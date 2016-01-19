@@ -34,7 +34,7 @@ function Microphone(_options) {
   // auxiliar buffer to keep unused samples (used when doing downsampling)
   this.bufferUnusedSamples = new Float32Array(0);
   this.samplesAll = new Float32Array(20000000);
-  this.samplesAllOffset = 0;  
+  this.samplesAllOffset = 0;
 
   // Chrome or Firefox or IE User media
   if (!navigator.getUserMedia) {

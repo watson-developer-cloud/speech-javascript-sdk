@@ -78,6 +78,7 @@ module.exports = function(config) {
     browsers: ['Chrome_without_prerecorded_mic'],
 
     // you can define custom flags
+    // there's a handy list of chrome flags at
     customLaunchers: {
       Chrome_without_prerecorded_mic: {
         base: 'Chrome',

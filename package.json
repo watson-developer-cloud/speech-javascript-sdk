@@ -13,7 +13,7 @@
     "watch": "karma start",
     "todo": "set up source maps",
     "browserify": "browserify src/watson-speech-to-text.js --standalone WatsonSpeechToText --outfile dist/watson-speech-to-text.js",
-    "watchify":   "watchify src/watson-speech-to-text.js --standalone WatsonSpeechToText --outfile dist/watson-speech-to-text.js --debug",
+    "watchify": "watchify src/watson-speech-to-text.js --standalone WatsonSpeechToText --outfile dist/watson-speech-to-text.js --debug",
     "minify": "uglifyjs dist/watson-speech-to-text.js --screw-ie8 > dist/watson-speech-to-text.min.js",
     "build": "npm run browserify && npm run minify"
   },
@@ -21,6 +21,7 @@
   "license": "MIT",
   "devDependencies": {
     "browserify": "^13.0.0",
+    "concat-stream": "^1.5.1",
     "expect.js": "^0.3.1",
     "karma": "^0.13.19",
     "karma-browserify": "^4.4.2",
@@ -29,12 +30,10 @@
     "karma-mocha": "^0.2.1",
     "mocha": "^2.3.4",
     "uglify-js": "^2.6.1",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "watson-developer-cloud": "^1.2.0"
   },
   "dependencies": {
-    "getusermedia": "^1.3.5",
-    "lodash": "^4.0.0",
-    "microphone-stream": "^1.0.0",
-    "watson-developer-cloud": "^1.2.0"
+    "lodash": "^4.0.0"
   }
 }

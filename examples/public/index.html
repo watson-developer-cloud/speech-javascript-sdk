@@ -5,13 +5,28 @@
     <title>Watson Speech to Text client example</title>
 </head>
 <body>
-    <button id="start-stop">Start/Stop Recording</button>
 
-    <p>Output:</p>
-    <div id="output"></div>
+    <section>
+        <h2>Transcribe from Microphone</h2>
+        <button id="start-stop">Start/Stop Microphone Transcription</button>
+
+        <p>Output:</p>
+        <div id="mic-output"></div>
+
+    </section>
+
+    <section>
+        <h2>Transcribe and Play File</h2>
+        <input type="file" id="audiofile"> <button id="start-stop-file">Start/Stop File Transcribe and Playback</button>
+        <p>Supported types are wav, ogg/opus (not ogg/vorbis), and flac, but only wav and ogg/opus can be played during transcription.</p>
+
+        <p>Output:</p>
+        <div id="file-output"></div>
+    </section>
 
     <script src="watson-speech-to-text.js"></script>
     <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
     <script src="app.js"></script>
+
 </body>
 </html>
