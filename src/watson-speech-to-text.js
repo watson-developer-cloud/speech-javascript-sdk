@@ -75,7 +75,7 @@ function WatsonSpeechToText(opts) {
         // we find why it's not accepted as query parameter
         var url = options.serviceURI || 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?watson-token=';
         url+= token + '&model=' + model;
-        console.log('URL model', model);
+        console.log('URL', url);
         try {
             socket = new WebSocket(url);
         } catch(err) {
@@ -84,44 +84,32 @@ function WatsonSpeechToText(opts) {
         socket.onopen = function() {
             listening = false;
             self.on('hardsocketstop', function() {
-                console.log('MICROPHONE: close.');
-                socket.send();
+                console.log('socket: close.');
+                socket.send(JSON.stringify({action: 'stop'}));
                 socket.close();
             });
             self.on('socketstop', function() {
-                console.log('MICROPHONE: close.');
+                console.log('socket: close.');
                 socket.close();
             });
+            console.log('sending opening message', message);
             socket.send(JSON.stringify(message));
             onopen(socket);
         };
         socket.onmessage = function(evt) {
             console.log(evt);
             var msg = JSON.parse(evt.data);
+            console.log(msg);
             if (msg.error) {
                 emitError(msg.error);
-                self.emit('hardsocketstop');
-                return;
-            }
-            if (msg.state === 'listening') {
-                // Early cut off, without notification
-                if (!listening) {
-                    onlistening(socket);
-                    listening = true;
-                } else {
-                    console.log('MICROPHONE: Closing socket.');
-                    socket.close();
-                }
-            }
-            if (msg.error) {
-                emitError(msg.error, e);
             } else if(msg.state === 'listening') {
                 // this is emitted both when the server is ready for audio, and after we send the close message to indicate that it's done processing
                 if (!self.listening) {
                     self.listening = true;
                     self.emit('listening');
+                    onlistening(socket);
                 } else {
-                    self.stop();
+                    socket.close();
                 }
             } else if (msg.results) {
                 /**
@@ -149,17 +137,21 @@ function WatsonSpeechToText(opts) {
         };
 
         socket.onclose = function(evt) {
-            console.log('WS onclose: ', evt);
-            if (evt.code === 1006) { // Authentication error - you should try again with a new token
-                return false;
-            }
-            if (evt.code === 1011) {
-                console.error('Server error ' + evt.code + ': please refresh your browser and try again');
-                return false;
-            }
+            console.log('WS onclose: ', evt, evt.code);
+
+            //if (evt.code === 1011) {
+            //    console.error('Server error ' + evt.code + ': please refresh your browser and try again');
+            //}
             if (evt.code > 1000) {
+                var err;
+                if (evt.code === 1006) { // Authentication error - you should try again with a new token
+                    err = new Error('Error 1006: Invalid Authentication');
+                } else {
+                    err = new Error('Server Error ' + e.code)
+                }
+                err.code = err.raw = evt.code;
                 console.error('Server error ' + evt.code + ': please refresh your browser and try again');
-                return false;
+                emitError(err);
             }
             self.emit('connection-close', evt.code);
             self.push(null);
@@ -217,11 +209,12 @@ function WatsonSpeechToText(opts) {
 
         function onError() {
             console.log('Mic socket err: ', err);
+            mic.stop();
         }
 
         function onClose(evt) {
             console.log('Mic socket close: ', evt);
-            self.push(null);
+            mic.stop();
         }
 
         initSocket(options, onOpen, onListening, onMessage, onError, onClose);

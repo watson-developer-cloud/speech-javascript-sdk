@@ -143,14 +143,14 @@ Microphone.prototype.record = function() {
  * Stop the audio recording
  */
 Microphone.prototype.stop = function() {
-  if (!this.recording)
-    return;
-  if(JSON.parse(localStorage.getItem('playback')))
-    this.playWav(); /*plays back the audio that was recorded*/
+  //if (!this.recording)
+  //  return;
   this.recording = false;
-  this.stream.getTracks()[0].stop();
-  this.requestedAccess = false;
-  this.mic.disconnect(0);
+  if (this.stream) {
+    this.stream.getTracks()[0].stop();
+    this.requestedAccess = false;
+    this.mic.disconnect(0);
+  }
   this.onStopRecording();
 };
 
@@ -303,12 +303,13 @@ Microphone.prototype.onAudio =  function() {};
 
 module.exports = Microphone;
 
+// does this save it in memory forever?
 Microphone.prototype.saveData = function(samples) {
   for(var i=0 ; i < samples.length ; ++i) {
     this.samplesAll[this.samplesAllOffset+i] = samples[i];
   }	
   this.samplesAllOffset += samples.length; 
-  console.log("samples: " + this.samplesAllOffset);
+  console.log("samples: " + this.samplesAllOffset, samples[samples.length-1]);
 }
 
 Microphone.prototype.playWav = function() {
