@@ -1,20 +1,6 @@
 // Karma configuration
 // Generated on Fri Jan 15 2016 13:36:31 GMT-0500 (EST)
 
-var fs = require('fs');
-var watson = require('watson-developer-cloud');
-
-var AUTH_FILE = './test/resources/auth.json';
-
-if (!fs.existsSync(AUTH_FILE)) {
-  console.error('Please create a test/resources/auth.json file with STT service credentials. See https://github.com/watson-developer-cloud/node-sdk#getting-the-service-credentials');
-  process.exit(1);
-}
-
-var auth = require(AUTH_FILE);
-var authorization = watson.authorization(auth);
-
-
 module.exports = function(config) {
   config.set({
 
@@ -101,23 +87,7 @@ module.exports = function(config) {
       port: 9877,
       // this function takes express app object and allows you to modify it
       // to your liking. For more see http://expressjs.com/4x/api.html
-      appVisitor: function (app, log) {
-        console.log('setting up express server')
-        app.get('/token', function (req, res) {
-          console.log('generating token')
-          res.header('Access-Control-Allow-Origin', '*'); // do *NOT* do this on a /token endpoint that's accessible to the internet
-
-          authorization.getToken({url: "https://stream.watsonplatform.net/speech-to-text/api"}, function (err, token) {
-            if (err) {
-              log.error('error retrieving auth token:', err);
-              res.status(500).send('Error: unable to retrieve access token')
-            } else {
-              log.info('auth token retrieved: ', token);
-              res.send(token);
-            }
-          });
-        });
-      }
+      appVisitor: (process.env.TEST_MODE=='integration') ? require('./test/resources/integration_test_server.js') : require('./test/resources/offline_test_server.js')
     }
   })
 };

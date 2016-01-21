@@ -7,17 +7,20 @@ var WatsonSpeechToText = require('../src/watson-speech-to-text');
 var expect = require('expect.js');
 var concat = require('concat-stream');
 
-function getToken() {
+// this is mainly for fetching the token, but it also determines what server to connect to during an offline test
+function getConfig() {
+    console.log('getting config');
     return fetch('http://localhost:9877/token').then(function(response) {
         return response.text();
-    }).then(function(token) {
-        return token;
+    }).then(function(config) {
+        console.log('got config:', config)
+        return JSON.parse(config);
     })
 }
 
 function getInstance() {
-    return getToken().then(function(token) {
-        return new WatsonSpeechToText({token: token});
+    return getConfig().then(function(config) {
+        return new WatsonSpeechToText(config);
     });
 }
 

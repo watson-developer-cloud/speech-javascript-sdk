@@ -20,10 +20,14 @@ var util = require('util');
 var defaults = require('lodash/defaults');
 var pick = require('lodash/pick');
 var Microphone = require('./microphone');
+var qs = require('querystring');
+var RecognizeStream = require('watson-developer-cloud/services/speech_to_text/recognize_stream');
+var getUserMedia = require('getusermedia');
+var MicStream = require('./microphone-stream');
 
 
 var PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
-    /*'model',*/ 'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold' ];
+    'model', 'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold' ];
 
 /**
  * IBM Watson Speech to Text client
@@ -62,108 +66,9 @@ function WatsonSpeechToText(opts) {
         self.emit('error', err);
     }
 
-    var socket;
-    function initSocket(options, onopen, onlistening, onmessage, onerror, onclose) {
-        var listening;
+    var recognizeStream;
 
-        var token = options.token;
-        var model = options.model || localStorage.getItem('currentModel');
-        var message = options.message || {'action': 'start'};
-
-        //var sessionPermissionsQueryParam = sessionPermissions ? '0' : '1';
-        // TODO: add '&X-Watson-Learning-Opt-Out=' + sessionPermissionsQueryParam once
-        // we find why it's not accepted as query parameter
-        var url = options.serviceURI || 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?watson-token=';
-        url+= token + '&model=' + model;
-        console.log('URL', url);
-        try {
-            socket = new WebSocket(url);
-        } catch(err) {
-            console.error('WS connection error: ', err);
-        }
-        socket.onopen = function() {
-            listening = false;
-            self.on('hardsocketstop', function() {
-                console.log('socket: close.');
-                socket.send(JSON.stringify({action: 'stop'}));
-                socket.close();
-            });
-            self.on('socketstop', function() {
-                console.log('socket: close.');
-                socket.close();
-            });
-            console.log('sending opening message', message);
-            socket.send(JSON.stringify(message));
-            onopen(socket);
-        };
-        socket.onmessage = function(evt) {
-            console.log(evt);
-            var msg = JSON.parse(evt.data);
-            console.log(msg);
-            if (msg.error) {
-                emitError(msg.error);
-            } else if(msg.state === 'listening') {
-                // this is emitted both when the server is ready for audio, and after we send the close message to indicate that it's done processing
-                if (!self.listening) {
-                    self.listening = true;
-                    self.emit('listening');
-                    onlistening(socket);
-                } else {
-                    socket.close();
-                }
-            } else if (msg.results) {
-                /**
-                 * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
-                 * @event RecognizeStream#results
-                 * @param {Object} results
-                 */
-                self.emit('results', msg);
-                // note: currently there is always either no entries or exactly 1 entry in the results array. However, this may change in the future.
-                if (msg.results[0] && msg.results[0].final && msg.results[0].alternatives) {
-                    /**
-                     * Finalized text
-                     * @event RecognizeStream#data
-                     * @param {String} transcript
-                     */
-                    self.push(msg.results[0].alternatives[0].transcript, 'utf8'); // this is the "data" event in a node.js stream
-                }
-            }
-            onmessage(msg, socket);
-        };
-
-        socket.onerror = function(evt) {
-            console.log('WS onerror: ', evt);
-            onerror(evt);
-        };
-
-        socket.onclose = function(evt) {
-            console.log('WS onclose: ', evt, evt.code);
-
-            //if (evt.code === 1011) {
-            //    console.error('Server error ' + evt.code + ': please refresh your browser and try again');
-            //}
-            if (evt.code > 1000) {
-                var err;
-                if (evt.code === 1006) { // Authentication error - you should try again with a new token
-                    err = new Error('Error 1006: Invalid Authentication');
-                } else {
-                    err = new Error('Server Error ' + e.code)
-                }
-                err.code = err.raw = evt.code;
-                console.error('Server error ' + evt.code + ': please refresh your browser and try again');
-                emitError(err);
-            }
-            self.emit('connection-close', evt.code);
-            self.push(null);
-            onclose(evt);
-        };
-    }
-
-
-    var micOptions = {
-        bufferSize: opts.bufferSize
-    };
-    var mic = new Microphone(micOptions);
+    var microphoneStream;
 
     function handleMicrophone(callback) {
         if (opts.model.indexOf('Narrowband') > -1) {
@@ -176,10 +81,8 @@ function WatsonSpeechToText(opts) {
 
         var options = {
             token: opts.token,
-            model: opts.model
-        };
-        options.message = defaults(pick(opts, PARAMS_ALLOWED), {
-            'action': 'start',
+            model: opts.model,
+            url: opts.url,
             'content-type': 'audio/l16;rate=16000',
             'interim_results': true,
             'continuous': true,
@@ -187,37 +90,33 @@ function WatsonSpeechToText(opts) {
             'timestamps': true,
             'max_alternatives': 3,
             'inactivity_timeout': 600
+        };
+
+        recognizeStream = new RecognizeStream(options);
+
+        recognizeStream.setEncoding('utf8'); // to get strings instead of Buffers from `data` events
+
+        //['data', 'results', 'connection-close'].forEach(function(eventName) {
+        //    recognizeStream.on(eventName, console.log.bind(console, eventName + ' event: '));
+        //});
+        recognizeStream.on('error', function(e) {
+            console.log(e.message, e.stack);
         });
 
-        function onOpen(socket) {
-            console.log('Mic socket: opened');
-            callback(null, socket);
-        }
+        getUserMedia({ video: false, audio: true }, function(err, stream) {
+            microphoneStream = new MicStream(stream, {bufferSize: opts.bufferSize});
+            try {
+                microphoneStream.pipe(recognizeStream);
+            } catch(ex) {
+                console.log(ex.message, ex.stack)
+            }
 
-        function onListening(socket) {
+        });
 
-            mic.onAudio = function(blob) {
-                if (socket.readyState < 2) {
-                    socket.send(blob);
-                }
-            };
-        }
-
-        function onMessage(data) {
-
-        }
-
-        function onError() {
-            console.log('Mic socket err: ', err);
-            mic.stop();
-        }
-
-        function onClose(evt) {
-            console.log('Mic socket close: ', evt);
-            mic.stop();
-        }
-
-        initSocket(options, onOpen, onListening, onMessage, onError, onClose);
+        recognizeStream.on('results', self.emit.bind(self, 'results'))
+        recognizeStream.on('data', function(chunk) {
+            self.push(chunk);
+        });
     }
 
     var running = false;
@@ -390,7 +289,6 @@ function WatsonSpeechToText(opts) {
     }
 
 
-
     this.start = function start() {
         if (opts.file) {
             handleFileUpload(opts.file);
@@ -399,7 +297,7 @@ function WatsonSpeechToText(opts) {
                 if (err) {
                     self.emit('error', err);
                 } else {
-                    mic.record();
+                    microphoneStream.record();
                 }
             });
         }
@@ -409,10 +307,7 @@ function WatsonSpeechToText(opts) {
 
     this.stop = function stop() {
         console.log('stopping');
-        mic.stop();
-        if (socket) {
-            socket.send(JSON.stringify({action:'stop'}));
-        }
+        microphoneStream.stop();
     };
 }
 util.inherits(WatsonSpeechToText, Stream.Readable);
