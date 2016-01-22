@@ -23,7 +23,8 @@ var Microphone = require('./microphone');
 var qs = require('querystring');
 var RecognizeStream = require('watson-developer-cloud/services/speech_to_text/recognize_stream');
 var getUserMedia = require('getusermedia');
-var MicStream = require('./microphone-stream');
+var MicrophoneStream = require('./microphone-stream');
+var WebAudioTo16leStream = require('./webaudio-to-16le-stream.js')
 
 
 var PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
@@ -96,19 +97,21 @@ function WatsonSpeechToText(opts) {
 
         recognizeStream.setEncoding('utf8'); // to get strings instead of Buffers from `data` events
 
-        //['data', 'results', 'connection-close'].forEach(function(eventName) {
-        //    recognizeStream.on(eventName, console.log.bind(console, eventName + ' event: '));
-        //});
+        ['data', 'results', 'connection-close'].forEach(function(eventName) {
+            recognizeStream.on(eventName, console.log.bind(console, eventName + ' event: '));
+        });
         recognizeStream.on('error', function(e) {
             console.log(e.message, e.stack);
         });
 
         getUserMedia({ video: false, audio: true }, function(err, stream) {
-            microphoneStream = new MicStream(stream, {bufferSize: opts.bufferSize});
             try {
-                microphoneStream.pipe(recognizeStream);
-            } catch(ex) {
-                console.log(ex.message, ex.stack)
+                microphoneStream = new MicrophoneStream(stream, {bufferSize: opts.bufferSize});
+                microphoneStream
+                    .pipe(new WebAudioTo16leStream())
+                    .pipe(recognizeStream);
+            } catch (ex) {
+                console.log(ex.message, ex.stack, ex);
             }
 
         });
