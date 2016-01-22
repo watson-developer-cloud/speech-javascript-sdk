@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Watson Speech to Text client example</title>
+</head>
+<body>
+
+<section>
+    <h2>Transcribe from Microphone</h2>
+    <button id="start-stop">Start/Stop Microphone Transcription</button>
+
+    <p>Output:</p>
+    <div id="mic-output"></div>
+
+</section>
+
+<section>
+    <h2>Transcribe and Play File</h2>
+    <input type="file" id="audiofile"> <button id="start-stop-file">Start/Stop File Transcribe and Playback</button>
+    <p>Supported types are wav, ogg/opus (not ogg/vorbis), and flac, but only wav and ogg/opus can be played during transcription.</p>
+
+    <p>Output:</p>
+    <div id="file-output"></div>
+</section>
+
+<script src="watson-speech-to-text.js"></script>
+<script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+
+<script>
+    $(function() {
+        var running = false;
+        var stt;
+
+
+        // mic input
+        var $output = $('#output');
+        $('#start-stop').click(function () {
+
+            console.log('test');
+            if (running) {
+                stt.stop();
+                running = false;
+            } else {
+                running = true;
+                $output.html('');
+
+                $.get('/token').then(function (token) {
+                    stt = new WatsonSpeechToText({
+                        continuous: false, // automatically stop the first time a pause is detected
+                        token: token
+                    });
+
+                    // each sentence gets it's own <span> because watson will sometimes go back and change a word as it hears the more of the sentence
+                    var $curSentence = $('<span/>').appendTo($output);
+
+                    stt.on('results', function (data) {
+                        // currently there are always either zero or one results objects
+                        if (data.results[0] && data.results[0].alternatives) {
+                            // update the text for the current sentence with the default alternative.
+                            // there may be multiple alternatives but this example app ignores all but the first.
+                            $curSentence.html(data.results[0].alternatives[0].transcript);
+                            if (data.results[0].final) {
+                                // if we have the final text for that sentence, start a new one
+                                $curSentence = $('<span/>').appendTo($output);
+                            }
+                        }
+                    });
+
+                    stt.on('error', function (err) {
+                        console.log(err);
+                    });
+
+                    stt.on('connection-close', function (code) {
+                        console.log('websocket closed with status code ', code);
+                        running = false;
+                    });
+
+                    stt.start();
+                });
+
+            }
+        });
+    })
+</script>
+
+</body>
+</html>

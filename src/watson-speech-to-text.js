@@ -15,307 +15,171 @@
  */
 
 'use strict';
-var Stream = require('stream');
-var util = require('util');
 var defaults = require('lodash/defaults');
 var pick = require('lodash/pick');
-var Microphone = require('./microphone');
 var qs = require('querystring');
 var RecognizeStream = require('watson-developer-cloud/services/speech_to_text/recognize_stream');
 var getUserMedia = require('getusermedia');
 var MicrophoneStream = require('./microphone-stream');
-var WebAudioTo16leStream = require('./webaudio-to-16le-stream.js')
+var WebAudioTo16leStream = require('./webaudio-to-16le-stream.js');
+var fileReaderStream = require('filereader-stream');
 
 
 var PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
     'model', 'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold' ];
 
+var DEFAULTS = {
+    model: 'en-US_BroadbandModel',
+    url: "https://stream.watsonplatform.net/speech-to-text/api"
+};
+
 /**
  * IBM Watson Speech to Text client
  *
- * @param {Object} opts options
- * @param {String} opts.token Auth Token for STT service. Must be generated server-side.
- * @param {DOMElement} [opts.file] Optional File Input DOM Element - qill cause #start() to upload the file instead of request microphone permission
- * @param {Boolean} [opts.playFile=true] If a file is being uploaded, should we also play it through the speakers?
+ * @param {Object} options - default options applied to .stream() and .promise()
+ * @param {String} options.token Auth Token for STT service. Must be generated server-side.
  * @constructor
  */
-function WatsonSpeechToText(opts) {
-    Stream.Readable.call(this);
+function WatsonSpeechToText(options) {
 
-    opts = defaults(opts, {
-        bufferSize: 8192,
-        model: 'en-US_BroadbandModel',
-        file: null,
-        url: "https://stream.watsonplatform.net/speech-to-text/api"
-    });
-    if (!opts.token) {
+    this.options = options;
+
+    if (!options.token) {
         throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
     }
+}
 
-    var self = this;
+/**
+ * Create and return a RecognizeStream from the user's microphone
+ * If the options.file is set, it is used instead of the microphone
+ *
+ * @param [options]
+ * @param {DOMElement} [options.file] - Optional File Input DOM Element - if set, this is used as the audio source instead of the microphone
+ * @param {Boolean} [options.playFile=true] - If a file is set, play it locally as it's being uploaded
+ * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
+ * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] base URL for service
+ * @param {String} [options.content-type='audio/l16;rate=16000'] - content type of audio; should be automatically determined in most cases
+ * @param {Boolean} [options.interim_results=true] - Send back non-final previews of each "sentence" as it is being processed
+ * @param {Boolean} [options.continuous=true] - set to false to automatically stop the transcription after the first "sentence"
+ * @param {Boolean} [options.word_confidence=false] - include confidence scores with results
+ * @param {Boolean} [options.timestamps=false] - include timestamps with results
+ * @param {Number} [options.max_alternatives=1] - maximum number of alternative transcriptions to include
+ * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity
+ * @param {Number} [options.bufferSize=] - size of buffer for microphone audio, leave unset to let browser determine it automatically
+ *
+ * //todo: investigate other options at http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/apis/#!/speech-to-text/recognizeSessionless
+ *
+ * @returns {RecognizeStream}
+ */
+WatsonSpeechToText.prototype.stream = function stream(options) {
+    options = defaults(options, this.options, {
+        'content-type': options.file? null : 'audio/l16;rate=16000',
+        'interim_results': true,
+        'continuous': true
+    });
 
-    /**
-     * @event RecognizeStream#error
-     */
-    function emitError(msg, frame, err) {
-        if (err) {
-            err.message = msg + ' ' + err.message;
-        } else {
-            err = new Error(msg);
+
+    var recognizeStream = new RecognizeStream(options);
+
+    ['results', 'end', 'close', 'finish'].forEach(function(key){
+        recognizeStream.on(key, console.log.bind(console, key))
+    });
+
+    recognizeStream.on('stop', this.stop.bind(this));
+
+    var source, self = this;
+    if (options.file) {
+        if (options.playFile) {
+            this.playFile(options.file, contentType);
         }
-        err.raw = frame;
-        self.emit('error', err);
-    }
-
-    var recognizeStream;
-
-    var microphoneStream;
-
-    function handleMicrophone(callback) {
-        if (opts.model.indexOf('Narrowband') > -1) {
-            var err = new Error('Microphone transcription cannot accomodate narrowband models, '+
-                'please select another');
-            callback(err, null);
-            return false;
-        }
-
-
-        var options = {
-            token: opts.token,
-            model: opts.model,
-            url: opts.url,
-            'content-type': 'audio/l16;rate=16000',
-            'interim_results': true,
-            'continuous': true,
-            'word_confidence': true,
-            'timestamps': true,
-            'max_alternatives': 3,
-            'inactivity_timeout': 600
-        };
-
-        recognizeStream = new RecognizeStream(options);
-
-        recognizeStream.setEncoding('utf8'); // to get strings instead of Buffers from `data` events
-
-        ['data', 'results', 'connection-close'].forEach(function(eventName) {
-            recognizeStream.on(eventName, console.log.bind(console, eventName + ' event: '));
-        });
-        recognizeStream.on('error', function(e) {
-            console.log(e.message, e.stack);
-        });
-
+        source = this.source = fileReaderStream(options.file);
+        source.pipe(recognizeStream);
+    } else {
         getUserMedia({ video: false, audio: true }, function(err, stream) {
-            try {
-                microphoneStream = new MicrophoneStream(stream, {bufferSize: opts.bufferSize});
-                microphoneStream
-                    .pipe(new WebAudioTo16leStream())
-                    .pipe(recognizeStream);
-            } catch (ex) {
-                console.log(ex.message, ex.stack, ex);
+            if (err) {
+                return recognizeStream.emit('error', err);
             }
-
-        });
-
-        recognizeStream.on('results', self.emit.bind(self, 'results'))
-        recognizeStream.on('data', function(chunk) {
-            self.push(chunk);
+            source = self.source = new MicrophoneStream(stream, {bufferSize: options.bufferSize});
+            source
+                .pipe(new WebAudioTo16leStream())
+                .pipe(recognizeStream);
         });
     }
 
-    var running = false;
-    function handleFileUpload(file) {
-        running = true;
-        self.on('hardsocketstop', function() {
-            running = false;
-        });
+    return recognizeStream;
+};
 
-        // Read first 4 bytes to determine header
+
+WatsonSpeechToText.prototype.playFile = function playFile(file) {
+    var self = this;
+    this.getContentType(file).then(function(contentType) {
+        var output = self.audioOutput = new Audio();
+        if (output.canPlayType(contentType)) {
+            output.src = URL.createObjectURL(new Blob([file], {type: contentType}));
+            output.play();
+        } else {
+            // if we emit an error, it prevents the promise from returning the actual result
+            self.stream.emit('unsupported-playback-format', new Error('Current browser is unable to play back ' + contentType + ', transcription will continue without playback'));
+        }
+    }).catch(self.stream.emit.bind(self,'error'));
+};
+
+
+WatsonSpeechToText.prototype.getContentType = function getContentType(file) {
+    return new Promise(function(resolve, reject) {
         var blobToText = new Blob([file]).slice(0, 4);
         var r = new FileReader();
         r.readAsText(blobToText);
         r.onload = function() {
-            var contentType, audio;
             if (r.result === 'fLaC') {
-                contentType = 'audio/flac';
-                console.log('Notice: browsers do not support playing FLAC audio, so no audio will accompany the transcription');
+                resolve('audio/flac');
             } else if (r.result === 'RIFF') {
-                contentType = 'audio/wav';
-                audio = new Audio();
-                audio.src = URL.createObjectURL(new Blob([file], {type: 'audio/wav'}));
-                audio.play();
-                self.on('hardsocketstop', function() {
-                    audio.pause();
-                    audio.currentTime = 0;
-                });
+                resolve('audio/wav');
             } else if (r.result === 'OggS') {
-                contentType = 'audio/ogg; codecs=opus';
-                audio = new Audio();
-                audio.src = URL.createObjectURL(new Blob([file], {type: 'audio/ogg; codecs=opus'}));
-                audio.play();
-                self.on('hardsocketstop', function() {
-                    audio.pause();
-                    audio.currentTime = 0;
-                });
+                resolve('audio/ogg; codecs=opus');
             } else {
-                console.log('header', r.result.toString());
-                emitError('Only WAV or FLAC or Opus files can be transcribed, please try another file format');
-                return;
+                reject(new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.'))
             }
-
-            function fileBlock(_offset, length, _file, readChunk) {
-                var r = new FileReader();
-                var blob = _file.slice(_offset, length + _offset);
-                r.onload = readChunk;
-                r.readAsArrayBuffer(blob);
-            }
-
-            function onFileProgress(options, ondata, running, onerror, onend, samplingRate) {
-                var file       = options.file;
-                var fileSize   = file.size;
-                var chunkSize  = options.bufferSize || 16000;  // in bytes
-                var offset     = 0;
-                var readChunk = function(evt) {
-                    if (offset >= fileSize) {
-                        console.log('Done reading file');
-                        onend();
-                        return;
-                    }
-                    if(!running()) {
-                        return;
-                    }
-                    if (evt.target.error == null) {
-                        var buffer = evt.target.result;
-                        offset += buffer.byteLength;
-                        //console.log('sending: ' + len);
-                        ondata(buffer); // callback for handling read chunk
-                    } else {
-                        var errorMessage = evt.target.error;
-                        console.log('Read error: ' + errorMessage);
-                        onerror(errorMessage);
-                        return;
-                    }
-                    // use this timeout to pace the data upload for the playSample case,
-                    // the idea is that the hyps do not arrive before the audio is played back
-                    // todo: upload the file at full-speed and instead use the word timings to control when they appear
-                    if (samplingRate) {
-                        // console.log('samplingRate: ' +
-                        //  samplingRate + ' timeout: ' + (chunkSize * 1000) / (samplingRate * 2));
-                        setTimeout(function() {
-                            fileBlock(offset, chunkSize, file, readChunk);
-                        }, (chunkSize * 1000) / (samplingRate * 2));
-                    } else {
-                        fileBlock(offset, chunkSize, file, readChunk);
-                    }
-                };
-                fileBlock(offset, chunkSize, file, readChunk);
-            }
-
-            function callback(socket) {
-                var blob = new Blob([file]);
-                var parseOptions = {
-                    file: blob
-                };
-                onFileProgress(parseOptions,
-                    // On data chunk
-                    function onData(chunk) {
-                        socket.send(chunk);
-                    },
-                    function isRunning() {
-                        if(running)
-                            return true;
-                        else
-                            return false;
-                    },
-                    // On file read error
-                    function(evt) {
-                        console.log('Error reading file: ', evt.message);
-                        emitError(evt.message);
-                    },
-                    // On load end
-                    function() {
-                        running = false;
-                        socket.send(JSON.stringify({'action': 'stop'}));
-                    });
-            }
-            function onend() {
-
-            }
-
-            self.on('progress', function(evt, data) {
-                console.log('progress: ', data);
-            });
-
-            console.log('contentType', contentType);
-
-            var options = {
-                token: opts.token,
-                model: opts.model
-            };
-            options.message = defaults(pick(opts, PARAMS_ALLOWED), {
-                'action': 'start',
-                'content-type': contentType,
-                'interim_results': true,
-                'continuous': true,
-                'word_confidence': true,
-                'timestamps': true,
-                'max_alternatives': 3,
-                'inactivity_timeout': 600
-            });
-
-            function onOpen() {
-                console.log('Socket opened');
-            }
-
-            function onListening(socket) {
-                console.log('Socket listening');
-                callback(socket);
-            }
-
-            function onMessage(msg) {
-
-            }
-
-            function onError(evt) {
-                localStorage.setItem('currentlyDisplaying', 'false');
-                onend(evt);
-                console.log('Socket err: ', evt.code);
-            }
-
-            function onClose(evt) {
-                localStorage.setItem('currentlyDisplaying', 'false');
-                onend(evt);
-                console.log('Socket closing: ', evt);
-            }
-
-            initSocket(options, onOpen, onListening, onMessage, onError, onClose);
         };
+    });
+};
+
+
+WatsonSpeechToText.prototype.promise = function promise(options) {
+    var self = this;
+    return new Promise(function(resolve, reject) {
+        options = defaults(options, {
+            'interim_results': false,
+        });
+        var stream = self.stream(options);
+        var results = [];
+        stream.on('data', function(){}) // put stream into flowing mode so that end event will be emitted
+            .on('results', function(data) {
+                results = results.concat(data.results);
+            }).on('end', function() {
+                resolve(results);
+            }).on('error', function(err) {
+                reject('error');
+            })
+    })
+};
+
+WatsonSpeechToText.prototype.stop = function stop() {
+    if (this.audioOutput) {
+        this.audioOutput.pause();
+        this.audioOutput.currentTime = 0;
+    }
+    if (this.source && this.source.stop) {
+        this.source.stop();
     }
 
+};
 
-    this.start = function start() {
-        if (opts.file) {
-            handleFileUpload(opts.file);
-        } else {
-            handleMicrophone(function(err) {
-                if (err) {
-                    self.emit('error', err);
-                } else {
-                    microphoneStream.record();
-                }
-            });
-        }
 
-        return this;
-    };
-
-    this.stop = function stop() {
-        console.log('stopping');
-        microphoneStream.stop();
-    };
-}
-util.inherits(WatsonSpeechToText, Stream.Readable);
-
-WatsonSpeechToText.prototype._read = function() {}; // flow control is not implemented, at least not at this level
-
+WatsonSpeechToText.resultsToText = function resultsToText(results) {
+    return results.map(function(result) {
+        return (result.final && result.alternatives && result.alternatives.length) ? result.alternatives[0].transcript : ''
+    }).join(' ');
+};
 
 module.exports = WatsonSpeechToText;

@@ -1,4 +1,6 @@
 // based on https://github.com/saebekassebil/microphone-stream (MIT)
+// PR sent: https://github.com/saebekassebil/microphone-stream/pull/3
+
 'use strict';
 var Readable = require('stream').Readable;
 var util = require('util');

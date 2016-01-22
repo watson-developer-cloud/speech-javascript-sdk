@@ -14,7 +14,7 @@
     "watch": "karma start",
     "todo": "set up source maps",
     "browserify": "browserify src/watson-speech-to-text.js --standalone WatsonSpeechToText --outfile dist/watson-speech-to-text.js",
-    "watchify": "watchify src/watson-speech-to-text.js --standalone WatsonSpeechToText --outfile dist/watson-speech-to-text.js --debug",
+    "watchify": "watchify src/watson-speech-to-text.js --standalone WatsonSpeechToText --outfile dist/watson-speech-to-text.js --debug --verbose",
     "minify": "uglifyjs dist/watson-speech-to-text.js --screw-ie8 > dist/watson-speech-to-text.min.js",
     "build": "npm run browserify && npm run minify"
   },
@@ -35,6 +35,7 @@
     "watson-developer-cloud": "^1.2.0"
   },
   "dependencies": {
+    "filereader-stream": "^1.0.0",
     "getusermedia": "^1.3.5",
     "lodash": "^4.0.0",
     "watson-developer-cloud": "^1.3.0"
