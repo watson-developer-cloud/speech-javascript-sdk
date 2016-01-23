@@ -8,35 +8,34 @@
 
     <section>
         <h1>Transcribe File</h1>
-        <input type="file" id="audiofile"> <button id="start">Transcribe</button>
-        <p>Supported types are wav, ogg/opus (not ogg/vorbis), and flac.</p>
+        <input type="file" id="audiofile"> <button id="button">Transcribe</button>
+        <p><small><i>Supported types are wav, ogg/opus (not ogg/vorbis), and flac.</i></small></p>
 
-        <p>Output:</p>
-        <div id="output"></div>
+        <h2>Output:</h2>
+        <div id="output">--</div>
     </section>
 
     <script src="watson-speech-to-text.js"></script>
     <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
 
     <h2>Code for this demo:</h2>
-    <code><pre><script style="display: block;">
+    <pre><code><script style="display: block;">
 $(function() {
     $.get('/token').then(function (token) {
 
         // each token may be reused for up to an hour
-        // the connection will close with code 1006 when the token
+        // the connection will close with code 1006 when the token is expired or otherwise invalid
         var stt =  new WatsonSpeechToText({
             token: token
         });
 
         var $output = $('#output');
 
-        $('#start').click(function () {
+        $('#button').click(function () {
             $output.html('Processing...');
 
             stt.promise({
-                file: $('#audiofile')[0].files[0],
-                playFile: false
+                file: $('#audiofile')[0]
             })
             .then(function(results) {
                 console.log('results', results);
@@ -58,6 +57,6 @@ $(function() {
         });
     });
 });
-    </script></pre></code>
+    </script></code></pre>
 </body>
 </html>

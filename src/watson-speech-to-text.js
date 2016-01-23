@@ -73,26 +73,29 @@ function WatsonSpeechToText(options) {
  */
 WatsonSpeechToText.prototype.stream = function stream(options) {
     options = defaults(options, this.options, {
-        'content-type': options.file? null : 'audio/l16;rate=16000',
+        'content-type': (options && options.file)? null : 'audio/l16;rate=16000',
         'interim_results': true,
         'continuous': true
     });
 
 
-    var recognizeStream = new RecognizeStream(options);
+    var recognizeStream = this.recognizeStream = new RecognizeStream(options);
 
-    ['results', 'end', 'close', 'finish'].forEach(function(key){
-        recognizeStream.on(key, console.log.bind(console, key))
-    });
+    //['results', 'end', 'close', 'finish'].forEach(function(key){
+    //    recognizeStream.on(key, console.log.bind(console, key))
+    //});
 
     recognizeStream.on('stop', this.stop.bind(this));
 
     var source, self = this;
     if (options.file) {
-        if (options.playFile) {
-            this.playFile(options.file, contentType);
+        if (!options.file.files || !options.file.files.length) {
+            throw new Error('Unable to read file');
         }
-        source = this.source = fileReaderStream(options.file);
+        if (options.playFile) {
+            this.playFile(options.file.files[0]);
+        }
+        source = this.source = fileReaderStream(options.file.files[0]);
         source.pipe(recognizeStream);
     } else {
         getUserMedia({ video: false, audio: true }, function(err, stream) {
@@ -119,9 +122,10 @@ WatsonSpeechToText.prototype.playFile = function playFile(file) {
             output.play();
         } else {
             // if we emit an error, it prevents the promise from returning the actual result
-            self.stream.emit('unsupported-playback-format', new Error('Current browser is unable to play back ' + contentType + ', transcription will continue without playback'));
+            // however, most browsers do not support flac, so this is a reasonably scenario
+            self.recognizeStream.emit('play-error', new Error('Current browser is unable to play back ' + contentType + ', transcription will continue without playback'));
         }
-    }).catch(self.stream.emit.bind(self,'error'));
+    }).catch(self.recognizeStream.emit.bind(self.recognizeStream,'play-error'));
 };
 
 
@@ -154,8 +158,8 @@ WatsonSpeechToText.prototype.promise = function promise(options) {
         var stream = self.stream(options);
         var results = [];
         stream.on('data', function(){}) // put stream into flowing mode so that end event will be emitted
-            .on('results', function(data) {
-                results = results.concat(data.results);
+            .on('result', function(result) {
+                results.push(result);
             }).on('end', function() {
                 resolve(results);
             }).on('error', function(err) {
@@ -178,7 +182,7 @@ WatsonSpeechToText.prototype.stop = function stop() {
 
 WatsonSpeechToText.resultsToText = function resultsToText(results) {
     return results.map(function(result) {
-        return (result.final && result.alternatives && result.alternatives.length) ? result.alternatives[0].transcript : ''
+        return (result && result.final && result.alternatives && result.alternatives.length) ? result.alternatives[0].transcript : ''
     }).join(' ');
 };
 
