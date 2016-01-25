@@ -17,7 +17,7 @@ Returns a Node.js-style stream of the final text and also emits `result` events 
 (including pre-final results, alternatives, word timing, confidence scores, etc.)
 
 
-### `WatsonSpeechToText.promise({/*...*/})` -> [Stream](https://nodejs.org/api/stream.html)
+### `WatsonSpeechToText.promise({/*...*/})` -> [Promise](https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Promise.jsm/Promise)
 
 Pass in a token (must be generated server-side) and any other desired options. 
 
@@ -30,3 +30,5 @@ Note: To use a promise with microphone input, either set `continuous: false` or 
 Otherwise the promise will not resolve in a timely manner (because it will continue to wait for more speech until the connection times out.)
 
 ### `WatsonSpeechToText.resultsToText(ArrayOfResults)` -> Final Text
+
+Helper method to turn `.promise()` results into a single string of text.
