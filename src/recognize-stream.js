@@ -94,7 +94,6 @@ RecognizeStream.prototype.initialize = function() {
     inactivity_timeout: 30
   });
 
-  var closingMessage = {action: 'stop'};
 
 
   var self = this;
@@ -104,15 +103,7 @@ RecognizeStream.prototype.initialize = function() {
   var socket = this.socket = new W3CWebSocket(url, null, null, options.headers, null);
 
   // when the input stops, let the service know that we're done
-  self.on('finish', function() {
-    if (self.socket) {
-      self.socket.send(JSON.stringify(closingMessage));
-    } else {
-      this.once('connect', function () {
-        self.socket.send(JSON.stringify(closingMessage));
-      });
-    }
-  });
+  self.on('finish', self.finish.bind(self));
 
   socket.onerror = function(error) {
     self.listening = false;
@@ -126,8 +117,10 @@ RecognizeStream.prototype.initialize = function() {
   };
 
   this.socket.onclose = function(e) {
-    self.listening = false;
-    self.push(null);
+    if (self.listening) {
+      self.listening = false;
+      self.push(null);
+    }
     /**
      * @event RecognizeStream#connection-close
      * @param {Number} reasonCode
@@ -170,6 +163,7 @@ RecognizeStream.prototype.initialize = function() {
         self.emit('listening');
       } else {
         self.listening = false;
+        self.push(null);
         socket.close();
       }
     } else if (data.results) {
@@ -180,21 +174,24 @@ RecognizeStream.prototype.initialize = function() {
        * @deprecated
        */
       self.emit('results', data.results);
-      /**
-       * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
-       * @event RecognizeStream#results
-       * @param {Object} results
-       */
-      data.results.forEach(self.emit.bind(self, 'result'));
-      // note: currently there is always either no entries or exactly 1 entry in the results array. However, this may change in the future.
-      if (data.results[0] && data.results[0].final && data.results[0].alternatives) {
+
+      // note: currently there is always either 0 or 1 entries in the results array. However, this may change in the future.
+      data.results.forEach(function(result) {
         /**
-         * Finalized text
-         * @event RecognizeStream#data
-         * @param {String} transcript
+         * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
+         * @event RecognizeStream#results
+         * @param {Object} results
          */
-        self.push(data.results[0].alternatives[0].transcript, 'utf8'); // this is the "data" event that can be easily piped to other streams
-      }
+        self.emit('result', result);
+        if (result.final && result.alternatives) {
+          /**
+           * Finalized text
+           * @event RecognizeStream#data
+           * @param {String} transcript
+           */
+          self.push(result.alternatives[0].transcript, 'utf8'); // this is the "data" event that can be easily piped to other streams
+        }
+      });
     } else {
       emitError('Unrecognised message from server', frame);
     }
@@ -238,10 +235,25 @@ RecognizeStream.prototype.afterSend = function afterSend(next) {
   }
 };
 
-RecognizeStream.prototype.stop = function() {
+RecognizeStream.prototype.stop = function(hard) {
   this.emit('stopping');
-  this.listening = false;
-  this.socket.close();
+  if (hard) {
+    this.socket.close();
+  } else {
+    this.finish();
+  }
+};
+
+RecognizeStream.prototype.finish = function finish() {
+  var self = this;
+  var closingMessage = {action: 'stop'};
+  if (self.socket) {
+    self.socket.send(JSON.stringify(closingMessage));
+  } else {
+    this.once('connect', function () {
+      self.socket.send(JSON.stringify(closingMessage));
+    });
+  }
 };
 
 // quick/dumb way to determine content type from a supported file format

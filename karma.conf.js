@@ -87,7 +87,7 @@ module.exports = function(config) {
       port: 9877,
       // this function takes express app object and allows you to modify it
       // to your liking. For more see http://expressjs.com/4x/api.html
-      appVisitor: (process.env.TEST_MODE=='integration') ? require('./test/resources/integration_test_server.js') : require('./test/resources/offline_test_server.js')
+      appVisitor: (process.env.TEST_MODE === 'integration') ? require('./test/resources/integration_test_server.js') : require('./test/resources/offline_test_server.js')
     }
-  })
+  });
 };

@@ -11,7 +11,7 @@ function WebAudioTo16leStream(opts) {
     this.bufferUnusedSamples = new Float32Array(0);
 
     var self = this;
-    this.on('pipe', (src) => {
+    this.on('pipe', function(src) {
         src.on('format', function(format) {
             self.sourceSampleRate = format.sampleRate;
         });

@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "karma start",
+    "lint": "eslint *.js src/*.js",
     "test": "karma start --single-run",
     "test-integration": "TEST_MODE=integration karma start --single-run",
     "watch": "karma start",
@@ -23,6 +24,8 @@
   "devDependencies": {
     "browserify": "^13.0.0",
     "concat-stream": "^1.5.1",
+    "eslint": "^1.10.3",
+    "eslint-config-google": "^0.3.0",
     "expect.js": "^0.3.1",
     "karma": "^0.13.19",
     "karma-browserify": "^4.4.2",
@@ -32,7 +35,7 @@
     "mocha": "^2.3.4",
     "uglify-js": "^2.6.1",
     "watchify": "^3.7.0",
-    "watson-developer-cloud": "^1.2.0"
+    "watson-developer-cloud": "^1.2.1"
   },
   "dependencies": {
     "filereader-stream": "^1.0.0",

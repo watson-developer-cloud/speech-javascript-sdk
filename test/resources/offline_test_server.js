@@ -82,6 +82,7 @@ module.exports = function (app, log) {
                 try {
                     var msg = JSON.parse(message.utf8Data);
                     if(msg.action == 'start') {
+                        //debug('starting');
                         connection.sendUTF('{"state":"listening"}');
                         if (msg.interim_results) {
                             interim_interval = startInterim();
@@ -117,7 +118,7 @@ module.exports = function (app, log) {
         });
         connection.on('close', function(reasonCode, description) {
             clearInterval(interim_interval);
-            debug('Peer ' + connection.remoteAddress + ' disconnected.');
+            debug('Peer disconnected:',connection.remoteAddress, reasonCode, description );
         });
     });
 };

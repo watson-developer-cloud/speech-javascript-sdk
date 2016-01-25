@@ -9,7 +9,6 @@
 <section>
     <h2>Transcribe from Microphone</h2>
     <button id="button">Start Microphone Transcription</button>
-    <button id="stop">Stop</button>
 
     <h2>Output:</h2>
     <div id="output">--</div>
@@ -29,7 +28,8 @@ $(function() {
 
         $.get('/token').then(function (token) {
             var stream = WatsonSpeechToText.stream({
-                token: token
+                token: token,
+                continuous: false // false = automatically stop transcription the first time a pause is detected
             });
 
             // each result (sentence) gets it's own <span> because Watson will sometimes go back and change a word as it hears more context
@@ -48,10 +48,6 @@ $(function() {
 
             stream.on('error', function(err) {
                 console.log(err);
-            });
-
-            $('#stop').off().click(function() {
-                stream.stop();
             });
         });
     });
