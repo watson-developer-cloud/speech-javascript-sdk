@@ -12,9 +12,9 @@ function WebAudioTo16leStream(opts) {
 
     var self = this;
     this.on('pipe', (src) => {
-        if (src.audioContext) {
-            self.sourceSampleRate = src.audioContext.sampleRate;
-        }
+        src.on('format', function(format) {
+            self.sourceSampleRate = format.sampleRate;
+        });
     });
 }
 util.inherits(WebAudioTo16leStream, Transform);
@@ -71,7 +71,12 @@ WebAudioTo16leStream.prototype._exportDataBufferTo16Khz = function(nodebuffer) {
             sample += buffer[i + j] * filter[j];
         }
         sample *= volume;
-        dataView16k.setInt16(index, sample, true); // 'true' -> means little endian
+        try {
+            dataView16k.setInt16(index, sample, true); // 'true' -> means little endian
+        } catch (ex) {
+            // chrome occasionally throws RangeError: Offset is outside the bounds of the DataView
+            // todo: actually fix it instead of just ignoring the error..
+        }
         index += 2;
         nOut++;
     }
@@ -101,3 +106,5 @@ WebAudioTo16leStream.prototype._flush = function(next) {
 };
 
 module.exports = WebAudioTo16leStream;
+
+

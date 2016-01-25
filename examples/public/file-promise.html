@@ -19,44 +19,28 @@
     <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
 
     <h2>Code for this demo:</h2>
-    <pre><code><script style="display: block;">
+<pre><code><script style="display: block;">
 $(function() {
-    $.get('/token').then(function (token) {
+    var $output = $('#output');
 
-        // each token may be reused for up to an hour
-        // the connection will close with code 1006 when the token is expired or otherwise invalid
-        var stt =  new WatsonSpeechToText({
-            token: token
-        });
-
-        var $output = $('#output');
-
-        $('#button').click(function () {
+    $('#button').click(function () {
+        $.get('/token').then(function (token) {
             $output.html('Processing...');
 
-            stt.promise({
+            WatsonSpeechToText.promise({
+                token: token,
                 file: $('#audiofile')[0]
-            })
-            .then(function(results) {
-                console.log('results', results);
-                return results;
             })
             .then(WatsonSpeechToText.resultsToText) // turn the collection of results into a string of text
             .then(function(text) {
-                console.log('text', text);
-                return text;
-            })
-            .then(function(text) {
-                running = false;
                 $output.text(text);
             }).catch(function(err) {
-                running = false;
                 console.log(err);
                 $output.text(err.message);
             });
         });
     });
 });
-    </script></code></pre>
+</script></code></pre>
 </body>
 </html>

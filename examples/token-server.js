@@ -52,5 +52,20 @@ app.get('/token', function(req, res, next) {
 
 var port = process.env.VCAP_APP_PORT || 3000;
 app.listen(port, function() {
-   console.log('example IBM Watson STT client app & server live at http://localhost:%s/', port);
+   console.log('Example IBM Watson STT client app & server live at http://localhost:%s/', port);
 });
+
+// chrome requires https to access the user's mic
+if (!process.env.VCAP_APP_PORT) {
+    var fs = require("fs"),
+        https = require("https"),
+        HTTPS_PORT = 3001;
+
+    var options = {
+        key: fs.readFileSync(__dirname + '/keys/localhost.pem'),
+        cert: fs.readFileSync(__dirname + '/keys/localhost.cert')
+    };
+    https.createServer(options, app).listen(HTTPS_PORT, function () {
+        console.log('Secure example IBM Watson STT client app & server live at https://localhost:%s/', port)
+    });
+}

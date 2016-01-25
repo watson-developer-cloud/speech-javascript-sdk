@@ -9,7 +9,7 @@
 <section>
     <h2>Transcribe File, Streaming</h2>
     <input type="file" id="audiofile"> <button id="button">Transcribe and Play</button>
-    <p><small><i>Supported types are wav, ogg/opus (not ogg/vorbis), and flac. However, most browsers can only play back wav and ogg, not flac.</i></small></p>
+    <p><small><i>Supported types are wav, ogg/opus (not ogg/vorbis), and flac. However, most browsers do not support flac.</i></small></p>
 
     <h2>Output:</h2>
     <div id="output">--</div>
@@ -19,22 +19,16 @@
 <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
 
 <h2>Code for this demo:</h2>
-    <pre><code><script style="display: block;">
+<pre><code><script style="display: block;">
 $(function() {
-    $.get('/token').then(function (token) {
+    var $output = $('#output');
 
-        // each token may be reused for up to an hour
-        // the connection will close with code 1006 when the token is expired or otherwise invalid
-        var stt =  new WatsonSpeechToText({
-            token: token
-        });
-
-        var $output = $('#output');
-
-        $('#button').click(function () {
+    $('#button').click(function () {
+        $.get('/token').then(function (token) {
             $output.html('');
 
-            var stream = stt.stream({
+            var stream = WatsonSpeechToText.stream({
+                token: token,
                 file: $('#audiofile')[0],
                 playFile: true
             });
@@ -62,9 +56,12 @@ $(function() {
                 console.log(err);
             });
 
+            stream.on('playback-error', function(err) {
+                console.log(err);
+            });
         });
     });
 });
-    </script></code></pre>
+</script></code></pre>
 </body>
 </html>
