@@ -46,69 +46,69 @@ var FilePlayer = require('./file-player.js');
  * @returns {RecognizeStream}
  */
 exports.stream = function stream(options) {
-    options = defaults(options, {
-        'content-type': (options && options.file)? null : 'audio/l16;rate=16000',
-        'interim_results': true,
-        'continuous': true
+  options = defaults(options, {
+    'content-type': (options && options.file) ? null : 'audio/l16;rate=16000',
+    'interim_results': true,
+    'continuous': true
+  });
+
+  if (!options.token) {
+    throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
+  }
+
+  var recognizeStream = new RecognizeStream(options);
+
+  var source;
+  if (options.file) {
+    if (!options.file.files || !options.file.files.length) {
+      throw new Error('Unable to read file');
+    }
+    if (options.playFile) {
+      FilePlayer.playFile(options.file.files[0]).then(function (player) {
+        recognizeStream.on('stop', player.stop.bind(player));
+      }).catch(function (err) {
+        recognizeStream.emit('playback-error', err);
+      });
+
+    }
+    source = fileReaderStream(options.file.files[0]);
+    source.pipe(recognizeStream);
+    // note: there's no way to stop the file reader, but stopping the recognizeStream should be good enough.
+  } else {
+    getUserMedia({video: false, audio: true}, function (err, stream) {
+      if (err) {
+        return recognizeStream.emit('error', err);
+      }
+      source = new MicrophoneStream(stream, {bufferSize: options.bufferSize});
+      source
+        .pipe(new WebAudioTo16leStream())
+        .pipe(recognizeStream);
+      recognizeStream.on('stop', source.stop.bind(source));
     });
+  }
 
-    if (!options.token) {
-        throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
-    }
-
-    var recognizeStream = new RecognizeStream(options);
-
-    var source;
-    if (options.file) {
-        if (!options.file.files || !options.file.files.length) {
-            throw new Error('Unable to read file');
-        }
-        if (options.playFile) {
-            FilePlayer.playFile(options.file.files[0]).then(function(player) {
-                recognizeStream.on('stop', player.stop.bind(player));
-            }).catch(function(err) {
-                recognizeStream.emit('playback-error', err);
-            });
-
-        }
-        source = fileReaderStream(options.file.files[0]);
-        source.pipe(recognizeStream);
-        // note: there's no way to stop the file reader, but stopping the recognizeStream should be good enough.
-    } else {
-        getUserMedia({ video: false, audio: true }, function(err, stream) {
-            if (err) {
-                return recognizeStream.emit('error', err);
-            }
-            source = new MicrophoneStream(stream, {bufferSize: options.bufferSize});
-            source
-                .pipe(new WebAudioTo16leStream())
-                .pipe(recognizeStream);
-            recognizeStream.on('stop', source.stop.bind(source));
-        });
-    }
-
-    return recognizeStream;
+  return recognizeStream;
 };
 
 exports.promise = function promise(options) {
-    options = defaults(options, {
-        'interim_results': false
-    });
-    var s = stream(options);
-    var p = new Promise(function(resolve, reject) {
-        var results = [];
-        s.on('result', function(result) {
-                results.push(result);
-            }).on('end', function() {
-                resolve(results);
-            }).on('error', reject);
-    });
-    p.stop = s.stop.bind(s);
-    return p;
+  options = defaults(options, {
+    'interim_results': false
+  });
+  var s = stream(options);
+  var p = new Promise(function (resolve, reject) {
+    var results = [];
+    s.on('result', function (result) {
+      results.push(result);
+    }).on('end', function () {
+      resolve(results);
+    }).on('error', reject);
+  });
+  p.stop = s.stop.bind(s);
+  return p;
 };
 
 exports.resultsToText = function resultsToText(results) {
-    return results.map(function(result) {
-        return (result && result.final && result.alternatives && result.alternatives.length) ? result.alternatives[0].transcript : ''
-    }).join(' ');
+  return results.map(function (result) {
+    return (result && result.final && result.alternatives && result.alternatives.length) ? result.alternatives[0].transcript : ''
+  }).join(' ');
 };

@@ -25,10 +25,9 @@ var W3CWebSocket = require('websocket').w3cwebsocket;
 
 
 var OPENING_MESSAGE_PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
-  'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold' ];
+  'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold'];
 
 var QUERY_PARAMS_ALLOWED = ['model', 'X-Watson-Learning-Opt-Out', 'watson-token'];
-
 
 
 /**
@@ -41,7 +40,7 @@ var QUERY_PARAMS_ALLOWED = ['model', 'X-Watson-Learning-Opt-Out', 'watson-token'
  * @param options
  * @constructor
  */
-function RecognizeStream(options){
+function RecognizeStream(options) {
   Duplex.call(this, options);
   this.options = options;
   this.listening = false;
@@ -52,17 +51,19 @@ function RecognizeStream(options){
   function flowForResults(event) {
     if (event == 'results' || event == 'result') {
       self.removeListener('newListener', flowForResults);
-      process.nextTick(function() {
-        self.on('data', function(){}); // todo: is there a better way to put a stream in flowing mode?
+      process.nextTick(function () {
+        self.on('data', function () {
+        }); // todo: is there a better way to put a stream in flowing mode?
       });
     }
   }
+
   this.on('newListener', flowForResults);
 }
 util.inherits(RecognizeStream, Duplex);
 
 
-RecognizeStream.prototype.initialize = function() {
+RecognizeStream.prototype.initialize = function () {
   var options = this.options;
 
   // todo: apply these corrections to other methods (?)
@@ -77,7 +78,7 @@ RecognizeStream.prototype.initialize = function() {
   }
 
   var queryParams = defaults(pick(options, QUERY_PARAMS_ALLOWED), {model: 'en-US_BroadbandModel'});
-  var queryString = Object.keys(queryParams).map(function(key) {
+  var queryString = Object.keys(queryParams).map(function (key) {
     return key + '=' + (key == 'watson-token' ? queryParams[key] : encodeURIComponent(queryParams[key])); // the server chokes if the token is correctly url-encoded
   }).join('&');
 
@@ -95,7 +96,6 @@ RecognizeStream.prototype.initialize = function() {
   });
 
 
-
   var self = this;
 
   //node params: requestUrl, protocols, origin, headers, extraRequestOptions
@@ -105,18 +105,18 @@ RecognizeStream.prototype.initialize = function() {
   // when the input stops, let the service know that we're done
   self.on('finish', self.finish.bind(self));
 
-  socket.onerror = function(error) {
+  socket.onerror = function (error) {
     self.listening = false;
     self.emit('error', error);
   };
 
 
-  this.socket.onopen = function() {
+  this.socket.onopen = function () {
     socket.send(JSON.stringify(openingMessage));
     self.emit('connect');
   };
 
-  this.socket.onclose = function(e) {
+  this.socket.onclose = function (e) {
     if (self.listening) {
       self.listening = false;
       self.push(null);
@@ -142,7 +142,7 @@ RecognizeStream.prototype.initialize = function() {
     self.emit('error', err);
   }
 
-  socket.onmessage = function(frame) {
+  socket.onmessage = function (frame) {
     if (typeof frame.data !== 'string') {
       return emitError('Unexpected binary data received from server', frame);
     }
@@ -176,7 +176,7 @@ RecognizeStream.prototype.initialize = function() {
       self.emit('results', data.results);
 
       // note: currently there is always either 0 or 1 entries in the results array. However, this may change in the future.
-      data.results.forEach(function(result) {
+      data.results.forEach(function (result) {
         /**
          * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
          * @event RecognizeStream#results
@@ -201,12 +201,12 @@ RecognizeStream.prototype.initialize = function() {
 };
 
 
-RecognizeStream.prototype._read = function(size) {
+RecognizeStream.prototype._read = function (size) {
   // there's no easy way to control reads from the underlying library
   // so, the best we can do here is a no-op
 };
 
-RecognizeStream.prototype._write = function(chunk, encoding, callback) {
+RecognizeStream.prototype._write = function (chunk, encoding, callback) {
   var self = this;
   if (self.listening) {
     self.socket.send(chunk);
@@ -218,7 +218,7 @@ RecognizeStream.prototype._write = function(chunk, encoding, callback) {
       }
       this.initialize();
     }
-    this.once('listening', function() {
+    this.once('listening', function () {
       self.socket.send(chunk);
       this.afterSend(callback);
     });
@@ -235,7 +235,7 @@ RecognizeStream.prototype.afterSend = function afterSend(next) {
   }
 };
 
-RecognizeStream.prototype.stop = function(hard) {
+RecognizeStream.prototype.stop = function (hard) {
   this.emit('stopping');
   if (hard) {
     this.socket.close();
@@ -262,8 +262,8 @@ var headerToContentType = {
   'RIFF': 'audio/wav',
   'OggS': 'audio/ogg; codecs=opus'
 };
-RecognizeStream.getContentType = function(buffer) {
-  var header = buffer.slice(0,4).toString();
+RecognizeStream.getContentType = function (buffer) {
+  var header = buffer.slice(0, 4).toString();
   return headerToContentType[header];
 };
 
