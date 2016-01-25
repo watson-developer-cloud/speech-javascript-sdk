@@ -9,6 +9,11 @@ May be used via browserify, or as a standalone library
 
 See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples
 
+This library is designed for use with [browserify](http://browserify.org/) (`npm install --save watson-speech`), but you can also grab the bundle from the 
+dist/ folder and use it as-is.
+
+Check out https://www.npmjs.com/package/watson-developer-cloud to use Watson services from Node.js.
+
 ## API
 
 ### `WatsonSpeechToText.stream({/*...*/})` -> [Stream](https://nodejs.org/api/stream.html)
