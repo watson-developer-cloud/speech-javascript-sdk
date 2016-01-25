@@ -34,7 +34,8 @@
     "mocha": "^2.3.4",
     "uglify-js": "^2.6.1",
     "watchify": "^3.7.0",
-    "watson-developer-cloud": "^1.2.1"
+    "watson-developer-cloud": "^1.2.1",
+    "whatwg-fetch": "^0.11.0"
   },
   "dependencies": {
     "filereader-stream": "^1.0.0",

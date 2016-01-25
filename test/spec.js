@@ -7,6 +7,10 @@ var WatsonSpeechToText = require('../src/watson-speech-to-text');
 var expect = require('expect.js');
 var concat = require('concat-stream');
 
+if (typeof fetch == "undefined") {
+  require('whatwg-fetch');
+}
+
 // this is mainly for fetching the token, but it also determines what server to connect to during an offline test
 function getConfig() {
   console.log('getting config');
