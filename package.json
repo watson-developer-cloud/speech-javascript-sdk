@@ -1,8 +1,8 @@
 {
-  "name": "stt-browser-client",
+  "name": "watson-speech",
   "version": "0.1.0",
-  "description": "IBM Watson Speech to Text client library for web browsers.",
-  "main": "lib/watson-speech-to-text.js",
+  "description": "IBM Watson Speech to Text SDK for web browsers.",
+  "main": "src/watson-speech-to-text.js",
   "directories": {
     "lib": "lib",
     "test": "test"
