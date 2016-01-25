@@ -7,6 +7,8 @@ Allows you to easily add voice recognition to any web app with minimal code.
 
 May be used via browserify, or as a standalone library
 
+See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples
+
 ## API
 
 ### `WatsonSpeechToText.stream({/*...*/})` -> [Stream](https://nodejs.org/api/stream.html)
