@@ -31,7 +31,7 @@ Pass that to `.resultsToText()` to get the final text as a string or do more com
 
 By default, `interim_results` is set to false (meaning that only final results will be included in the Array.)
 
-Note: To use a promise with microphone input, either set `continuous: false` or call `.stop()` on the resulting steam once the speech is done. 
+Note: To use a promise with microphone input, either set `continuous: false` or call the `.stop()` method on the resulting promise (once the speech is complete). 
 Otherwise the promise will not resolve in a timely manner (because it will continue to wait for more speech until the connection times out.)
 
 ### `WatsonSpeechToText.resultsToText(ArrayOfResults)` -> Final Text
