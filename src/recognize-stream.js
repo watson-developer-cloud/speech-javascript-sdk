@@ -45,6 +45,7 @@ function RecognizeStream(options) {
   this.options = options;
   this.listening = false;
   this.initialized = false;
+  this.finished = false;
   var self = this;
 
   // listening for `results` events should put the stream in flowing mode just like `data` events
@@ -197,6 +198,13 @@ RecognizeStream.prototype.initialize = function () {
     }
   };
 
+  //this.messages = [];
+  //var send = socket.send;
+  //socket.send = function(msg) {
+  //  self.messages.push(msg);
+  //  return send.apply(socket, arguments);
+  //};
+
   this.initialized = true;
 };
 
@@ -236,7 +244,7 @@ RecognizeStream.prototype.afterSend = function afterSend(next) {
 };
 
 RecognizeStream.prototype.stop = function (hard) {
-  this.emit('stopping');
+  this.emit('stop');
   if (hard) {
     this.socket.close();
   } else {
@@ -245,6 +253,11 @@ RecognizeStream.prototype.stop = function (hard) {
 };
 
 RecognizeStream.prototype.finish = function finish() {
+  // this is called both when the source stream finishes, and when .stop() is fired, but we only want to send the stop message once.
+  if (this.finished) {
+    return;
+  }
+  this.finished = true;
   var self = this;
   var closingMessage = {action: 'stop'};
   if (self.socket) {
