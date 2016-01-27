@@ -18,10 +18,13 @@
 var defaults = require('lodash/defaults');
 var getUserMedia = require('getusermedia');
 var MicrophoneStream = require('microphone-stream');
+var MediaElementAStream = require('./media-element-audio-stream');
 var fileReaderStream = require('filereader-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var WebAudioTo16leStream = require('./webaudio-to-16le-stream.js');
 var FilePlayer = require('./file-player.js');
+
+var SOURCE_MICROPHONE = exports.SOURCE_MICROPHONE = 'microphone';
 
 /**
  * Create and return a RecognizeStream from the user's microphone
@@ -45,50 +48,62 @@ var FilePlayer = require('./file-player.js');
  *
  * @returns {RecognizeStream}
  */
-exports.stream = function stream(options) {
+function stream(options) {
   options = defaults(options, {
-    'content-type': (options && options.file) ? null : 'audio/l16;rate=16000',
     'interim_results': true,
-    'continuous': true
+    'continuous': true,
+    source: SOURCE_MICROPHONE
   });
 
   if (!options.token) {
     throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
   }
 
-  var recognizeStream = new RecognizeStream(options);
+  var recognizeStream;
 
-  var source;
-  if (options.file) {
-    if (!options.file.files || !options.file.files.length) {
-      throw new Error('Unable to read file');
-    }
+  var sourceStream;
+  if (options.source === SOURCE_MICROPHONE) {
+    options['content-type'] = 'audio/l16;rate=16000';
+    recognizeStream = new RecognizeStream(options);
+    getUserMedia({video: false, audio: true}, function (err, mic) {
+      if (err) {
+        return recognizeStream.emit('error', err);
+      }
+      sourceStream = new MicrophoneStream(mic, {bufferSize: options.bufferSize});
+      sourceStream
+        .pipe(new WebAudioTo16leStream())
+        .pipe(recognizeStream);
+      recognizeStream.on('stop', sourceStream.stop.bind(sourceStream));
+    });
+  } else if (options.source instanceof File) {
+    recognizeStream = new RecognizeStream(options);
     if (options.playFile) {
-      FilePlayer.playFile(options.file.files[0]).then(function (player) {
+      FilePlayer.playFile(options.source).then(function (player) {
         recognizeStream.on('stop', player.stop.bind(player));
       }).catch(function (err) {
         recognizeStream.emit('playback-error', err);
       });
 
     }
-    source = fileReaderStream(options.file.files[0]);
-    source.pipe(recognizeStream);
+    sourceStream = fileReaderStream(options.source);
+    sourceStream.pipe(recognizeStream);
     // note: there's no way to stop the file reader, but stopping the recognizeStream should be good enough.
+  } else if (options.source instanceof HTMLMediaElement) {
+    sourceStream = new MediaElementAStream(options.source , {bufferSize: options.bufferSize});
+    options['content-type'] = 'audio/l16;rate=16000';
+    recognizeStream = new RecognizeStream(options);
+    sourceStream
+      .pipe(new WebAudioTo16leStream())
+      .pipe(recognizeStream);
+    recognizeStream.on('stop', sourceStream.stop.bind(sourceStream));
   } else {
-    getUserMedia({video: false, audio: true}, function (err, stream) {
-      if (err) {
-        return recognizeStream.emit('error', err);
-      }
-      source = new MicrophoneStream(stream, {bufferSize: options.bufferSize});
-      source
-        .pipe(new WebAudioTo16leStream())
-        .pipe(recognizeStream);
-      recognizeStream.on('stop', source.stop.bind(source));
-    });
+    throw new Error("Unrecognized source");
   }
 
   return recognizeStream;
-};
+}
+
+exports.stream = stream;
 
 exports.promise = function promise(options) {
   options = defaults(options, {

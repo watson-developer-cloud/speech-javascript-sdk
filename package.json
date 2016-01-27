@@ -32,6 +32,7 @@
     "karma-express-http-server": "0.0.1",
     "karma-mocha": "^0.2.1",
     "mocha": "^2.3.4",
+    "serve-static": "^1.10.2",
     "uglify-js": "^2.6.1",
     "watchify": "^3.7.0",
     "watson-developer-cloud": "^1.2.1",

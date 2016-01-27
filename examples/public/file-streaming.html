@@ -29,7 +29,7 @@ $(function() {
 
             var stream = WatsonSpeechToText.stream({
                 token: token,
-                file: $('#audiofile')[0],
+                source: $('#audiofile')[0].files[0],
                 playFile: true
             });
 

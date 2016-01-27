@@ -82,13 +82,16 @@ module.exports = function(config) {
     // how many browser should be started simultaneous
     concurrency: Infinity,
 
-
-
     expressHttpServer: {
       port: 9877,
       // this function takes express app object and allows you to modify it
       // to your liking. For more see http://expressjs.com/4x/api.html
       appVisitor: (process.env.TEST_MODE === 'integration') ? require('./test/resources/integration_test_server.js') : require('./test/resources/offline_test_server.js')
-    }
+    },
+
+    browserDisconnectTimeout: 15000,
+    browserDisconnectTolerance: 2,
+    browserNoActivityTimeout: 30000
+
   });
 };

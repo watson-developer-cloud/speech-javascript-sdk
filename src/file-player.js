@@ -11,7 +11,9 @@ function getContentType(file) {
       } else if (r.result === 'OggS') {
         resolve('audio/ogg; codecs=opus');
       } else {
-        reject(new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.'))
+        var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
+        err.name = 'UNRECOGNIZED_FORMAT';
+        reject(err)
       }
     };
   });
@@ -25,7 +27,10 @@ function FilePlayer(file, contentType) {
   } else {
     // if we emit an error, it prevents the promise from returning the actual result
     // however, most browsers do not support flac, so this is a reasonably scenario
-    throw new Error('Current browser is unable to play back ' + contentType);
+    var err = new Error('Current browser is unable to play back ' + contentType);
+    err.name = 'UNSUPPORTED_FORMAT';
+    err.contentType = contentType;
+    throw err;
   }
   this.stop = function stop() {
     output.pause();

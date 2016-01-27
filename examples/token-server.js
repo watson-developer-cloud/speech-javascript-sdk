@@ -25,6 +25,7 @@ var express      = require('express'),
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/../dist')); // normally these files would also go into public/ but this way the example always has the latest code
 
+
 // For local development, replace username and password
 var config = extend({
     version: 'v1',

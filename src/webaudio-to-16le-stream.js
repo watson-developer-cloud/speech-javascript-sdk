@@ -16,6 +16,16 @@ function WebAudioTo16leStream(opts) {
       self.sourceSampleRate = format.sampleRate;
     });
   });
+
+  process.nextTick(function() {
+    self.emit('format', {
+      channels: 1,
+      bitDepth: 16,
+      sampleRate: 16000,
+      signed: false,
+      float: false
+    })
+  })
 }
 util.inherits(WebAudioTo16leStream, Transform);
 

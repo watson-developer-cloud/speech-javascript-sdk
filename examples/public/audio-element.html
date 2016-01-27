@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audio Element Example - Watson Speech to Text</title>
+</head>
+<body>
+
+<section>
+    <h2>Transcribe &lt;audio&gt; Element, Streaming</h2>
+    <audio id="audio-element" src="audio.wav" controls>
+        Your browser does not support the <code>audio</code> element.
+    </audio>
+    <button id="button">Play and Transcribe</button>
+    <p><small><i>&lt;video&gt; elements should behave the same as &lt;audio&gt; elements.</i></small></p>
+
+    <h2>Output:</h2>
+    <div id="output">--</div>
+</section>
+
+<script src="watson-speech-to-text.js"></script>
+<script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+
+<h2>Code for this demo:</h2>
+<pre><code><script style="display: block;">
+    $(function() {
+        var $output = $('#output');
+
+        $('#button').click(function () {
+            $.get('/token').then(function (token) {
+                $output.html('');
+
+                var stream = WatsonSpeechToText.stream({
+                    token: token,
+                    source: $('#audio-element')[0]
+                });
+
+                // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
+                var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
+
+                // put the stream in flowing mode
+                stream.on('data', function(){});
+
+                // a result is approximately equivalent to a sentence
+                stream.on('result', function(result) {
+                    // update the text for the current sentence with the default alternative.
+                    // there may be multiple alternatives but this example app ignores all but the first.
+                    $curSentence.html(result.alternatives[0].transcript);
+                    if (result.final) {
+                        // if we have the final text for that sentence, start a new one
+                        $curSentence = $('<span/>').appendTo($output);
+                    }
+                });
+
+                stream.on('error', function(err) {
+                    console.log(err);
+                });
+
+                stream.on('playback-error', function(err) {
+                    console.log(err);
+                });
+            });
+        });
+    });
+</script></code></pre>
+</body>
+</html>

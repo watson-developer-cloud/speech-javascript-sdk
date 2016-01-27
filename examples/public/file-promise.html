@@ -29,7 +29,7 @@ $(function() {
 
             WatsonSpeechToText.promise({
                 token: token,
-                file: $('#audiofile')[0]
+                source: $('#audiofile')[0].files[0]
             })
             .then(WatsonSpeechToText.resultsToText) // turn the collection of results into a string of text
             .then(function(text) {

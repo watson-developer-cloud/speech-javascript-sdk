@@ -3,7 +3,7 @@ IBM Watson Speech To Text Browser Client Library
 
 Allows you to easily add voice recognition to any web app with minimal code. 
 
-**Warning** This is alpha software and will likely see major API changes. It doesn't even correspond to the proposed API currently.
+**Warning** This is alpha software and will likely see major API changes. It may not even conform to the documented API at times.
 
 See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples
 
@@ -16,10 +16,20 @@ Check out https://www.npmjs.com/package/watson-developer-cloud to use Watson ser
 
 ### `WatsonSpeechToText.stream({/*...*/})` -> [Stream](https://nodejs.org/api/stream.html)
 
-Pass in a token (must be generated server-side) and any other desired options. 
+Options: 
+  * Token: Required, must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization)
+  * source: one of: 
+    * `WatsonSpeechToText.SOURCE_MICROPHONE` (default) - prompts the user for permission and then streams audio from their mic
+    * a `File` instance (e.g. from an `<input>`)
+    * an `<audio>` or `<video>` element
+  * playFile: when source is a `File`, setting this to true will automatically play it while transcribing
+  * other options from RecognizeStream
 
 Returns a Node.js-style stream of the final text and also emits `result` events with full result data 
 (including pre-final results, alternatives, word timing, confidence scores, etc.)
+
+Requires the `getUserMedia` API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
+Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features
 
 
 ### `WatsonSpeechToText.promise({/*...*/})` -> [Promise](https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Promise.jsm/Promise)
@@ -37,3 +47,11 @@ Otherwise the promise will not resolve in a timely manner (because it will conti
 ### `WatsonSpeechToText.resultsToText(ArrayOfResults)` -> Final Text
 
 Helper method to turn `.promise()` results into a single string of text.
+
+
+## todo
+
+* Finish file transcribe test
+* Fix disconnection (should be 1000 or 1001, not 1006)
+* Finish API
+* (eventually) add text-to-speech support
