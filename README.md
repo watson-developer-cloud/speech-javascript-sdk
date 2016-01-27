@@ -7,8 +7,8 @@ Allows you to easily add voice recognition to any web app with minimal code.
 
 See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples
 
-This library is built with browserify [browserify](http://browserify.org/) and easy to use in browserify-based projects (`npm install --save watson-speech`), but you can also grab the bundle from the 
-dist/ folder and use it as a standalone library.
+This library is built with [browserify](http://browserify.org/) and easy to use in browserify-based projects (`npm install --save watson-speech`), but you can also grab the compiled bundle from the 
+`dist/` folder and use it as a standalone library.
 
 Check out https://www.npmjs.com/package/watson-developer-cloud to use Watson services from Node.js.
 
