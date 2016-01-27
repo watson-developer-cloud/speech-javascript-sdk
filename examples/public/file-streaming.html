@@ -38,9 +38,6 @@ $(function() {
             // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
             var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
 
-            // put the stream in flowing mode
-            stream.on('data', function(){});
-
             // a result is approximately equivalent to a sentence
             stream.on('result', function(result) {
                 // update the text for the current sentence with the default alternative.

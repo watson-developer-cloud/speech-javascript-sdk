@@ -23,45 +23,38 @@
 
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
-    $(function() {
-        var $output = $('#output');
+$(function() {
+    var $output = $('#output');
 
-        $('#button').click(function () {
-            $.get('/token').then(function (token) {
-                $output.html('');
+    $('#button').click(function () {
+        $.get('/token').then(function (token) {
+            $output.html('');
 
-                var stream = WatsonSpeechToText.stream({
-                    token: token,
-                    source: $('#audio-element')[0]
-                });
+            var stream = WatsonSpeechToText.stream({
+                token: token,
+                source: $('#audio-element')[0]
+            });
 
-                // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
-                var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
+            // each result gets it's own <span> because watson will sometimes go back and change a word as it hears more context
+            var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
 
-                // put the stream in flowing mode
-                stream.on('data', function(){});
+            // a result is approximately equivalent to a sentence
+            stream.on('result', function(result) {
+                // update the text for the current sentence with the default alternative.
+                // there may be multiple alternatives but this example app ignores all but the first.
+                $curSentence.html(result.alternatives[0].transcript);
+                if (result.final) {
+                    // if we have the final text for that sentence, start a new one
+                    $curSentence = $('<span/>').appendTo($output);
+                }
+            });
 
-                // a result is approximately equivalent to a sentence
-                stream.on('result', function(result) {
-                    // update the text for the current sentence with the default alternative.
-                    // there may be multiple alternatives but this example app ignores all but the first.
-                    $curSentence.html(result.alternatives[0].transcript);
-                    if (result.final) {
-                        // if we have the final text for that sentence, start a new one
-                        $curSentence = $('<span/>').appendTo($output);
-                    }
-                });
-
-                stream.on('error', function(err) {
-                    console.log(err);
-                });
-
-                stream.on('playback-error', function(err) {
-                    console.log(err);
-                });
+            stream.on('error', function(err) {
+                console.log(err);
             });
         });
     });
+});
 </script></code></pre>
 </body>
 </html>
