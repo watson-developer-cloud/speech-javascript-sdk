@@ -1,15 +1,16 @@
+'use strict';
+
+var contentType = require('./content-type');
+
 function getContentType(file) {
   return new Promise(function (resolve, reject) {
     var blobToText = new Blob([file]).slice(0, 4);
     var r = new FileReader();
     r.readAsText(blobToText);
     r.onload = function () {
-      if (r.result === 'fLaC') {
-        resolve('audio/flac');
-      } else if (r.result === 'RIFF') {
-        resolve('audio/wav');
-      } else if (r.result === 'OggS') {
-        resolve('audio/ogg; codecs=opus');
+      var ct = contentType(r.result);
+      if (ct) {
+        resolve(ct);
       } else {
         var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
         err.name = 'UNRECOGNIZED_FORMAT';

@@ -2,11 +2,12 @@
 var Transform = require('stream').Transform;
 var util = require('util');
 
-function WebAudioTo16leStream(opts) {
+function WebAudioWavStream(opts) {
 
   Transform.call(this, opts);
 
   this.sourceSampleRate = 4800;
+  this.sampleRate = 16000;
 
   this.bufferUnusedSamples = new Float32Array(0);
 
@@ -17,32 +18,23 @@ function WebAudioTo16leStream(opts) {
     });
   });
 
-  process.nextTick(function() {
-    self.emit('format', {
-      channels: 1,
-      bitDepth: 16,
-      sampleRate: 16000,
-      signed: false,
-      float: false
-    })
-  })
+  self.writeHeader();
 }
-util.inherits(WebAudioTo16leStream, Transform);
+util.inherits(WebAudioWavStream, Transform);
 
 /**
- * Creates a Blob type: 'audio/l16' with the chunk and downsampling to 16 kHz
- * coming from the microphone.
+ * Converts WebAudio to 'audio/l16' (raw wav) and downsamples to 16 kHz.
  *
  * Explanation for the math: The raw values captured from the Web Audio API are
  * in 32-bit Floating Point, between -1 and 1 (per the specification).
  * The values for 16-bit PCM range between -32768 and +32767 (16-bit signed integer).
  * Multiply to control the volume of the output. We store in little endian.
  *
- * @param  {Object} buffer Microphone audio chunk
- * @return {Blob} 'audio/l16' chunk
- * @deprecated This method is depracated
+ * @param  {Object} buffer Microphone/MediaElement audio chunk
+ * @return {Buffer} 'audio/l16' chunk
+ * @deprecated This method is deprecated
  */
-WebAudioTo16leStream.prototype._exportDataBufferTo16Khz = function (nodebuffer) {
+WebAudioWavStream.prototype._exportDataBufferTo16Khz = function (nodebuffer) {
   var bufferNewSamples = new Float32Array(nodebuffer.buffer),
     buffer = null,
     newSamples = bufferNewSamples.length,
@@ -105,16 +97,71 @@ WebAudioTo16leStream.prototype._exportDataBufferTo16Khz = function (nodebuffer) 
   return new Buffer(dataView16k.buffer);
 };
 
-WebAudioTo16leStream.prototype._transform = function (chunk, encoding, next) {
+
+/**
+ * The max size of the "data" chunk of a WAVE file. This is the max unsigned
+ * 32-bit int value, minus 100 bytes (overkill, 44 would be safe) for the header.
+ *
+ * From https://github.com/TooTallNate/node-wav/blob/master/lib/writer.js
+ *
+ * @api private
+ */
+
+var MAX_WAV = 4294967295 - 100;
+
+function writeString(view, offset, string) {
+  for (var i = 0; i < string.length; i++){
+    view.setUint8(offset + i, string.charCodeAt(i));
+  }
+}
+
+WebAudioWavStream.prototype.writeHeader = function writeHeader() {
+  var buffer = new ArrayBuffer(44);
+  var view = new DataView(buffer);
+  var length = MAX_WAV; // can't use the actuall length because we don't know it yet
+  var numChannels = 1;
+  var sampleRate = 16000;
+
+  /* RIFF identifier */
+  writeString(view, 0, 'RIFF');
+  /* RIFF chunk length */
+  view.setUint32(4, 36 + length, true);
+  /* RIFF type */
+  writeString(view, 8, 'WAVE');
+  /* format chunk identifier */
+  writeString(view, 12, 'fmt ');
+  /* format chunk length */
+  view.setUint32(16, 16, true);
+  /* sample format (raw PCM) */
+  view.setUint16(20, 1, true);
+  /* channel count */
+  view.setUint16(22, numChannels, true);
+  /* sample rate */
+  view.setUint32(24, sampleRate, true);
+  /* byte rate (sample rate * block align) */
+  view.setUint32(28, sampleRate * 4, true);
+  /* block align (channel count * bytes per sample) */
+  view.setUint16(32, numChannels * 2, true);
+  /* bits per sample */
+  view.setUint16(34, 16, true);
+  /* data chunk identifier */
+  writeString(view, 36, 'data');
+  /* data chunk length */
+  view.setUint32(40, length, true);
+
+  this.push(new Buffer(buffer));
+};
+
+WebAudioWavStream.prototype._transform = function (chunk, encoding, next) {
   this.push(this._exportDataBufferTo16Khz(chunk));
   next();
 };
 
-WebAudioTo16leStream.prototype._flush = function (next) {
+WebAudioWavStream.prototype._flush = function (next) {
   // todo: handle anything left in this.bufferUnusedSamples here...
   next();
 };
 
-module.exports = WebAudioTo16leStream;
+module.exports = WebAudioWavStream;
 
 

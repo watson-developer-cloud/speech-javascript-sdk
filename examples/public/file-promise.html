@@ -15,7 +15,7 @@
         <div id="output">--</div>
     </section>
 
-    <script src="watson-speech-to-text.js"></script>
+    <script src="watson-speech.js"></script>
     <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
 
     <h2>Code for this demo:</h2>
@@ -27,11 +27,15 @@ $(function() {
         $.get('/token').then(function (token) {
             $output.html('Processing...');
 
-            WatsonSpeechToText.promise({
+            WatsonSpeech.SpeechToText.recognizeBlob({
                 token: token,
-                source: $('#audiofile')[0].files[0]
-            })
-            .then(WatsonSpeechToText.resultsToText) // turn the collection of results into a string of text
+                data: $('#audiofile')[0].files[0],
+                // optional: disable unused features to save time/energy/bandwidth
+                interim_results: false,
+                word_confidence: false,
+                timestamps: false,
+                max_alternatives: 1
+            }).promise()
             .then(function(text) {
                 $output.text(text);
             }).catch(function(err) {
@@ -44,3 +48,4 @@ $(function() {
 </script></code></pre>
 </body>
 </html>
+npm t

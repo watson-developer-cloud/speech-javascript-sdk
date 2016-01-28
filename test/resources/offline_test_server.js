@@ -29,7 +29,7 @@ module.exports = function (app, log) {
     var args = toArray(arguments);
     args.unshift('API: ');
     console.log.apply(console, args);
-    console.log('');
+    //console.log('');
   }
 
 
@@ -46,7 +46,8 @@ module.exports = function (app, log) {
 
   var wsServer = new WebSocketServer({
     httpServer: server,
-    autoAcceptConnections: false // true = emit 'request' events
+    autoAcceptConnections: false, // true = emit 'request' events
+    maxReceivedFrameSize: 1024*1024 // filestream produces 1mb chunks
   });
 
   wsServer.on('request', function (request) {

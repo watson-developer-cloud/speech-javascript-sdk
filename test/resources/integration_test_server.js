@@ -11,10 +11,17 @@ if (!fs.existsSync(AUTH_FILE)) {
 var auth = require(AUTH_FILE);
 var authorization = watson.authorization(auth);
 
+var serveStatic = require('serve-static');
+
 module.exports = function (app, log) {
   log.info('setting up token server for integration test');
 
-  app.use()
+  app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*'); // do *NOT* do this on a /token endpoint that's accessible to the internet
+    next();
+  });
+
+  app.use(serveStatic(__dirname));
 
   app.get('/token', function (req, res) {
     res.header('Access-Control-Allow-Origin', '*'); // do *NOT* do this on a /token endpoint that's accessible to the internet
@@ -28,4 +35,4 @@ module.exports = function (app, log) {
       }
     });
   });
-}
+};

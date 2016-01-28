@@ -15,7 +15,7 @@
     <div id="output">--</div>
 </section>
 
-<script src="watson-speech-to-text.js"></script>
+<script src="watson-speech.js"></script>
 <script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
 
 <h2>Code for this demo:</h2>
@@ -28,7 +28,7 @@ $(function() {
         $output.html('');
 
         $.get('/token').then(function (token) {
-            var stream = WatsonSpeechToText.stream({
+            var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
                 token: token
             });
 

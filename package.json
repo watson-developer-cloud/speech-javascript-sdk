@@ -2,22 +2,16 @@
   "name": "watson-speech",
   "version": "0.2.1",
   "description": "IBM Watson Speech to Text SDK for web browsers.",
-  "main": "src/watson-speech-to-text.js",
-  "directories": {
-    "lib": "lib",
-    "test": "test"
-  },
+  "main": "index.js",
   "scripts": {
     "start": "karma start test/resources/karma.conf.js",
     "lint": "eslint --config test/resources/.eslintrc.js *.js src/*.js",
     "test": "karma start test/resources/karma.conf.js --single-run",
     "test-integration": "TEST_MODE=integration karma start test/resources/karma.conf.js --single-run",
     "watch": "karma start",
-    "todo": "set up source maps",
-    "browserify": "browserify src/watson-speech-to-text.js --standalone WatsonSpeechToText --outfile dist/watson-speech-to-text.js",
-    "watchify": "watchify src/watson-speech-to-text.js --standalone WatsonSpeechToText --outfile dist/watson-speech-to-text.js --debug --verbose",
-    "minify": "uglifyjs dist/watson-speech-to-text.js --screw-ie8 > dist/watson-speech-to-text.min.js",
-    "build": "npm run browserify && npm run minify"
+    "browserify": "browserify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js",
+    "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
+    "build": "npm run browserify"
   },
   "author": "Nathan Friedly <http://nfriedly.com>",
   "devDependencies": {
@@ -33,7 +27,6 @@
     "karma-mocha": "^0.2.1",
     "mocha": "^2.4.4",
     "serve-static": "^1.10.2",
-    "uglify-js": "^2.6.1",
     "watchify": "^3.7.0",
     "watson-developer-cloud": "^1.2.1",
     "whatwg-fetch": "^0.11.0"

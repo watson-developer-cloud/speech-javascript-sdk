@@ -2,7 +2,7 @@
 
 var assert = require('assert');
 
-var WatsonSpeechToText = require('../src/watson-speech-to-text');
+var WatsonSpeechToText = require('../speech-to-text');
 
 var expect = require('expect.js');
 var concat = require('concat-stream');
@@ -15,11 +15,14 @@ if (typeof fetch == "undefined") {
 function getConfig() {
   //console.log('getting config');
   return fetch('http://localhost:9877/token').then(function(response) {
-    return response.text();
-  }).then(function(config) {
-    //console.log('got config:', config);
-    return JSON.parse(config);
-  })
+    return response.json();
+  });
+}
+
+function getAudio() {
+  return fetch('http://localhost:9877/audio.wav').then(function(response) {
+    return response.blob();
+  });
 }
 
 describe("WatsonSpeechToText", function() {
@@ -31,11 +34,9 @@ describe("WatsonSpeechToText", function() {
     getConfig().then(function(cfg) {
       var audioElement = new Audio();
       audioElement.src = "http://localhost:9877/audio.wav";
-      cfg.source = audioElement;
-      return WatsonSpeechToText.promise(cfg)
-    })
-      .then(WatsonSpeechToText.resultsToText) // turn the collection of results into a string of text
-      .then(function(transcription) {
+      cfg.element = audioElement;
+      return WatsonSpeechToText.recognizeElement(cfg).promise();
+    }).then(function(transcription) {
         assert.equal(transcription.trim(), 'thunderstorms could produce large hail isolated tornadoes and heavy rain');
         done();
       })
@@ -44,11 +45,10 @@ describe("WatsonSpeechToText", function() {
 
   it("should transcribe mic input", function(done) {
     getConfig().then(function(cfg) {
-      var stt = WatsonSpeechToText.stream(cfg);
+      var stt = WatsonSpeechToText.recognizeMicrophone(cfg);
       stt.on('error', done)
       .setEncoding('utf8')
       .pipe(concat(function (transcription) {
-        console.log('final transcription', transcription);
         assert.equal(transcription.trim(), 'thunderstorms could produce large hail isolated tornadoes and heavy rain');
         done();
       }));
@@ -60,16 +60,20 @@ describe("WatsonSpeechToText", function() {
     }).catch(done);
   });
 
-  xit('should transcribe files', function(done) {
-    getConfig().then(function(cfg) {
-      // todo: use brfs (or fetch?) to include audio.flac here and convert it to a File to send as the source
-      return WatsonSpeechToText.promise(cfg)
-        .then(WatsonSpeechToText.resultsToText) // turn the collection of results into a string of text
+  it('should transcribe files', function(done) {
+    Promise.all([getConfig(), getAudio()]).then(function(results) {
+      var cfg = results[0];
+      cfg.data = results[1];
+      return WatsonSpeechToText.recognizeBlob(cfg).promise()
         .then(function(transcription) {
-          assert.equal(transcription.trim(), 'several tornadoes touch down as a line of severe thunderstorms swept through Colorado on Sunday');
+          assert.equal(transcription.trim(), 'thunderstorms could produce large hail isolated tornadoes and heavy rain');
           done();
         });
     }).catch(done);
   });
 
 });
+
+
+// recognizeElement
+// recognizeElement

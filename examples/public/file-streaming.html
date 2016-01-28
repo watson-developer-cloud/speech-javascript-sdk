@@ -15,7 +15,7 @@
     <div id="output">--</div>
 </section>
 
-<script src="watson-speech-to-text.js"></script>
+<script src="watson-speech.js"></script>
 <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
 
 <h2>Code for this demo:</h2>
@@ -27,9 +27,9 @@ $(function() {
         $.get('/token').then(function (token) {
             $output.html('');
 
-            var stream = WatsonSpeechToText.stream({
+            var stream = WatsonSpeech.SpeechToText.recognizeBlob({
                 token: token,
-                source: $('#audiofile')[0].files[0],
+                data: $('#audiofile')[0].files[0],
                 playFile: true
             });
 
