@@ -52,19 +52,20 @@ Helper method to turn `.promise()` results into a single string of text.
 ## todo
 
 * Finish file transcribe test
-* Fix disconnection (should be 1000 or 1001, not 1006)
 * Finish API
 * (eventually) add text-to-speech support
 
 ## Proposed API:
 
+* reduce "magic"
 * make the top-level object 'WatsonSpeech', have child for `SpeechToText` (and TextToSpeech when the time comes)
 * Add punctuation stream
 * make all streams available
-* rename WebAudioTo16leStream
+* rename WebAudioTo16leStream - maybe make it start with a .wav header then call it WebAudioToWavStream & stop having to specify the rate and such
 * split .stream() into three methods for mic, file, element
-* move .promise() to a stand-alone helper (that accepts either a RecognizeStream or a PunctuationStream and just returns a single string of text
+* move .promise() to a stand-alone helper (that accepts either a RecognizeStream or a PunctuationStream and just returns a single string of text.. maybe bind it to the streams
 * add a WordTimingStream (that slows down output to not go fater than word timings)
 * add an example that includes alternatives and word confidence scores inline
 * add bower support
 * automate dist/ generation (and possibly move it)
+* enable eslint
