@@ -1,7 +1,6 @@
 'use strict';
 var Readable = require('stream').Readable;
 var util = require('util');
-var defaults = require('lodash/defaults');
 
 /**
  * Turns a MediaStream object (from getUserMedia) into a Node.js Readable stream and converts the audio to Buffers
@@ -16,7 +15,7 @@ var defaults = require('lodash/defaults');
  */
 function MediaElementAudioStream(source, opts) {
 
-  opts = defaults(opts, {
+  opts = Object.assign({
     // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
     // buffer size to balance between latency and audio quality."
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
@@ -24,7 +23,7 @@ function MediaElementAudioStream(source, opts) {
     bufferSize:null,
     muteSource: false,
     autoplay: true
-  });
+  }, opts);
 
   // We can only emit one channel's worth of audio, so only one input. (Who has multiple microphones anyways?)
   var inputChannels = 1;

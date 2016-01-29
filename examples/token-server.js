@@ -41,6 +41,7 @@ var authService = watson.authorization(config);
 
 
 // Get token using your credentials
+// **Warning**: this endpoint should be guarded with additional authentication & authorization for production use
 app.get('/token', function(req, res, next) {
     authService.getToken({url: config.url}, function(err, token) {
         if (err) {

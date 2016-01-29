@@ -6,7 +6,7 @@ Allows you to easily add voice recognition to any web app with minimal code.
 **For Web Browsers Only** This library is primarily intended for use in browsers. 
 Check out [watson-developer-cloud](https://www.npmjs.com/package/watson-developer-cloud) to use Watson services (speech and others) from Node.js.
 
-**Warning** This library is still early-stage and may see significant breaking changes. We'll try to stick to Semver and node.js standards, but no guarentees
+**Warning** This library is still early-stage and may see significant breaking changes.
 
 See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples
 
@@ -16,10 +16,13 @@ This library is built with [browserify](http://browserify.org/) and easy to use 
 
 ## Basic API
 
-### `WatsonSpeech.SpeechToText.recognizeMicrophone({token)` -> RecognizeStream
+All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
+(see examples/token-server.js for a basic example.)
+
+
+### `WatsonSpeech.SpeechToText.recognizeMicrophone({token})` -> RecognizeStream
 
 Options: No direct options, all provided options are passed to MicrophoneStream and RecognizeStream
-
 
 Requires the `getUserMedia` API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
 Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features
@@ -54,9 +57,6 @@ RecognizeStream is generally not instantiated directly but rather returned as th
 
 The RecognizeStream waits until after receiving data to open a connection. 
 If no `content-type` option is set, it will attempt to parse the first chunk of data to determine type.
-
-`options.token` is required for client-side usage, and it must be 
-[generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization) (see examples/token-server.js for a basic example.)
 
 See speech-to-text/recognize-stream.js for other options.
  

@@ -5,7 +5,6 @@ var http = require('http');
 var serveStatic = require('serve-static');
 var token = 'abc123';
 var API_PORT = 9878;
-var toArray = require('lodash/toArray');
 
 module.exports = function (app, log) {
 
@@ -26,7 +25,7 @@ module.exports = function (app, log) {
   // so, if we just log something, it'll get nuked when karma rewrites it
   // to make up for that, this also logs a second blank line for karma to nuke, causing it to leave our actual message alone
   function debug() {
-    var args = toArray(arguments);
+    var args = Array.from(arguments);
     args.unshift('API: ');
     console.log.apply(console, args);
     //console.log('');

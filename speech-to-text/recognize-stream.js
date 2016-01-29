@@ -19,8 +19,7 @@
 
 var Duplex = require('stream').Duplex;
 var util = require('util');
-var defaults = require('lodash/defaults');
-var pick = require('lodash/pick');
+var pick = require('object.pick');
 var W3CWebSocket = require('websocket').w3cwebsocket;
 var contentType = require('./content-type');
 
@@ -97,7 +96,7 @@ RecognizeStream.prototype.initialize = function () {
 
   var url = (options.url || "wss://stream.watsonplatform.net/speech-to-text/api").replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
-  var openingMessage = defaults(pick(options, OPENING_MESSAGE_PARAMS_ALLOWED), {
+  var openingMessage = Object.assign({
     action: 'start',
     'content-type': 'audio/wav',
     continuous: true,
@@ -106,7 +105,7 @@ RecognizeStream.prototype.initialize = function () {
     timestamps: true,
     max_alternatives: 3,
     inactivity_timeout: 30
-  });
+  }, pick(options, OPENING_MESSAGE_PARAMS_ALLOWED));
 
 
   var self = this;
