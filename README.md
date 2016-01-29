@@ -109,3 +109,5 @@ In addition to the standard [Node.js stream events](https://nodejs.org/api/strea
 * enable eslint
 * break components into standalone npm modules where it makes sense
 * record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, etc.)
+* run integration tests on travis
+* more tests in general
