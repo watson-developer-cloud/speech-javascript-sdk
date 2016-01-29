@@ -14,20 +14,20 @@ This library is built with [browserify](http://browserify.org/) and easy to use 
 `dist/` folder and use it as a standalone library.
 
 
-## Basic API
+## `WatsonSpeech.SpeechToText` Basic API
 
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
 (see examples/token-server.js for a basic example.)
 
 
-### `WatsonSpeech.SpeechToText.recognizeMicrophone({token})` -> RecognizeStream
+### `.recognizeMicrophone({token})` -> `RecognizeStream`
 
 Options: No direct options, all provided options are passed to MicrophoneStream and RecognizeStream
 
 Requires the `getUserMedia` API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
 Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features
 
-### `WatsonSpeech.SpeechToText.recognizeElement({element, token})` -> RecognizeStream
+### `.recognizeElement({element, token})` -> `RecognizeStream`
 
 Options: 
 * `element`: an `<audio>` or `<video>` element (could be generated pragmatically, e.g. `new Audio()`)
@@ -37,7 +37,7 @@ Requires that the browser support MediaElement and whatever audio codec is used 
 
 Will automatically call `.play()` the `element`. Calling `.stop()` on the returned RecognizeStream will automatically call `.stop()` on the `element`.
 
-### `WatsonSpeech.SpeechToText.recognizeBlob({data, token})` -> RecognizeStream
+### `.recognizeBlob({data, token})` -> `RecognizeStream`
 
 Options: 
 * `data`: a `Blob` (or `File`) instance. 
@@ -49,7 +49,7 @@ Will emit a `playback-error` on the RecognizeStream if playback fails.
 Playback will automatically stop when `.stop()` is called on the RecognizeStream.
 
 
-### `WatsonSpeech.SpeechToText.RecognizeStream`
+### Class `RecognizeStream()`
 
 A [Node.js-style stream](https://nodejs.org/api/stream.html) of the final text, with some helpers and extra events built in.
 
