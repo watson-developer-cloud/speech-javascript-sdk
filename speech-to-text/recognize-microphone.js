@@ -17,7 +17,7 @@
  */
 
 'use strict';
-var getUserMedia = require('getusermedia');
+var getUserMedia = require('./getusermedia');
 var MicrophoneStream = require('microphone-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var WebAudioTo16leStream = require('./webaudio-wav-stream.js');
@@ -40,18 +40,14 @@ module.exports = function recognizeMicrophone(options) {
   //options['content-type'] = 'audio/l16;rate=16000';
   var recognizeStream = new RecognizeStream(options);
 
-    getUserMedia({video: false, audio: true}, function (err, mic) {
-      if (err) {
-        return recognizeStream.emit('error', err);
-      }
+  getUserMedia({video: false, audio: true}).then(function(mic) {
+    var micStream = new MicrophoneStream(mic, options);
+    micStream
+      .pipe(new WebAudioTo16leStream())
+      .pipe(recognizeStream);
 
-      var micStream = new MicrophoneStream(mic, options);
-      micStream
-        .pipe(new WebAudioTo16leStream())
-        .pipe(recognizeStream);
-
-      recognizeStream.on('stop', micStream.stop.bind(micStream));
-    });
+    recognizeStream.on('stop', micStream.stop.bind(micStream));
+  }).catch(recognizeStream.emit.bind(recognizeStream, 'error'));
 
   return recognizeStream;
 };

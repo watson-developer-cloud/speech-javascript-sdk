@@ -89,3 +89,4 @@ In addition to the standard [Node.js stream events](https://nodejs.org/api/strea
 * automate dist/ generation (and possibly move it)
 * enable eslint
 * check if object.pick and Object.assign result in significantly smaller output than lodash
+* break components into standalone npm modules where it makes sense
