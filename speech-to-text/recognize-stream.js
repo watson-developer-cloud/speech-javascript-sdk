@@ -89,14 +89,14 @@ RecognizeStream.prototype.initialize = function () {
     options['X-Watson-Learning-Opt-Out'] = options['X-WDC-PL-OPT-OUT'];
   }
 
-  var queryParams = Object.assign({model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
+  var queryParams = util._extend({model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
   var queryString = Object.keys(queryParams).map(function (key) {
     return key + '=' + (key == 'watson-token' ? queryParams[key] : encodeURIComponent(queryParams[key])); // the server chokes if the token is correctly url-encoded
   }).join('&');
 
   var url = (options.url || "wss://stream.watsonplatform.net/speech-to-text/api").replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
-  var openingMessage = Object.assign({
+  var openingMessage = util._extend({
     action: 'start',
     'content-type': 'audio/wav',
     continuous: true,

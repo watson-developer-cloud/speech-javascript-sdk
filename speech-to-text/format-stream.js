@@ -17,7 +17,7 @@ var clone = require('clone');
  * @constructor
  */
 function FormatStream(opts) {
-  this.opts = Object.assign({
+  this.opts = util._extend({
     model: '', // some models should have all spaces removed
     hesitation: '\u2026', // ellipsis
     decodeStrings: true

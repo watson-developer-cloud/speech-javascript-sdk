@@ -6021,7 +6021,7 @@ var clone = require('clone');
  * @constructor
  */
 function FormatStream(opts) {
-  this.opts = Object.assign({
+  this.opts = util._extend({
     model: '', // some models should have all spaces removed
     hesitation: '\u2026', // ellipsis
     decodeStrings: true
@@ -6159,7 +6159,7 @@ var util = require('util');
  */
 function MediaElementAudioStream(source, opts) {
 
-  opts = Object.assign({
+  opts = util._extend({
     // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
     // buffer size to balance between latency and audio quality."
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
@@ -6550,14 +6550,14 @@ RecognizeStream.prototype.initialize = function () {
     options['X-Watson-Learning-Opt-Out'] = options['X-WDC-PL-OPT-OUT'];
   }
 
-  var queryParams = Object.assign({model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
+  var queryParams = util._extend({model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
   var queryString = Object.keys(queryParams).map(function (key) {
     return key + '=' + (key == 'watson-token' ? queryParams[key] : encodeURIComponent(queryParams[key])); // the server chokes if the token is correctly url-encoded
   }).join('&');
 
   var url = (options.url || "wss://stream.watsonplatform.net/speech-to-text/api").replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
-  var openingMessage = Object.assign({
+  var openingMessage = util._extend({
     action: 'start',
     'content-type': 'audio/wav',
     continuous: true,
@@ -6627,6 +6627,8 @@ RecognizeStream.prototype.initialize = function () {
       return emitError('Invalid JSON received from service:', frame, jsonEx);
     }
 
+    self.emit('message', data);
+
     if (data.error) {
       emitError(data.error, frame);
     } else if (data.state === 'listening') {
@@ -6644,7 +6646,7 @@ RecognizeStream.prototype.initialize = function () {
        * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
        * @event RecognizeStream#results
        * @param {Object} results
-       * @deprecated
+       * @deprecated - use the 'result' event (singular) instead
        */
       self.emit('results', data.results);
 

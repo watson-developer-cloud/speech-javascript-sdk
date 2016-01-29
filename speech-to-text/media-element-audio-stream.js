@@ -15,7 +15,7 @@ var util = require('util');
  */
 function MediaElementAudioStream(source, opts) {
 
-  opts = Object.assign({
+  opts = util._extend({
     // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
     // buffer size to balance between latency and audio quality."
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
