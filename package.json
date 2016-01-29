@@ -35,7 +35,8 @@
     "filereader-stream": "^1.0.0",
     "getusermedia": "^1.3.5",
     "lodash": "^4.0.1",
-    "microphone-stream": "^2.0.2"
+    "microphone-stream": "^2.0.2",
+    "websocket": "^1.0.22"
   },
   "repository": {
     "type": "git",
