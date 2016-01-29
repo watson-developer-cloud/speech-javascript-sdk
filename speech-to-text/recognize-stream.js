@@ -89,7 +89,7 @@ RecognizeStream.prototype.initialize = function () {
     options['X-Watson-Learning-Opt-Out'] = options['X-WDC-PL-OPT-OUT'];
   }
 
-  var queryParams = defaults(pick(options, QUERY_PARAMS_ALLOWED), {model: 'en-US_BroadbandModel'});
+  var queryParams = Object.assign({model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
   var queryString = Object.keys(queryParams).map(function (key) {
     return key + '=' + (key == 'watson-token' ? queryParams[key] : encodeURIComponent(queryParams[key])); // the server chokes if the token is correctly url-encoded
   }).join('&');

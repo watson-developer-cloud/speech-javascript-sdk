@@ -17,7 +17,7 @@ This library is built with [browserify](http://browserify.org/) and easy to use 
 ## `WatsonSpeech.SpeechToText` Basic API
 
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
-(see examples/token-server.js for a basic example.)
+(Snp teee examples/token-server.js for a basic example.)
 
 
 ### `.recognizeMicrophone({token})` -> `RecognizeStream`
