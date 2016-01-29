@@ -4,7 +4,10 @@
 
 # checking the build/job numbers allows it to only publish once even though we test against multiple node.js versions
 
-if [ "$TRAVIS_REPO_SLUG" == "watson-developer-cloud/node-sdk" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" ] && [ "$TRAVIS_BUILD_NUMBER.1" == "$TRAVIS_JOB_NUMBER" ]; then
+# note: if we ever start building against multiple versions of node, include this in the if:
+#  && [ "$TRAVIS_BUILD_NUMBER.1" == "$TRAVIS_JOB_NUMBER" ]
+
+if [ "$TRAVIS_REPO_SLUG" == "watson-developer-cloud/node-sdk" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" ]; then
 
   echo "Publishing JSDoc..."
 

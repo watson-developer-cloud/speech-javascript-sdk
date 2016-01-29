@@ -11,7 +11,7 @@
     "watch": "karma start",
     "browserify": "browserify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js",
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
-    "build": "npm run browserify && npm run doc",
+    "build": "npm run browserify",
     "prepublish": "npm run build",
     "doc": "jsdoc -c jsdoc/config.json",
     "watch-doc": "nodemon --watch lib/ --watch services/ --watch jsdoc/ --watch package.json --ext js,tmpl --exec npm run doc"
