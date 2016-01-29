@@ -103,11 +103,9 @@ In addition to the standard [Node.js stream events](https://nodejs.org/api/strea
 * Solidify API
 * Full (automatic) API Docs
 * (eventually) add text-to-speech support
-* Add punctuation stream
 * add a WordTimingStream (that slows down output to not go fater than word timings)
 * add an example that includes alternatives and word confidence scores
 * automate dist/ generation (and possibly move it)
 * enable eslint
-* check if object.pick and Object.assign result in significantly smaller output than lodash
 * break components into standalone npm modules where it makes sense
-* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, Object.assign, etc.)
+* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, etc.)

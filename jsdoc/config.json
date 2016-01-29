@@ -1,0 +1,12 @@
+{
+  "source": {
+    "include": [ "./", "speech-to-text/" ]
+  },
+  "opts": {
+    "package": "package.json",
+    "readme": "README.md",
+    "recurse": false,
+    "xtemplate": "jsdoc/template",
+    "destination": "./doc/"
+  }
+}

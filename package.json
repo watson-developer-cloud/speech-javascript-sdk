@@ -11,7 +11,10 @@
     "watch": "karma start",
     "browserify": "browserify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js",
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
-    "build": "npm run browserify"
+    "build": "npm run browserify && npm run doc",
+    "prepublish": "npm run build",
+    "doc": "jsdoc -c jsdoc/config.json",
+    "watch-doc": "nodemon --watch lib/ --watch services/ --watch jsdoc/ --watch package.json --ext js,tmpl --exec npm run doc"
   },
   "author": "Nathan Friedly <http://nfriedly.com>",
   "devDependencies": {
@@ -20,6 +23,7 @@
     "eslint": "^1.10.3",
     "eslint-config-google": "^0.3.0",
     "expect.js": "^0.3.1",
+    "jsdoc": "^3.4.0",
     "karma": "^0.13.19",
     "karma-browserify": "^5.0.1",
     "karma-chrome-launcher": "^0.2.2",
