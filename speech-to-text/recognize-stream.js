@@ -166,6 +166,8 @@ RecognizeStream.prototype.initialize = function () {
       return emitError('Invalid JSON received from service:', frame, jsonEx);
     }
 
+    self.emit('message', data);
+
     if (data.error) {
       emitError(data.error, frame);
     } else if (data.state === 'listening') {
@@ -183,7 +185,7 @@ RecognizeStream.prototype.initialize = function () {
        * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
        * @event RecognizeStream#results
        * @param {Object} results
-       * @deprecated
+       * @deprecated - use the 'result' event (singular) instead
        */
       self.emit('results', data.results);
 
