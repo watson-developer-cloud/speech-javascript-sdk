@@ -16,6 +16,8 @@ This library is built with [browserify](http://browserify.org/) and easy to use 
 
 ## `WatsonSpeech.SpeechToText` Basic API
 
+Complete API docs should be published at http://watson-developer-cloud.github.io/speech-javascript-sdk/
+
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
 (Snp teee examples/token-server.js for a basic example.)
 
@@ -101,7 +103,6 @@ In addition to the standard [Node.js stream events](https://nodejs.org/api/strea
 ## todo
 
 * Solidify API
-* Full (automatic) API Docs
 * (eventually) add text-to-speech support
 * add a WordTimingStream (that slows down output to not go fater than word timings)
 * add an example that includes alternatives and word confidence scores
@@ -109,5 +110,6 @@ In addition to the standard [Node.js stream events](https://nodejs.org/api/strea
 * enable eslint
 * break components into standalone npm modules where it makes sense
 * record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, etc.)
-* run integration tests on travis
+* run integration tests on travis (fall back to offline server for pull requests)
 * more tests in general
+* update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
