@@ -31,7 +31,8 @@ $(function() {
                 token: token,
                 data: $('#audiofile')[0].files[0],
                 playFile: true
-            });
+            })
+            .pipe(new WatsonSpeech.SpeechToText.FormatStream()); // optional
 
             // todo: flow control so that words appear approximately when played
 

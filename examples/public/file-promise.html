@@ -35,7 +35,9 @@ $(function() {
                 word_confidence: false,
                 timestamps: false,
                 max_alternatives: 1
-            }).promise()
+            })
+            .pipe(new WatsonSpeech.SpeechToText.FormatStream()) // optional
+            .promise()
             .then(function(text) {
                 $output.text(text);
             }).catch(function(err) {
@@ -48,4 +50,3 @@ $(function() {
 </script></code></pre>
 </body>
 </html>
-npm t

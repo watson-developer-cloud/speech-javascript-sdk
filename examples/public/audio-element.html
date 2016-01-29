@@ -33,7 +33,8 @@ $(function() {
             var stream = WatsonSpeech.SpeechToText.recognizeElement({
                 token: token,
                 element: $('#audio-element')[0]
-            });
+            })
+            .pipe(new WatsonSpeech.SpeechToText.FormatStream()); // optional
 
             // each result gets it's own <span> because watson will sometimes go back and change a word as it hears more context
             var $curSentence = $('<span>&nbsp;</span>').appendTo($output);

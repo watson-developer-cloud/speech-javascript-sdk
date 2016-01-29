@@ -77,6 +77,26 @@ In addition to the standard [Node.js stream events](https://nodejs.org/api/strea
 
 (Note: there are several other events, but they are intended for internal usage)
 
+### Class `FormatStream()`
+
+Pipe a `RecognizeStream` to a format stream, and the resulting text and `results` events will have basic formatting applied:
+ *  Capitalize the first word of each sentence
+ *  Add a period to the end
+ *  Fix any "cruft" in the transcription
+ *  A few other tweaks for asian languages and such.
+ 
+#### Methods
+
+* `.promise()`: returns a promise that will resolve to the final text, formatted. 
+  Note that you must either set `continuous: false` or call `.stop()` on the `RecognizeStream` to make the promise resolve in a timely manner.
+  
+#### Events
+In addition to the standard [Node.js stream events](https://nodejs.org/api/stream.html), the following events are fired:
+
+* `result`: an individual result object from the results array. 
+  May include final or interim transcription, alternatives, word timing, confidence scores, etc. depending on passed in options.
+  Note: Listening for `result` will automatically put the stream into flowing mode.
+
 
 ## todo
 
@@ -90,3 +110,4 @@ In addition to the standard [Node.js stream events](https://nodejs.org/api/strea
 * enable eslint
 * check if object.pick and Object.assign result in significantly smaller output than lodash
 * break components into standalone npm modules where it makes sense
+* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, Object.assign, etc.)

@@ -5,7 +5,7 @@ exports.SpeechToText = require('./speech-to-text');
 
 // todo: add a text-to-speech library next
 
-},{"./speech-to-text":53}],2:[function(require,module,exports){
+},{"./speech-to-text":55}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
 (function (global){
@@ -5122,6 +5122,170 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./support/isBuffer":27,"_process":11,"inherits":8}],29:[function(require,module,exports){
+(function (Buffer){
+var clone = (function() {
+'use strict';
+
+/**
+ * Clones (copies) an Object using deep copying.
+ *
+ * This function supports circular references by default, but if you are certain
+ * there are no circular references in your object, you can save some CPU time
+ * by calling clone(obj, false).
+ *
+ * Caution: if `circular` is false and `parent` contains circular references,
+ * your program may enter an infinite loop and crash.
+ *
+ * @param `parent` - the object to be cloned
+ * @param `circular` - set to true if the object to be cloned may contain
+ *    circular references. (optional - true by default)
+ * @param `depth` - set to a number if the object is only to be cloned to
+ *    a particular depth. (optional - defaults to Infinity)
+ * @param `prototype` - sets the prototype to be used when cloning an object.
+ *    (optional - defaults to parent prototype).
+*/
+function clone(parent, circular, depth, prototype) {
+  var filter;
+  if (typeof circular === 'object') {
+    depth = circular.depth;
+    prototype = circular.prototype;
+    filter = circular.filter;
+    circular = circular.circular
+  }
+  // maintain two arrays for circular references, where corresponding parents
+  // and children have the same index
+  var allParents = [];
+  var allChildren = [];
+
+  var useBuffer = typeof Buffer != 'undefined';
+
+  if (typeof circular == 'undefined')
+    circular = true;
+
+  if (typeof depth == 'undefined')
+    depth = Infinity;
+
+  // recurse this function so we don't reset allParents and allChildren
+  function _clone(parent, depth) {
+    // cloning null always returns null
+    if (parent === null)
+      return null;
+
+    if (depth == 0)
+      return parent;
+
+    var child;
+    var proto;
+    if (typeof parent != 'object') {
+      return parent;
+    }
+
+    if (clone.__isArray(parent)) {
+      child = [];
+    } else if (clone.__isRegExp(parent)) {
+      child = new RegExp(parent.source, __getRegExpFlags(parent));
+      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
+    } else if (clone.__isDate(parent)) {
+      child = new Date(parent.getTime());
+    } else if (useBuffer && Buffer.isBuffer(parent)) {
+      child = new Buffer(parent.length);
+      parent.copy(child);
+      return child;
+    } else {
+      if (typeof prototype == 'undefined') {
+        proto = Object.getPrototypeOf(parent);
+        child = Object.create(proto);
+      }
+      else {
+        child = Object.create(prototype);
+        proto = prototype;
+      }
+    }
+
+    if (circular) {
+      var index = allParents.indexOf(parent);
+
+      if (index != -1) {
+        return allChildren[index];
+      }
+      allParents.push(parent);
+      allChildren.push(child);
+    }
+
+    for (var i in parent) {
+      var attrs;
+      if (proto) {
+        attrs = Object.getOwnPropertyDescriptor(proto, i);
+      }
+
+      if (attrs && attrs.set == null) {
+        continue;
+      }
+      child[i] = _clone(parent[i], depth - 1);
+    }
+
+    return child;
+  }
+
+  return _clone(parent, depth);
+}
+
+/**
+ * Simple flat clone using prototype, accepts only objects, usefull for property
+ * override on FLAT configuration object (no nested props).
+ *
+ * USE WITH CAUTION! This may not behave as you wish if you do not know how this
+ * works.
+ */
+clone.clonePrototype = function clonePrototype(parent) {
+  if (parent === null)
+    return null;
+
+  var c = function () {};
+  c.prototype = parent;
+  return new c();
+};
+
+// private utility functions
+
+function __objToStr(o) {
+  return Object.prototype.toString.call(o);
+};
+clone.__objToStr = __objToStr;
+
+function __isDate(o) {
+  return typeof o === 'object' && __objToStr(o) === '[object Date]';
+};
+clone.__isDate = __isDate;
+
+function __isArray(o) {
+  return typeof o === 'object' && __objToStr(o) === '[object Array]';
+};
+clone.__isArray = __isArray;
+
+function __isRegExp(o) {
+  return typeof o === 'object' && __objToStr(o) === '[object RegExp]';
+};
+clone.__isRegExp = __isRegExp;
+
+function __getRegExpFlags(re) {
+  var flags = '';
+  if (re.global) flags += 'g';
+  if (re.ignoreCase) flags += 'i';
+  if (re.multiline) flags += 'm';
+  return flags;
+};
+clone.__getRegExpFlags = __getRegExpFlags;
+
+return clone;
+})();
+
+if (typeof module === 'object' && module.exports) {
+  module.exports = clone;
+}
+
+}).call(this,require("buffer").Buffer)
+},{"buffer":3}],30:[function(require,module,exports){
 /* global FileReader */
 var from2 = require('from2')
 var toBuffer = require('typedarray-to-buffer')
@@ -5157,7 +5321,7 @@ module.exports = function (file, options) {
   return from
 }
 
-},{"from2":30,"typedarray-to-buffer":43}],30:[function(require,module,exports){
+},{"from2":31,"typedarray-to-buffer":44}],31:[function(require,module,exports){
 (function (process){
 var Readable = require('readable-stream').Readable
 var inherits = require('inherits')
@@ -5259,19 +5423,19 @@ function defaults(opts) {
 }
 
 }).call(this,require('_process'))
-},{"_process":11,"inherits":31,"readable-stream":42}],31:[function(require,module,exports){
+},{"_process":11,"inherits":32,"readable-stream":43}],32:[function(require,module,exports){
 arguments[4][8][0].apply(exports,arguments)
-},{"dup":8}],32:[function(require,module,exports){
+},{"dup":8}],33:[function(require,module,exports){
 arguments[4][13][0].apply(exports,arguments)
-},{"./_stream_readable":34,"./_stream_writable":36,"core-util-is":37,"dup":13,"inherits":31,"process-nextick-args":39}],33:[function(require,module,exports){
+},{"./_stream_readable":35,"./_stream_writable":37,"core-util-is":38,"dup":13,"inherits":32,"process-nextick-args":40}],34:[function(require,module,exports){
 arguments[4][14][0].apply(exports,arguments)
-},{"./_stream_transform":35,"core-util-is":37,"dup":14,"inherits":31}],34:[function(require,module,exports){
+},{"./_stream_transform":36,"core-util-is":38,"dup":14,"inherits":32}],35:[function(require,module,exports){
 arguments[4][15][0].apply(exports,arguments)
-},{"./_stream_duplex":32,"_process":11,"buffer":3,"core-util-is":37,"dup":15,"events":7,"inherits":31,"isarray":38,"process-nextick-args":39,"string_decoder/":40,"util":2}],35:[function(require,module,exports){
+},{"./_stream_duplex":33,"_process":11,"buffer":3,"core-util-is":38,"dup":15,"events":7,"inherits":32,"isarray":39,"process-nextick-args":40,"string_decoder/":41,"util":2}],36:[function(require,module,exports){
 arguments[4][16][0].apply(exports,arguments)
-},{"./_stream_duplex":32,"core-util-is":37,"dup":16,"inherits":31}],36:[function(require,module,exports){
+},{"./_stream_duplex":33,"core-util-is":38,"dup":16,"inherits":32}],37:[function(require,module,exports){
 arguments[4][17][0].apply(exports,arguments)
-},{"./_stream_duplex":32,"buffer":3,"core-util-is":37,"dup":17,"events":7,"inherits":31,"process-nextick-args":39,"util-deprecate":41}],37:[function(require,module,exports){
+},{"./_stream_duplex":33,"buffer":3,"core-util-is":38,"dup":17,"events":7,"inherits":32,"process-nextick-args":40,"util-deprecate":42}],38:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -5382,17 +5546,17 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js")})
-},{"../../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":9}],38:[function(require,module,exports){
+},{"../../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":9}],39:[function(require,module,exports){
 arguments[4][10][0].apply(exports,arguments)
-},{"dup":10}],39:[function(require,module,exports){
+},{"dup":10}],40:[function(require,module,exports){
 arguments[4][19][0].apply(exports,arguments)
-},{"_process":11,"dup":19}],40:[function(require,module,exports){
+},{"_process":11,"dup":19}],41:[function(require,module,exports){
 arguments[4][26][0].apply(exports,arguments)
-},{"buffer":3,"dup":26}],41:[function(require,module,exports){
+},{"buffer":3,"dup":26}],42:[function(require,module,exports){
 arguments[4][20][0].apply(exports,arguments)
-},{"dup":20}],42:[function(require,module,exports){
+},{"dup":20}],43:[function(require,module,exports){
 arguments[4][22][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":32,"./lib/_stream_passthrough.js":33,"./lib/_stream_readable.js":34,"./lib/_stream_transform.js":35,"./lib/_stream_writable.js":36,"dup":22}],43:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":33,"./lib/_stream_passthrough.js":34,"./lib/_stream_readable.js":35,"./lib/_stream_transform.js":36,"./lib/_stream_writable.js":37,"dup":22}],44:[function(require,module,exports){
 (function (Buffer){
 /**
  * Convert a typed array to a Buffer without a copy
@@ -5431,7 +5595,7 @@ module.exports = function (arr) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":3,"is-typedarray":44}],44:[function(require,module,exports){
+},{"buffer":3,"is-typedarray":45}],45:[function(require,module,exports){
 module.exports      = isTypedArray
 isTypedArray.strict = isStrictTypedArray
 isTypedArray.loose  = isLooseTypedArray
@@ -5474,7 +5638,7 @@ function isLooseTypedArray(arr) {
   return names[toString.call(arr)]
 }
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 (function (process,Buffer){
 'use strict';
 var Readable = require('stream').Readable;
@@ -5596,7 +5760,7 @@ MicrophoneStream.toRaw = function toFloat32(chunk) {
 module.exports = MicrophoneStream;
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":11,"buffer":3,"stream":25,"util":28}],46:[function(require,module,exports){
+},{"_process":11,"buffer":3,"stream":25,"util":28}],47:[function(require,module,exports){
 /*!
  * object.pick <https://github.com/jonschlinkert/object.pick>
  *
@@ -5632,7 +5796,7 @@ module.exports = function pick(obj, keys) {
   return res;
 };
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var _global = (function() { return this; })();
 var nativeWebSocket = _global.WebSocket || _global.MozWebSocket;
 var websocket_version = require('./version');
@@ -5670,10 +5834,10 @@ module.exports = {
     'version'      : websocket_version
 };
 
-},{"./version":48}],48:[function(require,module,exports){
+},{"./version":49}],49:[function(require,module,exports){
 module.exports = require('../package.json').version;
 
-},{"../package.json":49}],49:[function(require,module,exports){
+},{"../package.json":50}],50:[function(require,module,exports){
 module.exports={
   "name": "websocket",
   "description": "Websocket Client & Server Library implementing the WebSocket protocol as specified in RFC 6455.",
@@ -5765,7 +5929,7 @@ module.exports={
   "readme": "ERROR: No README data found!"
 }
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 // these are the only content-types currently supported by the speech-to-tet service
@@ -5785,7 +5949,7 @@ module.exports = function contentType(header) {
   return contentTypes[header];
 };
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict';
 
 var contentType = require('./content-type');
@@ -5837,7 +6001,103 @@ module.exports = FilePlayer;
 module.exports.getContentType = getContentType;
 module.exports.playFile = playFile;
 
-},{"./content-type":50}],52:[function(require,module,exports){
+},{"./content-type":51}],53:[function(require,module,exports){
+'use strict';
+
+var Transform = require('stream').Transform;
+var util = require('util');
+var clone = require('clone');
+
+/**
+ * Applies some basic formating to transcriptions:
+ *  - Capitalize the first word of each sentence
+ *  - Add a period to the end
+ *  - Fix any "cruft" in the transcription
+ *  - etc.
+ *
+ * @param opts
+ * @param opts.model - some models / languages need special handling
+ * @param [opts.hesitation='\u2026'] - what to put down for a "hesitation" event, defaults to an ellipsis (...)
+ * @constructor
+ */
+function FormatStream(opts) {
+  this.opts = Object.assign({
+    model: '', // some models should have all spaces removed
+    hesitation: '\u2026', // ellipsis
+    decodeStrings: true
+  }, opts);
+  Transform.call(this, opts);
+
+  this.isJaCn = ((this.opts.model.substring(0,5) === 'ja-JP') || (this.opts.model.substring(0,5) === 'zh-CN'));
+
+  var handleResult = this.handleResult.bind(this);
+  this.on('pipe', function(source) {
+    source.on('result', handleResult);
+  });
+}
+util.inherits(FormatStream, Transform);
+
+var reHesitation = /%HESITATION\s/g; // when the service tetects a "hesitation" pause, it literally puts the string "%HESITATION" into the transcription
+var reRepeatedCharacter = /(.)\1{2,}/g; // detect the same character repeated three or more times and remove it
+var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
+
+/**
+ * Formats a single alternative of a final or interim result
+ * @param text
+ * @param isFinal
+ * @returns {String}
+ */
+FormatStream.prototype.format = function format(text, isFinal) {
+  // clean out "junk"
+  text = text.trim().replace(reHesitation, this.opts.hesitation)
+    .replace(reRepeatedCharacter, '')
+    .replace(reDUnderscoreWords,'');
+
+  // short-circuit if there's no actual text (avoids getting multiple periods after a pause)
+  if (!text) {
+    return text;
+  }
+
+  // capitalize first word
+  text = text.charAt(0).toUpperCase() + text.substring(1);
+
+  // remove spaces for Japanese and Chinese
+  if (this.isJaCn) {
+    text = text.replace(/ /g,'');
+  }
+
+  // if final, insert a period and restore the trailing space
+  if (isFinal) {
+      text = text + (this.isJaCn ? '。' : '. ');
+  }
+  return text;
+};
+
+
+FormatStream.prototype._transform = function(chunk, encoding, next) {
+  this.push(this.format(chunk.toString(), true));
+  next();
+};
+
+/**
+ * Creates a new result with all transcriptions formatted
+ *
+ * @param result
+ */
+FormatStream.prototype.handleResult = function handleResult(result) {
+  result = clone(result);
+  result.alternatives = result.alternatives.map(function(alternative) {
+    alternative.transcript = this.format(alternative.transcript, result.final);
+    return alternative;
+  }, this);
+  this.emit('result', result);
+};
+
+FormatStream.prototype.promise = require('./promise');
+
+module.exports = FormatStream;
+
+},{"./promise":57,"clone":29,"stream":25,"util":28}],54:[function(require,module,exports){
 'use strict';
 
 module.exports = function getUserMedia(constraints) {
@@ -5856,7 +6116,8 @@ module.exports = function getUserMedia(constraints) {
   });
 };
 
-},{}],53:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
+(function (Buffer){
 'use strict';
 
 module.exports = {
@@ -5871,12 +6132,15 @@ module.exports = {
   RecognizeStream: require('./recognize-stream'),
   FilePlayer: require('./file-player'),
   getUserMedia: require('./getusermedia'),
+  FormatStream: require('./format-stream'),
 
   // external (provided here to allow the lib to be used standalone w/out browserify)
-  MicrophoneStream: require('microphone-stream')
+  MicrophoneStream: require('microphone-stream'),
+  Buffer: Buffer // may be needed to send data to the streams
 };
 
-},{"./file-player":51,"./getusermedia":52,"./media-element-audio-stream":54,"./recognize-blob":56,"./recognize-element":57,"./recognize-microphone":58,"./recognize-stream":59,"./webaudio-wav-stream":60,"microphone-stream":45}],54:[function(require,module,exports){
+}).call(this,require("buffer").Buffer)
+},{"./file-player":52,"./format-stream":53,"./getusermedia":54,"./media-element-audio-stream":56,"./recognize-blob":58,"./recognize-element":59,"./recognize-microphone":60,"./recognize-stream":61,"./webaudio-wav-stream":62,"buffer":3,"microphone-stream":46}],56:[function(require,module,exports){
 (function (process,Buffer){
 'use strict';
 var Readable = require('stream').Readable;
@@ -6010,7 +6274,7 @@ MediaElementAudioStream.toRaw = function toFloat32(chunk) {
 module.exports = MediaElementAudioStream;
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":11,"buffer":3,"stream":25,"util":28}],55:[function(require,module,exports){
+},{"_process":11,"buffer":3,"stream":25,"util":28}],57:[function(require,module,exports){
 'use strict';
 
 /**
@@ -6032,7 +6296,7 @@ module.exports = function promise(stream) {
   });
 };
 
-},{}],56:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /**
  * Copyright 2015 IBM Corp. All Rights Reserved.
  *
@@ -6086,7 +6350,7 @@ module.exports = function recognizeBlob(options) {
 
 
 
-},{"./file-player.js":51,"./recognize-stream.js":59,"filereader-stream":29}],57:[function(require,module,exports){
+},{"./file-player.js":52,"./recognize-stream.js":61,"filereader-stream":30}],59:[function(require,module,exports){
 /**
  * Copyright 2015 IBM Corp. All Rights Reserved.
  *
@@ -6136,7 +6400,7 @@ module.exports = function recognizeElement(options) {
   return recognizeStream;
 };
 
-},{"./media-element-audio-stream":54,"./recognize-stream.js":59,"./webaudio-wav-stream":60}],58:[function(require,module,exports){
+},{"./media-element-audio-stream":56,"./recognize-stream.js":61,"./webaudio-wav-stream":62}],60:[function(require,module,exports){
 'use strict';
 
 /**
@@ -6193,7 +6457,7 @@ module.exports = function recognizeMicrophone(options) {
 
 
 
-},{"./getusermedia":52,"./recognize-stream.js":59,"./webaudio-wav-stream.js":60,"microphone-stream":45}],59:[function(require,module,exports){
+},{"./getusermedia":54,"./recognize-stream.js":61,"./webaudio-wav-stream.js":62,"microphone-stream":46}],61:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014 IBM Corp. All Rights Reserved.
@@ -6488,7 +6752,7 @@ RecognizeStream.getContentType = function (buffer) {
 module.exports = RecognizeStream;
 
 }).call(this,require('_process'))
-},{"./content-type":50,"./promise":55,"_process":11,"object.pick":46,"stream":25,"util":28,"websocket":47}],60:[function(require,module,exports){
+},{"./content-type":51,"./promise":57,"_process":11,"object.pick":47,"stream":25,"util":28,"websocket":48}],62:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var Transform = require('stream').Transform;

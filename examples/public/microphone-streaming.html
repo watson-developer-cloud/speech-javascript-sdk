@@ -30,7 +30,8 @@ $(function() {
         $.get('/token').then(function (token) {
             var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
                 token: token
-            });
+            })
+            .pipe(new WatsonSpeech.SpeechToText.FormatStream()); // optional
 
             // each result (sentence) gets it's own <span> because Watson will sometimes go back and change a word as it hears more context
             var $curSentence = $('<span>&nbsp;</span>').appendTo($output);

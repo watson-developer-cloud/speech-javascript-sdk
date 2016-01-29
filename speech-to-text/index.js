@@ -12,7 +12,9 @@ module.exports = {
   RecognizeStream: require('./recognize-stream'),
   FilePlayer: require('./file-player'),
   getUserMedia: require('./getusermedia'),
+  FormatStream: require('./format-stream'),
 
   // external (provided here to allow the lib to be used standalone w/out browserify)
-  MicrophoneStream: require('microphone-stream')
+  MicrophoneStream: require('microphone-stream'),
+  Buffer: Buffer // may be needed to send data to the streams
 };
