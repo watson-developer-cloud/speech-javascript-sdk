@@ -21,26 +21,15 @@ module.exports = function (app, log) {
     res.json({token: token, url: 'http://localhost:' + API_PORT + '/speech-to-text/api'});
   });
 
-  // after the tests begin running, karma starts rewriting the current line with updates
-  // so, if we just log something, it'll get nuked when karma rewrites it
-  // to make up for that, this also logs a second blank line for karma to nuke, causing it to leave our actual message alone
-  function debug() {
-    var args = Array.from(arguments);
-    args.unshift('API: ');
-    console.log.apply(console, args);
-    //console.log('');
-  }
-
-
   // we don't have access to the actual http server in the karma-express plugin, so just creating a new one on a different port
   // url is /speech-to-text/api/v1/recognize
   var server = http.createServer(function (request, response) {
-    debug('Received request for ' + request.url);
+    log.debug('Received request for ' + request.url);
     response.writeHead(404);
     response.end();
   });
   server.listen(API_PORT, function () {
-    console.log('Mock API server listening at http://localhost:' + server.address().port + '/');
+    log.debug('Mock API server listening at http://localhost:' + server.address().port + '/');
   });
 
   var wsServer = new WebSocketServer({
@@ -50,14 +39,14 @@ module.exports = function (app, log) {
   });
 
   wsServer.on('request', function (request) {
-    debug('ws request for ' + request.resource);
+    log.debug('ws request for ' + request.resource);
     request.accept(null, request.origin);
   });
 
   var TEXT = 'thunderstorms could produce large hail isolated tornadoes and heavy rain ';
   wsServer.on('connect', function (connection) {
 
-    //debug('Connection accepted.');
+    //log.debug('Connection accepted.');
 
     var interim_interval;
 
@@ -68,7 +57,7 @@ module.exports = function (app, log) {
       return setInterval(function () {
         i++;
         if (i < words.length) {
-          //debug('sending interim result');
+          //log.debug('sending interim result');
           connection.sendUTF(JSON.stringify({
             results: [
               {
@@ -87,18 +76,18 @@ module.exports = function (app, log) {
 
     connection.on('message', function (message) {
       if (message.type === 'utf8') {
-        debug('Received Message: ' + message.utf8Data);
+        log.debug('Received Message: ' + message.utf8Data);
         try {
           var msg = JSON.parse(message.utf8Data);
           if (msg.action == 'start') {
-            //debug('starting');
+            //log.debug('starting');
             connection.sendUTF('{"state":"listening"}');
             if (msg.interim_results) {
               interim_interval = startInterim();
             }
           } else if (msg.action == 'stop') {
             clearInterval(interim_interval);
-            //debug('sending final result')
+            //log.debug('sending final result')
             connection.sendUTF(JSON.stringify({
               results: [
                 //msg.results[0] && msg.results[0].final && msg.results[0].alternatives
@@ -117,17 +106,22 @@ module.exports = function (app, log) {
             connection.sendUTF('{"state":"listening"}'); // The server sends this message out at the end, and then we have to kill the connection from the client
           }
         } catch (ex) {
-          debug(ex)
+          log.debug(ex)
         }
       }
       else if (message.type === 'binary') {
         // this is a mock server, so we aren't going to actually process the binary data
-        //debug('Received Binary Message of ' + message.binaryData.length + ' bytes');
+        //log.debug('Received Binary Message of ' + message.binaryData.length + ' bytes');
       }
     });
     connection.on('close', function (reasonCode, description) {
       clearInterval(interim_interval);
-      debug('Peer disconnected:', connection.remoteAddress, reasonCode, description);
+      if (reasonCode <=1001) {
+        log.debug('Normal disconnected:', connection.remoteAddress, reasonCode, description);
+      }
+      else {
+        log.warn('%s disconnected with %s %s', connection.remoteAddress, reasonCode, description);
+      }
     });
   });
 };

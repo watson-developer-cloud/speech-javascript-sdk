@@ -15,7 +15,7 @@
  */
 
 'use strict';
-var fileReaderStream = require('filereader-stream');
+var ReadableBlobStream = require('readable-blob-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var FilePlayer = require('./file-player.js');
 
@@ -46,7 +46,7 @@ module.exports = function recognizeBlob(options) {
     });
   }
 
-  return fileReaderStream(options.data).pipe(recognizeStream);
-}
+  return new ReadableBlobStream(options.data).pipe(recognizeStream);
+};
 
 

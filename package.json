@@ -37,9 +37,9 @@
   },
   "dependencies": {
     "clone": "^1.0.2",
-    "filereader-stream": "^1.0.0",
     "microphone-stream": "^2.0.2",
     "object.pick": "^1.1.1",
+    "readable-blob-stream": "^1.1.0",
     "websocket": "^1.0.22"
   },
   "repository": {

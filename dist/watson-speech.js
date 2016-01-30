@@ -5,7 +5,7 @@ exports.SpeechToText = require('./speech-to-text');
 
 // todo: add a text-to-speech library next
 
-},{"./speech-to-text":55}],2:[function(require,module,exports){
+},{"./speech-to-text":41}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
 (function (global){
@@ -5286,359 +5286,6 @@ if (typeof module === 'object' && module.exports) {
 
 }).call(this,require("buffer").Buffer)
 },{"buffer":3}],30:[function(require,module,exports){
-/* global FileReader */
-var from2 = require('from2')
-var toBuffer = require('typedarray-to-buffer')
-
-module.exports = function (file, options) {
-  options = options || {}
-  var offset = options.offset || 0
-  var chunkSize = options.chunkSize || 1024 * 1024 // default 1MB chunk has tolerable perf on large files
-  var fileReader = new FileReader(file)
-
-  var from = from2(function (size, cb) {
-    if (offset >= file.size) return cb(null, null)
-    fileReader.onloadend = function loaded (event) {
-      var data = event.target.result
-      if (data instanceof ArrayBuffer) data = toBuffer(new Uint8Array(event.target.result))
-      cb(null, data)
-    }
-    var end = offset + chunkSize
-    var slice = file.slice(offset, end)
-    fileReader.readAsArrayBuffer(slice)
-    offset = end
-  })
-
-  from.name = file.name
-  from.size = file.size
-  from.type = file.type
-  from.lastModifiedDate = file.lastModifiedDate
-
-  fileReader.onerror = function (err) {
-    from.destroy(err)
-  }
-
-  return from
-}
-
-},{"from2":31,"typedarray-to-buffer":44}],31:[function(require,module,exports){
-(function (process){
-var Readable = require('readable-stream').Readable
-var inherits = require('inherits')
-
-module.exports = from2
-
-from2.ctor = ctor
-from2.obj = obj
-
-var Proto = ctor()
-
-function toFunction(list) {
-  list = list.slice()
-  return function (_, cb) {
-    var err = null
-    var item = list.length ? list.shift() : null
-    if (item instanceof Error) {
-      err = item
-      item = null
-    }
-
-    cb(err, item)
-  }
-}
-
-function from2(opts, read) {
-  if (typeof opts !== 'object' || Array.isArray(opts)) {
-    read = opts
-    opts = {}
-  }
-
-  var rs = new Proto(opts)
-  rs._from = Array.isArray(read) ? toFunction(read) : read
-  return rs
-}
-
-function ctor(opts, read) {
-  if (typeof opts === 'function') {
-    read = opts
-    opts = {}
-  }
-
-  opts = defaults(opts)
-
-  inherits(Class, Readable)
-  function Class(override) {
-    if (!(this instanceof Class)) return new Class(override)
-    this._reading = false
-    this.destroyed = false
-    Readable.call(this, override || opts)
-  }
-
-  Class.prototype._from = read
-  Class.prototype._read = function(size) {
-    var self = this
-
-    if (this._reading || this.destroyed) return
-    this._reading = true
-    this._from(size, check)
-    function check(err, data) {
-      if (self.destroyed) return
-      if (err) return self.destroy(err)
-      if (data === null) return self.push(null)
-      self._reading = false
-      if (self.push(data)) self._read()
-    }
-  }
-
-  Class.prototype.destroy = function(err) {
-    if (this.destroyed) return
-    this.destroyed = true
-
-    var self = this
-    process.nextTick(function() {
-      if (err) self.emit('error', err)
-      self.emit('close')
-    })
-  }
-
-  return Class
-}
-
-function obj(opts, read) {
-  if (typeof opts === 'function' || Array.isArray(opts)) {
-    read = opts
-    opts = {}
-  }
-
-  opts = defaults(opts)
-  opts.objectMode = true
-  opts.highWaterMark = 16
-
-  return from2(opts, read)
-}
-
-function defaults(opts) {
-  opts = opts || {}
-  return opts
-}
-
-}).call(this,require('_process'))
-},{"_process":11,"inherits":32,"readable-stream":43}],32:[function(require,module,exports){
-arguments[4][8][0].apply(exports,arguments)
-},{"dup":8}],33:[function(require,module,exports){
-arguments[4][13][0].apply(exports,arguments)
-},{"./_stream_readable":35,"./_stream_writable":37,"core-util-is":38,"dup":13,"inherits":32,"process-nextick-args":40}],34:[function(require,module,exports){
-arguments[4][14][0].apply(exports,arguments)
-},{"./_stream_transform":36,"core-util-is":38,"dup":14,"inherits":32}],35:[function(require,module,exports){
-arguments[4][15][0].apply(exports,arguments)
-},{"./_stream_duplex":33,"_process":11,"buffer":3,"core-util-is":38,"dup":15,"events":7,"inherits":32,"isarray":39,"process-nextick-args":40,"string_decoder/":41,"util":2}],36:[function(require,module,exports){
-arguments[4][16][0].apply(exports,arguments)
-},{"./_stream_duplex":33,"core-util-is":38,"dup":16,"inherits":32}],37:[function(require,module,exports){
-arguments[4][17][0].apply(exports,arguments)
-},{"./_stream_duplex":33,"buffer":3,"core-util-is":38,"dup":17,"events":7,"inherits":32,"process-nextick-args":40,"util-deprecate":42}],38:[function(require,module,exports){
-(function (Buffer){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// NOTE: These type checking functions intentionally don't use `instanceof`
-// because it is fragile and can be easily faked with `Object.create()`.
-
-function isArray(arg) {
-  if (Array.isArray) {
-    return Array.isArray(arg);
-  }
-  return objectToString(arg) === '[object Array]';
-}
-exports.isArray = isArray;
-
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
-}
-exports.isBoolean = isBoolean;
-
-function isNull(arg) {
-  return arg === null;
-}
-exports.isNull = isNull;
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-exports.isNullOrUndefined = isNullOrUndefined;
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-exports.isNumber = isNumber;
-
-function isString(arg) {
-  return typeof arg === 'string';
-}
-exports.isString = isString;
-
-function isSymbol(arg) {
-  return typeof arg === 'symbol';
-}
-exports.isSymbol = isSymbol;
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-exports.isUndefined = isUndefined;
-
-function isRegExp(re) {
-  return objectToString(re) === '[object RegExp]';
-}
-exports.isRegExp = isRegExp;
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-exports.isObject = isObject;
-
-function isDate(d) {
-  return objectToString(d) === '[object Date]';
-}
-exports.isDate = isDate;
-
-function isError(e) {
-  return (objectToString(e) === '[object Error]' || e instanceof Error);
-}
-exports.isError = isError;
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-exports.isFunction = isFunction;
-
-function isPrimitive(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-exports.isPrimitive = isPrimitive;
-
-exports.isBuffer = Buffer.isBuffer;
-
-function objectToString(o) {
-  return Object.prototype.toString.call(o);
-}
-
-}).call(this,{"isBuffer":require("../../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js")})
-},{"../../../../../../../../browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":9}],39:[function(require,module,exports){
-arguments[4][10][0].apply(exports,arguments)
-},{"dup":10}],40:[function(require,module,exports){
-arguments[4][19][0].apply(exports,arguments)
-},{"_process":11,"dup":19}],41:[function(require,module,exports){
-arguments[4][26][0].apply(exports,arguments)
-},{"buffer":3,"dup":26}],42:[function(require,module,exports){
-arguments[4][20][0].apply(exports,arguments)
-},{"dup":20}],43:[function(require,module,exports){
-arguments[4][22][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":33,"./lib/_stream_passthrough.js":34,"./lib/_stream_readable.js":35,"./lib/_stream_transform.js":36,"./lib/_stream_writable.js":37,"dup":22}],44:[function(require,module,exports){
-(function (Buffer){
-/**
- * Convert a typed array to a Buffer without a copy
- *
- * Author:   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * License:  MIT
- *
- * `npm install typedarray-to-buffer`
- */
- /* eslint-disable no-proto */
-
-var isTypedArray = require('is-typedarray').strict
-
-module.exports = function (arr) {
-  // If `Buffer` is the browser `buffer` module, and the browser supports typed arrays,
-  // then avoid a copy. Otherwise, create a `Buffer` with a copy.
-  var constructor = Buffer.TYPED_ARRAY_SUPPORT
-    ? function (arr) {
-      arr.__proto__ = Buffer.prototype
-      return arr
-    }
-    : function (arr) { return new Buffer(arr) }
-
-  if (arr instanceof Uint8Array) {
-    return constructor(arr)
-  } else if (arr instanceof ArrayBuffer) {
-    return constructor(new Uint8Array(arr))
-  } else if (isTypedArray(arr)) {
-    // Use the typed array's underlying ArrayBuffer to back new Buffer. This respects
-    // the "view" on the ArrayBuffer, i.e. byteOffset and byteLength. No copy.
-    return constructor(new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength))
-  } else {
-    // Unsupported type, just pass it through to the `Buffer` constructor.
-    return new Buffer(arr)
-  }
-}
-
-}).call(this,require("buffer").Buffer)
-},{"buffer":3,"is-typedarray":45}],45:[function(require,module,exports){
-module.exports      = isTypedArray
-isTypedArray.strict = isStrictTypedArray
-isTypedArray.loose  = isLooseTypedArray
-
-var toString = Object.prototype.toString
-var names = {
-    '[object Int8Array]': true
-  , '[object Int16Array]': true
-  , '[object Int32Array]': true
-  , '[object Uint8Array]': true
-  , '[object Uint8ClampedArray]': true
-  , '[object Uint16Array]': true
-  , '[object Uint32Array]': true
-  , '[object Float32Array]': true
-  , '[object Float64Array]': true
-}
-
-function isTypedArray(arr) {
-  return (
-       isStrictTypedArray(arr)
-    || isLooseTypedArray(arr)
-  )
-}
-
-function isStrictTypedArray(arr) {
-  return (
-       arr instanceof Int8Array
-    || arr instanceof Int16Array
-    || arr instanceof Int32Array
-    || arr instanceof Uint8Array
-    || arr instanceof Uint8ClampedArray
-    || arr instanceof Uint16Array
-    || arr instanceof Uint32Array
-    || arr instanceof Float32Array
-    || arr instanceof Float64Array
-  )
-}
-
-function isLooseTypedArray(arr) {
-  return names[toString.call(arr)]
-}
-
-},{}],46:[function(require,module,exports){
 (function (process,Buffer){
 'use strict';
 var Readable = require('stream').Readable;
@@ -5760,7 +5407,7 @@ MicrophoneStream.toRaw = function toFloat32(chunk) {
 module.exports = MicrophoneStream;
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":11,"buffer":3,"stream":25,"util":28}],47:[function(require,module,exports){
+},{"_process":11,"buffer":3,"stream":25,"util":28}],31:[function(require,module,exports){
 /*!
  * object.pick <https://github.com/jonschlinkert/object.pick>
  *
@@ -5796,7 +5443,147 @@ module.exports = function pick(obj, keys) {
   return res;
 };
 
-},{}],48:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
+(function (global,Buffer){
+'use strict';
+
+var Readable = require('stream').Readable;
+// When required from browserify, Buffer is also an Uint8Array, which is important for ejson.
+var inherits = require('inherits');
+var FileReader = global.FileReader;
+var Uint8Array = global.Uint8Array;
+
+/**
+ * Read W3C Blob & File objects as a Node stream.
+ * @param {Blob} blob
+ * @constructor
+ */
+function ReadableBlobStream(blob, opts)
+{
+        if (!(this instanceof ReadableBlobStream)) {
+          return new ReadableBlobStream(blob, opts);
+        }
+
+        opts = opts || {};
+        opts.objectMode = false;
+        Readable.call(this, opts);
+
+        if (!blob)
+        {
+                throw Error('Missing argument "blob"');
+        }
+
+        if (typeof blob.slice !== 'function')
+        {
+                throw Error('Given argument "blob" is not really a Blob/File or your environment does not support .slice()');
+        }
+
+        if (!FileReader)
+        {
+                throw Error('Your environment does not support FileReader');
+        }
+
+        if (!Uint8Array)
+        {
+                throw Error('Your environment does not support Uint8Array');
+        }
+
+        this.totalSize = blob.size;
+        this._blob = blob;
+        this._nextByteStart = 0;
+}
+module.exports = ReadableBlobStream;
+inherits(ReadableBlobStream, Readable);
+
+function uint8ArrayToBuffer(buf)
+{
+        if (typeof Buffer._augment === 'function')
+        {
+                buf = Buffer._augment(buf);
+
+                if (!(buf instanceof Uint8Array))
+                {
+                        throw Error('Assertion error, buf should be an Uint8Array');
+                }
+        }
+        else
+        {
+                buf = new Buffer(buf);
+        }
+
+        return buf;
+}
+
+function bufferToUint8Array(buf)
+{
+        buf = new Uint8Array(buf);
+        if (typeof Buffer._augment === 'function')
+        {
+                buf = Buffer._augment(buf);
+                // buf is now both an Uint8Array and an Buffer
+        }
+
+        if (!(buf instanceof Uint8Array))  // this is the check ejson uses
+        {
+                // this is the check ejson uses
+                throw Error('Assertion error, buf should be an Uint8Array');
+        }
+
+        return buf;
+}
+
+ReadableBlobStream.prototype.read = function()
+{
+        var buf = ReadableBlobStream.super_.prototype.read.apply(this, arguments);
+
+        // make sure it is a Uint8Array in case browserify's Buffer
+        // stops using Uint8Array
+        if (Buffer.isBuffer(buf) && !(buf instanceof Uint8Array))
+        {
+                buf = bufferToUint8Array(buf);
+        }
+
+        return buf;
+};
+
+ReadableBlobStream.prototype._read = function(chunkSize)
+{
+        var size = this._blob.size;
+        var start, end;
+
+        start = this._nextByteStart;
+        end = Math.min(start + chunkSize, size); // exclusive
+        this._nextByteStart = end;
+
+        if (start >= this._blob.size)
+        {
+                return void this.push(null);
+        }
+
+        var chunk = this._blob.slice(start, end);
+        var reader = new FileReader();
+
+        reader.onload = function()
+        {
+                // reader.result is an ArrayBuffer
+                var buf = new Uint8Array(reader.result);
+                buf = uint8ArrayToBuffer(buf);
+
+                this.push(buf);
+        }.bind(this);
+
+        reader.onerror = function()
+        {
+                this.emit('error', reader.error);
+        }.bind(this);
+
+        reader.readAsArrayBuffer(chunk);
+};
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
+},{"buffer":3,"inherits":33,"stream":25}],33:[function(require,module,exports){
+arguments[4][8][0].apply(exports,arguments)
+},{"dup":8}],34:[function(require,module,exports){
 var _global = (function() { return this; })();
 var nativeWebSocket = _global.WebSocket || _global.MozWebSocket;
 var websocket_version = require('./version');
@@ -5834,10 +5621,10 @@ module.exports = {
     'version'      : websocket_version
 };
 
-},{"./version":49}],49:[function(require,module,exports){
+},{"./version":35}],35:[function(require,module,exports){
 module.exports = require('../package.json').version;
 
-},{"../package.json":50}],50:[function(require,module,exports){
+},{"../package.json":36}],36:[function(require,module,exports){
 module.exports={
   "name": "websocket",
   "description": "Websocket Client & Server Library implementing the WebSocket protocol as specified in RFC 6455.",
@@ -5929,7 +5716,7 @@ module.exports={
   "readme": "ERROR: No README data found!"
 }
 
-},{}],51:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 'use strict';
 
 // these are the only content-types currently supported by the speech-to-tet service
@@ -5949,7 +5736,7 @@ module.exports = function contentType(header) {
   return contentTypes[header];
 };
 
-},{}],52:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 var contentType = require('./content-type');
@@ -6001,7 +5788,7 @@ module.exports = FilePlayer;
 module.exports.getContentType = getContentType;
 module.exports.playFile = playFile;
 
-},{"./content-type":51}],53:[function(require,module,exports){
+},{"./content-type":37}],39:[function(require,module,exports){
 'use strict';
 
 var Transform = require('stream').Transform;
@@ -6097,7 +5884,7 @@ FormatStream.prototype.promise = require('./promise');
 
 module.exports = FormatStream;
 
-},{"./promise":57,"clone":29,"stream":25,"util":28}],54:[function(require,module,exports){
+},{"./promise":43,"clone":29,"stream":25,"util":28}],40:[function(require,module,exports){
 'use strict';
 
 module.exports = function getUserMedia(constraints) {
@@ -6116,7 +5903,7 @@ module.exports = function getUserMedia(constraints) {
   });
 };
 
-},{}],55:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -6140,7 +5927,7 @@ module.exports = {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./file-player":52,"./format-stream":53,"./getusermedia":54,"./media-element-audio-stream":56,"./recognize-blob":58,"./recognize-element":59,"./recognize-microphone":60,"./recognize-stream":61,"./webaudio-wav-stream":62,"buffer":3,"microphone-stream":46}],56:[function(require,module,exports){
+},{"./file-player":38,"./format-stream":39,"./getusermedia":40,"./media-element-audio-stream":42,"./recognize-blob":44,"./recognize-element":45,"./recognize-microphone":46,"./recognize-stream":47,"./webaudio-wav-stream":48,"buffer":3,"microphone-stream":30}],42:[function(require,module,exports){
 (function (process,Buffer){
 'use strict';
 var Readable = require('stream').Readable;
@@ -6274,7 +6061,7 @@ MediaElementAudioStream.toRaw = function toFloat32(chunk) {
 module.exports = MediaElementAudioStream;
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":11,"buffer":3,"stream":25,"util":28}],57:[function(require,module,exports){
+},{"_process":11,"buffer":3,"stream":25,"util":28}],43:[function(require,module,exports){
 'use strict';
 
 /**
@@ -6296,7 +6083,7 @@ module.exports = function promise(stream) {
   });
 };
 
-},{}],58:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /**
  * Copyright 2015 IBM Corp. All Rights Reserved.
  *
@@ -6314,7 +6101,7 @@ module.exports = function promise(stream) {
  */
 
 'use strict';
-var fileReaderStream = require('filereader-stream');
+var fileReaderStream = require('readable-blob-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var FilePlayer = require('./file-player.js');
 
@@ -6350,7 +6137,7 @@ module.exports = function recognizeBlob(options) {
 
 
 
-},{"./file-player.js":52,"./recognize-stream.js":61,"filereader-stream":30}],59:[function(require,module,exports){
+},{"./file-player.js":38,"./recognize-stream.js":47,"readable-blob-stream":32}],45:[function(require,module,exports){
 /**
  * Copyright 2015 IBM Corp. All Rights Reserved.
  *
@@ -6400,7 +6187,7 @@ module.exports = function recognizeElement(options) {
   return recognizeStream;
 };
 
-},{"./media-element-audio-stream":56,"./recognize-stream.js":61,"./webaudio-wav-stream":62}],60:[function(require,module,exports){
+},{"./media-element-audio-stream":42,"./recognize-stream.js":47,"./webaudio-wav-stream":48}],46:[function(require,module,exports){
 'use strict';
 
 /**
@@ -6457,7 +6244,7 @@ module.exports = function recognizeMicrophone(options) {
 
 
 
-},{"./getusermedia":54,"./recognize-stream.js":61,"./webaudio-wav-stream.js":62,"microphone-stream":46}],61:[function(require,module,exports){
+},{"./getusermedia":40,"./recognize-stream.js":47,"./webaudio-wav-stream.js":48,"microphone-stream":30}],47:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014 IBM Corp. All Rights Reserved.
@@ -6754,7 +6541,7 @@ RecognizeStream.getContentType = function (buffer) {
 module.exports = RecognizeStream;
 
 }).call(this,require('_process'))
-},{"./content-type":51,"./promise":57,"_process":11,"object.pick":47,"stream":25,"util":28,"websocket":48}],62:[function(require,module,exports){
+},{"./content-type":37,"./promise":43,"_process":11,"object.pick":31,"stream":25,"util":28,"websocket":34}],48:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var Transform = require('stream').Transform;
