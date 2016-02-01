@@ -29,14 +29,15 @@ function getAudio() {
 // integration = testing against actual watson servers
 var offline = process.env.TEST_MODE !== 'integration';
 var chrome = navigator.userAgent.indexOf('Chrome') >=0;
+var travis = !!process.env.TRAVIS;
 
 describe("WatsonSpeechToText", function() {
 
   this.timeout(30*1000);
 
   // not sure why, but I can't convince firefox or chrome to actually play <audio> elements during tests
-  // todo: file a stack overflow or something
-  (offline ?  it : xit)('should transcribe <audio> elements', function(done) {
+  // also, on travis, the element never appears to stop playing (or, more likely, it nevers starts in the first place)
+  (offline && !travis ? it : xit)('should transcribe <audio> elements', function(done) {
     getConfig().then(function(cfg) {
       var audioElement = new Audio();
       audioElement.src = "http://localhost:9877/audio.wav";
@@ -56,8 +57,9 @@ describe("WatsonSpeechToText", function() {
   });
 
   // firefox can automatically approve getUserMedia, but not playback audio, so offline only
+  // ...except on travis ci, where it gets NO_DEVICES_FOUND
   // chrome can do both, so it gets tested on and offline
-  (offline || chrome ? it : xit)("should transcribe mic input", function(done) {
+  (offline && !travis || chrome ? it : xit)("should transcribe mic input", function(done) {
     getConfig().then(function(cfg) {
       var stt = WatsonSpeechToText.recognizeMicrophone(cfg);
       //stt.on('send-json', console.log.bind(console, 'sending'));
