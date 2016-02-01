@@ -124,7 +124,7 @@ RecognizeStream.prototype.initialize = function () {
 
 
   this.socket.onopen = function () {
-    socket.send(JSON.stringify(openingMessage));
+    self.sendJSON(openingMessage);
     self.emit('connect');
   };
 
@@ -221,6 +221,15 @@ RecognizeStream.prototype.initialize = function () {
   this.initialized = true;
 };
 
+RecognizeStream.prototype.sendJSON = function sendJSON(msg) {
+  this.emit('send-json', msg);
+  return this.socket.send(JSON.stringify(msg));
+};
+
+RecognizeStream.prototype.sendData = function sendData(data) {
+  this.emit('send-data', data);
+  return this.socket.send(data);
+};
 
 RecognizeStream.prototype._read = function (size) {
   // there's no easy way to control reads from the underlying library
@@ -229,8 +238,12 @@ RecognizeStream.prototype._read = function (size) {
 
 RecognizeStream.prototype._write = function (chunk, encoding, callback) {
   var self = this;
+  if (self.finished) {
+    // can't send any more data after the stop message (although this shouldn't happen normally...)
+    return;
+  }
   if (self.listening) {
-    self.socket.send(chunk);
+    self.sendData(chunk);
     this.afterSend(callback);
   } else {
     if (!this.initialized) {
@@ -240,7 +253,7 @@ RecognizeStream.prototype._write = function (chunk, encoding, callback) {
       this.initialize();
     }
     this.once('listening', function () {
-      self.socket.send(chunk);
+      self.sendData(chunk);
       this.afterSend(callback);
     });
   }
@@ -256,13 +269,9 @@ RecognizeStream.prototype.afterSend = function afterSend(next) {
   }
 };
 
-RecognizeStream.prototype.stop = function (hard) {
+RecognizeStream.prototype.stop = function () {
   this.emit('stop');
-  if (hard) {
-    this.socket.close();
-  } else {
-    this.finish();
-  }
+  this.finish();
 };
 
 RecognizeStream.prototype.finish = function finish() {
@@ -274,10 +283,10 @@ RecognizeStream.prototype.finish = function finish() {
   var self = this;
   var closingMessage = {action: 'stop'};
   if (self.socket) {
-    self.socket.send(JSON.stringify(closingMessage));
+    self.sendJSON(closingMessage);
   } else {
     this.once('connect', function () {
-      self.socket.send(JSON.stringify(closingMessage));
+      self.sendJSON(closingMessage);
     });
   }
 };

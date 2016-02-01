@@ -2,17 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Audio Element Example - Watson Speech to Text</title>
+    <title>Programmatic new Audio() Example - Watson Speech to Text</title>
 </head>
 <body>
 
 <section>
-    <h2>Transcribe &lt;audio&gt; Element, Streaming</h2>
-    <audio id="audio-element" src="audio.wav" controls>
-        Your browser does not support the <code>audio</code> element.
-    </audio>
+    <h2>Transcribe Programmatic new Audio(), Streaming</h2>
+    <p><small><i>The browser must be able to decode and play the audio file.</i></small></p>
+
     <button id="button">Play and Transcribe</button>
-    <p><small><i>&lt;video&gt; elements should behave the same as &lt;audio&gt; elements. The browser must be able to decode and play the file in either case. </i></small></p>
 
     <h2>Output:</h2>
     <div id="output">--</div>
@@ -30,9 +28,12 @@ $(function() {
         $.get('/token').then(function (token) {
             $output.html('');
 
+            var audioElement = new Audio(); // document.createElement('video'); also works here
+            audioElement.src = "audio.wav";
+
             var stream = WatsonSpeech.SpeechToText.recognizeElement({
                 token: token,
-                element: $('#audio-element')[0]
+                element: audioElement
                 // muteSource: true // prevents sound from also playing locally
             })
             .pipe(new WatsonSpeech.SpeechToText.FormatStream()); // optional

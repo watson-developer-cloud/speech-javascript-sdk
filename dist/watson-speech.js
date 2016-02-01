@@ -5972,7 +5972,7 @@ function MediaElementAudioStream(source, opts) {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode/onaudioprocess
    * @param {AudioProcessingEvent} e https://developer.mozilla.org/en-US/docs/Web/API/AudioProcessingEvent
    */
-  function recorderProcess(e) {
+  function processAudio(e) {
     // onaudioprocess can be called at least once after we've stopped
     if (recording) {
 
@@ -6001,9 +6001,9 @@ function MediaElementAudioStream(source, opts) {
 
   var context = new AudioContext();
   var audioInput = context.createMediaElementSource(source);
-  var recorder = context.createScriptProcessor(opts.bufferSize, inputChannels, outputChannels);
+  var scriptProcessor = context.createScriptProcessor(opts.bufferSize, inputChannels, outputChannels);
 
-  recorder.onaudioprocess = recorderProcess;
+  scriptProcessor.onaudioprocess = processAudio;
 
   if (!opts.muteSource) {
     var gain = context.createGain();
@@ -6011,10 +6011,10 @@ function MediaElementAudioStream(source, opts) {
     gain.connect(context.destination);
   }
 
-  audioInput.connect(recorder);
+  audioInput.connect(scriptProcessor);
 
   // other half of workaround for chrome bugs
-  recorder.connect(context.destination);
+  scriptProcessor.connect(context.destination);
 
   this.stop = function() {
     recording = false;
@@ -6101,7 +6101,7 @@ module.exports = function promise(stream) {
  */
 
 'use strict';
-var fileReaderStream = require('readable-blob-stream');
+var ReadableBlobStream = require('readable-blob-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var FilePlayer = require('./file-player.js');
 
@@ -6132,8 +6132,8 @@ module.exports = function recognizeBlob(options) {
     });
   }
 
-  return fileReaderStream(options.data).pipe(recognizeStream);
-}
+  return new ReadableBlobStream(options.data).pipe(recognizeStream);
+};
 
 
 
@@ -6372,7 +6372,7 @@ RecognizeStream.prototype.initialize = function () {
 
 
   this.socket.onopen = function () {
-    socket.send(JSON.stringify(openingMessage));
+    self.sendJSON(openingMessage);
     self.emit('connect');
   };
 
@@ -6469,6 +6469,15 @@ RecognizeStream.prototype.initialize = function () {
   this.initialized = true;
 };
 
+RecognizeStream.prototype.sendJSON = function sendJSON(msg) {
+  this.emit('send-json', msg);
+  return this.socket.send(JSON.stringify(msg));
+};
+
+RecognizeStream.prototype.sendData = function sendData(data) {
+  this.emit('send-data', data);
+  return this.socket.send(data);
+};
 
 RecognizeStream.prototype._read = function (size) {
   // there's no easy way to control reads from the underlying library
@@ -6477,8 +6486,12 @@ RecognizeStream.prototype._read = function (size) {
 
 RecognizeStream.prototype._write = function (chunk, encoding, callback) {
   var self = this;
+  if (self.finished) {
+    // can't send any more data after the stop message (although this shouldn't happen normally...)
+    return;
+  }
   if (self.listening) {
-    self.socket.send(chunk);
+    self.sendData(chunk);
     this.afterSend(callback);
   } else {
     if (!this.initialized) {
@@ -6488,7 +6501,7 @@ RecognizeStream.prototype._write = function (chunk, encoding, callback) {
       this.initialize();
     }
     this.once('listening', function () {
-      self.socket.send(chunk);
+      self.sendData(chunk);
       this.afterSend(callback);
     });
   }
@@ -6504,13 +6517,9 @@ RecognizeStream.prototype.afterSend = function afterSend(next) {
   }
 };
 
-RecognizeStream.prototype.stop = function (hard) {
+RecognizeStream.prototype.stop = function () {
   this.emit('stop');
-  if (hard) {
-    this.socket.close();
-  } else {
-    this.finish();
-  }
+  this.finish();
 };
 
 RecognizeStream.prototype.finish = function finish() {
@@ -6522,10 +6531,10 @@ RecognizeStream.prototype.finish = function finish() {
   var self = this;
   var closingMessage = {action: 'stop'};
   if (self.socket) {
-    self.socket.send(JSON.stringify(closingMessage));
+    self.sendJSON(closingMessage);
   } else {
     this.once('connect', function () {
-      self.socket.send(JSON.stringify(closingMessage));
+      self.sendJSON(closingMessage);
     });
   }
 };

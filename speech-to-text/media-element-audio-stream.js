@@ -41,7 +41,7 @@ function MediaElementAudioStream(source, opts) {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode/onaudioprocess
    * @param {AudioProcessingEvent} e https://developer.mozilla.org/en-US/docs/Web/API/AudioProcessingEvent
    */
-  function recorderProcess(e) {
+  function processAudio(e) {
     // onaudioprocess can be called at least once after we've stopped
     if (recording) {
 
@@ -70,9 +70,9 @@ function MediaElementAudioStream(source, opts) {
 
   var context = new AudioContext();
   var audioInput = context.createMediaElementSource(source);
-  var recorder = context.createScriptProcessor(opts.bufferSize, inputChannels, outputChannels);
+  var scriptProcessor = context.createScriptProcessor(opts.bufferSize, inputChannels, outputChannels);
 
-  recorder.onaudioprocess = recorderProcess;
+  scriptProcessor.onaudioprocess = processAudio;
 
   if (!opts.muteSource) {
     var gain = context.createGain();
@@ -80,10 +80,10 @@ function MediaElementAudioStream(source, opts) {
     gain.connect(context.destination);
   }
 
-  audioInput.connect(recorder);
+  audioInput.connect(scriptProcessor);
 
   // other half of workaround for chrome bugs
-  recorder.connect(context.destination);
+  scriptProcessor.connect(context.destination);
 
   this.stop = function() {
     recording = false;

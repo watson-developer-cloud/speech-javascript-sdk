@@ -32,7 +32,10 @@ module.exports = function(config) {
 
     browserify: {
       debug: true,
-      transform: [ ] // 'brfs', 'browserify-shim'
+      // 'brfs' makes fs.read* work
+      // 'browserify-shim' wraps non-browserify modules
+      // 'envify' makes process.env work
+      transform: [ 'envify' ]
     },
 
 
@@ -61,7 +64,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromeWithPrerecordedMic'],
+    browsers: ['ChromeWithPrerecordedMic', 'FirefoxAutoGUM'],
 
     // you can define custom flags
     // there's a handy list of chrome flags at
@@ -70,6 +73,13 @@ module.exports = function(config) {
         base: 'Chrome',
         // --no-sandbox is required for travis-ci
         flags: ['--use-fake-device-for-media-stream','--use-fake-ui-for-media-stream', '--use-file-for-fake-audio-capture=test/resources/audio.wav', '--no-sandbox']
+      },
+      // automatically approve getUserMedia calls
+      FirefoxAutoGUM: {
+        base: 'Firefox',
+        prefs: {
+          'media.navigator.permission.disabled': true
+        }
       }
     },
 
