@@ -69,7 +69,7 @@ module.exports = function (app, log) {
                 ]
               }
             ]
-          }))
+          }));
         }
       }, 700);
     }

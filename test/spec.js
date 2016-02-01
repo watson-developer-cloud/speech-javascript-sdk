@@ -37,11 +37,13 @@ describe("WatsonSpeechToText", function() {
 
   // not sure why, but I can't convince firefox or chrome to actually play <audio> elements during tests
   // also, on travis, the element never appears to stop playing (or, more likely, it nevers starts in the first place)
-  (offline && !travis ? it : xit)('should transcribe <audio> elements', function(done) {
+  it('should transcribe <audio> elements', function(done) {
     getConfig().then(function(cfg) {
       var audioElement = new Audio();
+      audioElement.crossOrigin = true;
       audioElement.src = "http://localhost:9877/audio.wav";
       cfg.element = audioElement;
+      cfg.muteSource = true;
       var stream = WatsonSpeechToText.recognizeElement(cfg);
       //stream.on('send-json', console.log.bind(console, 'sending'));
       //stream.on('message', console.log.bind(console, 'received'));
