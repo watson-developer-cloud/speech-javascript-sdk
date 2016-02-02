@@ -54,9 +54,12 @@ function FormatStream(opts) {
 
   this.isJaCn = ((this.opts.model.substring(0,5) === 'ja-JP') || (this.opts.model.substring(0,5) === 'zh-CN'));
 
-  var handleResult = this.handleResult.bind(this);
+  var self = this;
   this.on('pipe', function(source) {
-    source.on('result', handleResult);
+    source.on('result', self.handleResult.bind(self));
+    if(source.stop) {
+      self.stop = source.stop.bind(source);
+    }
   });
 }
 util.inherits(FormatStream, Transform);
@@ -66,12 +69,12 @@ var reRepeatedCharacter = /(.)\1{2,}/g; // detect the same character repeated th
 var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
 
 /**
- * Formats a single alternative of a final or interim result
+ * Formats one or more words, removing special symbols, junk, and spacing for some languages
  * @param text
  * @param isFinal
  * @returns {String}
  */
-FormatStream.prototype.format = function format(text, isFinal) {
+FormatStream.prototype.clean = function clean(text) {
   // clean out "junk"
   text = text.trim().replace(reHesitation, this.opts.hesitation)
     .replace(reRepeatedCharacter, '')
@@ -82,24 +85,35 @@ FormatStream.prototype.format = function format(text, isFinal) {
     return text;
   }
 
-  // capitalize first word
-  text = text.charAt(0).toUpperCase() + text.substring(1);
-
   // remove spaces for Japanese and Chinese
   if (this.isJaCn) {
     text = text.replace(/ /g,'');
   }
 
-  // if final, insert a period and restore the trailing space
-  if (isFinal) {
-      text = text + (this.isJaCn ? '。' : '. ');
-  }
   return text;
 };
 
+/**
+ * Capitalizes the first word of a sentence
+ * @param text
+ * @returns {string}
+ */
+FormatStream.prototype.capitalize = function capitalize(text) {
+  // capitalize first word, returns '' in the case of an empty word
+  return text.charAt(0).toUpperCase() + text.substring(1);
+};
+
+/**
+ * puts a period on the end of a sentence
+ * @param text
+ * @returns {string}
+ */
+FormatStream.prototype.period = function period(text) {
+  return text + (this.isJaCn ? '。' : '. ')
+};
 
 FormatStream.prototype._transform = function(chunk, encoding, next) {
-  this.push(this.format(chunk.toString(), true));
+  this.push(this.period(this.capitalize(this.clean(chunk.toString()))));
   next();
 };
 
@@ -110,14 +124,33 @@ FormatStream.prototype._transform = function(chunk, encoding, next) {
  */
 FormatStream.prototype.handleResult = function handleResult(result) {
   result = clone(result);
-  result.alternatives = result.alternatives.map(function(alternative) {
-    alternative.transcript = this.format(alternative.transcript, result.final);
-    return alternative;
+  result.alternatives = result.alternatives.map(function(alt) {
+    alt.transcript = this.capitalize(this.clean(alt.transcript));
+    if (result.final) {
+      alt.transcript = this.period(alt.transcript)
+    }
+    if (alt.timestamps) {
+      alt.timestamps = alt.timestamps.map(function(ts, i, arr) {
+        // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
+        ts[0] = this.clean(ts[0]);
+        if (i===0) {
+          ts[0] = this.capitalize(ts[0])
+        }
+        if (i == arr.length-1 &amp;&amp; result.final) {
+          ts[0] = this.period(ts[0])
+        }
+        return ts;
+      }, this);
+      // todo: remove any timestamps without a word (due to cleaning out junk words)
+    }
+    return alt;
   }, this);
   this.emit('result', result);
 };
 
 FormatStream.prototype.promise = require('./promise');
+
+FormatStream.prototype.stop = function(){}; // usually overwritten during the `pipe` event
 
 module.exports = FormatStream;
 </code></pre>
@@ -130,13 +163,13 @@ module.exports = FormatStream;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li></ul><h3>Events</h3><ul><li><a href="MicrophoneStream.html#event:data">data</a></li><li><a href="MicrophoneStream.html#event:raw">raw</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Global</h3><ul><li><a href="global.html#MAX_WAV">MAX_WAV</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li></ul><h3>Events</h3><ul><li><a href="MicrophoneStream.html#event:data">data</a></li><li><a href="MicrophoneStream.html#event:raw">raw</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Global</h3><ul><li><a href="global.html#MAX_WAV">MAX_WAV</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Feb 01 2016 16:06:30 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 02 2016 20:55:26 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

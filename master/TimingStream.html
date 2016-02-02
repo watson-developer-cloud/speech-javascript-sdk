@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: FormatStream</title>
+    <title>JSDoc: Class: TimingStream</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: FormatStream</h1>
+    <h1 class="page-title">Class: TimingStream</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2>FormatStream</h2>
+        <h2>TimingStream</h2>
         
     
 </header>
@@ -40,7 +40,7 @@
 
     
 
-    <h4 class="name" id="FormatStream"><span class="type-signature"></span>new FormatStream<span class="signature">(opts)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="TimingStream"><span class="type-signature"></span>new TimingStream<span class="signature">(opts)</span><span class="type-signature"></span></h4>
 
     
 
@@ -233,7 +233,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="format-stream.js.html">format-stream.js</a>, <a href="format-stream.js.html#line19">line 19</a>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line19">line 19</a>
     </li></ul></dd>
     
 
@@ -282,14 +282,17 @@
 
     
 
-    <h4 class="name" id="capitalize"><span class="type-signature"></span>capitalize<span class="signature">(text)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="getCurrentResult"><span class="type-signature"></span>getCurrentResult<span class="signature">(results)</span><span class="type-signature"> &rarr; {*}</span></h4>
 
     
 
 
 
 <div class="description">
-    Capitalizes the first word of a sentence
+    Returns one of:
+ - undefined if the next result is completely later than the current cutoff
+ - a cropped clone of the next result if it's later than the current cutoff
+ - the original next result object (removing it from the array) if it's completely earlier than the current cutoff
 </div>
 
 
@@ -325,7 +328,7 @@
 
         <tr>
             
-                <td class="name"><code>text</code></td>
+                <td class="name"><code>results</code></td>
             
 
             <td class="type">
@@ -377,7 +380,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="format-stream.js.html">format-stream.js</a>, <a href="format-stream.js.html#line73">line 73</a>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line107">line 107</a>
     </li></ul></dd>
     
 
@@ -411,7 +414,7 @@
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">*</span>
 
 
     </dd>
@@ -426,14 +429,14 @@
 
     
 
-    <h4 class="name" id="clean"><span class="type-signature"></span>clean<span class="signature">(text, isFinal)</span><span class="type-signature"> &rarr; {String}</span></h4>
+    <h4 class="name" id="getNextWordOffset"><span class="type-signature"></span>getNextWordOffset<span class="signature">(lastResultWasFinal, numCurrentTimestamps)</span><span class="type-signature"> &rarr; {*}</span></h4>
 
     
 
 
 
 <div class="description">
-    Formats one or more words, removing special symbols, junk, and spacing for some languages
+    try to figure out when we'll emit the next word
 </div>
 
 
@@ -469,7 +472,7 @@
 
         <tr>
             
-                <td class="name"><code>text</code></td>
+                <td class="name"><code>lastResultWasFinal</code></td>
             
 
             <td class="type">
@@ -487,7 +490,7 @@
 
         <tr>
             
-                <td class="name"><code>isFinal</code></td>
+                <td class="name"><code>numCurrentTimestamps</code></td>
             
 
             <td class="type">
@@ -539,7 +542,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="format-stream.js.html">format-stream.js</a>, <a href="format-stream.js.html#line49">line 49</a>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line119">line 119</a>
     </li></ul></dd>
     
 
@@ -573,7 +576,7 @@
     </dt>
     <dd>
         
-<span class="param-type">String</span>
+<span class="param-type">*</span>
 
 
     </dd>
@@ -683,7 +686,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="format-stream.js.html">format-stream.js</a>, <a href="format-stream.js.html#line97">line 97</a>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line170">line 170</a>
     </li></ul></dd>
     
 
@@ -714,14 +717,14 @@
 
     
 
-    <h4 class="name" id="period"><span class="type-signature"></span>period<span class="signature">(text)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="tick"><span class="type-signature"></span>tick<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    puts a period on the end of a sentence
+    Tick occurs every half second, or when results are received if we're behind schedule.
 </div>
 
 
@@ -730,50 +733,6 @@
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>text</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -809,7 +768,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="format-stream.js.html">format-stream.js</a>, <a href="format-stream.js.html#line83">line 83</a>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line136">line 136</a>
     </li></ul></dd>
     
 
@@ -832,24 +791,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -875,7 +816,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 02 2016 20:55:26 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 02 2016 20:55:27 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
