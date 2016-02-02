@@ -196,6 +196,7 @@ RecognizeStream.prototype.initialize = function () {
          * @event RecognizeStream#results
          * @param {Object} results
          */
+        result.index = data.result_index;
         self.emit('result', result);
         if (result.final && result.alternatives) {
           /**

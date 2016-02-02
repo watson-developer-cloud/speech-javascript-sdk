@@ -8,11 +8,15 @@
 
 <section>
     <h2>Transcribe File, Streaming</h2>
-    <input type="file" id="audiofile"> <button id="button">Transcribe and Play</button>
+    <input type="file" id="audiofile"> <button id="button">Transcribe and Play</button> <button id="stop">Stop</button>
     <p><small><i>Supported types are wav, ogg/opus (not ogg/vorbis), and flac. However, most browsers do not support flac.</i></small></p>
 
     <h2>Output:</h2>
     <div id="output">--</div>
+
+    <h2>TimingStream Output:</h2>
+    <p><small><i>When transcription results are available faster than real-time (such as when simultaneously uploading and playing a file on a high-bandwidth connection), the TimingStream slows them down results to real-time.</i></small></p>
+    <div id="realtime-output">--</div>
 </section>
 
 <script src="watson-speech.js"></script>
@@ -20,44 +24,62 @@
 
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
+function renderStream(stream, $output) {
+    $output.html('');
+
+    // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
+    var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
+
+    // a result is approximately equivalent to a sentence
+    stream.on('result', function(result) {
+        // update the text for the current sentence with the default alternative.
+        // there may be multiple alternatives but this example app ignores all but the first.
+        $curSentence.html(result.alternatives[0].transcript);
+        if (result.final) {
+            // if we have the final text for that sentence, start a new one
+            $curSentence = $('<span/>').appendTo($output);
+        }
+    });
+
+    stream.on('error', function(err) {
+        console.log(err);
+    });
+
+    stream.on('playback-error', function(err) {
+        console.log(err);
+    });
+}
+
+
 $(function() {
-    var $output = $('#output');
+
+    var stream;
 
     $('#button').click(function () {
         $.get('/token').then(function (token) {
-            $output.html('');
 
-            var stream = WatsonSpeech.SpeechToText.recognizeBlob({
+            stream = WatsonSpeech.SpeechToText.recognizeBlob({
                 token: token,
                 data: $('#audiofile')[0].files[0],
-                playFile: true
+                playFile: true,
+                max_alternatives: 1 // default is 3, but only the first one includes word timing data
             })
-            .pipe(new WatsonSpeech.SpeechToText.FormatStream()); // optional
+            .pipe(new WatsonSpeech.SpeechToText.FormatStream());// optional
 
-            // todo: flow control so that words appear approximately when played
+            renderStream(stream, $('#output'));
 
-            // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
-            var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
+            // optional, slows down results to real-time (only useful for recognizeBlob() with playFile: true)
+            var realtimeStream = stream.pipe(new WatsonSpeech.SpeechToText.TimingStream());
 
-            // a result is approximately equivalent to a sentence
-            stream.on('result', function(result) {
-                // update the text for the current sentence with the default alternative.
-                // there may be multiple alternatives but this example app ignores all but the first.
-                $curSentence.html(result.alternatives[0].transcript);
-                if (result.final) {
-                    // if we have the final text for that sentence, start a new one
-                    $curSentence = $('<span/>').appendTo($output);
-                }
-            });
+            renderStream(realtimeStream, $('#realtime-output'));
 
-            stream.on('error', function(err) {
-                console.log(err);
-            });
-
-            stream.on('playback-error', function(err) {
-                console.log(err);
-            });
         });
+    });
+
+    $('#stop').click(function() {
+        if (stream) {
+            stream.stop();
+        }
     });
 });
 </script></code></pre>

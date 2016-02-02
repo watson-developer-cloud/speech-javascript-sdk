@@ -26,9 +26,12 @@ function FormatStream(opts) {
 
   this.isJaCn = ((this.opts.model.substring(0,5) === 'ja-JP') || (this.opts.model.substring(0,5) === 'zh-CN'));
 
-  var handleResult = this.handleResult.bind(this);
+  var self = this;
   this.on('pipe', function(source) {
-    source.on('result', handleResult);
+    source.on('result', self.handleResult.bind(self));
+    if(source.stop) {
+      self.stop = source.stop.bind(source);
+    }
   });
 }
 util.inherits(FormatStream, Transform);
@@ -110,6 +113,7 @@ FormatStream.prototype.handleResult = function handleResult(result) {
         }
         return ts;
       }, this);
+      // todo: remove any timestamps without a word (due to cleaning out junk words)
     }
     return alt;
   }, this);
@@ -117,5 +121,7 @@ FormatStream.prototype.handleResult = function handleResult(result) {
 };
 
 FormatStream.prototype.promise = require('./promise');
+
+FormatStream.prototype.stop = function(){}; // usually overwritten during the `pipe` event
 
 module.exports = FormatStream;

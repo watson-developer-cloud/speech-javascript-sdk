@@ -13,6 +13,7 @@ module.exports = {
   FilePlayer: require('./file-player'),
   getUserMedia: require('./getusermedia'),
   FormatStream: require('./format-stream'),
+  TimingStream: require('./timing-stream'),
 
   // external (provided here to allow the lib to be used standalone w/out browserify)
   MicrophoneStream: require('microphone-stream'),
