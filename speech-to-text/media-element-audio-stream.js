@@ -22,19 +22,23 @@ function MediaElementAudioStream(source, opts) {
     // Possible values: null, 256, 512, 1024, 2048, 4096, 8192, 16384
     bufferSize:null,
     muteSource: false,
-    autoplay: true
+    autoplay: true,
+    crossOrigin: "anonymous" // required for cross-domain audio playback
   }, opts);
 
   // We can only emit one channel's worth of audio, so only one input. (Who has multiple microphones anyways?)
   var inputChannels = 1;
 
-  // we shouldn't need any output channels (going back to the browser), but chrome is buggy and won't give us any audio without one
+  // we shouldn't need any output channels (going back to the browser - that's what the gain node is for), but chrome is buggy and won't give us any audio without one
   var outputChannels = 1;
 
   Readable.call(this, opts);
 
   var self = this;
   var recording = true;
+
+  // I can't seem to find any documentation for this on <audio> elements, but it seems to be required for cross-domain usage (in addition to CORS headers)
+  //source.crossOrigin = opts.crossOrigin;
 
   /**
    * Convert and emit the raw audio data
@@ -85,15 +89,29 @@ function MediaElementAudioStream(source, opts) {
   // other half of workaround for chrome bugs
   scriptProcessor.connect(context.destination);
 
-  this.stop = function() {
+  // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
+  function start() {
+    source.play();
+    source.removeEventListener("canplaythrough", start);
+  }
+  if (opts.autoplay) {
+    source.addEventListener("canplaythrough", start);
+  }
+
+  function end() {
     recording = false;
-    source.pause();
-    source.currentTime = 0;
+    scriptProcessor.disconnect();
     self.push(null);
     self.emit('close');
+  }
+  source.addEventListener("ended", end);
+
+  this.stop = function() {
+    source.pause();
+    end();
   };
 
-  source.addEventListener("ended", this.stop);
+  source.addEventListener("error", this.emit.bind(this, 'error'));
 
   process.nextTick(function() {
     self.emit('format', {
@@ -103,16 +121,13 @@ function MediaElementAudioStream(source, opts) {
       signed: true,
       float: true
     });
-    if (opts.autoplay) {
-      source.play();
-    }
   });
 
 }
 util.inherits(MediaElementAudioStream, Readable);
 
 MediaElementAudioStream.prototype._read = function(/* bytes */) {
-  // no-op, (flow-control doesn't really work on sound)
+  // no-op, (back-pressure flow-control doesn't really work on sound)
 };
 
 /**

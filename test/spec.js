@@ -29,18 +29,18 @@ function getAudio() {
 // integration = testing against actual watson servers
 var offline = process.env.TEST_MODE !== 'integration';
 var chrome = navigator.userAgent.indexOf('Chrome') >=0;
+var firefox = navigator.userAgent.indexOf('Firefox') >=0;
 var travis = !!process.env.TRAVIS;
 
 describe("WatsonSpeechToText", function() {
 
   this.timeout(30*1000);
 
-  // not sure why, but I can't convince firefox or chrome to actually play <audio> elements during tests
-  // also, on travis, the element never appears to stop playing (or, more likely, it nevers starts in the first place)
+  // firefox on travis always times out for this test, not sure why (it might be due to travis's older version of ff)
   it('should transcribe <audio> elements', function(done) {
     getConfig().then(function(cfg) {
       var audioElement = new Audio();
-      audioElement.crossOrigin = true;
+      audioElement.crossOrigin = "anonymous";
       audioElement.src = "http://localhost:9877/audio.wav";
       cfg.element = audioElement;
       cfg.muteSource = true;

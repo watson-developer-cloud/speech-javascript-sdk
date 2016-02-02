@@ -38,12 +38,12 @@ var reRepeatedCharacter = /(.)\1{2,}/g; // detect the same character repeated th
 var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
 
 /**
- * Formats a single alternative of a final or interim result
+ * Formats one or more words, removing special symbols, junk, and spacing for some languages
  * @param text
  * @param isFinal
  * @returns {String}
  */
-FormatStream.prototype.format = function format(text, isFinal) {
+FormatStream.prototype.clean = function clean(text) {
   // clean out "junk"
   text = text.trim().replace(reHesitation, this.opts.hesitation)
     .replace(reRepeatedCharacter, '')
@@ -54,24 +54,35 @@ FormatStream.prototype.format = function format(text, isFinal) {
     return text;
   }
 
-  // capitalize first word
-  text = text.charAt(0).toUpperCase() + text.substring(1);
-
   // remove spaces for Japanese and Chinese
   if (this.isJaCn) {
     text = text.replace(/ /g,'');
   }
 
-  // if final, insert a period and restore the trailing space
-  if (isFinal) {
-      text = text + (this.isJaCn ? '。' : '. ');
-  }
   return text;
 };
 
+/**
+ * Capitalizes the first word of a sentence
+ * @param text
+ * @returns {string}
+ */
+FormatStream.prototype.capitalize = function capitalize(text) {
+  // capitalize first word, returns '' in the case of an empty word
+  return text.charAt(0).toUpperCase() + text.substring(1);
+};
+
+/**
+ * puts a period on the end of a sentence
+ * @param text
+ * @returns {string}
+ */
+FormatStream.prototype.period = function period(text) {
+  return text + (this.isJaCn ? '。' : '. ')
+};
 
 FormatStream.prototype._transform = function(chunk, encoding, next) {
-  this.push(this.format(chunk.toString(), true));
+  this.push(this.period(this.capitalize(this.clean(chunk.toString()))));
   next();
 };
 
@@ -82,9 +93,25 @@ FormatStream.prototype._transform = function(chunk, encoding, next) {
  */
 FormatStream.prototype.handleResult = function handleResult(result) {
   result = clone(result);
-  result.alternatives = result.alternatives.map(function(alternative) {
-    alternative.transcript = this.format(alternative.transcript, result.final);
-    return alternative;
+  result.alternatives = result.alternatives.map(function(alt) {
+    alt.transcript = this.capitalize(this.clean(alt.transcript));
+    if (result.final) {
+      alt.transcript = this.period(alt.transcript)
+    }
+    if (alt.timestamps) {
+      alt.timestamps = alt.timestamps.map(function(ts, i, arr) {
+        // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
+        ts[0] = this.clean(ts[0]);
+        if (i===0) {
+          ts[0] = this.capitalize(ts[0])
+        }
+        if (i == arr.length-1 && result.final) {
+          ts[0] = this.period(ts[0])
+        }
+        return ts;
+      }, this);
+    }
+    return alt;
   }, this);
   this.emit('result', result);
 };

@@ -113,3 +113,5 @@ In addition to the standard [Node.js stream events](https://nodejs.org/api/strea
 * run integration tests on travis (fall back to offline server for pull requests)
 * more tests in general
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
+* improve docs
+* look at supporting/migrating to https://streams.spec.whatwg.org/ / https://github.com/whatwg/streams once it's ready
