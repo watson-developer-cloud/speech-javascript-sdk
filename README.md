@@ -86,25 +86,22 @@ Pipe a `RecognizeStream` to a format stream, and the resulting text and `results
  *  Add a period to the end
  *  Fix any "cruft" in the transcription
  *  A few other tweaks for asian languages and such.
- 
-#### Methods
 
-* `.promise()`: returns a promise that will resolve to the final text, formatted. 
-  Note that you must either set `continuous: false` or call `.stop()` on the `RecognizeStream` to make the promise resolve in a timely manner.
-  
-#### Events
-In addition to the standard [Node.js stream events](https://nodejs.org/api/stream.html), the following events are fired:
+Inherits `.promise()` and `.stop()` methods and `result` event from the `RecognizeStream`.
 
-* `result`: an individual result object from the results array. 
-  May include final or interim transcription, alternatives, word timing, confidence scores, etc. depending on passed in options.
-  Note: Listening for `result` will automatically put the stream into flowing mode.
+
+### Class `TimingStream()`
+
+For use with `.recognizeBlob({playFile: true})` - slows the results down to match the audio. Pipe in the `RecognizeStream` (or `FormatStream`) and listen for results as usual.
+
+Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 
 
 ## todo
 
+* Fix bugs around `.stop()
 * Solidify API
 * (eventually) add text-to-speech support
-* add a WordTimingStream (that slows down output to not go fater than word timings)
 * add an example that includes alternatives and word confidence scores
 * automate dist/ generation (and possibly move it)
 * enable eslint
@@ -115,3 +112,4 @@ In addition to the standard [Node.js stream events](https://nodejs.org/api/strea
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
 * improve docs
 * look at supporting/migrating to https://streams.spec.whatwg.org/ / https://github.com/whatwg/streams once it's ready
+* Add Text to Speech once CORS support is avaliable.

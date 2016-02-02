@@ -194,8 +194,6 @@ TimingStream.prototype.handleResult = function handleResult(result) {
   }
 };
 
-TimingStream.prototype.promise = require('./promise');
-
 TimingStream.prototype.stop = function(){}; // usually overwritten during the `pipe` event
 
 
