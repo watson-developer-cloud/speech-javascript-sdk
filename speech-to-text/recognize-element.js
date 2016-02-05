@@ -16,7 +16,7 @@
 
 'use strict';
 var MediaElementAudioStream = require('./media-element-audio-stream');
-var WebAudioTo16leStream = require('./webaudio-wav-stream');
+var L16 = require('./webaudio-l16-stream');
 var RecognizeStream = require('./recognize-stream.js');
 
 /**
@@ -33,13 +33,13 @@ module.exports = function recognizeElement(options) {
     throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
   }
 
-  //options['content-type'] = 'audio/l16;rate=16000';
+  options['content-type'] = 'audio/l16;rate=16000'; // raw wav audio (no header)
   var recognizeStream = new RecognizeStream(options);
 
   var sourceStream = new MediaElementAudioStream(options.element , options);
 
   sourceStream
-    .pipe(new WebAudioTo16leStream())
+    .pipe(new L16())
     .pipe(recognizeStream);
 
   recognizeStream.on('stop', sourceStream.stop.bind(sourceStream));

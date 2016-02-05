@@ -20,8 +20,7 @@
 var getUserMedia = require('./getusermedia');
 var MicrophoneStream = require('microphone-stream');
 var RecognizeStream = require('./recognize-stream.js');
-var WebAudioTo16leStream = require('./webaudio-wav-stream.js');
-
+var L16 = require('./webaudio-l16-stream.js');
 
 /**
  * Create and return a RecognizeStream from the user's microphone
@@ -37,13 +36,16 @@ module.exports = function recognizeMicrophone(options) {
     throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
   }
 
-  //options['content-type'] = 'audio/l16;rate=16000';
+  options['content-type'] = 'audio/l16;rate=16000'; // raw wav audio (no header)
   var recognizeStream = new RecognizeStream(options);
 
   getUserMedia({video: false, audio: true}).then(function(mic) {
-    var micStream = new MicrophoneStream(mic, options);
+    var micStream = new MicrophoneStream(mic, {
+      objectMode: true,
+      bufferSize: options.bufferSize
+    });
     micStream
-      .pipe(new WebAudioTo16leStream())
+      .pipe(new L16())
       .pipe(recognizeStream);
 
     recognizeStream.on('stop', micStream.stop.bind(micStream));

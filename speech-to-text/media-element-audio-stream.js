@@ -20,10 +20,12 @@ function MediaElementAudioStream(source, opts) {
     // buffer size to balance between latency and audio quality."
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
     // Possible values: null, 256, 512, 1024, 2048, 4096, 8192, 16384
-    bufferSize:null,
+    // however, webkitAudioContext (safari) requires it to be set
+    bufferSize: (typeof AudioContext != "undefined" ? null : 4096),
     muteSource: false,
     autoplay: true,
-    crossOrigin: "anonymous" // required for cross-domain audio playback
+    crossOrigin: "anonymous", // required for cross-domain audio playback
+    objectMode: true // true = emit AudioBuffers w/ audio + some metadata, false = emite node.js Buffers (with binary data only
   }, opts);
 
   // We can only emit one channel's worth of audio, so only one input. (Who has multiple microphones anyways?)
@@ -38,7 +40,7 @@ function MediaElementAudioStream(source, opts) {
   var recording = true;
 
   // I can't seem to find any documentation for this on <audio> elements, but it seems to be required for cross-domain usage (in addition to CORS headers)
-  //source.crossOrigin = opts.crossOrigin;
+  source.crossOrigin = opts.crossOrigin;
 
   /**
    * Convert and emit the raw audio data
@@ -48,32 +50,15 @@ function MediaElementAudioStream(source, opts) {
   function processAudio(e) {
     // onaudioprocess can be called at least once after we've stopped
     if (recording) {
-
-      var raw = e.inputBuffer.getChannelData(0);
-
-      /**
-       * @event MicrophoneStream#raw
-       * @param {Float32Array} data raw audio data from browser - each sample is a number from -1 to 1
-       */
-      self.emit('raw', raw);
-
-      // Standard (non-object mode) Node.js streams only accepts Buffers or Strings
-      var nodebuffer = new Buffer(raw.buffer);
-
-      /**
-       * Emit the readable/data event with a node-style buffer.
-       * Note: this is essentially a new DataView on the same underlying ArrayBuffer.
-       * The raw audio data is not actually coppied or changed.
-       *
-       * @event MicrophoneStream#data
-       * @param {Buffer} chunk node-style buffer with audio data; buffers are essentially a Uint8Array
-       */
-      self.push(nodebuffer);
+      // todo: interleave channels in binary mode
+      self.push( opts.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)) );
     }
   }
 
-  var context = new AudioContext();
-  var audioInput = context.createMediaElementSource(source);
+  var AudioContext = window.AudioContext || window.webkitAudioContext;
+  // cache the source node & context since it's not possible to recreate it later
+  var context = source.context = source.context || new AudioContext();
+  var audioInput = source.node  = source.node || context.createMediaElementSource(source);
   var scriptProcessor = context.createScriptProcessor(opts.bufferSize, inputChannels, outputChannels);
 
   scriptProcessor.onaudioprocess = processAudio;
@@ -84,23 +69,40 @@ function MediaElementAudioStream(source, opts) {
     gain.connect(context.destination);
   }
 
-  audioInput.connect(scriptProcessor);
-
-  // other half of workaround for chrome bugs
-  scriptProcessor.connect(context.destination);
+  /**
+   * Setup script processor to extract audio and also re-connect it via a no-op gain node if desired
+   *
+   * Delayed to avoid processing the stream of silence received before the file begins playing
+   *
+   */
+  function connect() {
+    audioInput.connect(scriptProcessor);
+    // other half of workaround for chrome bugs
+    scriptProcessor.connect(context.destination);
+    source.removeEventListener("playing", connect);
+  }
+  source.addEventListener("playing", connect);
 
   // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
   function start() {
     source.play();
     source.removeEventListener("canplaythrough", start);
   }
   if (opts.autoplay) {
-    source.addEventListener("canplaythrough", start);
+    // play immediately if we have enough data, otherwise wait for the canplaythrough event
+    if(source.readyState === source.HAVE_ENOUGH_DATA) {
+      source.play();
+    } else {
+      source.addEventListener("canplaythrough", start);
+    }
   }
 
   function end() {
     recording = false;
     scriptProcessor.disconnect();
+    audioInput.disconnect();
+    //context.close(); // this prevents us from re-using the same audio element until the page is refreshed
     self.push(null);
     self.emit('close');
   }
@@ -114,6 +116,7 @@ function MediaElementAudioStream(source, opts) {
   source.addEventListener("error", this.emit.bind(this, 'error'));
 
   process.nextTick(function() {
+    // this is more useful for binary mode than object mode, but it won't hurt either way
     self.emit('format', {
       channels: 1,
       bitDepth: 32,

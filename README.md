@@ -3,16 +3,21 @@ IBM Watson Speech To Text Browser Client Library
 
 Allows you to easily add voice recognition to any web app with minimal code. 
 
+**Warning** This library is still early-stage and may see significant breaking changes.
+
 **For Web Browsers Only** This library is primarily intended for use in browsers. 
 Check out [watson-developer-cloud](https://www.npmjs.com/package/watson-developer-cloud) to use Watson services (speech and others) from Node.js.
 
-**Warning** This library is still early-stage and may see significant breaking changes.
+However, a server-side component is required to generate auth tokens. 
+The examples/ folder includes a node.js one, and SDKs are available for [Node.js](https://github.com/watson-developer-cloud/node-sdk#authorization), 
+[Java](https://github.com/watson-developer-cloud/java-sdk), 
+[Python](https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py), 
+and there is also a [REST API](http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-tokens.shtml).
 
 See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples
 
 This library is built with [browserify](http://browserify.org/) and easy to use in browserify-based projects (`npm install --save watson-speech`), but you can also grab the compiled bundle from the 
 `dist/` folder and use it as a standalone library.
-
 
 ## `WatsonSpeech.SpeechToText` Basic API
 
@@ -101,7 +106,8 @@ Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 
 * Fix bugs around `.stop()
 * Solidify API
-* (eventually) add text-to-speech support
+* support objectMode instead of having random events
+*  add text-to-speech support
 * add an example that includes alternatives and word confidence scores
 * automate dist/ generation (and possibly move it)
 * enable eslint
@@ -111,5 +117,5 @@ Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 * more tests in general
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
 * improve docs
-* look at supporting/migrating to https://streams.spec.whatwg.org/ / https://github.com/whatwg/streams once it's ready
-* Add Text to Speech once CORS support is avaliable.
+
+
