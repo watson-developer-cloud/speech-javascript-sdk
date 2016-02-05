@@ -4,11 +4,10 @@
   "description": "IBM Watson Speech to Text SDK for web browsers.",
   "main": "index.js",
   "scripts": {
-    "start": "karma start test/resources/karma.conf.js",
+    "watch-test": "karma start test/resources/karma.conf.js",
     "lint": "eslint --config test/resources/.eslintrc.js *.js src/*.js",
     "test": "karma start test/resources/karma.conf.js --single-run",
     "test-integration": "TEST_MODE=integration karma start test/resources/karma.conf.js --single-run",
-    "watch": "karma start",
     "browserify": "browserify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js",
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
     "build": "npm run browserify",
