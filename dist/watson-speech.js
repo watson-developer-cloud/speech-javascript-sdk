@@ -5808,19 +5808,13 @@ function FormatStream(opts) {
   this.opts = util._extend({
     model: '', // some models should have all spaces removed
     hesitation: '\u2026', // ellipsis
-    decodeStrings: true
+    decodeStrings: true,
+    objectMode: true
   }, opts);
   Transform.call(this, opts);
 
   this.isJaCn = ((this.opts.model.substring(0,5) === 'ja-JP') || (this.opts.model.substring(0,5) === 'zh-CN'));
-
-  var self = this;
-  this.on('pipe', function(source) {
-    source.on('result', self.handleResult.bind(self));
-    if(source.stop) {
-      self.stop = source.stop.bind(source);
-    }
-  });
+  this._transform = opts.objectMode ? this.formatResult : this.formatString;
 }
 util.inherits(FormatStream, Transform);
 
@@ -5872,7 +5866,7 @@ FormatStream.prototype.period = function period(text) {
   return text + (this.isJaCn ? '。' : '. ')
 };
 
-FormatStream.prototype._transform = function(chunk, encoding, next) {
+FormatStream.prototype.formatString = function(chunk, encoding, next) {
   this.push(this.period(this.capitalize(this.clean(chunk.toString()))));
   next();
 };
@@ -5882,7 +5876,7 @@ FormatStream.prototype._transform = function(chunk, encoding, next) {
  *
  * @param result
  */
-FormatStream.prototype.handleResult = function handleResult(result) {
+FormatStream.prototype.formatResult = function handleResult(result) {
   result = clone(result);
   result.alternatives = result.alternatives.map(function(alt) {
     alt.transcript = this.capitalize(this.clean(alt.transcript));
@@ -6368,20 +6362,21 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; //, 'X-Watson-Learning-Opt
  * @param options
  * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
  * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] base URL for service
- * @param {String} [options.content-type='audio/wav'] - content type of audio; should be automatically determined in most cases
- * @param {Boolean} [options.interim_results=true] - Send back non-final previews of each "sentence" as it is being processed
+ * @param {String} [options.content-type='audio/wav'] - content type of audio; can be automatically determined from file header in most cases. only wav, flac, and ogg/opus are supported
+ * @param {Boolean} [options.interim_results=false] - Send back non-final previews of each "sentence" as it is being processed. Defaults to true when in objectMode.
  * @param {Boolean} [options.continuous=true] - set to false to automatically stop the transcription after the first "sentence"
- * @param {Boolean} [options.word_confidence=true] - include confidence scores with results
- * @param {Boolean} [options.timestamps=true] - include timestamps with results
- * @param {Number} [options.max_alternatives=3] - maximum number of alternative transcriptions to include
+ * @param {Boolean} [options.word_confidence=false] - include confidence scores with results. Defaults to true when in objectMode.
+ * @param {Boolean} [options.timestamps=false] - include timestamps with results. Defaults to true when in objectMode.
+ * @param {Number} [options.max_alternatives=1] - maximum number of alternative transcriptions to include. Defaults to 3 when in objectMode.
  * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity
-
+ * @param {Boolean} [options.objectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Changes several other defaults.
+ *
  * //todo: investigate other options at http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/apis/#!/speech-to-text/recognizeSessionless
  *
  * @constructor
  */
 function RecognizeStream(options) {
-  Duplex.call(this, options);
+  Duplex.call(this, {readableObjectMode: options && (options.objectMode)});
   this.options = options;
   this.listening = false;
   this.initialized = false;
@@ -6424,16 +6419,32 @@ RecognizeStream.prototype.initialize = function () {
 
   var url = (options.url || "wss://stream.watsonplatform.net/speech-to-text/api").replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
+  // turn off all the extras if we're just outputting a string with a single final result
+  var defaults = {
+    interim_results: false,
+    word_confidence: false,
+    timestamps: false,
+    max_alternatives: 1
+  };
+
+  // but turn everything on if we're in objectMode and the end user can consume it
+  var objectModeDefaults = {
+    interim_results: true,
+    word_confidence: true,
+    timestamps: true,
+    max_alternatives: 3
+  };
+
   var openingMessage = util._extend({
     action: 'start',
     'content-type': 'audio/wav',
     continuous: true,
-    interim_results: true,
-    word_confidence: true,
-    timestamps: true,
     max_alternatives: 3,
     inactivity_timeout: 30
-  }, pick(options, OPENING_MESSAGE_PARAMS_ALLOWED));
+  },
+    options.objectMode ? objectModeDefaults : defaults,
+    pick(options, OPENING_MESSAGE_PARAMS_ALLOWED)
+  );
 
 
   var self = this;
@@ -6513,7 +6524,7 @@ RecognizeStream.prototype.initialize = function () {
        * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
        * @event RecognizeStream#results
        * @param {Object} results
-       * @deprecated - use the 'result' event (singular) instead
+       * @deprecated - use objectMode instead
        */
       self.emit('results', data.results);
 
@@ -6523,6 +6534,7 @@ RecognizeStream.prototype.initialize = function () {
          * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
          * @event RecognizeStream#results
          * @param {Object} results
+         * @deprecated - use objectMode instead
          */
         result.index = data.result_index;
         self.emit('result', result);
@@ -6532,7 +6544,12 @@ RecognizeStream.prototype.initialize = function () {
            * @event RecognizeStream#data
            * @param {String} transcript
            */
-          self.push(result.alternatives[0].transcript, 'utf8'); // this is the "data" event that can be easily piped to other streams
+          if (options.objectMode) {
+            self.push(result); // this is the "data" event that can be easily piped to other streams
+          } else {
+            self.push(result.alternatives[0].transcript, 'utf8'); // this is the "data" event that can be easily piped to other streams
+          }
+
         }
       });
     } else {

@@ -20,19 +20,13 @@ function FormatStream(opts) {
   this.opts = util._extend({
     model: '', // some models should have all spaces removed
     hesitation: '\u2026', // ellipsis
-    decodeStrings: true
+    decodeStrings: true,
+    objectMode: true
   }, opts);
   Transform.call(this, opts);
 
   this.isJaCn = ((this.opts.model.substring(0,5) === 'ja-JP') || (this.opts.model.substring(0,5) === 'zh-CN'));
-
-  var self = this;
-  this.on('pipe', function(source) {
-    source.on('result', self.handleResult.bind(self));
-    if(source.stop) {
-      self.stop = source.stop.bind(source);
-    }
-  });
+  this._transform = opts.objectMode ? this.formatResult : this.formatString;
 }
 util.inherits(FormatStream, Transform);
 
@@ -84,7 +78,7 @@ FormatStream.prototype.period = function period(text) {
   return text + (this.isJaCn ? '。' : '. ')
 };
 
-FormatStream.prototype._transform = function(chunk, encoding, next) {
+FormatStream.prototype.formatString = function(chunk, encoding, next) {
   this.push(this.period(this.capitalize(this.clean(chunk.toString()))));
   next();
 };
@@ -94,7 +88,7 @@ FormatStream.prototype._transform = function(chunk, encoding, next) {
  *
  * @param result
  */
-FormatStream.prototype.handleResult = function handleResult(result) {
+FormatStream.prototype.formatResult = function handleResult(result) {
   result = clone(result);
   result.alternatives = result.alternatives.map(function(alt) {
     alt.transcript = this.capitalize(this.clean(alt.transcript));
