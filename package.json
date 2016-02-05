@@ -12,7 +12,6 @@
     "browserify": "browserify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js",
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
     "build": "npm run browserify",
-    "prepublish": "npm run build",
     "doc": "jsdoc -c jsdoc/config.json",
     "watch-doc": "nodemon --watch lib/ --watch services/ --watch jsdoc/ --watch package.json --ext js,tmpl --exec npm run doc"
   },
@@ -39,7 +38,7 @@
   },
   "dependencies": {
     "clone": "^1.0.2",
-    "microphone-stream": "^2.0.2",
+    "microphone-stream": "^3.0.1",
     "object.pick": "^1.1.1",
     "readable-blob-stream": "^1.1.0",
     "websocket": "^1.0.22"
