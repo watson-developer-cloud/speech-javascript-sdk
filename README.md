@@ -117,5 +117,5 @@ Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 * more tests in general
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
 * improve docs
-
+* check for a bug with the timing stream cutting off early
 
