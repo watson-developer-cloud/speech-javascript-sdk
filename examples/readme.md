@@ -17,11 +17,10 @@ Prerequisite
 Setup
 -----
 
-1. Run `npm install; npm run build` in the project root to generate a `dist/watson-speech.js` file (or grab a copy from GitHub releases and drop it into `examples/public/`)
-2. `cd` into the `examples/` directory and run `npm install` to grab dependencies
-3. edit `token-server.js` to include your service credentials
-4. run `npm start`
-5. Open your browser to http://localhost:3000/ to see the examples.
+1. `cd` into the `examples/` directory and run `npm install` to grab dependencies
+2. edit `token-server.js` to include your service credentials
+3. run `npm start`
+4. Open your browser to http://localhost:3000/ to see the examples.
 
 
 Notes
