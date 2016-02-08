@@ -36,6 +36,8 @@ Options: No direct options, all provided options are passed to MicrophoneStream 
 Requires the `getUserMedia` API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
 Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features
 
+Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
+
 ### `.recognizeElement({element, token})` -> `RecognizeStream`
 
 Options: 
@@ -44,19 +46,24 @@ Options:
 
 Requires that the browser support MediaElement and whatever audio codec is used in your media file.
 
-Will automatically call `.play()` the `element`. Calling `.stop()` on the returned RecognizeStream will automatically call `.stop()` on the `element`.
+Will automatically call `.play()` the `element`, set `options.autoplay=false` to  disable. Calling `.stop()` on the returned stream will automatically call `.stop()` on the `element`.
+
+Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
 
 ### `.recognizeBlob({data, token})` -> `RecognizeStream`
 
 Options: 
 * `data`: a `Blob` (or `File`) instance. 
-* `playFile`: (optional, default=`false`) Attempt to also play the file locally while uploading it for transcription 
+* `play`: (optional, default=`false`) Attempt to also play the file locally while uploading it for transcription 
 * Other options passed to RecognizeStream
 
-`playFile`requires that the browser support the format; most browsers support wav and ogg/opus, but not flac.) 
+`play`requires that the browser support the format; most browsers support wav and ogg/opus, but not flac.) 
 Will emit a `playback-error` on the RecognizeStream if playback fails. 
 Playback will automatically stop when `.stop()` is called on the RecognizeStream.
 
+Pipes results through a `{TimingStream}` by if `options.play=true`, set `options.realtime=false` to disable.
+
+Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
 
 ### Class `RecognizeStream()`
 
@@ -99,7 +106,7 @@ Inherits `.promise()` and `.stop()` methods and `result` event from the `Recogni
 
 ### Class `TimingStream()`
 
-For use with `.recognizeBlob({playFile: true})` - slows the results down to match the audio. Pipe in the `RecognizeStream` (or `FormatStream`) and listen for results as usual.
+For use with `.recognizeBlob({play: true})` - slows the results down to match the audio. Pipe in the `RecognizeStream` (or `FormatStream`) and listen for results as usual.
 
 Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 
@@ -107,17 +114,19 @@ Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 ## Changelog
 
 ### v0.7
-* Changed playFile option of recognizeBlob to play to match docs
-* Added options.format to recognize* to pipe text through a FormatStream (default: true)
-* Added close and end events to TimingStream
-
+* Changed `playFile` option of `recognizeBlob()` to just `play`, corrected default
+* Added `options.format=true` to `recognize*()` to pipe text through a FormatStream
+* Added `options.realtime=options.play` to `recognizeBlob()` to automatically pipe results through a TimingStream when playing locally
+* Added `close` and `end` events to TimingStream
+* Added `delay` option to `TimingStream`
+* Moved compiled binary to GitHub Releases (in addition to uncompiled source on npm).
+* Misc. doc and internal improvements
 
 ## todo
 
-* Fix bugs around `.stop()
 * Solidify API
 * support objectMode instead of having random events
-*  add text-to-speech support
+* add text-to-speech support
 * add an example that includes alternatives and word confidence scores
 * enable eslint
 * break components into standalone npm modules where it makes sense
