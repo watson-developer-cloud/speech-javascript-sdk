@@ -1,6 +1,6 @@
 {
   "name": "watson-speech",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "IBM Watson Speech to Text SDK for web browsers.",
   "main": "index.js",
   "scripts": {
