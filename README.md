@@ -109,7 +109,6 @@ Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 * support objectMode instead of having random events
 *  add text-to-speech support
 * add an example that includes alternatives and word confidence scores
-* automate dist/ generation (and possibly move it)
 * enable eslint
 * break components into standalone npm modules where it makes sense
 * record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, etc.)
