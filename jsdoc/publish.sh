@@ -29,6 +29,8 @@ if [ "$TRAVIS_REPO_SLUG" == "watson-developer-cloud/speech-javascript-sdk" ] && 
 
   popd
 
+  rm -rf gh-pages # clean up so that this doesn't mess with deployment
+
   echo -e "Published JSDoc for $TRAVIS_BRANCH to gh-pages.\n"
 
 else
