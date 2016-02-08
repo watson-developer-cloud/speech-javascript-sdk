@@ -21,10 +21,10 @@ function getContentType(file) {
 }
 
 function FilePlayer(file, contentType) {
-  var output = new Audio();
-  if (output.canPlayType(contentType)) {
-    output.src = URL.createObjectURL(new Blob([file], {type: contentType}));
-    output.play();
+  var audio = this.audio = new Audio();
+  if (audio.canPlayType(contentType)) {
+    audio.src = URL.createObjectURL(new Blob([file], {type: contentType}));
+    audio.play();
   } else {
     // if we emit an error, it prevents the promise from returning the actual result
     // however, most browsers do not support flac, so this is a reasonably scenario
@@ -34,8 +34,8 @@ function FilePlayer(file, contentType) {
     throw err;
   }
   this.stop = function stop() {
-    output.pause();
-    output.currentTime = 0;
+    audio.pause();
+    audio.currentTime = 0;
   }
 }
 
