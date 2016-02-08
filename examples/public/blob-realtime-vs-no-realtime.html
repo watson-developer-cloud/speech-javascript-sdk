@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Promise Example - Watson Speech to Text</title>
+</head>
+<body>
+
+<section>
+    <h2>Transcribe File, Comparing <code>{realtime: true}</code> to <code>{realtime: false}</code></h2>
+    <input type="file" id="audiofile"> <button id="button">Transcribe and Play</button> <button id="stop">Stop</button>
+    <p><small><i>Supported types are wav, ogg/opus (not ogg/vorbis), and flac. However, most browsers do not support flac.</i></small></p>
+
+    <h2><code>realtime: false</code> Output:</h2>
+    <div id="output">--</div>
+
+    <h2><code>realtime: true</code> Output:</h2>
+    <p><small><i>When transcription results are available faster than real-time (such as when simultaneously uploading and playing a file on a high-bandwidth connection), the TimingStream slows them down results to real-time.</i></small></p>
+    <div id="realtime-output">--</div>
+</section>
+
+<script src="watson-speech.js"></script>
+<script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+
+<h2>Code for this demo:</h2>
+<pre><code><script style="display: block;">
+function renderStream(stream, $output) {
+    $output.html('');
+
+    // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
+    var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
+
+    // a result is approximately equivalent to a sentence
+    stream.on('result', function(result) {
+        // update the text for the current sentence with the default alternative.
+        // there may be multiple alternatives but this example app ignores all but the first.
+        $curSentence.html(result.alternatives[0].transcript);
+        if (result.final) {
+            // if we have the final text for that sentence, start a new one
+            $curSentence = $('<span/>').appendTo($output);
+        }
+    });
+
+    stream.on('error', function(err) {
+        console.log(err);
+    });
+
+    stream.on('playback-error', function(err) {
+        console.log(err);
+    });
+}
+
+
+$(function() {
+
+    var stream;
+
+    $('#button').click(function () {
+        $.get('/token').then(function (token) {
+
+            stream = WatsonSpeech.SpeechToText.recognizeBlob({
+                token: token,
+                data: $('#audiofile')[0].files[0],
+                play: true,
+                max_alternatives: 1, // default is 3, but only the first one includes word timing data
+                realtime: false // defaults to true, but we're going to turn it off and then manually do it in a moment to show the difference
+            });
+
+            renderStream(stream, $('#output'));
+
+            // now do what the realtime option would have done: pipe through a TimingStream
+            var realtimeStream = stream.pipe(new WatsonSpeech.SpeechToText.TimingStream());
+
+            renderStream(realtimeStream, $('#realtime-output'));
+
+        });
+    });
+
+    $('#stop').click(function() {
+        if (stream) {
+            stream.stop();
+        }
+    });
+});
+</script></code></pre>
+</body>
+</html>

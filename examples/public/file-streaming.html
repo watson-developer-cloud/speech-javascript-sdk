@@ -13,10 +13,6 @@
 
     <h2>Output:</h2>
     <div id="output">--</div>
-
-    <h2>TimingStream Output:</h2>
-    <p><small><i>When transcription results are available faster than real-time (such as when simultaneously uploading and playing a file on a high-bandwidth connection), the TimingStream slows them down results to real-time.</i></small></p>
-    <div id="realtime-output">--</div>
 </section>
 
 <script src="watson-speech.js"></script>
@@ -24,54 +20,43 @@
 
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
-function renderStream(stream, $output) {
-    $output.html('');
-
-    // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
-    var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
-
-    // a result is approximately equivalent to a sentence
-    stream.on('result', function(result) {
-        // update the text for the current sentence with the default alternative.
-        // there may be multiple alternatives but this example app ignores all but the first.
-        $curSentence.html(result.alternatives[0].transcript);
-        if (result.final) {
-            // if we have the final text for that sentence, start a new one
-            $curSentence = $('<span/>').appendTo($output);
-        }
-    });
-
-    stream.on('error', function(err) {
-        console.log(err);
-    });
-
-    stream.on('playback-error', function(err) {
-        console.log(err);
-    });
-}
-
-
 $(function() {
 
-    var stream;
+    var stream, $output = $('#output');
 
     $('#button').click(function () {
+        $output.html('');
+
         $.get('/token').then(function (token) {
 
             stream = WatsonSpeech.SpeechToText.recognizeBlob({
                 token: token,
                 data: $('#audiofile')[0].files[0],
-                playFile: true,
-                max_alternatives: 1 // default is 3, but only the first one includes word timing data
-            })
-            .pipe(new WatsonSpeech.SpeechToText.FormatStream());// optional
+                play: true // play the audio out loud
+            });
 
-            renderStream(stream, $('#output'));
+            // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
+            var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
 
-            // optional, slows down results to real-time (only useful for recognizeBlob() with playFile: true)
-            var realtimeStream = stream.pipe(new WatsonSpeech.SpeechToText.TimingStream());
+            // a result is approximately equivalent to a sentence
+            stream.on('result', function(result) {
+                // update the text for the current sentence with the default alternative.
+                // there may be multiple alternatives but this example app ignores all but the first.
+                $curSentence.html(result.alternatives[0].transcript);
+                if (result.final) {
+                    // if we have the final text for that sentence, start a new one
+                    $curSentence = $('<span/>').appendTo($output);
+                }
+            });
 
-            renderStream(realtimeStream, $('#realtime-output'));
+            stream.on('error', function(err) {
+                console.log(err);
+            });
+
+            // handle file playback errors
+            stream.on('playback-error', function(err) {
+                console.log(err);
+            });
 
         });
     });
@@ -85,3 +70,5 @@ $(function() {
 </script></code></pre>
 </body>
 </html>
+
+

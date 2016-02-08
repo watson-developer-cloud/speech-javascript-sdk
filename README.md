@@ -1,6 +1,8 @@
 IBM Watson Speech To Text Browser Client Library
 ================================================
 
+[![Build Status](https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk)
+
 Allows you to easily add voice recognition to any web app with minimal code. 
 
 **Warning** This library is still early-stage and may see significant breaking changes.
@@ -102,6 +104,14 @@ For use with `.recognizeBlob({playFile: true})` - slows the results down to matc
 Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 
 
+## Changelog
+
+### v0.7
+* Changed playFile option of recognizeBlob to play to match docs
+* Added options.format to recognize* to pipe text through a FormatStream (default: true)
+* Added close and end events to TimingStream
+
+
 ## todo
 
 * Fix bugs around `.stop()
@@ -116,5 +126,4 @@ Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 * more tests in general
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
 * improve docs
-* check for a bug with the timing stream cutting off early
-
+* automatically npm publish on passing tagged build

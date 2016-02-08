@@ -36,7 +36,6 @@ $(function() {
                 timestamps: false,
                 max_alternatives: 1
             })
-            .pipe(new WatsonSpeech.SpeechToText.FormatStream()) // optional
             .promise()
             .then(function(text) {
                 $output.text(text);

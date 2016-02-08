@@ -18,6 +18,7 @@
 var MediaElementAudioStream = require('./media-element-audio-stream');
 var L16 = require('./webaudio-l16-stream');
 var RecognizeStream = require('./recognize-stream.js');
+var FormatStream = require('./format-stream.js');
 
 /**
  * Recognize audio from a <audio> or <video> element
@@ -25,6 +26,7 @@ var RecognizeStream = require('./recognize-stream.js');
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {MediaElement} options.element - the <video> or <audio> element to play
+ * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
  *
  * @returns {RecognizeStream}
  */
@@ -38,11 +40,15 @@ module.exports = function recognizeElement(options) {
 
   var sourceStream = new MediaElementAudioStream(options.element , options);
 
-  sourceStream
+  var stream = sourceStream
     .pipe(new L16())
     .pipe(recognizeStream);
 
+  if (options.format !== false) {
+    stream = stream.pipe(new FormatStream(options));
+  }
+
   recognizeStream.on('stop', sourceStream.stop.bind(sourceStream));
 
-  return recognizeStream;
+  return stream;;
 };

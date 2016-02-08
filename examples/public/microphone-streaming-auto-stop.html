@@ -30,8 +30,7 @@ $(function() {
             var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
                 token: token,
                 continuous: false // false = automatically stop transcription the first time a pause is detected
-            })
-            .pipe(new WatsonSpeech.SpeechToText.FormatStream()); // optional
+            });
 
             // each result (sentence) gets it's own <span> because Watson will sometimes go back and change a word as it hears more context
             var $curSentence = $('<span>&nbsp;</span>').appendTo($output);

@@ -18,7 +18,8 @@
 var BlobStream = require('readable-blob-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var FilePlayer = require('./file-player.js');
-
+var FormatStream = require('./format-stream.js');
+var TimingStream = require('./timing-stream.js');
 
 /**
  * Create and return a RecognizeStream from a File or Blob
@@ -27,7 +28,9 @@ var FilePlayer = require('./file-player.js');
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {Blob|File} options.data - the raw audio data as a Blob or File instance
- * @param {Boolean} [options.play=true] - If a file is set, play it locally as it's being uploaded
+ * @param {Boolean} [options.play=false] - If a file is set, play it locally as it's being uploaded
+ * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
+ * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback.
  *
  * @returns {RecognizeStream}
  */
@@ -36,9 +39,18 @@ module.exports = function recognizeBlob(options) {
     throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
   }
 
-  var recognizeStream  = new RecognizeStream(options);
+  var recognizeStream = new RecognizeStream(options);
+  var stream = new BlobStream(options.data).pipe(recognizeStream);
 
-  if (options.playFile) {
+  if (options.format !== false) {
+    stream = stream.pipe(new FormatStream(options));
+  }
+  if (options.realtime || typeof options.realtime === 'undefined' && options.play) {
+    stream = stream.pipe(new TimingStream(options));
+    start = Date.now();
+  }
+
+  if (options.play) {
     FilePlayer.playFile(options.data).then(function (player) {
       recognizeStream.on('stop', player.stop.bind(player));
     }).catch(function (err) {
@@ -46,7 +58,7 @@ module.exports = function recognizeBlob(options) {
     });
   }
 
-  return new BlobStream(options.data).pipe(recognizeStream);
+  return stream;
 };
 
 

@@ -21,6 +21,7 @@ var getUserMedia = require('./getusermedia');
 var MicrophoneStream = require('microphone-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var L16 = require('./webaudio-l16-stream.js');
+var FormatStream = require('./format-stream.js');
 
 /**
  * Create and return a RecognizeStream from the user's microphone
@@ -28,6 +29,7 @@ var L16 = require('./webaudio-l16-stream.js');
  *
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
+ * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
  *
  * @returns {RecognizeStream}
  */
@@ -51,7 +53,13 @@ module.exports = function recognizeMicrophone(options) {
     recognizeStream.on('stop', micStream.stop.bind(micStream));
   }).catch(recognizeStream.emit.bind(recognizeStream, 'error'));
 
-  return recognizeStream;
+
+  var stream = recognizeStream;
+  if (options.format !== false) {
+    stream = stream.pipe(new FormatStream(options));
+  }
+
+  return stream;
 };
 
 

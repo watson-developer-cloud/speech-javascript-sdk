@@ -35,8 +35,7 @@ $(function() {
                 token: token,
                 element: audioElement
                 // muteSource: true // prevents sound from also playing locally
-            })
-            .pipe(new WatsonSpeech.SpeechToText.FormatStream()); // optional
+            });
 
             // each result gets it's own <span> because watson will sometimes go back and change a word as it hears more context
             var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
