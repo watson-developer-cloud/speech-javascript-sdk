@@ -47,11 +47,9 @@
 
 
 <div class="description">
-    Applies some basic formating to transcriptions:
- - Capitalize the first word of each sentence
- - Add a period to the end
- - Fix any "cruft" in the transcription
- - etc.
+    Slows results down to no faster than real time.
+
+Useful when running recognizeBlob because the text can otherwise appear before the words are spoken
 </div>
 
 
@@ -92,6 +90,11 @@
 
             <td class="type">
             
+                
+<span class="param-type">Object</span>
+
+
+            
             </td>
 
             
@@ -128,40 +131,15 @@
 
         <tr>
             
-                <td class="name"><code>model</code></td>
+                <td class="name"><code>emitAtt</code></td>
             
 
             <td class="type">
             
-            </td>
-
-            
-                <td class="attributes">
                 
+<span class="param-type">*</span>
 
-                
 
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">some models / languages need special handling</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>hesitation</code></td>
-            
-
-            <td class="type">
             
             </td>
 
@@ -180,12 +158,51 @@
             
                 <td class="default">
                 
-                    '\u2026'
+                    TimingStream.START
                 
                 </td>
             
 
-            <td class="description last">what to put down for a "hesitation" event, defaults to an ellipsis (...)</td>
+            <td class="description last">set to TimingStream.END to only emit text that has been completely spoken.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delay</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last">Additional delay (in seconds) to apply before emitting words, useful for precise syncing to audio tracks. May be negative</td>
         </tr>
 
     
@@ -233,7 +250,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line19">line 19</a>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line17">line 17</a>
     </li></ul></dd>
     
 
@@ -282,7 +299,7 @@
 
     
 
-    <h4 class="name" id="getCurrentResult"><span class="type-signature"></span>getCurrentResult<span class="signature">(results)</span><span class="type-signature"> &rarr; {*}</span></h4>
+    <h4 class="name" id="getCurrentResult"><span class="type-signature"></span>getCurrentResult<span class="signature">(results, cutoff)</span><span class="type-signature"> &rarr; {*}</span></h4>
 
     
 
@@ -343,154 +360,10 @@
         </tr>
 
     
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line107">line 107</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">*</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="getNextWordOffset"><span class="type-signature"></span>getNextWordOffset<span class="signature">(lastResultWasFinal, numCurrentTimestamps)</span><span class="type-signature"> &rarr; {*}</span></h4>
-
-    
-
-
-
-<div class="description">
-    try to figure out when we'll emit the next word
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
 
         <tr>
             
-                <td class="name"><code>lastResultWasFinal</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>numCurrentTimestamps</code></td>
+                <td class="name"><code>cutoff</code></td>
             
 
             <td class="type">
@@ -542,7 +415,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line119">line 119</a>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line116">line 116</a>
     </li></ul></dd>
     
 
@@ -686,7 +559,135 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line170">line 170</a>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line187">line 187</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="scheduleNextTick"><span class="type-signature"></span>scheduleNextTick<span class="signature">(cutoff)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Schedules next tick if possible.
+
+triggers the 'close' and 'end' events if the buffer is empty and no further results are expected
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>cutoff</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line154">line 154</a>
     </li></ul></dd>
     
 
@@ -724,7 +725,7 @@
 
 
 <div class="description">
-    Tick occurs every half second, or when results are received if we're behind schedule.
+    Tick emits any buffered words that have a timestamp before the current time, then calls scheduleNextTick()
 </div>
 
 
@@ -768,7 +769,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line136">line 136</a>
+        <a href="timing-stream.js.html">timing-stream.js</a>, <a href="timing-stream.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -816,7 +817,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Feb 08 2016 16:10:20 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Feb 08 2016 19:40:57 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
