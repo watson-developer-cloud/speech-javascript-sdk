@@ -52,7 +52,7 @@ describe("WatsonSpeechToText", function() {
       //});
       return stream.promise();
     }).then(function(transcription) {
-      assert.equal(transcription.trim(), 'thunderstorms could produce large hail isolated tornadoes and heavy rain');
+      assert.equal(transcription, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
       done();
     })
       .catch(done);
@@ -72,7 +72,7 @@ describe("WatsonSpeechToText", function() {
       stt.on('error', done)
         .setEncoding('utf8')
         .pipe(concat(function (transcription) {
-          assert.equal(transcription.trim(), 'thunderstorms could produce large hail isolated tornadoes and heavy rain');
+          assert.equal(transcription, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
           done();
         }));
       setTimeout(stt.stop.bind(stt), 8 * 1000);
@@ -90,7 +90,7 @@ describe("WatsonSpeechToText", function() {
       cfg.data = results[1];
       return WatsonSpeechToText.recognizeBlob(cfg).promise()
         .then(function(transcription) {
-          assert.equal(transcription.trim(), 'thunderstorms could produce large hail isolated tornadoes and heavy rain');
+          assert.equal(transcription, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
           done();
         });
     })
