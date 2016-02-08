@@ -9,8 +9,9 @@
     "test": "karma start test/resources/karma.conf.js --single-run",
     "test-integration": "TEST_MODE=integration karma start test/resources/karma.conf.js --single-run",
     "browserify": "browserify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js",
+    "minify": "uglifyjs --compress --mangle --screw-ie8 dist/watson-speech.js --output dist/watson-speech.min.js",
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
-    "build": "npm run browserify",
+    "build": "npm run browserify && npm run minify",
     "doc": "jsdoc -c jsdoc/config.json",
     "watch-doc": "nodemon --watch lib/ --watch services/ --watch jsdoc/ --watch package.json --ext js,tmpl --exec npm run doc"
   },
@@ -31,6 +32,7 @@
     "karma-mocha": "^0.2.1",
     "mocha": "^2.4.4",
     "serve-static": "^1.10.2",
+    "uglify-js": "^2.6.1",
     "watchify": "^3.7.0",
     "watson-developer-cloud": "^1.2.1",
     "whatwg-fetch": "^0.11.0"
