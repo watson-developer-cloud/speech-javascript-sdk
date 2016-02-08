@@ -1,32 +1,33 @@
 'use strict';
 
-var Transform = require('stream').Transform;
+var Duplex = require('stream').Duplex;
 var util = require('util');
 var clone = require('clone');
 
 /**
- * Applies some basic formating to transcriptions:
- *  - Capitalize the first word of each sentence
- *  - Add a period to the end
- *  - Fix any "cruft" in the transcription
- *  - etc.
+ * Slows results down to no faster than real time.
  *
- * @param opts
- * @param opts.model - some models / languages need special handling
- * @param [opts.hesitation='\u2026'] - what to put down for a "hesitation" event, defaults to an ellipsis (...)
+ * Useful when running recognizeBlob because the text can otherwise appear before the words are spoken
+ *
+ * @param {Object} opts
+ * @param {*} [opts.emitAtt=TimingStream.START] - set to TimingStream.END to only emit text that has been completely spoken.
+ * @param {Number} [opts.delay=0] - Additional delay (in seconds) to apply before emitting words, useful for precise syncing to audio tracks. May be negative
  * @constructor
  */
 function TimingStream(opts) {
   this.opts = util._extend({
-    emitAt: TimingStream.WORD_START // WORD_START = emit the word as it's beginning to be spoken, WORD_END = once it's completely spoken
+    emitAt: TimingStream.START,
+    delay: 0,
+    allowHalfOpen: true // keep the readable side open after the source closes
   }, opts);
-  Transform.call(this, opts);
+  Duplex.call(this, opts);
 
   this.startTime = Date.now();
   // buffer to store future results
   this.final = [];
   this.interim = [];
   this.nextTick = null;
+  this.sourceEnded = false;
 
   var self = this;
   this.on('pipe', function(source) {
@@ -34,20 +35,27 @@ function TimingStream(opts) {
     if(source.stop) {
       self.stop = source.stop.bind(source);
     }
+    source.on('end', function() {
+      self.sourceEnded = true;
+    });
   });
 }
-util.inherits(TimingStream, Transform);
+util.inherits(TimingStream, Duplex);
 
-TimingStream.WORD_START = 1;
-TimingStream.WORD_END = 2;
+TimingStream.START = 1;
+TimingStream.END = 2;
 
-TimingStream.prototype._transform = function(chunk, encoding, next) {
+TimingStream.prototype._write = function(chunk, encoding, next) {
   // ignore - we'll emit our own final text based on the result events
   next();
 };
 
+TimingStream.prototype._read = function(size) {
+  // ignore - we'll emit results once the time has come
+};
+
 TimingStream.prototype.cutoff = function cutoff() {
-  return (Date.now() - this.startTime)/1000;
+  return (Date.now() - this.startTime)/1000 - this.opts.delay;
 };
 
 TimingStream.prototype.withinRange = function(result, cutoff) {
@@ -72,7 +80,7 @@ TimingStream.prototype.completelyWithinRange = function(result, cutoff) {
  * Clones the given result and then crops out any words that occur later than the current cutoff
  * @param result
  */
-Transform.prototype.crop = function crop(result, cutoff) {
+Duplex.prototype.crop = function crop(result, cutoff) {
   result = clone(result);
   result.alternatives = result.alternatives.map(function(alt) {
     var timestamps = [];
@@ -102,6 +110,7 @@ Transform.prototype.crop = function crop(result, cutoff) {
  *  - the original next result object (removing it from the array) if it's completely earlier than the current cutoff
  *
  * @param results
+ * @param cutoff
  * @returns {*}
  */
 TimingStream.prototype.getCurrentResult = function getCurrentResult(results, cutoff) {
@@ -110,33 +119,14 @@ TimingStream.prototype.getCurrentResult = function getCurrentResult(results, cut
   }
 };
 
-/**
- * try to figure out when we'll emit the next word
- * @param lastResultWasFinal
- * @param numCurrentTimestamps
- * @returns {*}
- */
-TimingStream.prototype.getNextWordOffset = function getNextWordOffset(lastResultWasFinal, numCurrentTimestamps) {
-  if (lastResultWasFinal) {
-    // if the current result is final, then grab the first timestamp of the next one
-    var nextResult = this.final[0] || this.interim[0];
-    return nextResult && nextResult.alternatives[0].timestamps[0][this.opts.emitAt];
-  } else {
-    // if the current result wasn't final, then we just want the next word from the current result (assuming there is one)
-    var currentResultSource = this.final[0] || this.interim[0];
-    var nextTimestamp = currentResultSource && currentResultSource.alternatives[0].timestamps[numCurrentTimestamps];
-    return nextTimestamp && nextTimestamp[this.opts.emitAt];
-  }
-};
-
 
 /**
- * Tick occurs every half second, or when results are received if we're behind schedule.
+ * Tick emits any buffered words that have a timestamp before the current time, then calls scheduleNextTick()
  */
 TimingStream.prototype.tick = function tick() {
   var cutoff = this.cutoff();
 
-  this.nextTick = null;
+  clearTimeout(this.nextTick);
   var result = this.getCurrentResult(this.final, cutoff);
 
   if (!result) {
@@ -147,14 +137,41 @@ TimingStream.prototype.tick = function tick() {
     this.emit('result', result);
     if (result.final) {
       this.push(result.alternatives[0].transcript);
-    }
-    var nextWordOffset = this.getNextWordOffset(result.final, result.alternatives[0].timestamps.length);
-    // if we have a next word, set a timeout to emit it. Otherwise the next call to handleResult() will trigger a tick.
-    if (nextWordOffset) {
-      this.nextTick = setTimeout(this.tick.bind(this), this.startTime + (nextWordOffset*1000));
+      return this.nextTick = setTimeout(this.tick.bind(this), 0); // in case we are multiple results behind - don't schedule until we are out of final results that are due now
     }
   }
 
+  this.scheduleNextTick(cutoff);
+};
+
+/**
+ * Schedules next tick if possible.
+ *
+ * triggers the 'close' and 'end' events if the buffer is empty and no further results are expected
+ *
+ * @param cutoff
+ */
+TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
+
+  // prefer final results over interim - when final results are added, any older interim ones are automatically deleted.
+  var nextResult = this.final[0] || this.interim[0];
+  if (nextResult) {
+    // loop through the timestamps until we find one that comes after the current cutoff (there should always be one)
+    var timestamps = nextResult.alternatives[0].timestamps;
+    for(var i=0; i<timestamps.length; i++) {
+      var wordOffset = timestamps[i][this.opts.emitAt];
+      if (wordOffset > cutoff) {
+        return this.nextTick = setTimeout(this.tick.bind(this), this.startTime + (wordOffset*1000));
+      }
+    }
+    throw new Error('No future words found'); // this shouldn't happen ever - getCurrentResult should automatically delete the result from the buffer if all of it's words are consumed
+  } else {
+    // if we have no next result in the buffer, and the source has ended, then we're done.
+    if (this.sourceEnded) {
+      this.emit('close');
+      this.push(null);
+    }
+  }
 };
 
 function noTimestamps(result) {
@@ -189,9 +206,7 @@ TimingStream.prototype.handleResult = function handleResult(result) {
     this.interim.push(result);
   }
 
-  if (!this.nextTick) {
-    this.tick();
-  }
+  this.tick();
 };
 
 TimingStream.prototype.stop = function(){}; // usually overwritten during the `pipe` event
