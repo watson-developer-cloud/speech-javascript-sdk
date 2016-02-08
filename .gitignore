@@ -3,6 +3,7 @@ node_modules/
 npm-debug.log.*
 .DS_store
 Thumbs.db
-test/resources/auth.json
+test/resources/stt-auth.json
+test/resources/tts-auth.json
 doc/
 *-auth.json

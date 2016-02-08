@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Basic Example - Watson Text to Speech</title>
+</head>
+<body>
+
+<section>
+    <h2>Basic Text to Speech Example</h2>
+    <input id="text" value="Hello from IBM Watson"/> <button id="button">Synthesize Text</button>
+</section>
+
+<script src="watson-speech.js"></script>
+<script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+
+<h2>Code for this demo:</h2>
+<pre><code><script style="display: block;">
+    $(function() {
+        $('#button').click(function () {
+            $.get('/api/text-to-speech/token').then(function (token) {
+                WatsonSpeech.TextToSpeech.synthesize({
+                    text: $('#text').val(),
+                    token: token
+                })
+            });
+        });
+    });
+</script></code></pre>
+</body>
+</html>

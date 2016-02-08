@@ -138,7 +138,7 @@ For use with `.recognizeBlob({play: true})` - slows the results down to match th
 ## todo
 
 * Solidify API
-* add text-to-speech support - may require service improvements
+* support objectMode instead of having random events
 * add an example that includes alternatives and word confidence scores
 * enable eslint - https://github.ibm.com/fed/javascript-style-guides
 * break components into standalone npm modules where it makes sense

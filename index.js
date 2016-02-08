@@ -18,4 +18,4 @@ exports.version = process.env.TRAVIS_BRANCH;
  */
 exports.SpeechToText = require('./speech-to-text');
 
-// todo: add text-to-speech
+exports.TextToSpeech = require('./text-to-speech');

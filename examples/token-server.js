@@ -26,8 +26,10 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/../dist')); // normally these files would also go into public/ but this way the example always has the latest code
 
 
+// set up an endpoint to serve speech-to-text auth tokens
+
 // For local development, replace username and password
-var config = extend({
+var sttConfig = extend({
     version: 'v1',
     url: 'https://stream.watsonplatform.net/speech-to-text/api',
     username: '<username>',
@@ -35,15 +37,14 @@ var config = extend({
 }, vcapServices.getCredentials('speech_to_text'));
 
 // quick hack to make development easier
-try { extend(config, require('../test/resources/stt-auth.json')) } catch (ex) {}
+try { extend(sttConfig, require('../test/resources/stt-auth.json')) } catch (ex) {}
 
-var authService = watson.authorization(config);
-
+var sttAuthService = watson.authorization(sttConfig);
 
 // Get token using your credentials
-// **Warning**: this endpoint should be guarded with additional authentication & authorization for production use
-app.get('/token', function(req, res, next) {
-    authService.getToken({url: config.url}, function(err, token) {
+// **Warning**: these endpoints should be guarded with additional authentication & authorization for production use
+app.get('/api/speech-to-text/token', function(req, res) {
+    sttAuthService.getToken({url: sttConfig.url}, function(err, token) {
         if (err) {
             console.log('Error retrieving token: ', err);
             return res.status(500).send('Error retrieving token')
@@ -52,12 +53,35 @@ app.get('/token', function(req, res, next) {
     });
 });
 
-var port = process.env.VCAP_APP_PORT || 3000;
-app.listen(port, function() {
-   console.log('Example IBM Watson STT client app & server live at http://localhost:%s/', port);
+// and, do it all again for the text to speech service
+var ttsConfig = extend({
+  version: 'v1',
+  url: 'https://stream.watsonplatform.net/text-to-speech/api',
+  username: '<username>',
+  password: '<password>'
+}, vcapServices.getCredentials('text_to_speech'));
+
+// quick hack to make development easier
+try { extend(ttsConfig, require('../test/resources/tts-auth.json')) } catch (ex) {}
+
+var ttsAuthService = watson.authorization(ttsConfig);
+
+app.get('/api/text-to-speech/token', function(req, res) {
+  ttsAuthService.getToken({url: ttsConfig.url}, function(err, token) {
+    if (err) {
+      console.log('Error retrieving token: ', err);
+      return res.status(500).send('Error retrieving token')
+    }
+    res.send(token);
+  });
 });
 
-// chrome requires https to access the user's mic
+var port = process.env.VCAP_APP_PORT || 3000;
+app.listen(port, function() {
+   console.log('Example IBM Watson Speech JS SDK client app & token server live at http://localhost:%s/', port);
+});
+
+// chrome requires https to access the user's mic unless it's a localhost url
 if (!process.env.VCAP_APP_PORT) {
     var fs = require("fs"),
         https = require("https"),
@@ -68,6 +92,6 @@ if (!process.env.VCAP_APP_PORT) {
         cert: fs.readFileSync(__dirname + '/keys/localhost.cert')
     };
     https.createServer(options, app).listen(HTTPS_PORT, function () {
-        console.log('Secure example IBM Watson STT client app & server live at https://localhost:%s/', port)
+        console.log('Secure server live at https://localhost:%s/', port)
     });
 }
