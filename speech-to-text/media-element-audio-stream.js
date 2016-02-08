@@ -11,6 +11,9 @@ var util = require('util');
  * @param {Object} [opts] options
  * @param {Number|null} [opts.bufferSize=null] https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
  * @param {Boolean} [opts.muteSource=false] - If true, the audio will not be sent back to the source
+ *
+ * // todo: add option for whether to keep or destroy the context
+ *
  * @constructor
  */
 function MediaElementAudioStream(source, opts) {
@@ -39,7 +42,7 @@ function MediaElementAudioStream(source, opts) {
   var self = this;
   var recording = true;
 
-  // I can't seem to find any documentation for this on <audio> elements, but it seems to be required for cross-domain usage (in addition to CORS headers)
+  // I can't find much documentation for this for <audio> elements, but it seems to be required for cross-domain usage (in addition to CORS headers)
   source.crossOrigin = opts.crossOrigin;
 
   /**
