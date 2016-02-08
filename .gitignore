@@ -5,3 +5,4 @@ npm-debug.log.*
 Thumbs.db
 test/resources/auth.json
 doc/
+*-auth.json
