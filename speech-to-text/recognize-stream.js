@@ -54,7 +54,7 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; //, 'X-Watson-Learning-Opt
  * @constructor
  */
 function RecognizeStream(options) {
-  Duplex.call(this, {readableObjectMode: options && (options.objectMode)});
+  Duplex.call(this, {readableObjectMode: options && (options.objectMode || options.readableObjectMode)});
   this.options = options;
   this.listening = false;
   this.initialized = false;
@@ -223,9 +223,9 @@ RecognizeStream.prototype.initialize = function () {
            * @param {String} transcript
            */
           if (options.objectMode) {
-            self.push(result); // this is the "data" event that can be easily piped to other streams
+            self.push(result);
           } else {
-            self.push(result.alternatives[0].transcript, 'utf8'); // this is the "data" event that can be easily piped to other streams
+            self.push(result.alternatives[0].transcript, 'utf8');
           }
 
         }

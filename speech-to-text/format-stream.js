@@ -14,6 +14,7 @@ var clone = require('clone');
  * @param opts
  * @param opts.model - some models / languages need special handling
  * @param [opts.hesitation='\u2026'] - what to put down for a "hesitation" event, defaults to an ellipsis (...)
+ * @param {Boolean} [options.objectMode=false] - emit `result` objects instead of string Buffers for the `data` events.
  * @constructor
  */
 function FormatStream(opts) {
