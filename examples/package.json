@@ -1,7 +1,7 @@
 {
-  "name": "example-watson-stt-client",
+  "name": "watson-speech-examples",
   "version": "1.0.0",
-  "description": "Example app showing the IBM Watson Speech To Text browser library in action.",
+  "description": "Examples showing the IBM Watson Speech Javascript SDK in action.",
   "main": "token-server.js",
   "scripts": {
     "start": "node token-server.js"
