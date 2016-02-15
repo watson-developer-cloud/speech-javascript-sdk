@@ -20,7 +20,7 @@ var RecognizeStream = require('./recognize-stream.js');
 var FilePlayer = require('./file-player.js');
 var FormatStream = require('./format-stream.js');
 var TimingStream = require('./timing-stream.js');
-
+var assign = require('object.assign/polyfill')();
 
 
 /**
@@ -45,7 +45,7 @@ module.exports = function recognizeBlob(options) {
 
   // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
   // unless were in realtime mode - in which case the timing stream requires objectMode input.
-  var rsOpts = Object.assign({}, options);
+  var rsOpts = assign({}, options);
   rsOpts.readableObjectMode = options.objectMode || realtime;
   delete rsOpts.objectMode;
 

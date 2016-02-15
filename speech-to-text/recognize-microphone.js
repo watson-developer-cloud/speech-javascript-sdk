@@ -22,6 +22,7 @@ var MicrophoneStream = require('microphone-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var L16 = require('./webaudio-l16-stream.js');
 var FormatStream = require('./format-stream.js');
+var assign = require('object.assign/polyfill')();
 
 /**
  * Create and return a RecognizeStream from the user's microphone
@@ -39,7 +40,7 @@ module.exports = function recognizeMicrophone(options) {
   }
 
   // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
-  var rsOpts = Object.assign({}, options);
+  var rsOpts = assign({}, options);
   rsOpts.readableObjectMode = options.objectMode;
   rsOpts['content-type'] = 'audio/l16;rate=16000';
   delete rsOpts.objectMode;

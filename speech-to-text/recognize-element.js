@@ -19,6 +19,7 @@ var MediaElementAudioStream = require('./media-element-audio-stream');
 var L16 = require('./webaudio-l16-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var FormatStream = require('./format-stream.js');
+var assign = require('object.assign/polyfill')();
 
 /**
  * Recognize audio from a <audio> or <video> element
@@ -36,7 +37,7 @@ module.exports = function recognizeElement(options) {
   }
 
   // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
-  var rsOpts = Object.assign({}, options);
+  var rsOpts = assign({}, options);
   rsOpts.readableObjectMode = options.objectMode;
   rsOpts['content-type'] = 'audio/l16;rate=16000';
   delete rsOpts.objectMode;

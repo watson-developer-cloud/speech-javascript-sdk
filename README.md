@@ -142,7 +142,7 @@ For use with `.recognizeBlob({play: true})` - slows the results down to match th
 * add an example that includes alternatives and word confidence scores
 * enable eslint - https://github.ibm.com/fed/javascript-style-guides
 * break components into standalone npm modules where it makes sense
-* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, Object.assign, etc.)
+* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, etc.)
 * run integration tests on travis (fall back to offline server for pull requests)
 * more tests in general
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
