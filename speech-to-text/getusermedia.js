@@ -5,6 +5,7 @@ module.exports = function getUserMedia(constraints) {
   if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     return navigator.mediaDevices.getUserMedia(constraints);
   }
+  // todo: return a fake promise if window.Promise is undefined
   return new Promise(function(resolve, reject) {
     var gum = navigator.getUserMedia || navigator.webkitGetUserMedia ||  navigator.mozGetUserMedia || navigator.msGetUserMedia;
     if (!gum) {

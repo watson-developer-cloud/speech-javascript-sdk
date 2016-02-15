@@ -3,6 +3,7 @@
 var Duplex = require('stream').Duplex;
 var util = require('util');
 var clone = require('clone');
+var defaults = require('defaults');
 
 /**
  * Slows results down to no faster than real time.
@@ -15,12 +16,12 @@ var clone = require('clone');
  * @constructor
  */
 function TimingStream(opts) {
-  this.options = util._extend({
+  this.options = defaults(opts, {
     emitAt: TimingStream.START,
     delay: 0,
     allowHalfOpen: true, // keep the readable side open after the source closes
     writableObjectMode: true
-  }, opts);
+  });
   Duplex.call(this, opts);
 
   this.startTime = Date.now();

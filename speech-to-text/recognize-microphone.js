@@ -38,8 +38,14 @@ module.exports = function recognizeMicrophone(options) {
     throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
   }
 
-  options['content-type'] = 'audio/l16;rate=16000'; // raw wav audio (no header)
-  var recognizeStream = new RecognizeStream(options);
+  // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
+  var rsOpts = Object.assign({}, options);
+  rsOpts.readableObjectMode = options.objectMode;
+  rsOpts['content-type'] = 'audio/l16;rate=16000';
+  delete rsOpts.objectMode;
+
+  var recognizeStream = new RecognizeStream(rsOpts);
+
 
   getUserMedia({video: false, audio: true}).then(function(mic) {
     var micStream = new MicrophoneStream(mic, {
@@ -47,7 +53,7 @@ module.exports = function recognizeMicrophone(options) {
       bufferSize: options.bufferSize
     });
     micStream
-      .pipe(new L16({writableObjectMode: true, downsample: false}))
+      .pipe(new L16({writableObjectMode: true}))
       .pipe(recognizeStream);
 
     recognizeStream.on('stop', micStream.stop.bind(micStream));

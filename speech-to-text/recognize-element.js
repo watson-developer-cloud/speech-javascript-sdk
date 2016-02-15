@@ -35,14 +35,19 @@ module.exports = function recognizeElement(options) {
     throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
   }
 
-  options['content-type'] = 'audio/l16;rate=16000'; // raw wav audio (no header)
-  var recognizeStream = new RecognizeStream(options);
+  // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
+  var rsOpts = Object.assign({}, options);
+  rsOpts.readableObjectMode = options.objectMode;
+  rsOpts['content-type'] = 'audio/l16;rate=16000';
+  delete rsOpts.objectMode;
+
+  var recognizeStream = new RecognizeStream(rsOpts);
 
   var sourceStream = new MediaElementAudioStream(options.element , {
     objectMode: true,
     bufferSize: options.bufferSize,
     muteSource: options.muteSource,
-    autoplay: options.autoPlay
+    autoPlay: options.autoPlay !== false // default to true if it's undefined
   });
 
   var stream = sourceStream
@@ -55,5 +60,5 @@ module.exports = function recognizeElement(options) {
 
   recognizeStream.on('stop', sourceStream.stop.bind(sourceStream));
 
-  return stream;;
+  return stream;
 };

@@ -3,6 +3,7 @@
 var Transform = require('stream').Transform;
 var util = require('util');
 var clone = require('clone');
+var defaults = require('defaults');
 
 /**
  * Applies some basic formating to transcriptions:
@@ -18,11 +19,11 @@ var clone = require('clone');
  * @constructor
  */
 function FormatStream(opts) {
-  this.options = util._extend({
+  this.options = defaults(opts, {
     model: '', // some models should have all spaces removed
     hesitation: '\u2026', // ellipsis
     decodeStrings: true
-  }, opts);
+  });
   Transform.call(this, opts);
 
   this.isJaCn = ((this.options.model.substring(0,5) === 'ja-JP') || (this.options.model.substring(0,5) === 'zh-CN'));

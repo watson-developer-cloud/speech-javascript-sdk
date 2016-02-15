@@ -22,6 +22,7 @@ var util = require('util');
 var pick = require('object.pick');
 var W3CWebSocket = require('websocket').w3cwebsocket;
 var contentType = require('./content-type');
+var defaults = require('defaults');
 
 
 var OPENING_MESSAGE_PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
@@ -103,7 +104,11 @@ RecognizeStream.prototype.initialize = function () {
   var url = (options.url || "wss://stream.watsonplatform.net/speech-to-text/api").replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
   // turn off all the extras if we're just outputting text
-  var defaults = {
+  var textModeDefaults = {
+    action: 'start',
+    'content-type': 'audio/wav',
+    continuous: true,
+    inactivity_timeout: 30,
     interim_results: false,
     word_confidence: false,
     timestamps: false,
@@ -112,23 +117,20 @@ RecognizeStream.prototype.initialize = function () {
 
   // but turn everything on if we're in objectMode and the end user can consume it
   var objectModeDefaults = {
+    action: 'start',
+    'content-type': 'audio/wav',
+    continuous: true,
+    inactivity_timeout: 30,
     interim_results: true,
     word_confidence: true,
     timestamps: true,
     max_alternatives: 3
   };
 
-  var openingMessage = util._extend({
-    action: 'start',
-    'content-type': 'audio/wav',
-    continuous: true,
-    max_alternatives: 3,
-    inactivity_timeout: 30
-  },
-    (options.objectMode || options.readableObjectMode) ? objectModeDefaults : defaults,
-    pick(options, OPENING_MESSAGE_PARAMS_ALLOWED)
+  var openingMessage = defaults(
+    pick(options, OPENING_MESSAGE_PARAMS_ALLOWED),
+    (options.objectMode || options.readableObjectMode) ? objectModeDefaults : textModeDefaults
   );
-
 
   var self = this;
 

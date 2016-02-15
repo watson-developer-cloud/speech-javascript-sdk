@@ -1,6 +1,7 @@
 'use strict';
 var Readable = require('stream').Readable;
 var util = require('util');
+var defaults = require('defaults');
 
 /**
  * Turns a MediaStream object (from getUserMedia) into a Node.js Readable stream and converts the audio to Buffers
@@ -18,7 +19,7 @@ var util = require('util');
  */
 function MediaElementAudioStream(source, opts) {
 
-  opts = util._extend({
+  opts = defaults(opts, {
     // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
     // buffer size to balance between latency and audio quality."
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
@@ -26,10 +27,10 @@ function MediaElementAudioStream(source, opts) {
     // however, webkitAudioContext (safari) requires it to be set
     bufferSize: (typeof AudioContext != "undefined" ? null : 4096),
     muteSource: false,
-    autoplay: true,
+    autoPlay: true,
     crossOrigin: "anonymous", // required for cross-domain audio playback
     objectMode: true // true = emit AudioBuffers w/ audio + some metadata, false = emite node.js Buffers (with binary data only
-  }, opts);
+  });
 
   // We can only emit one channel's worth of audio, so only one input. (Who has multiple microphones anyways?)
   var inputChannels = 1;
@@ -92,7 +93,7 @@ function MediaElementAudioStream(source, opts) {
     source.play();
     source.removeEventListener("canplaythrough", start);
   }
-  if (opts.autoplay) {
+  if (opts.autoPlay) {
     // play immediately if we have enough data, otherwise wait for the canplaythrough event
     if(source.readyState === source.HAVE_ENOUGH_DATA) {
       source.play();

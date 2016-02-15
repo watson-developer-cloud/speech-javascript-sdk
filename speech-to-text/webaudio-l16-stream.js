@@ -1,6 +1,7 @@
 'use strict';
 var Transform = require('stream').Transform;
 var util = require('util');
+var defaults = require('defaults');
 
 var TARGET_SAMPLE_RATE = 16000;
 /**
@@ -16,10 +17,10 @@ var TARGET_SAMPLE_RATE = 16000;
  * @constructor
  */
 function WebAudioL16Stream(options) {
-  options = this.options = util._extend({
+  options = this.options = defaults(options, {
     sourceSampleRate: 48000,
     downsample: true
-  }, options);
+  });
 
   Transform.call(this, options);
 
