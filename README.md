@@ -135,3 +135,11 @@ Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 * more tests in general
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
 * improve docs
+* consider a wrapper to match https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html
+
+
+recognizeBlob -> recognizeFile (?)
+objectMode
+move timing/format stream.stop to wrapper methods
+test promise with objectmode
+consider interim event for recognize/format/timing streams

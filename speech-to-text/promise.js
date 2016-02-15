@@ -14,7 +14,7 @@ module.exports = function promise(stream) {
     .on('data', function (result) {
       results.push(result);
     }).on('end', function () {
-      resolve(results.join(''));
+      resolve(typeof results[0] === 'string' ? results.join('') : results);
     }).on('error', reject);
   });
 };

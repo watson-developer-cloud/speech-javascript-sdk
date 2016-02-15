@@ -33,7 +33,8 @@ $(function() {
 
             var stream = WatsonSpeech.SpeechToText.recognizeElement({
                 token: token,
-                element: audioElement
+                element: audioElement,
+                objectMode: true // necessary to receive interim results
                 // muteSource: true // prevents sound from also playing locally
             });
 
@@ -41,7 +42,7 @@ $(function() {
             var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
 
             // a result is approximately equivalent to a sentence
-            stream.on('result', function(result) {
+            stream.on('data', function(result) {
                 // update the text for the current sentence with the default alternative.
                 // there may be multiple alternatives but this example app ignores all but the first.
                 $curSentence.html(result.alternatives[0].transcript);

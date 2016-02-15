@@ -47,7 +47,7 @@ module.exports = function recognizeMicrophone(options) {
       bufferSize: options.bufferSize
     });
     micStream
-      .pipe(new L16())
+      .pipe(new L16({writableObjectMode: true, downsample: false}))
       .pipe(recognizeStream);
 
     recognizeStream.on('stop', micStream.stop.bind(micStream));

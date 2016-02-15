@@ -35,7 +35,7 @@ var config = extend({
 }, vcapServices.getCredentials('speech_to_text'));
 
 // quick hack to make development easier
-try { extend(config, require('../test/resources/auth.json')) } catch (ex) {}
+try { extend(config, require('../test/resources/stt-auth.json')) } catch (ex) {}
 
 var authService = watson.authorization(config);
 

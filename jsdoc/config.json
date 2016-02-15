@@ -2,7 +2,7 @@
   "source": {
     "include": [ "./", "speech-to-text/" ]
   },
-  "opts": {
+  "options": {
     "package": "package.json",
     "readme": "README.md",
     "recurse": false,

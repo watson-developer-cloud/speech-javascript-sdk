@@ -47,14 +47,14 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; //, 'X-Watson-Learning-Opt
  * @param {Boolean} [options.timestamps=false] - include timestamps with results. Defaults to true when in objectMode.
  * @param {Number} [options.max_alternatives=1] - maximum number of alternative transcriptions to include. Defaults to 3 when in objectMode.
  * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity
- * @param {Boolean} [options.objectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Changes several other defaults.
+ * @param {Boolean} [options.objectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Changes several other defaults. (Effectively readableObjectMode
  *
  * //todo: investigate other options at http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/apis/#!/speech-to-text/recognizeSessionless
  *
  * @constructor
  */
 function RecognizeStream(options) {
-  Duplex.call(this, {readableObjectMode: options && (options.objectMode || options.readableObjectMode)});
+  Duplex.call(this, options);
   this.options = options;
   this.listening = false;
   this.initialized = false;
@@ -69,6 +69,11 @@ function RecognizeStream(options) {
         self.on('data', function () {
         }); // todo: is there a better way to put a stream in flowing mode?
       });
+      if (!options.silent) {
+        console.log(new Error('Watson Speech to Text RecognizeStream: the ' + event + ' event is deprecated and will be removed from a future release. ' +
+          'Please set {objectMode: true} and listen for the data event instead. ' +
+          'Pass {silent: true} to disable this message.'));
+      }
     }
   }
   this.on('newListener', flowForResults);
@@ -97,7 +102,7 @@ RecognizeStream.prototype.initialize = function () {
 
   var url = (options.url || "wss://stream.watsonplatform.net/speech-to-text/api").replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
-  // turn off all the extras if we're just outputting a string with a single final result
+  // turn off all the extras if we're just outputting text
   var defaults = {
     interim_results: false,
     word_confidence: false,
@@ -120,7 +125,7 @@ RecognizeStream.prototype.initialize = function () {
     max_alternatives: 3,
     inactivity_timeout: 30
   },
-    options.objectMode ? objectModeDefaults : defaults,
+    (options.objectMode || options.readableObjectMode) ? objectModeDefaults : defaults,
     pick(options, OPENING_MESSAGE_PARAMS_ALLOWED)
   );
 
@@ -199,35 +204,37 @@ RecognizeStream.prototype.initialize = function () {
       }
     } else if (data.results) {
       /**
-       * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
+       * Object with array of interim or final results, possibly including confidence scores, alternatives, and word timing. May have no results at all for empty audio files.
        * @event RecognizeStream#results
        * @param {Object} results
-       * @deprecated - use objectMode instead
+       * @deprecated - use objectMode and listen for the 'data' event instead
        */
       self.emit('results', data.results);
 
       // note: currently there is always either 0 or 1 entries in the results array. However, this may change in the future.
       data.results.forEach(function (result) {
+        result.index = data.result_index;
         /**
-         * Object with interim or final results, including possible alternatives. May have no results at all for empty audio files.
+         * Object with interim or final results, possibly including confidence scores, alternatives, and word timing.
          * @event RecognizeStream#results
          * @param {Object} results
-         * @deprecated - use objectMode instead
+         * @deprecated - use objectMode and listen for the 'data' event instead
          */
-        result.index = data.result_index;
         self.emit('result', result);
-        if (result.final && result.alternatives) {
+        if (options.objectMode || options.readableObjectMode) {
+          /**
+           * Object with interim or final results, possibly including confidence scores, alternatives, and word timing.
+           * @event RecognizeStream#data
+           * @param {Object} data
+           */
+          self.push(result);
+        } else if (result.final && result.alternatives) {
           /**
            * Finalized text
            * @event RecognizeStream#data
            * @param {String} transcript
            */
-          if (options.objectMode) {
-            self.push(result);
-          } else {
-            self.push(result.alternatives[0].transcript, 'utf8');
-          }
-
+          self.push(result.alternatives[0].transcript, 'utf8');
         }
       });
     } else {

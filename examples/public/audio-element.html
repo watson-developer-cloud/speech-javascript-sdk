@@ -33,7 +33,7 @@ $(function() {
             var stream = WatsonSpeech.SpeechToText.recognizeElement({
                 token: token,
                 element: $('#audio-element')[0],
-                objectMode: true, // necessary to receive interim results
+                objectMode: true // necessary to receive interim results
                 // muteSource: true // prevents sound from also playing locally
             });
 

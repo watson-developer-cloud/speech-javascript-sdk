@@ -18,15 +18,14 @@ var clone = require('clone');
  * @constructor
  */
 function FormatStream(opts) {
-  this.opts = util._extend({
+  this.options = util._extend({
     model: '', // some models should have all spaces removed
     hesitation: '\u2026', // ellipsis
-    decodeStrings: true,
-    objectMode: true
+    decodeStrings: true
   }, opts);
   Transform.call(this, opts);
 
-  this.isJaCn = ((this.opts.model.substring(0,5) === 'ja-JP') || (this.opts.model.substring(0,5) === 'zh-CN'));
+  this.isJaCn = ((this.options.model.substring(0,5) === 'ja-JP') || (this.options.model.substring(0,5) === 'zh-CN'));
   this._transform = opts.objectMode ? this.formatResult : this.formatString;
 }
 util.inherits(FormatStream, Transform);
@@ -43,7 +42,7 @@ var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
  */
 FormatStream.prototype.clean = function clean(text) {
   // clean out "junk"
-  text = text.trim().replace(reHesitation, this.opts.hesitation)
+  text = text.trim().replace(reHesitation, this.options.hesitation)
     .replace(reRepeatedCharacter, '')
     .replace(reDUnderscoreWords,'');
 
@@ -89,7 +88,7 @@ FormatStream.prototype.formatString = function(chunk, encoding, next) {
  *
  * @param result
  */
-FormatStream.prototype.formatResult = function handleResult(result) {
+FormatStream.prototype.formatResult = function formatResult(result, encoding, next) {
   result = clone(result);
   result.alternatives = result.alternatives.map(function(alt) {
     alt.transcript = this.capitalize(this.clean(alt.transcript));
@@ -112,7 +111,8 @@ FormatStream.prototype.formatResult = function handleResult(result) {
     }
     return alt;
   }, this);
-  this.emit('result', result);
+  this.push(result);
+  next();
 };
 
 FormatStream.prototype.promise = require('./promise');

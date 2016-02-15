@@ -38,10 +38,15 @@ module.exports = function recognizeElement(options) {
   options['content-type'] = 'audio/l16;rate=16000'; // raw wav audio (no header)
   var recognizeStream = new RecognizeStream(options);
 
-  var sourceStream = new MediaElementAudioStream(options.element , options);
+  var sourceStream = new MediaElementAudioStream(options.element , {
+    objectMode: true,
+    bufferSize: options.bufferSize,
+    muteSource: options.muteSource,
+    autoplay: options.autoPlay
+  });
 
   var stream = sourceStream
-    .pipe(new L16())
+    .pipe(new L16({writableObjectMode: true}))
     .pipe(recognizeStream);
 
   if (options.format !== false) {

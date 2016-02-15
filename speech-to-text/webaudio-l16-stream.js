@@ -15,36 +15,32 @@ var TARGET_SAMPLE_RATE = 16000;
  *
  * @constructor
  */
-function WebAudioL16Stream(opts) {
-  opts = this.opts = util._extend({
+function WebAudioL16Stream(options) {
+  options = this.options = util._extend({
     sourceSampleRate: 48000,
-    writableObjectMode: true,
     downsample: true
-  }, opts);
+  }, options);
 
-  Transform.call(this, opts);
+  Transform.call(this, options);
 
   this.bufferUnusedSamples = [];
 
-  if (opts.writableObjectMode) {
-    this.formatEmitted = false;
+  if (options.objectMode || options.writableObjectMode) {
     this._transform = this.handleFirstAudioBuffer;
   } else {
     this._transform = this.transformBuffer;
     process.nextTick(this.emitFormat.bind(this));
   }
 
-
 }
 util.inherits(WebAudioL16Stream, Transform);
 
 
 WebAudioL16Stream.prototype.emitFormat = function emitFormat() {
-  this.formatEmitted = true;
   this.emit('format', {
     channels: 1,
     bitDepth: 16,
-    sampleRate: this.opts.downsample ? TARGET_SAMPLE_RATE : this.opts.sourceSampleRate,
+    sampleRate: this.options.downsample ? TARGET_SAMPLE_RATE : this.options.sourceSampleRate,
     signed: true,
     float: false
   });
@@ -87,7 +83,7 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
       -0.0040653, 0.14527, 0.26927, 0.33913, 0.26927, 0.14527, -0.0040653, -0.056487,
       -0.058675, 0.0047792, 0.019989, 0.040173, -0.00089024, -0.037935
     ],
-    samplingRateRatio = this.opts.sourceSampleRate / TARGET_SAMPLE_RATE,
+    samplingRateRatio = this.options.sourceSampleRate / TARGET_SAMPLE_RATE,
     nOutputSamples = Math.floor((buffer.length - filter.length) / (samplingRateRatio)) + 1,
     outputBuffer = new Float32Array(nOutputSamples);
 
@@ -142,10 +138,8 @@ WebAudioL16Stream.prototype.floatTo16BitPCM = function(input){
  * @param next
  */
 WebAudioL16Stream.prototype.handleFirstAudioBuffer = function handleFirstAudioBuffer(audioBuffer, encoding, next) {
-  this.opts.sourceSampleRate = audioBuffer.sampleRate;
-  if (!this.formatEmitted) {
-    this.emitFormat();
-  }
+  this.options.sourceSampleRate = audioBuffer.sampleRate;
+  this.emitFormat();
   this._transform = this.transformAudioBuffer;
   this._transform(audioBuffer, encoding, next);
 };
@@ -159,7 +153,7 @@ WebAudioL16Stream.prototype.handleFirstAudioBuffer = function handleFirstAudioBu
  */
 WebAudioL16Stream.prototype.transformAudioBuffer = function (audioBuffer, encoding, next) {
   var source = audioBuffer.getChannelData(0);
-  if (this.opts.downsample) {
+  if (this.options.downsample) {
     source = this.downsample(source);
   }
   this.push(this.floatTo16BitPCM(source));
@@ -169,13 +163,13 @@ WebAudioL16Stream.prototype.transformAudioBuffer = function (audioBuffer, encodi
 /**
  * Accepts a Buffer (for binary mode), then downsamples to 16000 and converts to a 16-bit pcm
  *
- * @param audioBuffer
+ * @param {Buffer} nodebufferok
  * @param encoding
  * @param next
  */
 WebAudioL16Stream.prototype.transformBuffer = function (nodebuffer, encoding, next) {
   var source = new Float32Array(nodebuffer.buffer);
-  if (this.opts.downsample) {
+  if (this.options.downsample) {
     source = this.downsample(source);
   }
   this.push(this.floatTo16BitPCM(source));

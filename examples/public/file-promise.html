@@ -29,12 +29,7 @@ $(function() {
 
             WatsonSpeech.SpeechToText.recognizeBlob({
                 token: token,
-                data: $('#audiofile')[0].files[0],
-                // optional: disable unused features to save time/energy/bandwidth
-                interim_results: false,
-                word_confidence: false,
-                timestamps: false,
-                max_alternatives: 1
+                data: $('#audiofile')[0].files[0]
             })
             .promise()
             .then(function(text) {

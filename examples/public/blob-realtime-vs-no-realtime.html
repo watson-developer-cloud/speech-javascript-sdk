@@ -31,7 +31,7 @@ function renderStream(stream, $output) {
     var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
 
     // a result is approximately equivalent to a sentence
-    stream.on('result', function(result) {
+    stream.on('data', function(result) {
         // update the text for the current sentence with the default alternative.
         // there may be multiple alternatives but this example app ignores all but the first.
         $curSentence.html(result.alternatives[0].transcript);
@@ -62,6 +62,7 @@ $(function() {
                 token: token,
                 data: $('#audiofile')[0].files[0],
                 play: true,
+                objectMode: true,
                 max_alternatives: 1, // default is 3, but only the first one includes word timing data
                 realtime: false // defaults to true, but we're going to turn it off and then manually do it in a moment to show the difference
             });
@@ -69,7 +70,7 @@ $(function() {
             renderStream(stream, $('#output'));
 
             // now do what the realtime option would have done: pipe through a TimingStream
-            var realtimeStream = stream.pipe(new WatsonSpeech.SpeechToText.TimingStream());
+            var realtimeStream = stream.pipe(new WatsonSpeech.SpeechToText.TimingStream({objectMode: true}));
 
             renderStream(realtimeStream, $('#realtime-output'));
 
