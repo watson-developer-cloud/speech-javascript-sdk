@@ -324,7 +324,7 @@ RecognizeStream.prototype.finish = function finish() {
   }
 };
 
-RecognizeStream.prototype.promise = require('./promise');
+RecognizeStream.prototype.promise = require('./to-promise');
 
 
 RecognizeStream.getContentType = function (buffer) {

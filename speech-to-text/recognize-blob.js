@@ -59,6 +59,7 @@ module.exports = function recognizeBlob(options) {
   if (realtime) {
     stream = stream.pipe(new TimingStream(options));
   }
+  stream.stop = recognizeStream.stop.bind(recognizeStream);
 
   if (options.play) {
     FilePlayer.playFile(options.data).then(function (player) {

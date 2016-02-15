@@ -116,8 +116,6 @@ FormatStream.prototype.formatResult = function formatResult(result, encoding, ne
   next();
 };
 
-FormatStream.prototype.promise = require('./promise');
-
-FormatStream.prototype.stop = function(){}; // usually overwritten during the `pipe` event
+FormatStream.prototype.promise = require('./to-promise');
 
 module.exports = FormatStream;

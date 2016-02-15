@@ -56,6 +56,7 @@ module.exports = function recognizeElement(options) {
 
   if (options.format !== false) {
     stream = stream.pipe(new FormatStream(options));
+    stream.stop = recognizeStream.stop.bind(recognizeStream);
   }
 
   recognizeStream.on('stop', sourceStream.stop.bind(sourceStream));

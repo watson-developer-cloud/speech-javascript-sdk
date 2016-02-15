@@ -46,7 +46,7 @@ Options:
 
 Requires that the browser support MediaElement and whatever audio codec is used in your media file.
 
-Will automatically call `.play()` the `element`, set `options.autoplay=false` to  disable. Calling `.stop()` on the returned stream will automatically call `.stop()` on the `element`.
+Will automatically call `.play()` the `element`, set `options.autoPlay=false` to  disable. Calling `.stop()` on the returned stream will automatically call `.stop()` on the `element`.
 
 Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
 
@@ -85,13 +85,12 @@ See speech-to-text/recognize-stream.js for other options.
   Standard `close` event will fire once the underlying websocket is closed and `end` once all of the data is consumed.
 
 #### Events
-In addition to the standard [Node.js stream events](https://nodejs.org/api/stream.html), the following events are fired:
+Follows standard [Node.js stream events](https://nodejs.org/api/stream.html), in particular: 
 
-* `result`: an individual result object from the results array. 
-  May include final or interim transcription, alternatives, word timing, confidence scores, etc. depending on passed in options.
-  Note: Listening for `result` will automatically put the stream into flowing mode.
+* `data`: emits either final Strings or final/interim result objects depending on if the stream is in objectMode
+* `end`: emitted once all data has been consumed.
 
-(Note: there are several other events, but they are intended for internal usage)
+(Note: there are several custom events, but they are deprecated or intended for internal usage)
 
 ### Class `FormatStream()`
 
@@ -101,17 +100,19 @@ Pipe a `RecognizeStream` to a format stream, and the resulting text and `results
  *  Fix any "cruft" in the transcription
  *  A few other tweaks for asian languages and such.
 
-Inherits `.promise()` and `.stop()` methods and `result` event from the `RecognizeStream`.
+Inherits `.promise()` from the `RecognizeStream`.
 
 
 ### Class `TimingStream()`
 
 For use with `.recognizeBlob({play: true})` - slows the results down to match the audio. Pipe in the `RecognizeStream` (or `FormatStream`) and listen for results as usual.
 
-Inherits `.stop()` method and `result` event from the `RecognizeStream`.
-
 
 ## Changelog
+
+### v0.8
+* deprecated `result` events in favor of `objectMode`.
+* renamed the `autoplay` option to `autoPlay` on `recognizeElement()` (capital P)
 
 ### v0.7
 * Changed `playFile` option of `recognizeBlob()` to just `play`, corrected default
@@ -125,21 +126,16 @@ Inherits `.stop()` method and `result` event from the `RecognizeStream`.
 ## todo
 
 * Solidify API
-* support objectMode instead of having random events
-* add text-to-speech support
+* add text-to-speech support - may require service improvements
 * add an example that includes alternatives and word confidence scores
-* enable eslint
+* enable eslint - https://github.ibm.com/fed/javascript-style-guides
 * break components into standalone npm modules where it makes sense
-* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, etc.)
+* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, Object.assign, etc.)
 * run integration tests on travis (fall back to offline server for pull requests)
 * more tests in general
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
+* move `result` and `results` events to node wrapper (along with the deprecation notice)
 * improve docs
 * consider a wrapper to match https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html
-
-
-recognizeBlob -> recognizeFile (?)
-objectMode
-move timing/format stream.stop to wrapper methods
-test promise with objectmode
-consider interim event for recognize/format/timing streams
+* consider renaming recognizeBlob to recognizeFile to make the usage more obvious
+* consider an `interim` event for recognize/format/timing streams to avoid objectMode (in most cases)

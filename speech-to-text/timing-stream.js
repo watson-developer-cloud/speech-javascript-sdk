@@ -33,9 +33,6 @@ function TimingStream(opts) {
 
   var self = this;
   this.on('pipe', function(source) {
-    if(source.stop) {
-      self.stop = source.stop.bind(source);
-    }
     source.on('end', function() {
       self.sourceEnded = true; // todo: see if there's anything built-in that does this for us
     });
@@ -222,8 +219,5 @@ TimingStream.prototype.handleResult = function handleResult(result) {
 
   this.tick();
 };
-
-TimingStream.prototype.stop = function(){}; // usually overwritten during the `pipe` event
-
 
 module.exports = TimingStream;
