@@ -38,7 +38,19 @@ Also note that Chrome requires https (with a few exceptions for localhost and su
 
 Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
 
+Known issue: Firefox continues to display a microphone icon in the address bar even after recording has ceased. This is a browser bug.
+
 ### `.recognizeElement({element, token})` -> `RecognizeStream`
+
+Extract audio from an `<audio>` or `<video>` element and transcribe speech. 
+
+This method has some limitations: 
+ * the audio is run through two lossy conversions: first from the source format to WebAudio, and second to l16 (raw wav) for Watson
+ * the WebAudio API does not guarantee the same exact output for the same file played twice, so it's possible to receive slight different transcriptions for the same file played repeatedly
+ * it transcribes the audio as it is heard, so pausing or skipping will affect the transcription
+ * audio that is paused for too long will cause the socket to time out and disconnect, preventing further transcription (without setting things up again)
+ 
+Because of these limitations, it may be preferable to instead fetch the audio via ajax and then pass it the `recognizeBlob()` API in some situations.
 
 Options: 
 * `element`: an `<audio>` or `<video>` element (could be generated pragmatically, e.g. `new Audio()`)
@@ -139,3 +151,4 @@ For use with `.recognizeBlob({play: true})` - slows the results down to match th
 * consider a wrapper to match https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html
 * consider renaming recognizeBlob to recognizeFile to make the usage more obvious
 * consider an `interim` event for recognize/format/timing streams to avoid objectMode (in most cases)
+* ajax / playFile demo 
