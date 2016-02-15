@@ -152,3 +152,4 @@ For use with `.recognizeBlob({play: true})` - slows the results down to match th
 * consider renaming recognizeBlob to recognizeFile to make the usage more obvious
 * consider an `interim` event for recognize/format/timing streams to avoid objectMode (in most cases)
 * ajax / playFile demo 
+* fix documentation generation

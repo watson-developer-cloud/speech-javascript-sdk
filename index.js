@@ -3,8 +3,19 @@
 
 'use strict';
 
+/**
+ * @namespace WatsonSpeech
+ */
+
+/**
+ * Version - for public releases, this should have the version number, e.g 'v1.0.0'
+ */
 exports.version = process.env.TRAVIS_BRANCH;
 
+/**
+ * SpeechToText
+ * @type {*|exports|module.exports}
+ */
 exports.SpeechToText = require('./speech-to-text');
 
 // todo: add text-to-speech
