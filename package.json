@@ -1,7 +1,7 @@
 {
   "name": "watson-speech",
   "version": "0.8.3",
-  "description": "IBM Watson Speech to Text SDK for web browsers.",
+  "description": "IBM Watson Speech to Text and Text to Speech SDK for web browsers.",
   "main": "index.js",
   "scripts": {
     "watch-test": "karma start test/resources/karma.conf.js",

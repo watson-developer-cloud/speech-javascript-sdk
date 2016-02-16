@@ -1,9 +1,9 @@
-IBM Watson Speech To Text Browser Client Library
-================================================
+IBM Watson Speech Services for Web Browsers
+===========================================
 
 [![Build Status](https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk)
 
-Allows you to easily add voice recognition to any web app with minimal code. 
+Allows you to easily add voice recognition and synthesis to any web app with minimal code. 
 
 **Warning** This library is still early-stage and may see significant breaking changes.
 
@@ -21,12 +21,26 @@ See several examples at https://github.com/watson-developer-cloud/speech-javascr
 This library is built with [browserify](http://browserify.org/) and easy to use in browserify-based projects (`npm install --save watson-speech`), but you can also grab the compiled bundle from the 
 `dist/` folder and use it as a standalone library.
 
-## `WatsonSpeech.SpeechToText` Basic API
+Basic API
+---------
 
 Complete API docs should be published at http://watson-developer-cloud.github.io/speech-javascript-sdk/
 
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
 (Snp teee examples/token-server.js for a basic example.)
+
+## `Watson.TextToSpeech`
+
+### '.synthesize({text, token})`
+
+Speaks the supplied text through an automatically-created `<audio>` element. 
+Currently limited to text that can fit within a GET URL (this is particularly an issue on [Internet Explorer before Windows 10](http://stackoverflow.com/questions/32267442/url-length-limitation-of-microsoft-edge)
+where the max length is around 1000 characters after the token is accounted for.)
+
+Options: 
+* voice
+
+## `WatsonSpeech.SpeechToText` 
 
 
 ### `.recognizeMicrophone({token})` -> `RecognizeStream`

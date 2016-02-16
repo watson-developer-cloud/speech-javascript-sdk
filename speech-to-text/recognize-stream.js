@@ -23,6 +23,7 @@ var pick = require('object.pick');
 var W3CWebSocket = require('websocket').w3cwebsocket;
 var contentType = require('./content-type');
 var defaults = require('defaults');
+var qs = require('../util/querystring.js');
 
 
 var OPENING_MESSAGE_PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
@@ -97,10 +98,7 @@ RecognizeStream.prototype.initialize = function () {
   }
 
   var queryParams = util._extend({model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
-  var queryString = Object.keys(queryParams).map(function (key) {
-    return key + '=' + (key == 'watson-token' ? queryParams[key] : encodeURIComponent(queryParams[key])); // the server chokes if the token is correctly url-encoded
-  }).join('&');
-
+  var queryString = qs.stringify(queryParams);
   var url = (options.url || "wss://stream.watsonplatform.net/speech-to-text/api").replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
   // turn off all the extras if we're just outputting text
