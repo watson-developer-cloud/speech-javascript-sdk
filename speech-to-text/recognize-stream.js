@@ -158,11 +158,17 @@ RecognizeStream.prototype.initialize = function () {
       self.push(null);
     }
     /**
-     * @event RecognizeStream#connection-close
+     * @event RecognizeStream#close
      * @param {Number} reasonCode
      * @param {String} description
      */
-    self.emit('close', e.code, e.reason);
+    self.emit('close', e.code, e.reason);    /**
+     * @event RecognizeStream#connection-close
+     * @param {Number} reasonCode
+     * @param {String} description
+     * @deprecated
+     */
+    self.emit('connection-close', e.code, e.reason);
   };
 
   /**
