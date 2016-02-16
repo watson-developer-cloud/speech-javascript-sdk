@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch-test": "karma start test/resources/karma.conf.js",
-    "lint": "eslint --config test/resources/.eslintrc.js *.js src/*.js",
+    "lint": "eslint --config test/resources/.eslintrc.js *.js speech-to-text/*.js text-to-speech/*.js util/*.js",
     "test": "karma start test/resources/karma.conf.js --single-run",
     "test-integration": "TEST_MODE=integration karma start test/resources/karma.conf.js --single-run",
     "browserify": "browserify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --transform envify",
