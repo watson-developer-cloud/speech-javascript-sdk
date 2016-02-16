@@ -136,6 +136,9 @@ For use with `.recognizeBlob({play: true})` - slows the results down to match th
 
 ## Changelog
 
+### v0.9
+* Added basic text to speech support
+
 ### v0.8
 * deprecated `result` events in favor of `objectMode`.
 * renamed the `autoplay` option to `autoPlay` on `recognizeElement()` (capital P)

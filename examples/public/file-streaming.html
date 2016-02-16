@@ -27,7 +27,7 @@ $(function() {
     $('#button').click(function () {
         $output.html('');
 
-        $.get('/token').then(function (token) {
+        $.get('/api/speech-to-text/token').then(function (token) {
 
             stream = WatsonSpeech.SpeechToText.recognizeBlob({
                 token: token,

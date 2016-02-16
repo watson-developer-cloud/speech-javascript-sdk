@@ -27,7 +27,7 @@ $(function() {
     $('#button').click(function () {
         $output.html('');
 
-        $.get('/token').then(function (token) {
+        $.get('/api/speech-to-text/token').then(function (token) {
             var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
                 token: token,
                 objectMode: true // necessary to receive interim results

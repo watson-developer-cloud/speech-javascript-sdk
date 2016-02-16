@@ -25,7 +25,7 @@ $(function() {
     var $output = $('#output');
 
     $('#button').click(function () {
-        $.get('/token').then(function (token) {
+        $.get('/api/speech-to-text/token').then(function (token) {
             $output.html('');
 
             var audioElement = new Audio(); // document.createElement('video'); also works here

@@ -26,7 +26,7 @@ $(function() {
     $('#button').click(function () {
         $output.html('');
 
-        $.get('/token').then(function (token) {
+        $.get('/api/speech-to-text/token').then(function (token) {
             var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
                 token: token,
                 continuous: false, // false = automatically stop transcription the first time a pause is detected
