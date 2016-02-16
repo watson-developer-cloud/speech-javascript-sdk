@@ -45,7 +45,8 @@
     "object.assign": "^4.0.3",
     "object.pick": "^1.1.1",
     "readable-blob-stream": "^1.1.0",
-    "websocket": "^1.0.22"
+    "websocket": "^1.0.22",
+    "whatwg-fetch": "^0.11.0"
   },
   "repository": {
     "type": "git",

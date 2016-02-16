@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Basic Example - Watson Text to Speech</title>
+    <title>Custom Voice - Watson Text to Speech</title>
 </head>
 <body>
 
 <section>
-    <h2>Basic Text to Speech Example</h2>
+    <h2>Text to Speech with Custom Voice Example</h2>
     <textarea id="text" rows="6" cols="80">Hello from IBM Watson</textarea>
+    <p>Voice: <select id="voice"></select></p>
     <p><button id="button">Synthesize Text</button></p>
 </section>
 
@@ -18,10 +19,19 @@
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
     $(function() {
+        $.get('/api/text-to-speech/token').then(function (token) {
+            WatsonSpeech.TextToSpeech.getVoices({token: token}).then(function (voices) {
+                $('#voice').html(voices.map(function(v) {
+                    return '<option value="' + v.name + '"' + (v.name == 'en-GB_KateVoice' ? ' selected' : '') + '>' + v.name + '</option>';
+                }).join('\n'));
+            }).catch(console.error.bind(console));
+        });
+
         $('#button').click(function () {
             $.get('/api/text-to-speech/token').then(function (token) {
                 WatsonSpeech.TextToSpeech.synthesize({
                     text: $('#text').val(),
+                    voice: $('#voice').val(),
                     token: token
                 })
             });
