@@ -155,7 +155,6 @@ For use with `.recognizeBlob({play: true})` - slows the results down to match th
 ## todo
 
 * Solidify API
-* support objectMode instead of having random events
 * add an example that includes alternatives and word confidence scores
 * enable eslint - https://github.ibm.com/fed/javascript-style-guides
 * break components into standalone npm modules where it makes sense
@@ -169,4 +168,3 @@ For use with `.recognizeBlob({play: true})` - slows the results down to match th
 * consider renaming recognizeBlob to recognizeFile to make the usage more obvious
 * consider an `interim` event for recognize/format/timing streams to avoid objectMode (in most cases)
 * ajax / playFile demo 
-* fix documentation generation
