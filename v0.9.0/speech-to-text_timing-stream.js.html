@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: speech-to-text/timing-stream.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: speech-to-text/timing-stream.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+var Duplex = require('stream').Duplex;
+var util = require('util');
+var clone = require('clone');
+var defaults = require('defaults');
+
+/**
+ * Slows results down to no faster than real time.
+ *
+ * Useful when running recognizeBlob because the text can otherwise appear before the words are spoken
+ *
+ * @param {Object} opts
+ * @param {*} [opts.emitAtt=TimingStream.START] - set to TimingStream.END to only emit text that has been completely spoken.
+ * @param {Number} [opts.delay=0] - Additional delay (in seconds) to apply before emitting words, useful for precise syncing to audio tracks. May be negative
+ * @constructor
+ */
+function TimingStream(opts) {
+  this.options = defaults(opts, {
+    emitAt: TimingStream.START,
+    delay: 0,
+    allowHalfOpen: true, // keep the readable side open after the source closes
+    writableObjectMode: true
+  });
+  Duplex.call(this, opts);
+
+  this.startTime = Date.now();
+  // buffer to store future results
+  this.final = [];
+  this.interim = [];
+  this.nextTick = null;
+  this.sourceEnded = false;
+
+  var self = this;
+  this.on('pipe', function(source) {
+    source.on('end', function() {
+      self.sourceEnded = true; // todo: see if there's anything built-in that does this for us
+    });
+  });
+}
+util.inherits(TimingStream, Duplex);
+
+TimingStream.START = 1;
+TimingStream.END = 2;
+
+TimingStream.prototype._write = function(result, encoding, next) {
+  if (result instanceof Buffer) {
+    return this.emit('error', new Error('TimingStream requires the source to be in objectMode'));
+  }
+  this.handleResult(result);
+  next();
+};
+
+TimingStream.prototype._read = function(size) {
+  // ignore - we'll emit results once the time has come
+};
+
+TimingStream.prototype.cutoff = function cutoff() {
+  return (Date.now() - this.startTime)/1000 - this.options.delay;
+};
+
+TimingStream.prototype.withinRange = function(result, cutoff) {
+  return result.alternatives.some(function(alt) {
+    // timestamp structure is ["word", startTime, endTime]
+    // if the first timestamp ends before the cutoff, then it's at least partially within range
+    var timestamp = alt.timestamps[0];
+    return !!timestamp &amp;&amp; timestamp[this.options.emitAt] &lt;= cutoff;
+  }, this);
+};
+
+TimingStream.prototype.completelyWithinRange = function(result, cutoff) {
+  return result.alternatives.every(function(alt) {
+    // timestamp structure is ["word", startTime, endTime]
+    // if the last timestamp ends before the cutoff, then it's completely within range
+    var timestamp = alt.timestamps[alt.timestamps.length - 1];
+    return timestamp[this.options.emitAt] &lt;= cutoff;
+  }, this);
+};
+
+/**
+ * Clones the given result and then crops out any words that occur later than the current cutoff
+ * @param result
+ */
+Duplex.prototype.crop = function crop(result, cutoff) {
+  result = clone(result);
+  result.alternatives = result.alternatives.map(function(alt) {
+    var timestamps = [];
+    for (var i=0, timestamp; i&lt;alt.timestamps.length; i++) {
+      timestamp = alt.timestamps[i];
+      if (timestamp[this.options.emitAt] &lt;= cutoff) {
+        timestamps.push(timestamp);
+      } else {
+        break;
+      }
+    }
+    alt.timestamps = timestamps;
+    alt.transcript = timestamps.map(function(ts) {
+      return ts[0];
+    }).join(' ');
+    return alt;
+  }, this);
+  // "final" signifies both that the text won't change, and that we're at the end of a sentence. Only one of those is true here.
+  result.final = false;
+  return result
+};
+
+/**
+ * Returns one of:
+ *  - undefined if the next result is completely later than the current cutoff
+ *  - a cropped clone of the next result if it's later than the current cutoff &amp;&amp; in objectMode
+ *  - the original next result object (removing it from the array) if it's completely earlier than the current cutoff (or we're in string mode with emitAt set to start)
+ *
+ * @param results
+ * @param cutoff
+ * @returns {*}
+ */
+TimingStream.prototype.getCurrentResult = function getCurrentResult(results, cutoff) {
+  if (results.length &amp;&amp; this.withinRange(results[0], cutoff)) {
+    var completeResult = this.completelyWithinRange(results[0], cutoff);
+    if (this.options.objectMode || this.options.readableObjectMode) {
+      // object mode: emit either a complete result or a cropped result
+      return completeResult ? results.shift() : this.crop(results[0], cutoff);
+    } else if (completeResult || this.options.emitAt == TimingStream.START) {
+      // string mode: emit either a complete result or nothing
+      return results.shift();
+    }
+  }
+};
+
+
+/**
+ * Tick emits any buffered words that have a timestamp before the current time, then calls scheduleNextTick()
+ */
+TimingStream.prototype.tick = function tick() {
+  var cutoff = this.cutoff();
+
+  clearTimeout(this.nextTick);
+  var result = this.getCurrentResult(this.final, cutoff);
+
+  if (!result) {
+    result = this.getCurrentResult(this.interim, cutoff);
+  }
+
+  if(result) {
+    if (this.options.objectMode || this.options.readableObjectMode) {
+      this.push(result);
+    } else {
+      this.push(result.alternatives[0].transcript);
+    }
+    if (result.final) {
+      return this.nextTick = setTimeout(this.tick.bind(this), 0); // in case we are multiple results behind - don't schedule until we are out of final results that are due now
+    }
+  }
+
+  this.scheduleNextTick(cutoff);
+};
+
+/**
+ * Schedules next tick if possible. Requires previous stream to emit recognize objects (objectMode or readableObjectMode)
+ *
+ * triggers the 'close' and 'end' events if the buffer is empty and no further results are expected
+ *
+ * @param cutoff
+ */
+TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
+
+  // prefer final results over interim - when final results are added, any older interim ones are automatically deleted.
+  var nextResult = this.final[0] || this.interim[0];
+  if (nextResult) {
+    // loop through the timestamps until we find one that comes after the current cutoff (there should always be one)
+    var timestamps = nextResult.alternatives[0].timestamps;
+    for(var i=0; i&lt;timestamps.length; i++) {
+      var wordOffset = timestamps[i][this.options.emitAt];
+      if (wordOffset > cutoff) {
+        return this.nextTick = setTimeout(this.tick.bind(this), this.startTime + (wordOffset*1000));
+      }
+    }
+    throw new Error('No future words found'); // this shouldn't happen ever - getCurrentResult should automatically delete the result from the buffer if all of it's words are consumed
+  } else {
+    // if we have no next result in the buffer, and the source has ended, then we're done.
+    if (this.sourceEnded) {
+      this.emit('close');
+      this.push(null);
+    }
+  }
+};
+
+function noTimestamps(result) {
+  var alt = result.alternatives &amp;&amp; result.alternatives[0];
+  return alt &amp;&amp; alt.transcript.trim() &amp;&amp; !alt.timestamps || !alt.timestamps.length;
+}
+
+/**
+ * Creates a new result with all transcriptions formatted
+ *
+ * @param result
+ */
+TimingStream.prototype.handleResult = function handleResult(result) {
+  if (noTimestamps(result)) {
+    return this.emit('error', new Error('TimingStream requires timestamps'));
+  }
+
+  // additional alternatives do not include timestamps, so we can't process and emit them correctly
+  if (result.alternatives.length > 1) {
+    result.alternatives.length = 1;
+  }
+
+  // loop through the buffer and delete any interim results with the same or lower index
+  while(this.interim.length &amp;&amp; this.interim[0].index &lt;= result.index) {
+    this.interim.shift();
+  }
+
+  if (result.final) {
+    // then add it to the final results array
+    this.final.push(result);
+  } else {
+    this.interim.push(result);
+  }
+
+  this.tick();
+};
+
+module.exports = TimingStream;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Namespaces</h3><ul><li><a href="WatsonSpeech.html">WatsonSpeech</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SpeechToText">SpeechToText</a></li><li><a href="global.html#version">version</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 16 2016 17:50:30 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
