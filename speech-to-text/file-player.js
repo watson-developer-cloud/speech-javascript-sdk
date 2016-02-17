@@ -20,6 +20,12 @@ function getContentType(file) {
   });
 }
 
+/**
+ * Plays audio from File/Blob instances
+ * @param file
+ * @param contentType
+ * @constructor
+ */
 function FilePlayer(file, contentType) {
   var audio = this.audio = new Audio();
   if (audio.canPlayType(contentType)) {

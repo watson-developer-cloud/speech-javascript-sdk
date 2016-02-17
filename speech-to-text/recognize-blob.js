@@ -22,6 +22,9 @@ var FormatStream = require('./format-stream.js');
 var TimingStream = require('./timing-stream.js');
 var assign = require('object.assign/polyfill')();
 
+/**
+ * @module watson-speech/speech-to-text/recognize-blob
+ */
 
 /**
  * Create and return a RecognizeStream from a File or Blob

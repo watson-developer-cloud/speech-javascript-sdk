@@ -31,14 +31,33 @@ All API methods require an auth token that must be [generated server-side](https
 
 ## `Watson.TextToSpeech`
 
-### '.synthesize({text, token})`
+### `.synthesize({text, token})` -> `<audio>`
 
 Speaks the supplied text through an automatically-created `<audio>` element. 
 Currently limited to text that can fit within a GET URL (this is particularly an issue on [Internet Explorer before Windows 10](http://stackoverflow.com/questions/32267442/url-length-limitation-of-microsoft-edge)
 where the max length is around 1000 characters after the token is accounted for.)
 
 Options: 
-* voice
+* text - the text to transcribe // todo: list supported languages
+* voice - the desired playback voice's name - see .getVoices(). Note that the voices are language-specific.
+* todo: autoPlay option that can be set to false to preload audio
+
+### `.getVoices()` -> Promise
+
+Returns a promise that resolves to an array of objects representing the available voices.  Example:
+
+```js
+[{
+    "name": "en-US_MichaelVoice", 
+    "language": "en-US", 
+    "customizable": true, 
+    "gender": "male", 
+    "url": "https://stream.watsonplatform.net/text-to-speech/api/v1/voices/en-US_MichaelVoice", 
+    "description": "Michael: American English male voice."
+ },
+ //...
+]
+ ```
 
 ## `WatsonSpeech.SpeechToText` 
 

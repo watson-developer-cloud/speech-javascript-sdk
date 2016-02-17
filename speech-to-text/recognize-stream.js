@@ -25,7 +25,6 @@ var contentType = require('./content-type');
 var defaults = require('defaults');
 var qs = require('../util/querystring.js');
 
-
 var OPENING_MESSAGE_PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
   'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold'];
 

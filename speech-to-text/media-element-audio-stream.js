@@ -4,22 +4,25 @@ var util = require('util');
 var defaults = require('defaults');
 
 /**
- * Turns a MediaStream object (from getUserMedia) into a Node.js Readable stream and converts the audio to Buffers
+ * Extracts audio from an `<audio>` or `<video>` element and provides it as a Node.js Readable stream
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getUserMedia
+ * @param {HTMLMediaElement} source `<audio>` or `<video>` element
+ * @param {Object} [options] options
+ * @param {Number|null} [options.bufferSize=null] buffer size - Mozilla docs recommend leaving this unset for optimal performance
+ * @param {Boolean} [options.muteSource=false] - If true, the audio will not be sent back to the source
+ * @param {Boolean} [options.objectMode=true] - emit AudioBuffers w/ the audio + a bit of metadata instead of Node.js Buffers with audio only
  *
- * @param {MediaStream|HTMLMediaElement} source - either https://developer.mozilla.org/en-US/docs/Web/API/MediaStream or https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
- * @param {Object} [opts] options
- * @param {Number|null} [opts.bufferSize=null] https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
- * @param {Boolean} [opts.muteSource=false] - If true, the audio will not be sent back to the source
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
  *
- * // todo: add option for whether to keep or destroy the context
+ * @todo: add option for whether to keep or destroy the context
+ * @todo: test what happens if source has multiple channels
  *
  * @constructor
  */
-function MediaElementAudioStream(source, opts) {
+function MediaElementAudioStream(source, options) {
 
-  opts = defaults(opts, {
+  options = defaults(options, {
     // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
     // buffer size to balance between latency and audio quality."
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
@@ -38,13 +41,13 @@ function MediaElementAudioStream(source, opts) {
   // we shouldn't need any output channels (going back to the browser - that's what the gain node is for), but chrome is buggy and won't give us any audio without one
   var outputChannels = 1;
 
-  Readable.call(this, opts);
+  Readable.call(this, options);
 
   var self = this;
   var recording = true;
 
   // I can't find much documentation for this for <audio> elements, but it seems to be required for cross-domain usage (in addition to CORS headers)
-  source.crossOrigin = opts.crossOrigin;
+  source.crossOrigin = options.crossOrigin;
 
   /**
    * Convert and emit the raw audio data
@@ -55,7 +58,7 @@ function MediaElementAudioStream(source, opts) {
     // onaudioprocess can be called at least once after we've stopped
     if (recording) {
       // todo: interleave channels in binary mode
-      self.push( opts.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)) );
+      self.push( options.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)) );
     }
   }
 
@@ -63,11 +66,11 @@ function MediaElementAudioStream(source, opts) {
   // cache the source node & context since it's not possible to recreate it later
   var context = source.context = source.context || new AudioContext();
   var audioInput = source.node  = source.node || context.createMediaElementSource(source);
-  var scriptProcessor = context.createScriptProcessor(opts.bufferSize, inputChannels, outputChannels);
+  var scriptProcessor = context.createScriptProcessor(options.bufferSize, inputChannels, outputChannels);
 
   scriptProcessor.onaudioprocess = processAudio;
 
-  if (!opts.muteSource) {
+  if (!options.muteSource) {
     var gain = context.createGain();
     audioInput.connect(gain);
     gain.connect(context.destination);
@@ -93,7 +96,7 @@ function MediaElementAudioStream(source, opts) {
     source.play();
     source.removeEventListener("canplaythrough", start);
   }
-  if (opts.autoPlay) {
+  if (options.autoPlay) {
     // play immediately if we have enough data, otherwise wait for the canplaythrough event
     if(source.readyState === source.HAVE_ENOUGH_DATA) {
       source.play();

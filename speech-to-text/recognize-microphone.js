@@ -25,6 +25,10 @@ var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();
 
 /**
+ * @module watson-speech/speech-to-text/recognize-microphone
+ */
+
+/**
  * Create and return a RecognizeStream from the user's microphone
  * If the options.file is set, it is used instead of the microphone
  *

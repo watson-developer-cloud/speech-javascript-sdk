@@ -22,6 +22,10 @@ var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();
 
 /**
+ * @module watson-speech/speech-to-text/recognize-element
+ */
+
+/**
  * Recognize audio from a <audio> or <video> element
  *
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}

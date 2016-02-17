@@ -3,19 +3,35 @@
 
 'use strict';
 
+require('whatwg-fetch'); // pollyfill - most supported browsers have this built-in
+
 /**
- * @namespace WatsonSpeech
+ * IBM Watson Speech JavaScript SDK
+ *
+ * Top-level module includes the version, a [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) pollyfill, and both of the speech libraries.
+ *
+ * If using a bundler such as browserify, you may optionally include sub-modules directly to reduce the size of the final bundle
+ *
+ * @module watson-speech
  */
 
 /**
- * Version - for public releases, this should have the version number, e.g 'v1.0.0'
+ * Example: 'v1.0.0'
+ *
+ * Will be `undefined` during development
  */
 exports.version = process.env.TRAVIS_BRANCH;
 
 /**
- * SpeechToText
- * @type {*|exports|module.exports}
+ *
+ * @see module:watson-speech/speech-to-text
  */
 exports.SpeechToText = require('./speech-to-text');
 
+/**
+ *
+ * @see module:watson-speech/text-to-speech
+ */
 exports.TextToSpeech = require('./text-to-speech');
+
+
