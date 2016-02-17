@@ -47,14 +47,11 @@
 
 
 <div class="description">
-    Transforms Buffers or AudioBuffers into a binary stream of l16 (raw wav) audio, downsampling in the process.
-
-The watson speech-to-text service works on 1600khz and internally downsamples audio received at higher samplerates.
-WebAudio is usually 48000khz, so downsampling here reduces bandwidth usage by 2/3.
-
-Format event + stream can be combined with https://www.npmjs.com/package/wav to generate a wav file with a proper header
-
-Todo: support multi-channel audio (for use with <audio>/<video> elements) - will require interleaving audio channels
+    <p>Transforms Buffers or AudioBuffers into a binary stream of l16 (raw wav) audio, downsampling in the process.</p>
+<p>The watson speech-to-text service works on 1600khz and internally downsamples audio received at higher samplerates.
+WebAudio is usually 48000khz, so downsampling here reduces bandwidth usage by 2/3.</p>
+<p>Format event + stream can be combined with https://www.npmjs.com/package/wav to generate a wav file with a proper header</p>
+<p>Todo: support multi-channel audio (for use with <audio>/<video> elements) - will require interleaving audio channels</p>
 </div>
 
 
@@ -154,14 +151,12 @@ Todo: support multi-channel audio (for use with <audio>/<video> elements) - will
 
 
 <div class="description">
-    Downsamples WebAudio to 16 kHz.
-
-Browsers can downsample WebAudio natively with OfflineAudioContext's but it was designed for non-streaming use and
+    <p>Downsamples WebAudio to 16 kHz.</p>
+<p>Browsers can downsample WebAudio natively with OfflineAudioContext's but it was designed for non-streaming use and
 requires a new context for each AudioBuffer. Firefox can handle this, but chrome (v47) crashes after a few minutes.
-So, we'll do it in JS for now.
-
-This really belongs in it's own stream, but there's no way to create new AudioBuffer instances from JS, so its
-fairly coupled to the wav conversion code.
+So, we'll do it in JS for now.</p>
+<p>This really belongs in it's own stream, but there's no way to create new AudioBuffer instances from JS, so its
+fairly coupled to the wav conversion code.</p>
 </div>
 
 
@@ -213,7 +208,7 @@ fairly coupled to the wav conversion code.
 
             
 
-            <td class="description last">Microphone/MediaElement audio chunk</td>
+            <td class="description last"><p>Microphone/MediaElement audio chunk</p></td>
         </tr>
 
     
@@ -281,7 +276,7 @@ fairly coupled to the wav conversion code.
 
         
 <div class="param-desc">
-    'audio/l16' chunk
+    <p>'audio/l16' chunk</p>
 </div>
 
 
@@ -314,13 +309,12 @@ fairly coupled to the wav conversion code.
 
 
 <div class="description">
-    Accepts a Float32Array of audio data and converts it to a Buffer of l16 audio data (raw wav)
-
-Explanation for the math: The raw values captured from the Web Audio API are
+    <p>Accepts a Float32Array of audio data and converts it to a Buffer of l16 audio data (raw wav)</p>
+<p>Explanation for the math: The raw values captured from the Web Audio API are
 in 32-bit Floating Point, between -1 and 1 (per the specification).
 The values for 16-bit PCM range between -32768 and +32767 (16-bit signed integer).
-Filter & combine samples to reduce frequency, then multiply to by 0x7FFF (32767) to convert.
-Store in little endian.
+Filter &amp; combine samples to reduce frequency, then multiply to by 0x7FFF (32767) to convert.
+Store in little endian.</p>
 </div>
 
 
@@ -464,7 +458,7 @@ Store in little endian.
 
 
 <div class="description">
-    Does some one-time setup to grab sampleRate and emit format, then sets _transform to the actual audio buffer handler and calls it.
+    <p>Does some one-time setup to grab sampleRate and emit format, then sets _transform to the actual audio buffer handler and calls it.</p>
 </div>
 
 
@@ -626,7 +620,7 @@ Store in little endian.
 
 
 <div class="description">
-    Accepts an AudioBuffer (for objectMode), then downsamples to 16000 and converts to a 16-bit pcm
+    <p>Accepts an AudioBuffer (for objectMode), then downsamples to 16000 and converts to a 16-bit pcm</p>
 </div>
 
 
@@ -788,7 +782,7 @@ Store in little endian.
 
 
 <div class="description">
-    Accepts a Buffer (for binary mode), then downsamples to 16000 and converts to a 16-bit pcm
+    <p>Accepts a Buffer (for binary mode), then downsamples to 16000 and converts to a 16-bit pcm</p>
 </div>
 
 
@@ -959,13 +953,13 @@ Store in little endian.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Namespaces</h3><ul><li><a href="WatsonSpeech.html">WatsonSpeech</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SpeechToText">SpeechToText</a></li><li><a href="global.html#version">version</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-blob.html">watson-speech/speech-to-text/recognize-blob</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 16 2016 17:50:37 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 17 2016 23:06:40 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

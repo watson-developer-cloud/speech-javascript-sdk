@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: speech-to-text/to-promise.js</title>
+    <title>JSDoc: Class: FilePlayer</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,38 +17,191 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: speech-to-text/to-promise.js</h1>
+    <h1 class="page-title">Class: FilePlayer</h1>
 
     
 
 
 
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>'use strict';
 
-/**
- * Helper method that can be bound to a stream - it sets the output to utf-8, captures all of the results, and returns a promise that resolves to the final text.
- * Essentially a smaller version of concat-stream wrapped in a promise
- *
- * @param [stream=] optional stream param for when not bound to an existing stream instance
- */
-module.exports = function promise(stream) {
-  stream = stream || this;
-  return new Promise(function (resolve, reject) {
-    var results = [];
-    stream.setEncoding('utf8')
-    .on('data', function (result) {
-      results.push(result);
-    }).on('end', function () {
-      resolve(typeof results[0] === 'string' ? results.join('') : results);
-    }).on('error', reject);
-  });
-};
-</code></pre>
-        </article>
-    </section>
+<section>
+
+<header>
+    
+        <h2>FilePlayer</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="FilePlayer"><span class="type-signature"></span>new FilePlayer<span class="signature">(file, contentType)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Plays audio from File/Blob instances</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>file</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>contentType</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="speech-to-text_file-player.js.html">speech-to-text/file-player.js</a>, <a href="speech-to-text_file-player.js.html#line29">line 29</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

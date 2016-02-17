@@ -32,22 +32,25 @@ var util = require('util');
 var defaults = require('defaults');
 
 /**
- * Turns a MediaStream object (from getUserMedia) into a Node.js Readable stream and converts the audio to Buffers
+ * Extracts audio from an `&lt;audio>` or `&lt;video>` element and provides it as a Node.js Readable stream
  *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getUserMedia
+ * @param {HTMLMediaElement} source `&lt;audio>` or `&lt;video>` element
+ * @param {Object} [options] options
+ * @param {Number|null} [options.bufferSize=null] buffer size - Mozilla docs recommend leaving this unset for optimal performance
+ * @param {Boolean} [options.muteSource=false] - If true, the audio will not be sent back to the source
+ * @param {Boolean} [options.objectMode=true] - emit AudioBuffers w/ the audio + a bit of metadata instead of Node.js Buffers with audio only
  *
- * @param {MediaStream|HTMLMediaElement} source - either https://developer.mozilla.org/en-US/docs/Web/API/MediaStream or https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
- * @param {Object} [opts] options
- * @param {Number|null} [opts.bufferSize=null] https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
- * @param {Boolean} [opts.muteSource=false] - If true, the audio will not be sent back to the source
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
  *
- * // todo: add option for whether to keep or destroy the context
+ * @todo: add option for whether to keep or destroy the context
+ * @todo: test what happens if source has multiple channels
  *
  * @constructor
  */
-function MediaElementAudioStream(source, opts) {
+function MediaElementAudioStream(source, options) {
 
-  opts = defaults(opts, {
+  options = defaults(options, {
     // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
     // buffer size to balance between latency and audio quality."
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
@@ -66,13 +69,13 @@ function MediaElementAudioStream(source, opts) {
   // we shouldn't need any output channels (going back to the browser - that's what the gain node is for), but chrome is buggy and won't give us any audio without one
   var outputChannels = 1;
 
-  Readable.call(this, opts);
+  Readable.call(this, options);
 
   var self = this;
   var recording = true;
 
   // I can't find much documentation for this for &lt;audio> elements, but it seems to be required for cross-domain usage (in addition to CORS headers)
-  source.crossOrigin = opts.crossOrigin;
+  source.crossOrigin = options.crossOrigin;
 
   /**
    * Convert and emit the raw audio data
@@ -83,7 +86,7 @@ function MediaElementAudioStream(source, opts) {
     // onaudioprocess can be called at least once after we've stopped
     if (recording) {
       // todo: interleave channels in binary mode
-      self.push( opts.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)) );
+      self.push( options.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)) );
     }
   }
 
@@ -91,11 +94,11 @@ function MediaElementAudioStream(source, opts) {
   // cache the source node &amp; context since it's not possible to recreate it later
   var context = source.context = source.context || new AudioContext();
   var audioInput = source.node  = source.node || context.createMediaElementSource(source);
-  var scriptProcessor = context.createScriptProcessor(opts.bufferSize, inputChannels, outputChannels);
+  var scriptProcessor = context.createScriptProcessor(options.bufferSize, inputChannels, outputChannels);
 
   scriptProcessor.onaudioprocess = processAudio;
 
-  if (!opts.muteSource) {
+  if (!options.muteSource) {
     var gain = context.createGain();
     audioInput.connect(gain);
     gain.connect(context.destination);
@@ -121,7 +124,7 @@ function MediaElementAudioStream(source, opts) {
     source.play();
     source.removeEventListener("canplaythrough", start);
   }
-  if (opts.autoPlay) {
+  if (options.autoPlay) {
     // play immediately if we have enough data, otherwise wait for the canplaythrough event
     if(source.readyState === source.HAVE_ENOUGH_DATA) {
       source.play();
@@ -188,13 +191,13 @@ module.exports = MediaElementAudioStream;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Namespaces</h3><ul><li><a href="WatsonSpeech.html">WatsonSpeech</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SpeechToText">SpeechToText</a></li><li><a href="global.html#version">version</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-blob.html">watson-speech/speech-to-text/recognize-blob</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 16 2016 17:50:37 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 17 2016 23:06:40 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

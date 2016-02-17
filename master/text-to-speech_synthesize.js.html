@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: speech-to-text/to-promise.js</title>
+    <title>JSDoc: Source: text-to-speech/synthesize.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: speech-to-text/to-promise.js</h1>
+    <h1 class="page-title">Source: text-to-speech/synthesize.js</h1>
 
     
 
@@ -26,26 +26,39 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>'use strict';
+            <pre class="prettyprint source linenums"><code>"use strict";
+var qs = require('../util/querystring.js');
 
 /**
- * Helper method that can be bound to a stream - it sets the output to utf-8, captures all of the results, and returns a promise that resolves to the final text.
- * Essentially a smaller version of concat-stream wrapped in a promise
- *
- * @param [stream=] optional stream param for when not bound to an existing stream instance
+ * @module watson-speech/text-to-speech/synthesize
  */
-module.exports = function promise(stream) {
-  stream = stream || this;
-  return new Promise(function (resolve, reject) {
-    var results = [];
-    stream.setEncoding('utf8')
-    .on('data', function (result) {
-      results.push(result);
-    }).on('end', function () {
-      resolve(typeof results[0] === 'string' ? results.join('') : results);
-    }).on('error', reject);
-  });
+
+/**
+ * Synthesize and play the supplied text over the computers speakers.
+ *
+ * Creates and returns a HTML5 `&lt;audio>` element
+ *
+ * @param options
+ * @param {String} options.token auth token
+ * @param {String} options.text text to speak
+ * @param {String} [options.voice=en-US_MichaelVoice] what voice to use - call getVoices() for a complete list.
+ * @param {Number} [options.X-WDC-PL-OPT-OUT=0] set to 1 to opt-out of allowing Watson to use this request to improve it's services
+ * @returns {Audio}
+ * @see module:watson-speech/text-to-speech/get-voices
+ */
+module.exports = function synthesize(options) {
+  if (!options || !options.token) {
+    throw new Error("Watson TextToSpeech: missing required parameter: options.token");
+  }
+  options['watson-token'] = options.token;
+  delete options.token;
+  var audio = new Audio();
+  audio.crossOrigin = true;
+  audio.src = 'https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?' + qs.stringify(options);
+  audio.play();
+  return audio;
 };
+
 </code></pre>
         </article>
     </section>

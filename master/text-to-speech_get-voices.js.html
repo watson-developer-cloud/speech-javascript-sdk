@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: speech-to-text/to-promise.js</title>
+    <title>JSDoc: Source: text-to-speech/get-voices.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: speech-to-text/to-promise.js</h1>
+    <h1 class="page-title">Source: text-to-speech/get-voices.js</h1>
 
     
 
@@ -26,25 +26,50 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>'use strict';
+            <pre class="prettyprint source linenums"><code>"use strict";
 
 /**
- * Helper method that can be bound to a stream - it sets the output to utf-8, captures all of the results, and returns a promise that resolves to the final text.
- * Essentially a smaller version of concat-stream wrapped in a promise
- *
- * @param [stream=] optional stream param for when not bound to an existing stream instance
+ * @module watson-speech/text-to-speech/get-voices
  */
-module.exports = function promise(stream) {
-  stream = stream || this;
-  return new Promise(function (resolve, reject) {
-    var results = [];
-    stream.setEncoding('utf8')
-    .on('data', function (result) {
-      results.push(result);
-    }).on('end', function () {
-      resolve(typeof results[0] === 'string' ? results.join('') : results);
-    }).on('error', reject);
-  });
+
+/**
+ Returns a promise that resolves to an array of objects representing the available voices.  Example:
+
+ ```js
+ [{
+    "name": "en-US_MichaelVoice",
+    "language": "en-US",
+    "customizable": true,
+    "gender": "male",
+    "url": "https://stream.watsonplatform.net/text-to-speech/api/v1/voices/en-US_MichaelVoice",
+    "description": "Michael: American English male voice."
+ },
+ //...
+ ]
+ ```
+ Requires fetch (loading the top-level module automatically includes a pollyfill, but loading this sub-module directly doesn't.)
+
+ * @todo define format in @returns statement
+ * @param options
+ * @param {String} options.token auth token
+ * @returns {Promise.&lt;T>}
+ */
+module.exports = function getVoices(options) {
+  if (!options || !options.token) {
+    throw new Error("Watson TextToSpeech: missing required parameter: options.token");
+  }
+  var reqOpts = {
+    credentials: 'omit',
+    headers: {
+      'accept': 'application/json'
+    }
+  };
+  return fetch('https://stream.watsonplatform.net/text-to-speech/api/v1/voices?watson-token=' + options.token, reqOpts)
+    .then(function(response){
+      return response.json();
+    }).then(function(obj) {
+      return obj.voices;
+    });
 };
 </code></pre>
         </article>

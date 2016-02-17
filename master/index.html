@@ -59,14 +59,26 @@ and there is also a <a href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/de
 <h2>Basic API</h2><p>Complete API docs should be published at http://watson-developer-cloud.github.io/speech-javascript-sdk/</p>
 <p>All API methods require an auth token that must be <a href="https://github.com/watson-developer-cloud/node-sdk#authorization">generated server-side</a>. 
 (Snp teee examples/token-server.js for a basic example.)</p>
-<h2><code>Watson.TextToSpeech</code></h2><h3>'.synthesize({text, token})`</h3><p>Speaks the supplied text through an automatically-created <code>&lt;audio&gt;</code> element. 
+<h2><code>Watson.TextToSpeech</code></h2><h3><code>.synthesize({text, token})</code> -&gt; <code>&lt;audio&gt;</code></h3><p>Speaks the supplied text through an automatically-created <code>&lt;audio&gt;</code> element. 
 Currently limited to text that can fit within a GET URL (this is particularly an issue on <a href="http://stackoverflow.com/questions/32267442/url-length-limitation-of-microsoft-edge">Internet Explorer before Windows 10</a>
 where the max length is around 1000 characters after the token is accounted for.)</p>
 <p>Options: </p>
 <ul>
-<li>voice</li>
+<li>text - the text to transcribe // todo: list supported languages</li>
+<li>voice - the desired playback voice's name - see .getVoices(). Note that the voices are language-specific.</li>
+<li>todo: autoPlay option that can be set to false to preload audio</li>
 </ul>
-<h2><code>WatsonSpeech.SpeechToText</code></h2><h3><code>.recognizeMicrophone({token})</code> -&gt; <code>RecognizeStream</code></h3><p>Options: No direct options, all provided options are passed to MicrophoneStream and RecognizeStream</p>
+<h3><code>.getVoices()</code> -&gt; Promise</h3><p>Returns a promise that resolves to an array of objects representing the available voices.  Example:</p>
+<pre class="prettyprint source lang-js"><code>[{
+    &quot;name&quot;: &quot;en-US_MichaelVoice&quot;, 
+    &quot;language&quot;: &quot;en-US&quot;, 
+    &quot;customizable&quot;: true, 
+    &quot;gender&quot;: &quot;male&quot;, 
+    &quot;url&quot;: &quot;https://stream.watsonplatform.net/text-to-speech/api/v1/voices/en-US_MichaelVoice&quot;, 
+    &quot;description&quot;: &quot;Michael: American English male voice.&quot;
+ },
+ //...
+]</code></pre><h2><code>WatsonSpeech.SpeechToText</code></h2><h3><code>.recognizeMicrophone({token})</code> -&gt; <code>RecognizeStream</code></h3><p>Options: No direct options, all provided options are passed to MicrophoneStream and RecognizeStream</p>
 <p>Requires the <code>getUserMedia</code> API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
 Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features</p>
 <p>Pipes results through a <code>{FormatStream}</code> by default, set <code>options.format=false</code> to disable.</p>
@@ -145,7 +157,6 @@ Standard <code>close</code> event will fire once the underlying websocket is clo
 </ul>
 <h2>todo</h2><ul>
 <li>Solidify API</li>
-<li>support objectMode instead of having random events</li>
 <li>add an example that includes alternatives and word confidence scores</li>
 <li>enable eslint - https://github.ibm.com/fed/javascript-style-guides</li>
 <li>break components into standalone npm modules where it makes sense</li>
@@ -159,7 +170,6 @@ Standard <code>close</code> event will fire once the underlying websocket is clo
 <li>consider renaming recognizeBlob to recognizeFile to make the usage more obvious</li>
 <li>consider an <code>interim</code> event for recognize/format/timing streams to avoid objectMode (in most cases)</li>
 <li>ajax / playFile demo </li>
-<li>fix documentation generation</li>
 </ul></article>
     </section>
 
@@ -171,13 +181,13 @@ Standard <code>close</code> event will fire once the underlying websocket is clo
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Namespaces</h3><ul><li><a href="WatsonSpeech.html">WatsonSpeech</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SpeechToText">SpeechToText</a></li><li><a href="global.html#version">version</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-blob.html">watson-speech/speech-to-text/recognize-blob</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 16 2016 17:50:37 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 17 2016 23:06:40 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

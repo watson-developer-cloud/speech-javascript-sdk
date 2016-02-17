@@ -47,12 +47,10 @@
 
 
 <div class="description">
-    pipe()-able Node.js Readable/Writeable stream - accepts binary audio and emits text in it's `data` events.
-Also emits `results` events with interim results and other data.
-
-Cannot be instantiated directly, instead reated by calling #createRecognizeStream()
-
-Uses WebSockets under the hood. For audio with no recognizable speech, no `data` events are emitted.
+    <p>pipe()-able Node.js Readable/Writeable stream - accepts binary audio and emits text in it's <code>data</code> events.
+Also emits <code>results</code> events with interim results and other data.</p>
+<p>Cannot be instantiated directly, instead reated by calling #createRecognizeStream()</p>
+<p>Uses WebSockets under the hood. For audio with no recognizable speech, no <code>data</code> events are emitted.</p>
 </div>
 
 
@@ -161,7 +159,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">voice model to use. Microphone streaming only supports broadband models.</td>
+            <td class="description last"><p>voice model to use. Microphone streaming only supports broadband models.</p></td>
         </tr>
 
     
@@ -200,7 +198,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">base URL for service</td>
+            <td class="description last"><p>base URL for service</p></td>
         </tr>
 
     
@@ -239,7 +237,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">content type of audio; can be automatically determined from file header in most cases. only wav, flac, and ogg/opus are supported</td>
+            <td class="description last"><p>content type of audio; can be automatically determined from file header in most cases. only wav, flac, and ogg/opus are supported</p></td>
         </tr>
 
     
@@ -278,7 +276,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">Send back non-final previews of each "sentence" as it is being processed. Defaults to true when in objectMode.</td>
+            <td class="description last"><p>Send back non-final previews of each &quot;sentence&quot; as it is being processed. Defaults to true when in objectMode.</p></td>
         </tr>
 
     
@@ -317,7 +315,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">set to false to automatically stop the transcription after the first "sentence"</td>
+            <td class="description last"><p>set to false to automatically stop the transcription after the first &quot;sentence&quot;</p></td>
         </tr>
 
     
@@ -356,7 +354,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">include confidence scores with results. Defaults to true when in objectMode.</td>
+            <td class="description last"><p>include confidence scores with results. Defaults to true when in objectMode.</p></td>
         </tr>
 
     
@@ -395,7 +393,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">include timestamps with results. Defaults to true when in objectMode.</td>
+            <td class="description last"><p>include timestamps with results. Defaults to true when in objectMode.</p></td>
         </tr>
 
     
@@ -434,7 +432,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">maximum number of alternative transcriptions to include. Defaults to 3 when in objectMode.</td>
+            <td class="description last"><p>maximum number of alternative transcriptions to include. Defaults to 3 when in objectMode.</p></td>
         </tr>
 
     
@@ -473,7 +471,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity</td>
+            <td class="description last"><p>how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity</p></td>
         </tr>
 
     
@@ -512,7 +510,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">emit `result` objects instead of string Buffers for the `data` events. Changes several other defaults.</td>
+            <td class="description last"><p>emit <code>result</code> objects instead of string Buffers for the <code>data</code> events. Changes several other defaults.</p></td>
         </tr>
 
     
@@ -551,9 +549,8 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
                 </td>
             
 
-            <td class="description last">set to 1 to opt-out of allowing Watson to use this request to improve it's services
-
-//todo: investigate other options at http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/apis/#!/speech-to-text/recognizeSessionless</td>
+            <td class="description last"><p>set to 1 to opt-out of allowing Watson to use this request to improve it's services</p>
+<p>//todo: investigate other options at http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/apis/#!/speech-to-text/recognizeSessionless</p></td>
         </tr>
 
     
@@ -601,7 +598,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line59">line 59</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line58">line 58</a>
     </li></ul></dd>
     
 
@@ -773,7 +770,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line159">line 159</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line158">line 158</a>
     </li></ul></dd>
     
 
@@ -925,7 +922,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line164">line 164</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line163">line 163</a>
     </li></ul></dd>
     
 
@@ -963,138 +960,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
 
 
 <div class="description">
-    Finalized text
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>transcript</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line239">line 239</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="event:data">data</h4>
-
-    
-
-
-
-<div class="description">
-    Object with interim or final results, possibly including confidence scores, alternatives, and word timing.
+    <p>Object with interim or final results, possibly including confidence scores, alternatives, and word timing.</p>
 </div>
 
 
@@ -1187,7 +1053,138 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line232">line 232</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line231">line 231</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:data">data</h4>
+
+    
+
+
+
+<div class="description">
+    <p>Finalized text</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>transcript</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line238">line 238</a>
     </li></ul></dd>
     
 
@@ -1265,7 +1262,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line173">line 173</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -1303,7 +1300,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
 
 
 <div class="description">
-    Object with interim or final results, possibly including confidence scores, alternatives, and word timing.
+    <p>Object with array of interim or final results, possibly including confidence scores, alternatives, and word timing. May have no results at all for empty audio files.</p>
 </div>
 
 
@@ -1398,7 +1395,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line224">line 224</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line212">line 212</a>
     </li></ul></dd>
     
 
@@ -1436,7 +1433,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
 
 
 <div class="description">
-    Object with array of interim or final results, possibly including confidence scores, alternatives, and word timing. May have no results at all for empty audio files.
+    <p>Object with interim or final results, possibly including confidence scores, alternatives, and word timing.</p>
 </div>
 
 
@@ -1531,7 +1528,7 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line213">line 213</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line223">line 223</a>
     </li></ul></dd>
     
 
@@ -1569,13 +1566,13 @@ Uses WebSockets under the hood. For audio with no recognizable speech, no `data`
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Namespaces</h3><ul><li><a href="WatsonSpeech.html">WatsonSpeech</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SpeechToText">SpeechToText</a></li><li><a href="global.html#version">version</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-blob.html">watson-speech/speech-to-text/recognize-blob</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 16 2016 17:50:37 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 17 2016 23:06:40 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

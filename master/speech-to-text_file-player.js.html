@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: speech-to-text/to-promise.js</title>
+    <title>JSDoc: Source: speech-to-text/file-player.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: speech-to-text/to-promise.js</h1>
+    <h1 class="page-title">Source: speech-to-text/file-player.js</h1>
 
     
 
@@ -28,24 +28,60 @@
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
 
-/**
- * Helper method that can be bound to a stream - it sets the output to utf-8, captures all of the results, and returns a promise that resolves to the final text.
- * Essentially a smaller version of concat-stream wrapped in a promise
- *
- * @param [stream=] optional stream param for when not bound to an existing stream instance
- */
-module.exports = function promise(stream) {
-  stream = stream || this;
+var contentType = require('./content-type');
+
+function getContentType(file) {
   return new Promise(function (resolve, reject) {
-    var results = [];
-    stream.setEncoding('utf8')
-    .on('data', function (result) {
-      results.push(result);
-    }).on('end', function () {
-      resolve(typeof results[0] === 'string' ? results.join('') : results);
-    }).on('error', reject);
+    var blobToText = new Blob([file]).slice(0, 4);
+    var r = new FileReader();
+    r.readAsText(blobToText);
+    r.onload = function () {
+      var ct = contentType(r.result);
+      if (ct) {
+        resolve(ct);
+      } else {
+        var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
+        err.name = 'UNRECOGNIZED_FORMAT';
+        reject(err)
+      }
+    };
   });
-};
+}
+
+/**
+ * Plays audio from File/Blob instances
+ * @param file
+ * @param contentType
+ * @constructor
+ */
+function FilePlayer(file, contentType) {
+  var audio = this.audio = new Audio();
+  if (audio.canPlayType(contentType)) {
+    audio.src = URL.createObjectURL(new Blob([file], {type: contentType}));
+    audio.play();
+  } else {
+    // if we emit an error, it prevents the promise from returning the actual result
+    // however, most browsers do not support flac, so this is a reasonably scenario
+    var err = new Error('Current browser is unable to play back ' + contentType);
+    err.name = 'UNSUPPORTED_FORMAT';
+    err.contentType = contentType;
+    throw err;
+  }
+  this.stop = function stop() {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+}
+
+function playFile(file) {
+  return getContentType(file).then(function (contentType) {
+    return new FilePlayer(file, contentType);
+  });
+}
+
+module.exports = FilePlayer;
+module.exports.getContentType = getContentType;
+module.exports.playFile = playFile;
 </code></pre>
         </article>
     </section>
