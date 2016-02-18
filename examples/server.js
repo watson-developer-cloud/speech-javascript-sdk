@@ -46,6 +46,6 @@ if (!process.env.VCAP_APP_PORT) {
         cert: fs.readFileSync(__dirname + '/keys/localhost.cert')
     };
     https.createServer(options, app).listen(HTTPS_PORT, function () {
-        console.log('Secure server live at https://localhost:%s/', port)
+        console.log('Secure server live at https://localhost:%s/', HTTPS_PORT)
     });
 }

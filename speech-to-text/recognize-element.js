@@ -20,6 +20,7 @@ var L16 = require('./webaudio-l16-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();
+var WritableElementStream = require('./writable-element-stream');
 
 /**
  * @module watson-speech/speech-to-text/recognize-element
@@ -32,6 +33,7 @@ var assign = require('object.assign/polyfill')();
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {MediaElement} options.element - the <video> or <audio> element to play
  * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
+ * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
  *
  * @returns {RecognizeStream}
  */
@@ -39,6 +41,12 @@ module.exports = function recognizeElement(options) {
   if (!options || !options.token) {
     throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
   }
+
+  // the WritableElementStream works best in objectMode
+  if (options.outputElement && options.objectMode !== false) {
+    options.objectMode = true;
+  }
+
 
   // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
   var rsOpts = assign({}, options);
@@ -65,6 +73,10 @@ module.exports = function recognizeElement(options) {
   }
 
   recognizeStream.on('stop', sourceStream.stop.bind(sourceStream));
+
+  if (options.outputElement) {
+    stream.pipe(new WritableElementStream(options))
+  }
 
   return stream;
 };

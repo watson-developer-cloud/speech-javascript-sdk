@@ -22,7 +22,7 @@ function FormatStream(opts) {
   this.options = defaults(opts, {
     model: '', // some models should have all spaces removed
     hesitation: '\u2026', // ellipsis
-    decodeStrings: true
+    decodeStrings: false // false = don't convert strings to buffers before passing to _write
   });
   Transform.call(this, opts);
 

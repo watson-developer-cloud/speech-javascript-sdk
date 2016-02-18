@@ -20,69 +20,59 @@
 </section>
 
 <script src="watson-speech.js"></script>
-<script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
 
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
-function renderStream(stream, $output) {
-    $output.html('');
+function renderStream(stream, outputElement) {
+  stream.pipe(new WatsonSpeech.SpeechToText.WritableElementStream({
+    outputElement: outputElement,
+    objectMode: true
+  }));
 
-    // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
-    var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
+  stream.on('error', function(err) {
+    console.log(err);
+  });
 
-    // a result is approximately equivalent to a sentence
-    stream.on('data', function(result) {
-        // update the text for the current sentence with the default alternative.
-        // there may be multiple alternatives but this example app ignores all but the first.
-        $curSentence.html(result.alternatives[0].transcript);
-        if (result.final) {
-            // if we have the final text for that sentence, start a new one
-            $curSentence = $('<span/>').appendTo($output);
-        }
-    });
-
-    stream.on('error', function(err) {
-        console.log(err);
-    });
-
-    stream.on('playback-error', function(err) {
-        console.log(err);
-    });
+  stream.on('playback-error', function(err) {
+    console.log(err);
+  });
 }
 
+var stream;
 
-$(function() {
+document.querySelector('#button').onclick = function () {
+  fetch('/api/speech-to-text/token').then(function(response) {
+    return response.text();
+  }).then(function (token) {
 
-    var stream;
-
-    $('#button').click(function () {
-        $.get('/api/speech-to-text/token').then(function (token) {
-
-            stream = WatsonSpeech.SpeechToText.recognizeBlob({
-                token: token,
-                data: $('#audiofile')[0].files[0],
-                play: true,
-                objectMode: true,
-                max_alternatives: 1, // default is 3, but only the first one includes word timing data
-                realtime: false // defaults to true, but we're going to turn it off and then manually do it in a moment to show the difference
-            });
-
-            renderStream(stream, $('#output'));
-
-            // now do what the realtime option would have done: pipe through a TimingStream
-            var realtimeStream = stream.pipe(new WatsonSpeech.SpeechToText.TimingStream({objectMode: true}));
-
-            renderStream(realtimeStream, $('#realtime-output'));
-
-        });
+    stream = WatsonSpeech.SpeechToText.recognizeBlob({
+      token: token,
+      data: document.querySelector('#audiofile').files[0],
+      play: true,
+      objectMode: true,
+      max_alternatives: 1, // default is 3, but only the first one includes word timing data
+      realtime: false // defaults to true, but we're going to turn it off and then manually do it in a moment to show the difference
     });
 
-    $('#stop').click(function() {
-        if (stream) {
-            stream.stop();
-        }
-    });
-});
+    renderStream(stream, '#output');
+
+    // now do what the realtime option would have done: pipe through a TimingStream
+    var realtimeStream = stream.pipe(new WatsonSpeech.SpeechToText.TimingStream({objectMode: true}));
+
+    renderStream(realtimeStream, '#realtime-output');
+
+  }).catch(function(error) {
+    console.log(error);
+  });
+};
+
+document.querySelector('#stop').onclick = function() {
+  if (stream) {
+    stream.stop();
+  }
+};
 </script></code></pre>
 </body>
 </html>

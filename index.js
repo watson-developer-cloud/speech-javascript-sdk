@@ -3,8 +3,6 @@
 
 'use strict';
 
-require('whatwg-fetch'); // pollyfill - most supported browsers have this built-in
-
 /**
  * IBM Watson Speech JavaScript SDK
  *

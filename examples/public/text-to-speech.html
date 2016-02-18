@@ -13,20 +13,24 @@
 </section>
 
 <script src="watson-speech.js"></script>
-<script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
 
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
-    $(function() {
-        $('#button').click(function () {
-            $.get('/api/text-to-speech/token').then(function (token) {
-                WatsonSpeech.TextToSpeech.synthesize({
-                    text: $('#text').val(),
-                    token: token
-                })
-            });
-        });
+document.querySelector('#button').onclick = function () {
+
+  fetch('/api/text-to-speech/token')
+    .then(function(response) {
+      return response.text();
+    }).then(function (token) {
+
+      WatsonSpeech.TextToSpeech.synthesize({
+        text: document.querySelector('#text').value,
+        token: token
+      });
     });
+};
 </script></code></pre>
 </body>
 </html>

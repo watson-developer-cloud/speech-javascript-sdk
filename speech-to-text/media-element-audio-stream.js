@@ -6,7 +6,7 @@ var defaults = require('defaults');
 /**
  * Extracts audio from an `<audio>` or `<video>` element and provides it as a Node.js Readable stream
  *
- * @param {HTMLMediaElement} source `<audio>` or `<video>` element
+ * @param {HTMLMediaElement|string} element `<audio>` or `<video>` element or CSS selector
  * @param {Object} [options] options
  * @param {Number|null} [options.bufferSize=null] buffer size - Mozilla docs recommend leaving this unset for optimal performance
  * @param {Boolean} [options.muteSource=false] - If true, the audio will not be sent back to the source
@@ -20,7 +20,7 @@ var defaults = require('defaults');
  *
  * @constructor
  */
-function MediaElementAudioStream(source, options) {
+function MediaElementAudioStream(element, options) {
 
   options = defaults(options, {
     // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
@@ -41,13 +41,21 @@ function MediaElementAudioStream(source, options) {
   // we shouldn't need any output channels (going back to the browser - that's what the gain node is for), but chrome is buggy and won't give us any audio without one
   var outputChannels = 1;
 
+  if (typeof element == 'string') {
+    element = document.querySelector(element);
+  }
+
+  if (!element) {
+    throw new Error('Watson Speech to Text MediaElementAudioStream: missing element');
+  }
+
   Readable.call(this, options);
 
   var self = this;
   var recording = true;
 
   // I can't find much documentation for this for <audio> elements, but it seems to be required for cross-domain usage (in addition to CORS headers)
-  source.crossOrigin = options.crossOrigin;
+  element.crossOrigin = options.crossOrigin;
 
   /**
    * Convert and emit the raw audio data
@@ -64,8 +72,8 @@ function MediaElementAudioStream(source, options) {
 
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   // cache the source node & context since it's not possible to recreate it later
-  var context = source.context = source.context || new AudioContext();
-  var audioInput = source.node  = source.node || context.createMediaElementSource(source);
+  var context = element.context = element.context || new AudioContext();
+  var audioInput = element.node  = element.node || context.createMediaElementSource(element);
   var scriptProcessor = context.createScriptProcessor(options.bufferSize, inputChannels, outputChannels);
 
   scriptProcessor.onaudioprocess = processAudio;
@@ -86,22 +94,22 @@ function MediaElementAudioStream(source, options) {
     audioInput.connect(scriptProcessor);
     // other half of workaround for chrome bugs
     scriptProcessor.connect(context.destination);
-    source.removeEventListener("playing", connect);
+    element.removeEventListener("playing", connect);
   }
-  source.addEventListener("playing", connect);
+  element.addEventListener("playing", connect);
 
   // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
   function start() {
-    source.play();
-    source.removeEventListener("canplaythrough", start);
+    element.play();
+    element.removeEventListener("canplaythrough", start);
   }
   if (options.autoPlay) {
     // play immediately if we have enough data, otherwise wait for the canplaythrough event
-    if(source.readyState === source.HAVE_ENOUGH_DATA) {
-      source.play();
+    if(element.readyState === element.HAVE_ENOUGH_DATA) {
+      element.play();
     } else {
-      source.addEventListener("canplaythrough", start);
+      element.addEventListener("canplaythrough", start);
     }
   }
 
@@ -113,14 +121,14 @@ function MediaElementAudioStream(source, options) {
     self.push(null);
     self.emit('close');
   }
-  source.addEventListener("ended", end);
+  element.addEventListener("ended", end);
 
   this.stop = function() {
-    source.pause();
+    element.pause();
     end();
   };
 
-  source.addEventListener("error", this.emit.bind(this, 'error'));
+  element.addEventListener("error", this.emit.bind(this, 'error'));
 
   process.nextTick(function() {
     // this is more useful for binary mode than object mode, but it won't hurt either way

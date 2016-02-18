@@ -44,27 +44,16 @@ Options:
 
 ### `.getVoices()` -> Promise
 
-Returns a promise that resolves to an array of objects representing the available voices.  Example:
+Returns a promise that resolves to an array of objects containing the name, language, gender, and other details for each voice.
 
-```js
-[{
-    "name": "en-US_MichaelVoice", 
-    "language": "en-US", 
-    "customizable": true, 
-    "gender": "male", 
-    "url": "https://stream.watsonplatform.net/text-to-speech/api/v1/voices/en-US_MichaelVoice", 
-    "description": "Michael: American English male voice."
- },
- //...
-]
- ```
+Requires[window.fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), a [pollyfill](https://www.npmjs.com/package/whatwg-fetch) for IE/Edge and older Chrome/Firefox.
 
 ## `WatsonSpeech.SpeechToText` 
 
 
 ### `.recognizeMicrophone({token})` -> `RecognizeStream`
 
-Options: No direct options, all provided options are passed to MicrophoneStream and RecognizeStream
+Options: No direct options, all provided options are passed to MicrophoneStream and RecognizeStream, and WritableElementStream if `options.outputElement` is set
 
 Requires the `getUserMedia` API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
 Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features
@@ -88,6 +77,7 @@ Because of these limitations, it may be preferable to instead fetch the audio vi
 Options: 
 * `element`: an `<audio>` or `<video>` element (could be generated pragmatically, e.g. `new Audio()`)
 * Other options passed to MediaElementAudioStream and RecognizeStream
+* Other options passed to WritableElementStream if `options.outputElement` is set
 
 Requires that the browser support MediaElement and whatever audio codec is used in your media file.
 
@@ -101,6 +91,7 @@ Options:
 * `data`: a `Blob` (or `File`) instance. 
 * `play`: (optional, default=`false`) Attempt to also play the file locally while uploading it for transcription 
 * Other options passed to RecognizeStream
+* Other options passed to WritableElementStream if `options.outputElement` is set
 
 `play`requires that the browser support the format; most browsers support wav and ogg/opus, but not flac.) 
 Will emit a `playback-error` on the RecognizeStream if playback fails. 
@@ -152,8 +143,16 @@ Inherits `.promise()` from the `RecognizeStream`.
 
 For use with `.recognizeBlob({play: true})` - slows the results down to match the audio. Pipe in the `RecognizeStream` (or `FormatStream`) and listen for results as usual.
 
+### Class `WritableElementStream()`
+
+Accepts input from `RecognizeStream()` and friends, writes text to supplied `outputElement`.
+
 
 ## Changelog
+
+### v0.10
+* Added ability to write text directly to targetElement, updated examples to use this
+* converted examples from jQuery to vanilla JS + fetch pollyfill
 
 ### v0.9
 * Added basic text to speech support
@@ -187,3 +186,5 @@ For use with `.recognizeBlob({play: true})` - slows the results down to match th
 * consider renaming recognizeBlob to recognizeFile to make the usage more obvious
 * consider an `interim` event for recognize/format/timing streams to avoid objectMode (in most cases)
 * ajax / playFile demo 
+* support a "hard" stop that prevents any further data events, even for already uploaded audio, ensure timing stream also impliments this.
+* handle pause/resume in media element streams - perhaps just stop and then create a new stream on resume

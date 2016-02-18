@@ -2,7 +2,7 @@
 
 var assert = require('assert');
 
-var WatsonSpeechToText = require('../speech-to-text');
+var SpeechToText = require('../speech-to-text');
 
 var expect = require('expect.js');
 var concat = require('concat-stream');
@@ -32,8 +32,7 @@ var chrome = navigator.userAgent.indexOf('Chrome') >=0;
 var firefox = navigator.userAgent.indexOf('Firefox') >=0;
 var travis = !!process.env.TRAVIS;
 
-describe("WatsonSpeechToText", function() {
-
+describe("WatsonSpeech.SpeechToText end-to-end", function() {
   this.timeout(30*1000);
 
   // firefox on travis always times out for this test, not sure why (it might be due to travis's older version of ff)
@@ -44,15 +43,15 @@ describe("WatsonSpeechToText", function() {
       audioElement.src = "http://localhost:9877/audio.wav";
       cfg.element = audioElement;
       cfg.muteSource = true;
-      var stream = WatsonSpeechToText.recognizeElement(cfg);
+      var stream = SpeechToText.recognizeElement(cfg);
       //stream.on('send-json', console.log.bind(console, 'sending'));
       //stream.on('message', console.log.bind(console, 'received'));
       //stream.on('send-data', function(d) {
       //  console.log('sending ' + d.length + ' bytes');
       //});
       return stream.promise();
-    }).then(function(transcription) {
-      assert.equal(transcription, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
+    }).then(function(transcript) {
+      assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
       done();
     })
       .catch(done);
@@ -63,7 +62,7 @@ describe("WatsonSpeechToText", function() {
   // chrome can do both, so it gets tested on and offline
   (offline && !travis || chrome ? it : xit)("should transcribe mic input", function(done) {
     getConfig().then(function(cfg) {
-      var stt = WatsonSpeechToText.recognizeMicrophone(cfg);
+      var stt = SpeechToText.recognizeMicrophone(cfg);
       //stt.on('send-json', console.log.bind(console, 'sending'));
       //stt.on('message', console.log.bind(console, 'received'));
       //stt.on('send-data', function(d) {
@@ -71,8 +70,8 @@ describe("WatsonSpeechToText", function() {
       //})
       stt.on('error', done)
         .setEncoding('utf8')
-        .pipe(concat(function (transcription) {
-          assert.equal(transcription, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
+        .pipe(concat(function (transcript) {
+          assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
           done();
         }));
       setTimeout(stt.stop.bind(stt), 8 * 1000);
@@ -88,9 +87,9 @@ describe("WatsonSpeechToText", function() {
     Promise.all([getConfig(), getAudio()]).then(function(results) {
       var cfg = results[0];
       cfg.data = results[1];
-      return WatsonSpeechToText.recognizeBlob(cfg).promise()
-        .then(function(transcription) {
-          assert.equal(transcription, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
+      return SpeechToText.recognizeBlob(cfg).promise()
+        .then(function(transcript) {
+          assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
           done();
         });
     })

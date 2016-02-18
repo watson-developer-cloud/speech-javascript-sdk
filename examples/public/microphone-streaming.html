@@ -16,47 +16,35 @@
 </section>
 
 <script src="watson-speech.js"></script>
-<script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
 
 <h2>Code for this demo:</h2>
 
 <pre><code><script style="display: block;">
-$(function() {
-    var $output = $('#output');
+document.querySelector('#button').onclick = function () {
 
-    $('#button').click(function () {
-        $output.html('');
+  fetch('/api/speech-to-text/token')
+  .then(function(response) {
+      return response.text();
+  }).then(function (token) {
 
-        $.get('/api/speech-to-text/token').then(function (token) {
-            var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-                token: token,
-                objectMode: true // necessary to receive interim results
-            });
-
-            // each result (sentence) gets it's own <span> because Watson will sometimes go back and change a word as it hears more context
-            var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
-
-            // a result is approximately equivalent to a sentence
-            stream.on('data', function(result) {
-                // update the text for the current sentence with the default alternative.
-                // there may be multiple alternatives but this example app ignores all but the first.
-                $curSentence.html(result.alternatives[0].transcript);
-                if (result.final) {
-                    // if we have the final text for that sentence, start a new one
-                    $curSentence = $('<span/>').appendTo($output);
-                }
-            });
-
-            stream.on('error', function(err) {
-                console.log(err);
-            });
-
-            $('#stop').off().click(function() {
-                stream.stop();
-            });
-        });
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+        token: token,
+        outputElement: '#output' // CSS selector or DOM Element
     });
-});
+
+    stream.on('error', function(err) {
+        console.log(err);
+    });
+
+    document.querySelector('#stop').onclick = stream.stop.bind(stream);
+
+  }).catch(function(error) {
+      console.log(error);
+  });
+};
+
 </script></code></pre>
 
 </body>

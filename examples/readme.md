@@ -26,8 +26,9 @@ Setup
 Notes
 -----
 
-* The examples all use jQuery, but it is not required to use the Speech SDK.
-* The examples use a node.js server to generate tokens. Node.js is not requred, but *some server-side token generator is required*. 
+* The examples all use [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) (a modern promise-based replacement for XMLHttpRequest) to retrieve auth tokens. 
+  Most supported browsers include a native fetch implementation, but a pollyfill is included in the top-level module for older browsers.
+* The examples use a Node.js server to generate tokens. It doesn't have to be written in Node.js, but *some server-side token generator is required*. 
   The SDK will not accept your service credentials directly, and you can not use them to generate a token client-side. 
   SDKs are available for [Node.js](https://github.com/watson-developer-cloud/node-sdk#authorization), 
   [Java](https://github.com/watson-developer-cloud/java-sdk), 

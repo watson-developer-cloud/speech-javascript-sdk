@@ -35,7 +35,6 @@
     "uglify-js": "^2.6.1",
     "watchify": "^3.7.0",
     "watson-developer-cloud": "^1.2.1",
-    "whatwg-fetch": "^0.11.0",
     "with-package": "^0.2.0"
   },
   "dependencies": {
@@ -45,7 +44,8 @@
     "object.assign": "^4.0.3",
     "object.pick": "^1.1.1",
     "readable-blob-stream": "^1.1.0",
-    "websocket": "^1.0.22"
+    "websocket": "^1.0.22",
+    "whatwg-fetch": "^0.11.0"
   },
   "repository": {
     "type": "git",

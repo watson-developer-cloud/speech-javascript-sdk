@@ -16,58 +16,41 @@
 </section>
 
 <script src="watson-speech.js"></script>
-<script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
 
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
-$(function() {
 
-    var stream, $output = $('#output');
+var stream;
+document.querySelector('#button').onclick = function () {
 
-    $('#button').click(function () {
-        $output.html('');
+  fetch('/api/speech-to-text/token').then(function(response) {
+    return response.text();
+  }).then(function (token) {
 
-        $.get('/api/speech-to-text/token').then(function (token) {
-
-            stream = WatsonSpeech.SpeechToText.recognizeBlob({
-                token: token,
-                data: $('#audiofile')[0].files[0],
-                objectMode: true, // necessary to receive interim results
-                play: true // play the audio out loud
-            });
-
-            // each result (sentence) gets it's own <span> because watson will sometimes go back and change a word as it hears more context
-            var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
-
-            // a result is approximately equivalent to a sentence
-            stream.on('data', function(result) {
-                // update the text for the current sentence with the default alternative.
-                // there may be multiple alternatives but this example app ignores all but the first.
-                $curSentence.html(result.alternatives[0].transcript);
-                if (result.final) {
-                    // if we have the final text for that sentence, start a new one
-                    $curSentence = $('<span/>').appendTo($output);
-                }
-            });
-
-            stream.on('error', function(err) {
-                console.log(err);
-            });
-
-            // handle file playback errors
-            stream.on('playback-error', function(err) {
-                console.log(err);
-            });
-
-        });
+    stream = WatsonSpeech.SpeechToText.recognizeBlob({
+      token: token,
+      data: document.querySelector('#audiofile').files[0],
+      objectMode: true, // necessary to receive interim results
+      play: true, // play the audio out loud
+      outputElement: '#output' // CSS selector or DOM Element (optional)
     });
 
-    $('#stop').click(function() {
-        if (stream) {
-            stream.stop();
-        }
+    stream.on('error', function(err) {
+        console.log(err);
     });
-});
+
+  }).catch(function(error) {
+      console.log(error);
+  });
+};
+
+document.querySelector('#stop').onclick = function() {
+    if (stream) {
+        stream.stop();
+    }
+};
 </script></code></pre>
 </body>
 </html>

@@ -31,6 +31,7 @@ module.exports = {
    */
   recognizeElement: require('./recognize-element'),
 
+
   // individual components to build more customized solutions
   /**
    * @see WebAudioL16Stream
@@ -67,6 +68,12 @@ module.exports = {
    */
   TimingStream: require('./timing-stream'),
 
+  /**
+   * @see WritableElementStream
+   */
+  WritableElementStream: require('./writable-element-stream'),
+
+  // external components exposed for convenience
   /**
    * @see https://www.npmjs.com/package/microphone-stream
    */
