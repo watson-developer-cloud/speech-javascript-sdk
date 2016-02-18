@@ -152,7 +152,8 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 
 ### v0.10
 * Added ability to write text directly to targetElement, updated examples to use this
-* converted examples from jQuery to vanilla JS + fetch pollyfill
+* converted examples from jQuery to vanilla JS (w/ fetch pollyfill when necessary)
+* significantly improved JSDoc
 
 ### v0.9
 * Added basic text to speech support
@@ -173,18 +174,20 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 ## todo
 
 * Solidify API
-* add an example that includes alternatives and word confidence scores
+* add an example showing alternatives
+* add an example showing word confidence scores
+* add an ajax / recognizeBlob example and then use it for stt sample app 
 * enable eslint - https://github.ibm.com/fed/javascript-style-guides
 * break components into standalone npm modules where it makes sense
-* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, etc.)
+* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, fetch, etc.)
 * run integration tests on travis (fall back to offline server for pull requests)
 * more tests in general
+* better cross-browser testing (saucelabs?)
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
 * move `result` and `results` events to node wrapper (along with the deprecation notice)
 * improve docs
 * consider a wrapper to match https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html
 * consider renaming recognizeBlob to recognizeFile to make the usage more obvious
-* consider an `interim` event for recognize/format/timing streams to avoid objectMode (in most cases)
-* ajax / playFile demo 
-* support a "hard" stop that prevents any further data events, even for already uploaded audio, ensure timing stream also impliments this.
-* handle pause/resume in media element streams - perhaps just stop and then create a new stream on resume
+* support a "hard" stop that prevents any further data events, even for already uploaded audio, ensure timing stream also implements this.
+* handle pause/resume in media element streams - perhaps just stop and then create a new stream on resume, using the same token
+
