@@ -29,7 +29,7 @@ Complete API docs should be published at http://watson-developer-cloud.github.io
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
 (Snp teee examples/token-server.js for a basic example.)
 
-## `Watson.TextToSpeech`
+## `WatsonSpeech.TextToSpeech`
 
 ### `.synthesize({text, token})` -> `<audio>`
 
