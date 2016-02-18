@@ -21,6 +21,7 @@ var FilePlayer = require('./file-player.js');
 var FormatStream = require('./format-stream.js');
 var TimingStream = require('./timing-stream.js');
 var assign = require('object.assign/polyfill')();
+var WritableElementStream = require('./writable-element-stream');
 
 /**
  * @module watson-speech/speech-to-text/recognize-blob
@@ -36,12 +37,18 @@ var assign = require('object.assign/polyfill')();
  * @param {Boolean} [options.play=false] - If a file is set, play it locally as it's being uploaded
  * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
  * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback.
+ * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
  *
  * @returns {RecognizeStream}
  */
 module.exports = function recognizeBlob(options) {
   if (!options || !options.token) {
     throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
+  }
+
+  // the WritableElementStream works best in objectMode
+  if (options.outputElement && options.objectMode !== false) {
+    options.objectMode = true;
   }
 
   var realtime = options.realtime || typeof options.realtime === 'undefined' && options.play;
@@ -68,8 +75,12 @@ module.exports = function recognizeBlob(options) {
     FilePlayer.playFile(options.data).then(function (player) {
       recognizeStream.on('stop', player.stop.bind(player));
     }).catch(function (err) {
-      recognizeStream.emit('playback-error', err);
+      stream.emit('playback-error', err);
     });
+  }
+
+  if (options.outputElement) {
+    stream.pipe(new WritableElementStream(options))
   }
 
   return stream;
