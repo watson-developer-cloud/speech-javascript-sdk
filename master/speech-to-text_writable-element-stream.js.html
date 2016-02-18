@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: speech-to-text/to-promise.js</title>
+    <title>JSDoc: Source: speech-to-text/writable-element-stream.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: speech-to-text/to-promise.js</h1>
+    <h1 class="page-title">Source: speech-to-text/writable-element-stream.js</h1>
 
     
 
@@ -28,24 +28,66 @@
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
 
+var Writable = require('stream').Writable;
+var util = require('util');
+var defaults = require('defaults');
+
 /**
- * Helper method that can be bound to a stream - it sets the output to utf-8, captures all of the results, and returns a promise that resolves to the final text.
- * Essentially a smaller version of concat-stream wrapped in a promise
+ * Writable stream that accepts results in either object or string mode and outputs the text to a supplied html element
  *
- * @param [stream=] optional stream param for when not bound to an existing stream instance
+ * Can show interim results when in objectMode
+ *
+ * @todo: consider automatically setting the value attribute on &lt;input> elements
+ *
+ * @param options
+ * @param {String|DOMElement} options.outputElement
+ * @param {Boolean} [options.clear=true] delete any previous text
+ * @constructor
  */
-module.exports = function promise(stream) {
-  stream = stream || this;
-  return new Promise(function (resolve, reject) {
-    var results = [];
-    stream.setEncoding('utf8')
-    .on('data', function (result) {
-      results.push(result);
-    }).on('end', function () {
-      resolve(typeof results[0] === 'string' ? results.join('') : results);
-    }).on('error', reject);
+function WritableElementStream(options) {
+  this.options = options = defaults(options, {
+    decodeStrings: false,  // false = don't convert strings to buffers before passing to _write (only applies in string mode)
+    clear: true
   });
+
+  this.el = typeof options.outputElement === 'string' ?  document.querySelector(options.outputElement) : options.outputElement;
+
+  if (!this.el) {
+    throw new Error('Watson Speech to Text WriteableElementStream: missing outputElement');
+  }
+
+  Writable.call(this, options);
+
+  if (options.clear) {
+    this.el.textContent = '';
+  }
+
+  if (options.objectMode) {
+    this.finalizedText = this.el.textContent;
+    this._write = this.writeObject;
+  } else {
+    this._write = this.writeString;
+  }
+}
+util.inherits(WritableElementStream, Writable);
+
+
+WritableElementStream.prototype.writeString = function writeString(text, encoding, next) {
+  this.el.textContent += text;
+  next();
 };
+
+WritableElementStream.prototype.writeObject = function writeObject(result, encoding, next) {
+  if (result.final) {
+    this.finalizedText += result.alternatives[0].transcript;
+    this.el.textContent = this.finalizedText;
+  } else {
+    this.el.textContent = this.finalizedText + result.alternatives[0].transcript
+  }
+  next();
+};
+
+module.exports = WritableElementStream;
 </code></pre>
         </article>
     </section>

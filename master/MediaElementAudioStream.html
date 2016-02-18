@@ -40,7 +40,7 @@
 
     
 
-    <h4 class="name" id="MediaElementAudioStream"><span class="type-signature"></span>new MediaElementAudioStream<span class="signature">(source, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="MediaElementAudioStream"><span class="type-signature"></span>new MediaElementAudioStream<span class="signature">(element, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -85,13 +85,16 @@
 
         <tr>
             
-                <td class="name"><code>source</code></td>
+                <td class="name"><code>element</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">HTMLMediaElement</span>
+|
+
+<span class="param-type">string</span>
 
 
             
@@ -109,7 +112,7 @@
 
             
 
-            <td class="description last"><p><code>&lt;audio&gt;</code> or <code>&lt;video&gt;</code> element</p></td>
+            <td class="description last"><p><code>&lt;audio&gt;</code> or <code>&lt;video&gt;</code> element or CSS selector</p></td>
         </tr>
 
     
@@ -493,7 +496,7 @@ the actual audio data is not copied or changed here.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_media-element-audio-stream.js.html">speech-to-text/media-element-audio-stream.js</a>, <a href="speech-to-text_media-element-audio-stream.js.html#line151">line 151</a>
+        <a href="speech-to-text_media-element-audio-stream.js.html">speech-to-text/media-element-audio-stream.js</a>, <a href="speech-to-text_media-element-audio-stream.js.html#line159">line 159</a>
     </li></ul></dd>
     
 
@@ -598,7 +601,7 @@ the actual audio data is not copied or changed here.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_media-element-audio-stream.js.html">speech-to-text/media-element-audio-stream.js</a>, <a href="speech-to-text_media-element-audio-stream.js.html#line85">line 85</a>
+        <a href="speech-to-text_media-element-audio-stream.js.html">speech-to-text/media-element-audio-stream.js</a>, <a href="speech-to-text_media-element-audio-stream.js.html#line93">line 93</a>
     </li></ul></dd>
     
 
@@ -729,7 +732,7 @@ the actual audio data is not copied or changed here.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_media-element-audio-stream.js.html">speech-to-text/media-element-audio-stream.js</a>, <a href="speech-to-text_media-element-audio-stream.js.html#line57">line 57</a>
+        <a href="speech-to-text_media-element-audio-stream.js.html">speech-to-text/media-element-audio-stream.js</a>, <a href="speech-to-text_media-element-audio-stream.js.html#line65">line 65</a>
     </li></ul></dd>
     
 
@@ -778,13 +781,13 @@ the actual audio data is not copied or changed here.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-blob.html">watson-speech/speech-to-text/recognize-blob</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-blob.html">watson-speech/speech-to-text/recognize-blob</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 17 2016 23:06:40 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 18 2016 22:46:18 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

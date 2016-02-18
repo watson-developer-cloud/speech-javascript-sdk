@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: watson-speech/speech-to-text/recognize-microphone</title>
+    <title>JSDoc: Class: WritableElementStream</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: watson-speech/speech-to-text/recognize-microphone</h1>
+    <h1 class="page-title">Class: WritableElementStream</h1>
 
     
 
@@ -28,8 +28,7 @@
 
 <header>
     
-        
-            
+        <h2>WritableElementStream</h2>
         
     
 </header>
@@ -39,20 +38,17 @@
     
         
 
-        
-            
-
     
 
-    <h4 class="name" id="module:watson-speech/speech-to-text/recognize-microphone"><span class="type-signature"></span>(require("watson-speech/speech-to-text/recognize-microphone"))<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="RecognizeStream.html">RecognizeStream</a>}</span></h4>
+    <h4 class="name" id="WritableElementStream"><span class="type-signature"></span>new WritableElementStream<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Create and return a RecognizeStream from the user's microphone
-If the options.file is set, it is used instead of the microphone</p>
+    <p>Writable stream that accepts results in either object or string mode and outputs the text to a supplied html element</p>
+<p>Can show interim results when in objectMode</p>
 </div>
 
 
@@ -93,18 +89,13 @@ If the options.file is set, it is used instead of the microphone</p>
 
             <td class="type">
             
-                
-<span class="param-type">Object</span>
-
-
-            
             </td>
 
             
 
             
 
-            <td class="description last"><p>Also passed to {MediaElementAudioStream} and to {RecognizeStream}</p>
+            <td class="description last">
                 <h6>Properties</h6>
                 
 
@@ -134,13 +125,16 @@ If the options.file is set, it is used instead of the microphone</p>
 
         <tr>
             
-                <td class="name"><code>token</code></td>
+                <td class="name"><code>outputElement</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">String</span>
+|
+
+<span class="param-type">DOMElement</span>
 
 
             
@@ -162,14 +156,14 @@ If the options.file is set, it is used instead of the microphone</p>
                 </td>
             
 
-            <td class="description last"><p>Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization</p></td>
+            <td class="description last"></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>format</code></td>
+                <td class="name"><code>clear</code></td>
             
 
             <td class="type">
@@ -201,47 +195,7 @@ If the options.file is set, it is used instead of the microphone</p>
                 </td>
             
 
-            <td class="description last"><p>pipe the text through a {FormatStream} which performs light formatting</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>outputElement</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">DOMElement</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.</p></td>
+            <td class="description last"><p>delete any previous text</p></td>
         </tr>
 
     
@@ -289,7 +243,7 @@ If the options.file is set, it is used instead of the microphone</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-microphone.js.html">speech-to-text/recognize-microphone.js</a>, <a href="speech-to-text_recognize-microphone.js.html#line43">line 43</a>
+        <a href="speech-to-text_writable-element-stream.js.html">speech-to-text/writable-element-stream.js</a>, <a href="speech-to-text_writable-element-stream.js.html#line19">line 19</a>
     </li></ul></dd>
     
 
@@ -312,28 +266,9 @@ If the options.file is set, it is used instead of the microphone</p>
 
 
 
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="RecognizeStream.html">RecognizeStream</a></span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
-        
     
     </div>
 
