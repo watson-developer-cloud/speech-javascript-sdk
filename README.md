@@ -174,8 +174,6 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 ## todo
 
 * Solidify API
-* add an example showing alternatives
-* add an example showing word confidence scores
 * add an ajax / recognizeBlob example and then use it for stt sample app 
 * enable eslint - https://github.ibm.com/fed/javascript-style-guides
 * break components into standalone npm modules where it makes sense
@@ -190,4 +188,5 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 * consider renaming recognizeBlob to recognizeFile to make the usage more obvious
 * support a "hard" stop that prevents any further data events, even for already uploaded audio, ensure timing stream also implements this.
 * handle pause/resume in media element streams - perhaps just stop and then create a new stream on resume, using the same token
-
+* consider moving STT core to standalone module
+* look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)

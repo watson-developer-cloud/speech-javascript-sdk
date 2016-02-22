@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Microphone with Alternatives | IBM Watson Speech JavaScript SDK Example</title>
+</head>
+<body>
+
+<section>
+    <h2>Transcribe from Microphone, with Alternatives</h2>
+    <button id="button">Start Microphone Transcription</button>
+    <button id="stop">Stop</button>
+
+    <h2>Output:</h2>
+    <div id="output">--</div>
+</section>
+
+<script src="watson-speech.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+
+<h2>Code for this demo:</h2>
+
+<pre><code><script style="display: block;">
+document.querySelector('#button').onclick = function () {
+
+  var $output = $('#output').html('');
+
+  fetch('/api/speech-to-text/token')
+  .then(function(response) {
+    return response.text();
+  }).then(function (token) {
+
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+      token: token,
+      objectMode: true,
+      max_alternatives: 4
+    });
+
+    stream.on('error', function(err) {
+      console.log(err);
+    });
+
+    // each result (sentence) gets it's own <span> because Watson will sometimes go back and change a word as it hears more context
+    var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
+
+    // a result is approximately equivalent to a sentence, and is the granularity that alternatives are selected on
+    stream.on('data', function(result) {
+
+      // build up a quick HTML dropdown the wrong way...
+      var dropdown = ['<select>'].concat(result.alternatives.map(function(alt) {
+        return '<option>' + alt.transcript + '</option>';
+      })).concat(['</select>']).join('\n');
+
+      $curSentence.html(dropdown);
+
+      if (result.final) {
+        // if we have the final text for that sentence, start a new one
+        $curSentence = $('<span/>').appendTo($output);
+      }
+    });
+
+    document.querySelector('#stop').onclick = stream.stop.bind(stream);
+
+  }).catch(function(error) {
+    console.log(error);
+  });
+};
+
+</script></code></pre>
+
+</body>
+</html>
