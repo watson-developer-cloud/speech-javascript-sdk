@@ -24,7 +24,7 @@ var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 
 /**
- * @module watson-speech/speech-to-text/recognize-blob
+ * @module watson-speech/speech-to-text/recognize-file
  */
 
 /**
@@ -41,7 +41,7 @@ var WritableElementStream = require('./writable-element-stream');
  *
  * @returns {RecognizeStream}
  */
-module.exports = function recognizeBlob(options) {
+module.exports = function recognizeFile(options) {
   if (!options || !options.token) {
     throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
   }

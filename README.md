@@ -72,7 +72,7 @@ This method has some limitations:
  * it transcribes the audio as it is heard, so pausing or skipping will affect the transcription
  * audio that is paused for too long will cause the socket to time out and disconnect, preventing further transcription (without setting things up again)
  
-Because of these limitations, it may be preferable to instead fetch the audio via ajax and then pass it the `recognizeBlob()` API in some situations.
+Because of these limitations, it may be preferable to instead fetch the audio via ajax and then pass it the `recognizeFile()` API in some situations.
 
 Options: 
 * `element`: an `<audio>` or `<video>` element (could be generated pragmatically, e.g. `new Audio()`)
@@ -85,10 +85,13 @@ Will automatically call `.play()` the `element`, set `options.autoPlay=false` to
 
 Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
 
-### `.recognizeBlob({data, token})` -> `RecognizeStream`
+### `.recognizeFile({data, token})` -> `RecognizeStream`
+
+Can recognize and optionally attempt to play a [File](https://developer.mozilla.org/en-US/docs/Web/API/File) or [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
+(such as from an `<input type="file"/>` or from an ajax request.)
 
 Options: 
-* `data`: a `Blob` (or `File`) instance. 
+* `data`: a `Blob` or `File` instance. 
 * `play`: (optional, default=`false`) Attempt to also play the file locally while uploading it for transcription 
 * Other options passed to RecognizeStream
 * Other options passed to WritableElementStream if `options.outputElement` is set
@@ -141,7 +144,9 @@ Inherits `.promise()` from the `RecognizeStream`.
 
 ### Class `TimingStream()`
 
-For use with `.recognizeBlob({play: true})` - slows the results down to match the audio. Pipe in the `RecognizeStream` (or `FormatStream`) and listen for results as usual.
+For use with `.recognizeFile({play: true})` - slows the results down to match the audio. Pipe in the `RecognizeStream` (or `FormatStream`) and listen for results as usual.
+
+Inherits `.promise()` from the `RecognizeStream`.
 
 ### Class `WritableElementStream()`
 
@@ -149,6 +154,13 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 
 
 ## Changelog
+
+### v0.11
+* renamed `recognizeBlob` to `recognizeFile` to make the primary usage more apparent
+* Added support for `<input>` and `<textarea>` elements when using the `targetElement` option (or a `WritableElementStream`)
+* For objectMode, changed defaults for `word_confidence` to `false`, `alternatives` to `1`, and `timing` to off unless required for `realtime` option. 
+* Fixed bug with calling `.promise()` on `objectMode` streams
+* Fixed bug with calling `.promise()` on `recognizeFile({play: true})`
 
 ### v0.10
 * Added ability to write text directly to targetElement, updated examples to use this
@@ -174,7 +186,6 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 ## todo
 
 * Solidify API
-* add an ajax / recognizeBlob example and then use it for stt sample app 
 * enable eslint - https://github.ibm.com/fed/javascript-style-guides
 * break components into standalone npm modules where it makes sense
 * record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, fetch, etc.)
@@ -185,8 +196,8 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 * move `result` and `results` events to node wrapper (along with the deprecation notice)
 * improve docs
 * consider a wrapper to match https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html
-* consider renaming recognizeBlob to recognizeFile to make the usage more obvious
 * support a "hard" stop that prevents any further data events, even for already uploaded audio, ensure timing stream also implements this.
 * handle pause/resume in media element streams - perhaps just stop and then create a new stream on resume, using the same token
 * consider moving STT core to standalone module
 * look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)
+* fix bug where TimingStream shows words slightly before they're spoken

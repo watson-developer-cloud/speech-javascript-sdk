@@ -10,11 +10,10 @@ module.exports = function promise(stream) {
   stream = stream || this;
   return new Promise(function (resolve, reject) {
     var results = [];
-    stream.setEncoding('utf8')
-    .on('data', function (result) {
+    stream.on('data', function (result) {
       results.push(result);
     }).on('end', function () {
-      resolve(typeof results[0] === 'string' ? results.join('') : results);
+      resolve(Buffer.isBuffer(results[0]) ? Buffer.concat(results).toString() : results);
     }).on('error', reject);
   });
 };

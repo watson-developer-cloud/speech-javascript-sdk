@@ -29,10 +29,9 @@ document.querySelector('#button').onclick = function () {
     return response.text();
   }).then(function (token) {
 
-    stream = WatsonSpeech.SpeechToText.recognizeBlob({
+    stream = WatsonSpeech.SpeechToText.recognizeFile({
       token: token,
       data: document.querySelector('#audiofile').files[0],
-      objectMode: true, // necessary to receive interim results
       play: true, // play the audio out loud
       outputElement: '#output' // CSS selector or DOM Element (optional)
     });

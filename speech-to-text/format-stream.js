@@ -24,10 +24,10 @@ function FormatStream(opts) {
     hesitation: '\u2026', // ellipsis
     decodeStrings: false // false = don't convert strings to buffers before passing to _write
   });
-  Transform.call(this, opts);
+  Transform.call(this, this.options);
 
   this.isJaCn = ((this.options.model.substring(0,5) === 'ja-JP') || (this.options.model.substring(0,5) === 'zh-CN'));
-  this._transform = opts.objectMode ? this.formatResult : this.formatString;
+  this._transform = this.options.objectMode ? this.formatResult : this.formatString;
 }
 util.inherits(FormatStream, Transform);
 

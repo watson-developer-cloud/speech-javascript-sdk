@@ -8,7 +8,7 @@ var defaults = require('defaults');
 /**
  * Slows results down to no faster than real time.
  *
- * Useful when running recognizeBlob because the text can otherwise appear before the words are spoken
+ * Useful when running recognizeFile because the text can otherwise appear before the words are spoken
  *
  * @param {Object} opts
  * @param {*} [opts.emitAtt=TimingStream.START] - set to TimingStream.END to only emit text that has been completely spoken.
@@ -219,5 +219,7 @@ TimingStream.prototype.handleResult = function handleResult(result) {
 
   this.tick();
 };
+
+TimingStream.prototype.promise = require('./to-promise');
 
 module.exports = TimingStream;

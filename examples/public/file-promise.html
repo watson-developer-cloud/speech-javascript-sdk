@@ -7,9 +7,11 @@
 <body>
 
     <section>
-        <h1>Transcribe File</h1>
-        <input type="file" id="audiofile"> <button id="button">Transcribe</button>
-        <p><small><i>Supported types are wav, ogg/opus (not ogg/vorbis), and flac.</i></small></p>
+        <h1>Transcribe File via AJAX</h1>
+        <button id="button">Load and Transcribe</button>
+        <p>This method is sometimes preferable to embedding an <code>&lt;autio&gt;</code> element because it avoids two
+          lossy conversions (source to web audio, and then web audio to wav) and guarantees that the transcription will work even if the browser cannot play the audio file's format.</p>
+        <p>The downside to this method is that it (currently) requires the entire audio file be downloaded before playback or processing can begin.</p>
 
         <h2>Output:</h2>
         <div id="output">--</div>
@@ -26,21 +28,28 @@ document.querySelector('#button').onclick = function () {
   var output = document.querySelector('#output');
   output.textContent = 'Processing...';
 
-  fetch('/api/speech-to-text/token').then(function(response) {
-    return response.text();
-  }).then(function (token) {
-
-    WatsonSpeech.SpeechToText.recognizeBlob({
-      token: token,
-      data: document.querySelector('#audiofile').files[0]
+  Promise.all([
+    fetch('/api/speech-to-text/token').then(function(response) {
+      return response.text();
+    }),
+    fetch('/Us_English_Broadband_Sample_1.wav').then(function(response) {
+      return response.blob();
     })
-      .promise()
-      .then(function(text) {
-        output.textContent = text;
-      }).catch(function(err) {
-        console.log(err);
-        output.textContent = err.message;
-      });
+  ])
+  .then(function (values) {
+      var token = values[0];
+      var file = values[1];
+
+    return WatsonSpeech.SpeechToText.recognizeFile({
+        token: token,
+        data: file,
+        outputElement: output
+      })
+      .promise();
+  })
+  .catch(function(err) {
+    console.log(err);
+    output.textContent = err.message;
   });
 };
 </script></code></pre>

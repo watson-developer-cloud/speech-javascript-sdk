@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Promise Example - Watson Speech to Text</title>
+</head>
+<body>
+
+<section>
+  <h1>Transcribe File via AJAX</h1>
+  <button id="button">Load and Transcribe</button>
+  <p>Note: This method is sometimes preferable to embedding an <code>&lt;audio&gt;</code> element because it avoids two
+    lossy conversions (source to web audio, and then web audio to wav) and guarantees that the transcription will work
+    even if the browser cannot play the audio file's format.
+
+    The downside is that it (currently) requires the entire audio file be downloaded before playback or processing can begin, making it impractical for large files.</p>
+
+  <h2>Output:</h2>
+  <div id="output">--</div>
+</section>
+
+<script src="watson-speech.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
+
+<h2>Code for this demo:</h2>
+<pre><code><script style="display: block;">
+
+  // preloading the data for a smoother experience
+  var preloadTokenAndAudio = Promise.all([
+    fetch('/api/speech-to-text/token').then(function(response) {
+      return response.text();
+    }),
+    fetch('/Us_English_Broadband_Sample_1.wav').then(function(response) {
+      return response.blob();
+    })
+  ]);
+
+  document.querySelector('#button').onclick = function () {
+
+      preloadTokenAndAudio.then(function (values) {
+        var token = values[0];
+        var file = values[1];
+
+        return WatsonSpeech.SpeechToText.recognizeFile({
+          token: token,
+          data: file,
+          outputElement: '#output',
+          play: true
+        })
+        .promise(); // conveniently passes along error events to the catch handler just below
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
+  };
+</script></code></pre>
+</body>
+</html>

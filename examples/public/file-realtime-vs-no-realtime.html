@@ -47,13 +47,13 @@ document.querySelector('#button').onclick = function () {
     return response.text();
   }).then(function (token) {
 
-    stream = WatsonSpeech.SpeechToText.recognizeBlob({
+    stream = WatsonSpeech.SpeechToText.recognizeFile({
       token: token,
       data: document.querySelector('#audiofile').files[0],
       play: true,
       objectMode: true,
-      max_alternatives: 1, // default is 3, but only the first one includes word timing data
-      realtime: false // defaults to true, but we're going to turn it off and then manually do it in a moment to show the difference
+      realtime: false, // defaults to true when play is true, but we're going to turn it off and then manually do it in a moment to show the difference
+      timestamps: true // defaults to true when realtime is true
     });
 
     renderStream(stream, '#output');

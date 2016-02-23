@@ -87,13 +87,28 @@ describe("WatsonSpeech.SpeechToText end-to-end", function() {
     Promise.all([getConfig(), getAudio()]).then(function(results) {
       var cfg = results[0];
       cfg.data = results[1];
-      return SpeechToText.recognizeBlob(cfg).promise()
+      return SpeechToText.recognizeFile(cfg).promise()
         .then(function(transcript) {
           assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
           done();
         });
     })
       .catch(done);
+  });
+
+  it('should transcribe files with dom output', function(done) {
+    Promise.all([getConfig(), getAudio()]).then(function(results) {
+      var cfg = results[0];
+      cfg.data = results[1];
+      var el = document.createElement('div');
+      cfg.outputElement = el;
+      return SpeechToText.recognizeFile(cfg).promise()
+        .then(function() {
+          assert.equal(el.textContent, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
+          done();
+        });
+    }).catch(done);
+
   });
 
 });

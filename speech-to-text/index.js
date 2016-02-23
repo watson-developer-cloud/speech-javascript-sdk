@@ -6,7 +6,7 @@
  * The primary methods for interacting with the Speech to Text JS SDK are:
  *  * `recognizeMicrophone()` for live microphone input
  *  * `recognizeElement()` for transcribing `<audio>` and `<video>` elements
- *  * `recognizeBlob()` for file `<input>`'s and other data sources
+ *  * `recognizeFile()` for file `<input>`'s and other data sources
  *
  * However, the underlying streams and utils that they use are also provided for advanced usage.
  *
@@ -24,7 +24,7 @@ module.exports = {
   /**
    * @see module:watson-speech/speech-to-text/recognize-blob
    */
-  recognizeBlob: require('./recognize-blob'),
+  recognizeFile: require('./recognize-file'),
 
   /**
    * @see module:watson-speech/speech-to-text/recognize-element
