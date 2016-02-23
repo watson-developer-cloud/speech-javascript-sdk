@@ -26,7 +26,7 @@
     
 
 
-    <h3>watson-speech 0.10.1</h3>
+    <h3>watson-speech 0.11.0</h3>
 
 
 
@@ -83,7 +83,7 @@ Also note that Chrome requires https (with a few exceptions for localhost and su
 <li>it transcribes the audio as it is heard, so pausing or skipping will affect the transcription</li>
 <li>audio that is paused for too long will cause the socket to time out and disconnect, preventing further transcription (without setting things up again)</li>
 </ul>
-<p>Because of these limitations, it may be preferable to instead fetch the audio via ajax and then pass it the <code>recognizeBlob()</code> API in some situations.</p>
+<p>Because of these limitations, it may be preferable to instead fetch the audio via ajax and then pass it the <code>recognizeFile()</code> API in some situations.</p>
 <p>Options: </p>
 <ul>
 <li><code>element</code>: an <code>&lt;audio&gt;</code> or <code>&lt;video&gt;</code> element (could be generated pragmatically, e.g. <code>new Audio()</code>)</li>
@@ -93,9 +93,11 @@ Also note that Chrome requires https (with a few exceptions for localhost and su
 <p>Requires that the browser support MediaElement and whatever audio codec is used in your media file.</p>
 <p>Will automatically call <code>.play()</code> the <code>element</code>, set <code>options.autoPlay=false</code> to  disable. Calling <code>.stop()</code> on the returned stream will automatically call <code>.stop()</code> on the <code>element</code>.</p>
 <p>Pipes results through a <code>{FormatStream}</code> by default, set <code>options.format=false</code> to disable.</p>
-<h3><code>.recognizeBlob({data, token})</code> -&gt; <code>RecognizeStream</code></h3><p>Options: </p>
+<h3><code>.recognizeFile({data, token})</code> -&gt; <code>RecognizeStream</code></h3><p>Can recognize and optionally attempt to play a <a href="https://developer.mozilla.org/en-US/docs/Web/API/File">File</a> or <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob">Blob</a>
+(such as from an <code>&lt;input type=&quot;file&quot;/&gt;</code> or from an ajax request.)</p>
+<p>Options: </p>
 <ul>
-<li><code>data</code>: a <code>Blob</code> (or <code>File</code>) instance. </li>
+<li><code>data</code>: a <code>Blob</code> or <code>File</code> instance. </li>
 <li><code>play</code>: (optional, default=<code>false</code>) Attempt to also play the file locally while uploading it for transcription </li>
 <li>Other options passed to RecognizeStream</li>
 <li>Other options passed to WritableElementStream if <code>options.outputElement</code> is set</li>
@@ -132,9 +134,17 @@ Standard <code>close</code> event will fire once the underlying websocket is clo
 <li>A few other tweaks for asian languages and such.</li>
 </ul>
 <p>Inherits <code>.promise()</code> from the <code>RecognizeStream</code>.</p>
-<h3>Class <code>TimingStream()</code></h3><p>For use with <code>.recognizeBlob({play: true})</code> - slows the results down to match the audio. Pipe in the <code>RecognizeStream</code> (or <code>FormatStream</code>) and listen for results as usual.</p>
+<h3>Class <code>TimingStream()</code></h3><p>For use with <code>.recognizeFile({play: true})</code> - slows the results down to match the audio. Pipe in the <code>RecognizeStream</code> (or <code>FormatStream</code>) and listen for results as usual.</p>
+<p>Inherits <code>.promise()</code> from the <code>RecognizeStream</code>.</p>
 <h3>Class <code>WritableElementStream()</code></h3><p>Accepts input from <code>RecognizeStream()</code> and friends, writes text to supplied <code>outputElement</code>.</p>
-<h2>Changelog</h2><h3>v0.10</h3><ul>
+<h2>Changelog</h2><h3>v0.11</h3><ul>
+<li>renamed <code>recognizeBlob</code> to <code>recognizeFile</code> to make the primary usage more apparent</li>
+<li>Added support for <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> elements when using the <code>targetElement</code> option (or a <code>WritableElementStream</code>)</li>
+<li>For objectMode, changed defaults for <code>word_confidence</code> to <code>false</code>, <code>alternatives</code> to <code>1</code>, and <code>timing</code> to off unless required for <code>realtime</code> option. </li>
+<li>Fixed bug with calling <code>.promise()</code> on <code>objectMode</code> streams</li>
+<li>Fixed bug with calling <code>.promise()</code> on <code>recognizeFile({play: true})</code></li>
+</ul>
+<h3>v0.10</h3><ul>
 <li>Added ability to write text directly to targetElement, updated examples to use this</li>
 <li>converted examples from jQuery to vanilla JS (w/ fetch pollyfill when necessary)</li>
 <li>significantly improved JSDoc</li>
@@ -157,9 +167,6 @@ Standard <code>close</code> event will fire once the underlying websocket is clo
 </ul>
 <h2>todo</h2><ul>
 <li>Solidify API</li>
-<li>add an example showing alternatives</li>
-<li>add an example showing word confidence scores</li>
-<li>add an ajax / recognizeBlob example and then use it for stt sample app </li>
 <li>enable eslint - https://github.ibm.com/fed/javascript-style-guides</li>
 <li>break components into standalone npm modules where it makes sense</li>
 <li>record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, fetch, etc.)</li>
@@ -170,9 +177,11 @@ Standard <code>close</code> event will fire once the underlying websocket is clo
 <li>move <code>result</code> and <code>results</code> events to node wrapper (along with the deprecation notice)</li>
 <li>improve docs</li>
 <li>consider a wrapper to match https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html</li>
-<li>consider renaming recognizeBlob to recognizeFile to make the usage more obvious</li>
 <li>support a &quot;hard&quot; stop that prevents any further data events, even for already uploaded audio, ensure timing stream also implements this.</li>
 <li>handle pause/resume in media element streams - perhaps just stop and then create a new stream on resume, using the same token</li>
+<li>consider moving STT core to standalone module</li>
+<li>look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)</li>
+<li>fix bug where TimingStream shows words slightly before they're spoken</li>
 </ul></article>
     </section>
 
@@ -184,13 +193,13 @@ Standard <code>close</code> event will fire once the underlying websocket is clo
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-blob.html">watson-speech/speech-to-text/recognize-blob</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 18 2016 22:53:27 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 23 2016 15:35:48 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
