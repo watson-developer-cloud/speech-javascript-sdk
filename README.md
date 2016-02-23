@@ -40,7 +40,7 @@ where the max length is around 1000 characters after the token is accounted for.
 Options: 
 * text - the text to transcribe // todo: list supported languages
 * voice - the desired playback voice's name - see .getVoices(). Note that the voices are language-specific.
-* todo: autoPlay option that can be set to false to preload audio
+* autoPlay - set to false to prevent the audio from automatically playing
 
 ### `.getVoices()` -> Promise
 
@@ -155,6 +155,10 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 
 ## Changelog
 
+### v0.12
+* Added `autoPlay` option to `synthesize()`
+* Added proper parameter filtering to `synthesize()`
+
 ### v0.11
 * renamed `recognizeBlob` to `recognizeFile` to make the primary usage more apparent
 * Added support for `<input>` and `<textarea>` elements when using the `targetElement` option (or a `WritableElementStream`)
@@ -201,3 +205,4 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 * consider moving STT core to standalone module
 * look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)
 * fix bug where TimingStream shows words slightly before they're spoken
+* automatically turn on objectMode when required by other options (timing, confidence, etc.
