@@ -42,71 +42,69 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; //, 'X-Watson-Learning-Opt
  *
  *  An interim result looks like this (assuming all features are enabled):
  ```js
- { results:
-    [ { alternatives:
-         [ { timestamps:
-              [ [ 'it', 20.9, 21.04 ],
-                [ 'is', 21.04, 21.17 ],
-                [ 'a', 21.17, 21.25 ],
-                [ 'site', 21.25, 21.56 ],
-                [ 'that', 21.56, 21.7 ],
-                [ 'hardly', 21.7, 22.06 ],
-                [ 'anyone', 22.06, 22.49 ],
-                [ 'can', 22.49, 22.67 ],
-                [ 'behold', 22.67, 23.13 ],
-                [ 'without', 23.13, 23.46 ],
-                [ 'some', 23.46, 23.67 ],
-                [ 'sort', 23.67, 23.91 ],
-                [ 'of', 23.91, 24 ],
-                [ 'unwanted', 24, 24.58 ],
-                [ 'emotion', 24.58, 25.1 ] ],
-             transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotion ' } ],
-        final: false } ],
-   result_index: 3 }
+ { alternatives:
+   [ { timestamps:
+        [ [ 'it', 20.9, 21.04 ],
+          [ 'is', 21.04, 21.17 ],
+          [ 'a', 21.17, 21.25 ],
+          [ 'site', 21.25, 21.56 ],
+          [ 'that', 21.56, 21.7 ],
+          [ 'hardly', 21.7, 22.06 ],
+          [ 'anyone', 22.06, 22.49 ],
+          [ 'can', 22.49, 22.67 ],
+          [ 'behold', 22.67, 23.13 ],
+          [ 'without', 23.13, 23.46 ],
+          [ 'some', 23.46, 23.67 ],
+          [ 'sort', 23.67, 23.91 ],
+          [ 'of', 23.91, 24 ],
+          [ 'unwanted', 24, 24.58 ],
+          [ 'emotion', 24.58, 25.1 ] ],
+       transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotion ' } ],
+  final: false,
+  result_index: 3 }
  ```
 
  While a final result looks like this (again, assuming all features are enabled):
  ```js
- { results:
-    [ { alternatives:
-         [ { word_confidence:
-              [ [ 'it', 1 ],
-                [ 'is', 0.956286624429304 ],
-                [ 'a', 0.8105753725270362 ],
-                [ 'site', 1 ],
-                [ 'that', 1 ],
-                [ 'hardly', 1 ],
-                [ 'anyone', 1 ],
-                [ 'can', 1 ],
-                [ 'behold', 0.5273598005406737 ],
-                [ 'without', 1 ],
-                [ 'some', 1 ],
-                [ 'sort', 1 ],
-                [ 'of', 1 ],
-                [ 'unwanted', 1 ],
-                [ 'emotion', 0.49401837076320887 ] ],
-             confidence: 0.881,
-             transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotion ',
-             timestamps:
-              [ [ 'it', 20.9, 21.04 ],
-                [ 'is', 21.04, 21.17 ],
-                [ 'a', 21.17, 21.25 ],
-                [ 'site', 21.25, 21.56 ],
-                [ 'that', 21.56, 21.7 ],
-                [ 'hardly', 21.7, 22.06 ],
-                [ 'anyone', 22.06, 22.49 ],
-                [ 'can', 22.49, 22.67 ],
-                [ 'behold', 22.67, 23.13 ],
-                [ 'without', 23.13, 23.46 ],
-                [ 'some', 23.46, 23.67 ],
-                [ 'sort', 23.67, 23.91 ],
-                [ 'of', 23.91, 24 ],
-                [ 'unwanted', 24, 24.58 ],
-                [ 'emotion', 24.58, 25.1 ] ] },
-           { transcript: 'it is a sight that hardly anyone can behold without some sort of unwanted emotion ' },
-           { transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotions ' } ],
-        final: true } ],
-   result_index: 3 }
+  { alternatives:
+     [ { word_confidence:
+          [ [ 'it', 1 ],
+            [ 'is', 0.956286624429304 ],
+            [ 'a', 0.8105753725270362 ],
+            [ 'site', 1 ],
+            [ 'that', 1 ],
+            [ 'hardly', 1 ],
+            [ 'anyone', 1 ],
+            [ 'can', 1 ],
+            [ 'behold', 0.5273598005406737 ],
+            [ 'without', 1 ],
+            [ 'some', 1 ],
+            [ 'sort', 1 ],
+            [ 'of', 1 ],
+            [ 'unwanted', 1 ],
+            [ 'emotion', 0.49401837076320887 ] ],
+         confidence: 0.881,
+         transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotion ',
+         timestamps:
+          [ [ 'it', 20.9, 21.04 ],
+            [ 'is', 21.04, 21.17 ],
+            [ 'a', 21.17, 21.25 ],
+            [ 'site', 21.25, 21.56 ],
+            [ 'that', 21.56, 21.7 ],
+            [ 'hardly', 21.7, 22.06 ],
+            [ 'anyone', 22.06, 22.49 ],
+            [ 'can', 22.49, 22.67 ],
+            [ 'behold', 22.67, 23.13 ],
+            [ 'without', 23.13, 23.46 ],
+            [ 'some', 23.46, 23.67 ],
+            [ 'sort', 23.67, 23.91 ],
+            [ 'of', 23.91, 24 ],
+            [ 'unwanted', 24, 24.58 ],
+            [ 'emotion', 24.58, 25.1 ] ] },
+       { transcript: 'it is a sight that hardly anyone can behold without some sort of unwanted emotion ' },
+       { transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotions ' } ],
+    final: true,
+    result_index: 3 }
  ```
 
 
