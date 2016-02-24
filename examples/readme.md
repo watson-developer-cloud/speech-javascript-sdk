@@ -36,3 +36,10 @@ Notes
   and there is a [REST API](http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-tokens.shtml) 
   for use with other languages (or `curl`).
 * The Speech SDK may be used in browserify or as a standalone library; all of the current examples use it as a standalone library for simplicity.
+
+
+More Examples
+-------------
+
+* Speech & Dialog services together: [Demo](https://speech-dialog.mybluemix.net/), [Code](https://github.com/nfriedly/speech-dialog)
+* Text to Speech w/ word timings: [Demo](http://watson-tts-timing.mybluemix.net/), [Code](https://github.com/nfriedly/tts-timing)

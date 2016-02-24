@@ -214,4 +214,3 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 * fix bug where TimingStream shows words slightly before they're spoken
 * automatically turn on objectMode when required by other options (timing, confidence, etc.
 * support jquery objects for element and targetElement
-* add a way to keep the mic stream so the user isn't repeatedly prompted in firefox
