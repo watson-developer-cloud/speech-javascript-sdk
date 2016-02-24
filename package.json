@@ -9,7 +9,7 @@
     "test": "karma start test/resources/karma.conf.js --single-run",
     "test-integration": "TEST_MODE=integration karma start test/resources/karma.conf.js --single-run",
     "browserify": "browserify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --transform envify",
-    "minify": "with-package uglifyjs --compress --mangle --screw-ie8 dist/watson-speech.js --output dist/watson-speech.min.js --preamble \"// IBM Watson Speech JavaScript SDK\n// vpkg.version\n// Generated at `date`\n// Copyright IBM (pkg.license)\"",
+    "minify": "uglifyjs --compress --mangle --screw-ie8 dist/watson-speech.js --output dist/watson-speech.min.js --preamble \"// IBM Watson Speech JavaScript SDK\n// $npm_package_version\n// Generated at `date`\n// Copyright IBM ($npm_package_license)\n// $npm_package_homepage\"",
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
     "build": "npm run browserify && npm run minify",
     "doc": "jsdoc -c jsdoc/config.json --debug",
@@ -35,8 +35,7 @@
     "serve-static": "^1.10.2",
     "uglify-js": "^2.6.1",
     "watchify": "^3.7.0",
-    "watson-developer-cloud": "^1.2.1",
-    "with-package": "^0.2.0"
+    "watson-developer-cloud": "^1.2.1"
   },
   "dependencies": {
     "clone": "^1.0.2",
@@ -48,6 +47,7 @@
     "websocket": "^1.0.22",
     "whatwg-fetch": "^0.11.0"
   },
+  "homepage": "https://github.com/watson-developer-cloud/speech-javascript-sdk",
   "repository": {
     "type": "git",
     "url": "https://github.com/watson-developer-cloud/speech-javascript-sdk.git"
