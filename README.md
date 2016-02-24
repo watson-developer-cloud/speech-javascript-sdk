@@ -123,7 +123,7 @@ See speech-to-text/recognize-stream.js for other options.
 * `.promise()`: returns a promise that will resolve to the final text. 
   Note that you must either set `continuous: false` or call `.stop()` on the stream to make the promise resolve in a timely manner.
   
-* `.stop()`: stops the stream. No more data will be sent, but the stream may still recieve additional results with the transcription of already-sent audio.
+* `.stop()`: stops the stream. No more data will be sent, but the stream may still receive additional results with the transcription of already-sent audio.
   Standard `close` event will fire once the underlying websocket is closed and `end` once all of the data is consumed.
 
 #### Events
