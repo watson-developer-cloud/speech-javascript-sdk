@@ -22,8 +22,10 @@ var L16 = require('./webaudio-l16-stream.js');
 var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
+var Readable = require('stream').Readable;
 
 var preservedMicStream;
+var bitBucket = new Readable;
 
 /**
  * @module watson-speech/speech-to-text/recognize-microphone
@@ -62,6 +64,7 @@ module.exports = function recognizeMicrophone(options) {
   var keepMic = options.keepMicrophone;
   var getMicStream;
   if (keepMic && preservedMicStream) {
+    preservedMicStream.unpipe(bitBucket);
     getMicStream = Promise.resolve(preservedMicStream);
   } else {
     getMicStream = getUserMedia({video: false, audio: true}).then(function (mic) {
@@ -85,6 +88,7 @@ module.exports = function recognizeMicrophone(options) {
 
     function end() {
       micStream.unpipe(l16Stream);
+      micStream.pipe(bitBucket); // otherwise it will buffer the audio from in between calls and prepend it to the next one
       l16Stream.end();
     }
     // trigger on both stop and end events:
