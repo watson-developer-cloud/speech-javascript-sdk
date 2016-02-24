@@ -53,7 +53,10 @@ Requires[window.fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_AP
 
 ### `.recognizeMicrophone({token})` -> `RecognizeStream`
 
-Options: No direct options, all provided options are passed to MicrophoneStream and RecognizeStream, and WritableElementStream if `options.outputElement` is set
+Options: 
+* `keepMic`: if true, preserves the MicrophoneStream for subsequent calls, preventing additional permissions requests in Firefox
+* Other options passed to MediaElementAudioStream and RecognizeStream
+* Other options passed to WritableElementStream if `options.outputElement` is set
 
 Requires the `getUserMedia` API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
 Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features
@@ -155,6 +158,10 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 
 ## Changelog
 
+### v0.13
+* Fixed bug where `continuous: false` didn't close the microphone at end of recognition
+* Added `keepMic` option to `recognizeMicrophone()` to prevent multiple permission popups in firefox
+
 ### v0.12
 * Added `autoPlay` option to `synthesize()`
 * Added proper parameter filtering to `synthesize()`
@@ -206,3 +213,5 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 * look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)
 * fix bug where TimingStream shows words slightly before they're spoken
 * automatically turn on objectMode when required by other options (timing, confidence, etc.
+* support jquery objects for element and targetElement
+* add a way to keep the mic stream so the user isn't repeatedly prompted in firefox

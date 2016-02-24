@@ -23,6 +23,8 @@ var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 
+var preservedMicStream;
+
 /**
  * @module watson-speech/speech-to-text/recognize-microphone
  */
@@ -34,6 +36,7 @@ var WritableElementStream = require('./writable-element-stream');
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {Boolean} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
+ * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
  *
  * @returns {RecognizeStream}
@@ -56,17 +59,46 @@ module.exports = function recognizeMicrophone(options) {
 
   var recognizeStream = new RecognizeStream(rsOpts);
 
-
-  getUserMedia({video: false, audio: true}).then(function(mic) {
-    var micStream = new MicrophoneStream(mic, {
-      objectMode: true,
-      bufferSize: options.bufferSize
+  var keepMic = options.keepMicrophone;
+  var getMicStream;
+  if (keepMic && preservedMicStream) {
+    getMicStream = Promise.resolve(preservedMicStream);
+  } else {
+    getMicStream = getUserMedia({video: false, audio: true}).then(function (mic) {
+      var micStream = new MicrophoneStream(mic, {
+        objectMode: true,
+        bufferSize: options.bufferSize
+      });
+      if (keepMic) {
+        preservedMicStream = micStream;
+      }
+      return Promise.resolve(micStream);
     });
+  }
+
+  getMicStream.then(function(micStream) {
+    var l16Stream = new L16({writableObjectMode: true});
+
     micStream
-      .pipe(new L16({writableObjectMode: true}))
+      .pipe(l16Stream)
       .pipe(recognizeStream);
 
-    recognizeStream.on('stop', micStream.stop.bind(micStream));
+    function end() {
+      micStream.unpipe(l16Stream);
+      l16Stream.end();
+    }
+    // trigger on both stop and end events:
+    // stop will not fire when a stream ends due to a timeout or having continuous: false
+    // but when stop does fire, we want to honor it immediately
+    // end will always fire, but it may take a few moments after stop
+    if (keepMic) {
+      recognizeStream.on('end', end);
+      recognizeStream.on('stop', end);
+    } else {
+      recognizeStream.on('end', micStream.stop.bind(micStream));
+      recognizeStream.on('stop', micStream.stop.bind(micStream));
+    }
+
   }).catch(recognizeStream.emit.bind(recognizeStream, 'error'));
 
 

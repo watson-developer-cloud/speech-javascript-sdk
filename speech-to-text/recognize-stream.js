@@ -391,7 +391,7 @@ RecognizeStream.prototype.finish = function finish() {
   this.finished = true;
   var self = this;
   var closingMessage = {action: 'stop'};
-  if (self.socket) {
+  if (self.socket && self.socket.readyState !== self.socket.CLOSED && self.socket.readyState !== self.socket.CLOSING) {
     self.sendJSON(closingMessage);
   } else {
     this.once('connect', function () {
