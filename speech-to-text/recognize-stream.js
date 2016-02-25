@@ -34,8 +34,6 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; //, 'X-Watson-Learning-Opt
 /**
  * pipe()-able Node.js Readable/Writeable stream - accepts binary audio and emits text/objects in it's `data` events.
  *
- * Cannot be instantiated directly, instead reated by calling #createRecognizeStream()
- *
  * Uses WebSockets under the hood. For audio with no recognizable speech, no `data` events are emitted.
  *
  * By default, only finalized text is emitted in the data events, however in `readableObjectMode` (usually just `objectMode` when using a helper method).
