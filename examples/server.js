@@ -20,7 +20,7 @@ var express      = require('express'),
     app          = express();
 
 // allows environment properties to be set in a file named .env
-require('dotenv').load();
+require('dotenv').load({silent: true});
 
 app.use(express.static(__dirname + '/static'));
 
