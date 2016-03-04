@@ -7,3 +7,4 @@ test/resources/stt-auth.json
 test/resources/tts-auth.json
 doc/
 *-auth.json
+.env

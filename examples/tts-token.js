@@ -8,12 +8,12 @@ var express      = require('express'),
 
 // another endpoint for the text to speech service
 
-// For local development, replace username and password
+// For local development, replace username and password or set env properties
 var ttsConfig = extend({
   version: 'v1',
   url: 'https://stream.watsonplatform.net/text-to-speech/api',
-  username: '<username>',
-  password: '<password>'
+  username: process.env.TTS_USERNAME || '<username>',
+  password: process.env.TTS_PASSWORD || '<password>'
 }, vcapServices.getCredentials('text_to_speech'));
 
 // quick hack to make development easier

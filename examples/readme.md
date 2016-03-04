@@ -11,16 +11,25 @@ Prerequisite
 ------------
 
 * IBM Watson Speech to Text service credentials - see http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-credentials.shtml
-* [Node.js](https://nodejs.org/en/) (see notes)
+* Node.js OR Python
 
 
-Setup
------
+Setup - Node.js
+---------------
 
 1. `cd` into the `examples/` directory and run `npm install` to grab dependencies
-2. edit `token-server.js` to include your service credentials
+2. edit `tts-token.js` and `stt-token.js` to include your service credentials (or create a `.env` file)
 3. run `npm start`
 4. Open your browser to http://localhost:3000/ to see the examples.
+
+
+Setup - Python
+---------------
+
+1. `cd` into the `examples/` directory and run `pip install watson_developer_cloud flask` (or `easy_install...`) to grab dependencies
+2. edit `server.py` to include your service credentials (or create a `.env` file)
+3. run `python server.py`
+4. Open your browser to http://localhost:5000/ to see the examples.
 
 
 Notes

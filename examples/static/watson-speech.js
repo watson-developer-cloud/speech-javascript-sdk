@@ -1,0 +1,1 @@
+../../dist/watson-speech.js

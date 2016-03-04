@@ -19,8 +19,10 @@
 var express      = require('express'),
     app          = express();
 
-app.use(express.static(__dirname + '/public'));
-app.use(express.static(__dirname + '/../dist')); // normally these files would also go into public/ but this way the example always has the latest code
+// allows environment properties to be set in a file named .env
+require('dotenv').load();
+
+app.use(express.static(__dirname + '/static'));
 
 // token endpoints
 // **Warning**: these endpoints should be guarded with additional authentication & authorization for production use
