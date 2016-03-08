@@ -15,7 +15,7 @@
  */
 
 'use strict';
-var getUserMedia = require('./getusermedia');
+var getUserMedia = require('get-user-media-promise');
 var MicrophoneStream = require('microphone-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var L16 = require('./webaudio-l16-stream.js');
@@ -78,6 +78,10 @@ module.exports = function recognizeMicrophone(options) {
       return Promise.resolve(micStream);
     });
   }
+
+  getMicStream.catch(function(err) {
+    console.log(err);
+  });
 
   getMicStream.then(function(micStream) {
     var l16Stream = new L16({writableObjectMode: true});

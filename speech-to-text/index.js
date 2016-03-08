@@ -54,11 +54,6 @@ module.exports = {
   FilePlayer: require('./file-player'),
 
   /**
-   * @todo: move this one to it's own module
-   */
-  getUserMedia: require('./getusermedia'),
-
-  /**
    * @see FormatStream
    */
   FormatStream: require('./format-stream'),
@@ -74,6 +69,12 @@ module.exports = {
   WritableElementStream: require('./writable-element-stream'),
 
   // external components exposed for convenience
+
+  /**
+   * @see https://www.npmjs.com/package/get-user-media-promise
+   */
+  getUserMedia: require('get-user-media-promise'),
+
   /**
    * @see https://www.npmjs.com/package/microphone-stream
    */
