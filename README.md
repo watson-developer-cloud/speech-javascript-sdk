@@ -2,6 +2,7 @@ IBM Watson Speech Services for Web Browsers
 ===========================================
 
 [![Build Status](https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk)
+[![npm-version](https://img.shields.io/npm/v/watson-speech.svg)](https://www.npmjs.com/package/watson-speech)
 
 Allows you to easily add voice recognition and synthesis to any web app with minimal code. 
 
