@@ -40,6 +40,7 @@
   "dependencies": {
     "clone": "^1.0.2",
     "defaults": "^1.0.3",
+    "get-user-media-promise": "^1.0.0",
     "microphone-stream": "^3.0.2",
     "object.assign": "^4.0.3",
     "object.pick": "^1.1.1",
