@@ -159,6 +159,10 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 
 ## Changelog
 
+### v0.14
+* Moved getUserMedia shim to a [standalone library](https://www.npmjs.com/package/get-user-media-promise)
+* added a python token server example
+
 ### v0.13
 * Fixed bug where `continuous: false` didn't close the microphone at end of recognition
 * Added `keepMic` option to `recognizeMicrophone()` to prevent multiple permission popups in firefox
