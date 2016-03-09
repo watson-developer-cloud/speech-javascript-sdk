@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3>watson-speech 0.14.0</h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>IBM Watson Speech Services for Web Browsers</h1><p><a href="https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk"><img src="https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk.svg?branch=master" alt="Build Status"></a>
+<a href="https://www.npmjs.com/package/watson-speech"><img src="https://img.shields.io/npm/v/watson-speech.svg" alt="npm-version"></a></p>
+<p>Allows you to easily add voice recognition and synthesis to any web app with minimal code. </p>
+<p><strong>Warning</strong> This library is still early-stage and may see significant breaking changes.</p>
+<p><strong>For Web Browsers Only</strong> This library is primarily intended for use in browsers. 
+Check out <a href="https://www.npmjs.com/package/watson-developer-cloud">watson-developer-cloud</a> to use Watson services (speech and others) from Node.js.</p>
+<p>However, a server-side component is required to generate auth tokens. 
+The examples/ folder includes a node.js one, and SDKs are available for <a href="https://github.com/watson-developer-cloud/node-sdk#authorization">Node.js</a>, 
+<a href="https://github.com/watson-developer-cloud/java-sdk">Java</a>, 
+<a href="https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py">Python</a>, 
+and there is also a <a href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-tokens.shtml">REST API</a>.</p>
+<p>See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples</p>
+<p>This library is built with <a href="http://browserify.org/">browserify</a> and easy to use in browserify-based projects (<code>npm install --save watson-speech</code>), but you can also grab the compiled bundle from the 
+<code>dist/</code> folder and use it as a standalone library.</p>
+<h2>Basic API</h2><p>Complete API docs should be published at http://watson-developer-cloud.github.io/speech-javascript-sdk/</p>
+<p>All API methods require an auth token that must be <a href="https://github.com/watson-developer-cloud/node-sdk#authorization">generated server-side</a>. 
+(Snp teee examples/token-server.js for a basic example.)</p>
+<h2><code>WatsonSpeech.TextToSpeech</code></h2><h3><code>.synthesize({text, token})</code> -&gt; <code>&lt;audio&gt;</code></h3><p>Speaks the supplied text through an automatically-created <code>&lt;audio&gt;</code> element. 
+Currently limited to text that can fit within a GET URL (this is particularly an issue on <a href="http://stackoverflow.com/questions/32267442/url-length-limitation-of-microsoft-edge">Internet Explorer before Windows 10</a>
+where the max length is around 1000 characters after the token is accounted for.)</p>
+<p>Options: </p>
+<ul>
+<li>text - the text to transcribe // todo: list supported languages</li>
+<li>voice - the desired playback voice's name - see .getVoices(). Note that the voices are language-specific.</li>
+<li>autoPlay - set to false to prevent the audio from automatically playing</li>
+</ul>
+<h3><code>.getVoices()</code> -&gt; Promise</h3><p>Returns a promise that resolves to an array of objects containing the name, language, gender, and other details for each voice.</p>
+<p>Requires<a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">window.fetch</a>, a <a href="https://www.npmjs.com/package/whatwg-fetch">pollyfill</a> for IE/Edge and older Chrome/Firefox.</p>
+<h2><code>WatsonSpeech.SpeechToText</code></h2><h3><code>.recognizeMicrophone({token})</code> -&gt; <code>RecognizeStream</code></h3><p>Options: </p>
+<ul>
+<li><code>keepMic</code>: if true, preserves the MicrophoneStream for subsequent calls, preventing additional permissions requests in Firefox</li>
+<li>Other options passed to MediaElementAudioStream and RecognizeStream</li>
+<li>Other options passed to WritableElementStream if <code>options.outputElement</code> is set</li>
+</ul>
+<p>Requires the <code>getUserMedia</code> API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
+Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features</p>
+<p>Pipes results through a <code>{FormatStream}</code> by default, set <code>options.format=false</code> to disable.</p>
+<p>Known issue: Firefox continues to display a microphone icon in the address bar even after recording has ceased. This is a browser bug.</p>
+<h3><code>.recognizeElement({element, token})</code> -&gt; <code>RecognizeStream</code></h3><p>Extract audio from an <code>&lt;audio&gt;</code> or <code>&lt;video&gt;</code> element and transcribe speech. </p>
+<p>This method has some limitations: </p>
+<ul>
+<li>the audio is run through two lossy conversions: first from the source format to WebAudio, and second to l16 (raw wav) for Watson</li>
+<li>the WebAudio API does not guarantee the same exact output for the same file played twice, so it's possible to receive slight different transcriptions for the same file played repeatedly</li>
+<li>it transcribes the audio as it is heard, so pausing or skipping will affect the transcription</li>
+<li>audio that is paused for too long will cause the socket to time out and disconnect, preventing further transcription (without setting things up again)</li>
+</ul>
+<p>Because of these limitations, it may be preferable to instead fetch the audio via ajax and then pass it the <code>recognizeFile()</code> API in some situations.</p>
+<p>Options: </p>
+<ul>
+<li><code>element</code>: an <code>&lt;audio&gt;</code> or <code>&lt;video&gt;</code> element (could be generated pragmatically, e.g. <code>new Audio()</code>)</li>
+<li>Other options passed to MediaElementAudioStream and RecognizeStream</li>
+<li>Other options passed to WritableElementStream if <code>options.outputElement</code> is set</li>
+</ul>
+<p>Requires that the browser support MediaElement and whatever audio codec is used in your media file.</p>
+<p>Will automatically call <code>.play()</code> the <code>element</code>, set <code>options.autoPlay=false</code> to  disable. Calling <code>.stop()</code> on the returned stream will automatically call <code>.stop()</code> on the <code>element</code>.</p>
+<p>Pipes results through a <code>{FormatStream}</code> by default, set <code>options.format=false</code> to disable.</p>
+<h3><code>.recognizeFile({data, token})</code> -&gt; <code>RecognizeStream</code></h3><p>Can recognize and optionally attempt to play a <a href="https://developer.mozilla.org/en-US/docs/Web/API/File">File</a> or <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob">Blob</a>
+(such as from an <code>&lt;input type=&quot;file&quot;/&gt;</code> or from an ajax request.)</p>
+<p>Options: </p>
+<ul>
+<li><code>data</code>: a <code>Blob</code> or <code>File</code> instance. </li>
+<li><code>play</code>: (optional, default=<code>false</code>) Attempt to also play the file locally while uploading it for transcription </li>
+<li>Other options passed to RecognizeStream</li>
+<li>Other options passed to WritableElementStream if <code>options.outputElement</code> is set</li>
+</ul>
+<p><code>play</code>requires that the browser support the format; most browsers support wav and ogg/opus, but not flac.) 
+Will emit a <code>playback-error</code> on the RecognizeStream if playback fails. 
+Playback will automatically stop when <code>.stop()</code> is called on the RecognizeStream.</p>
+<p>Pipes results through a <code>{TimingStream}</code> by if <code>options.play=true</code>, set <code>options.realtime=false</code> to disable.</p>
+<p>Pipes results through a <code>{FormatStream}</code> by default, set <code>options.format=false</code> to disable.</p>
+<h3>Class <code>RecognizeStream()</code></h3><p>A <a href="https://nodejs.org/api/stream.html">Node.js-style stream</a> of the final text, with some helpers and extra events built in.</p>
+<p>RecognizeStream is generally not instantiated directly but rather returned as the result of calling one of the recognize* methods.</p>
+<p>The RecognizeStream waits until after receiving data to open a connection. 
+If no <code>content-type</code> option is set, it will attempt to parse the first chunk of data to determine type.</p>
+<p>See speech-to-text/recognize-stream.js for other options.</p>
+<h4>Methods</h4><ul>
+<li><p><code>.promise()</code>: returns a promise that will resolve to the final text. 
+Note that you must either set <code>continuous: false</code> or call <code>.stop()</code> on the stream to make the promise resolve in a timely manner.</p>
+</li>
+<li><p><code>.stop()</code>: stops the stream. No more data will be sent, but the stream may still receive additional results with the transcription of already-sent audio.
+Standard <code>close</code> event will fire once the underlying websocket is closed and <code>end</code> once all of the data is consumed.</p>
+</li>
+</ul>
+<h4>Events</h4><p>Follows standard <a href="https://nodejs.org/api/stream.html">Node.js stream events</a>, in particular: </p>
+<ul>
+<li><code>data</code>: emits either final Strings or final/interim result objects depending on if the stream is in objectMode</li>
+<li><code>end</code>: emitted once all data has been consumed.</li>
+</ul>
+<p>(Note: there are several custom events, but they are deprecated or intended for internal usage)</p>
+<h3>Class <code>FormatStream()</code></h3><p>Pipe a <code>RecognizeStream</code> to a format stream, and the resulting text and <code>results</code> events will have basic formatting applied:</p>
+<ul>
+<li>Capitalize the first word of each sentence</li>
+<li>Add a period to the end</li>
+<li>Fix any &quot;cruft&quot; in the transcription</li>
+<li>A few other tweaks for asian languages and such.</li>
+</ul>
+<p>Inherits <code>.promise()</code> from the <code>RecognizeStream</code>.</p>
+<h3>Class <code>TimingStream()</code></h3><p>For use with <code>.recognizeFile({play: true})</code> - slows the results down to match the audio. Pipe in the <code>RecognizeStream</code> (or <code>FormatStream</code>) and listen for results as usual.</p>
+<p>Inherits <code>.promise()</code> from the <code>RecognizeStream</code>.</p>
+<h3>Class <code>WritableElementStream()</code></h3><p>Accepts input from <code>RecognizeStream()</code> and friends, writes text to supplied <code>outputElement</code>.</p>
+<h2>Changelog</h2><h3>v0.14</h3><ul>
+<li>Moved getUserMedia shim to a <a href="https://www.npmjs.com/package/get-user-media-promise">standalone library</a></li>
+<li>added a python token server example</li>
+</ul>
+<h3>v0.13</h3><ul>
+<li>Fixed bug where <code>continuous: false</code> didn't close the microphone at end of recognition</li>
+<li>Added <code>keepMic</code> option to <code>recognizeMicrophone()</code> to prevent multiple permission popups in firefox</li>
+</ul>
+<h3>v0.12</h3><ul>
+<li>Added <code>autoPlay</code> option to <code>synthesize()</code></li>
+<li>Added proper parameter filtering to <code>synthesize()</code></li>
+</ul>
+<h3>v0.11</h3><ul>
+<li>renamed <code>recognizeBlob</code> to <code>recognizeFile</code> to make the primary usage more apparent</li>
+<li>Added support for <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> elements when using the <code>targetElement</code> option (or a <code>WritableElementStream</code>)</li>
+<li>For objectMode, changed defaults for <code>word_confidence</code> to <code>false</code>, <code>alternatives</code> to <code>1</code>, and <code>timing</code> to off unless required for <code>realtime</code> option. </li>
+<li>Fixed bug with calling <code>.promise()</code> on <code>objectMode</code> streams</li>
+<li>Fixed bug with calling <code>.promise()</code> on <code>recognizeFile({play: true})</code></li>
+</ul>
+<h3>v0.10</h3><ul>
+<li>Added ability to write text directly to targetElement, updated examples to use this</li>
+<li>converted examples from jQuery to vanilla JS (w/ fetch pollyfill when necessary)</li>
+<li>significantly improved JSDoc</li>
+</ul>
+<h3>v0.9</h3><ul>
+<li>Added basic text to speech support</li>
+</ul>
+<h3>v0.8</h3><ul>
+<li>deprecated <code>result</code> events in favor of <code>objectMode</code>.</li>
+<li>renamed the <code>autoplay</code> option to <code>autoPlay</code> on <code>recognizeElement()</code> (capital P)</li>
+</ul>
+<h3>v0.7</h3><ul>
+<li>Changed <code>playFile</code> option of <code>recognizeBlob()</code> to just <code>play</code>, corrected default</li>
+<li>Added <code>options.format=true</code> to <code>recognize*()</code> to pipe text through a FormatStream</li>
+<li>Added <code>options.realtime=options.play</code> to <code>recognizeBlob()</code> to automatically pipe results through a TimingStream when playing locally</li>
+<li>Added <code>close</code> and <code>end</code> events to TimingStream</li>
+<li>Added <code>delay</code> option to <code>TimingStream</code></li>
+<li>Moved compiled binary to GitHub Releases (in addition to uncompiled source on npm).</li>
+<li>Misc. doc and internal improvements</li>
+</ul>
+<h2>todo</h2><ul>
+<li>Solidify API</li>
+<li>enable eslint - https://github.ibm.com/fed/javascript-style-guides</li>
+<li>break components into standalone npm modules where it makes sense</li>
+<li>record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, fetch, etc.)</li>
+<li>run integration tests on travis (fall back to offline server for pull requests)</li>
+<li>more tests in general</li>
+<li>better cross-browser testing (saucelabs?)</li>
+<li>update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)</li>
+<li>move <code>result</code> and <code>results</code> events to node wrapper (along with the deprecation notice)</li>
+<li>improve docs</li>
+<li>consider a wrapper to match https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html</li>
+<li>support a &quot;hard&quot; stop that prevents any further data events, even for already uploaded audio, ensure timing stream also implements this.</li>
+<li>handle pause/resume in media element streams - perhaps just stop and then create a new stream on resume, using the same token</li>
+<li>consider moving STT core to standalone module</li>
+<li>look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)</li>
+<li>fix bug where TimingStream shows words slightly before they're spoken</li>
+<li>automatically turn on objectMode when required by other options (timing, confidence, etc.</li>
+<li>support jquery objects for element and targetElement</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Mar 09 2016 15:25:05 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
