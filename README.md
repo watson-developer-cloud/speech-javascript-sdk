@@ -202,7 +202,6 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 ## todo
 
 * Solidify API
-* enable eslint - https://github.ibm.com/fed/javascript-style-guides
 * break components into standalone npm modules where it makes sense
 * record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, fetch, etc.)
 * run integration tests on travis (fall back to offline server for pull requests)
@@ -217,5 +216,4 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 * consider moving STT core to standalone module
 * look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)
 * fix bug where TimingStream shows words slightly before they're spoken
-* automatically turn on objectMode when required by other options (timing, confidence, etc.
 * support jquery objects for element and targetElement
