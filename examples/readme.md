@@ -1,10 +1,10 @@
 Watson Speech JavaScript SDK Examples
 =====================================
 
-This folder has a basic node.js server to host files and generate auth tokens and 
-several html files with different examples of using the Speech SDJ. 
+This folder has example Node.js and Python servers to generate auth tokens and 
+several html files (in `static/`) with different examples of using the Speech SDK. 
 
-There are also a few audio files to test with in the public/ folder.
+There are also a few audio files to test with in the `static/` folder.
 
 
 Prerequisite
@@ -24,7 +24,7 @@ Setup - Node.js
 
 
 Setup - Python
----------------
+--------------
 
 1. `cd` into the `examples/` directory and run `pip install watson_developer_cloud flask` (or `easy_install...`) to grab dependencies
 2. edit `server.py` to include your service credentials (or create a `.env` file)
