@@ -27,9 +27,9 @@
  */
 
 /**
- * Example: 'v1.0.0'
+ * Release version
  *
- * Will be `undefined` during development
+ * envify automatically rewrites this during the release process
  */
 exports.version = process.env.TRAVIS_BRANCH;
 
