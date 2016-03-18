@@ -76,7 +76,9 @@ This method has some limitations:
  * it transcribes the audio as it is heard, so pausing or skipping will affect the transcription
  * audio that is paused for too long will cause the socket to time out and disconnect, preventing further transcription (without setting things up again)
  
-Because of these limitations, it may be preferable to instead fetch the audio via ajax and then pass it the `recognizeFile()` API in some situations.
+Because of these limitations, there are two alternative methods that may be preferable in some situations:
+ * fetch the audio via ajax and then pass it to `recognizeFile()` - this resolves the issues around lossy conversion and inexact transcription, but the audio playback, if enabled, cannot be paused, rewound, etc.
+ * Pre-process the audio and generate a [WebVTT](https://developer.mozilla.org/en-US/docs/Web/API/Web_Video_Text_Tracks_Format) subtitles file to insert in `<track>`, completely bypassing this SDK. This resolves all of the above issues, and gives you an opportunity to review and/or edit the subtitles if desired.
 
 Options: 
 * `element`: an `<audio>` or `<video>` element (could be generated pragmatically, e.g. `new Audio()`)
