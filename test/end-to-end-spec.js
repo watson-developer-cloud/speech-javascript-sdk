@@ -6,13 +6,13 @@ var SpeechToText = require('../speech-to-text');
 
 var concat = require('concat-stream');
 
-if (typeof fetch == "undefined") {
+if (typeof fetch == 'undefined') {
   require('whatwg-fetch');
 }
 
 // this is mainly for fetching the token, but it also determines what server to connect to during an offline test
 function getConfig() {
-  //console.log('getting config');
+  // console.log('getting config');
   return fetch('http://localhost:9877/token').then(function(response) {
     return response.json();
   });
@@ -27,27 +27,27 @@ function getAudio() {
 // offline = mock server that ignores actual audio data
 // integration = testing against actual watson servers
 var offline = process.env.TEST_MODE !== 'integration';
-var chrome = navigator.userAgent.indexOf('Chrome') >=0;
-var firefox = navigator.userAgent.indexOf('Firefox') >=0;
+var chrome = navigator.userAgent.indexOf('Chrome') >= 0;
+var firefox = navigator.userAgent.indexOf('Firefox') >= 0;
 var travis = !!process.env.TRAVIS;
 
-describe("WatsonSpeech.SpeechToText end-to-end", function() {
-  this.timeout(30*1000);
+describe('WatsonSpeech.SpeechToText end-to-end', function() {
+  this.timeout(30 * 1000); // eslint-disable-line no-invalid-this
 
   // firefox on travis always times out for this test, not sure why (it might be due to travis's older version of ff)
-  ( !(firefox && travis) ? it : xit)('should transcribe <audio> elements', function(done) {
+  (firefox && travis ? xit : it)('should transcribe <audio> elements', function(done) {
     getConfig().then(function(cfg) {
       var audioElement = new Audio();
-      audioElement.crossOrigin = "anonymous";
-      audioElement.src = "http://localhost:9877/audio.wav";
+      audioElement.crossOrigin = 'anonymous';
+      audioElement.src = 'http://localhost:9877/audio.wav';
       cfg.element = audioElement;
       cfg.muteSource = true;
       var stream = SpeechToText.recognizeElement(cfg);
-      //stream.on('send-json', console.log.bind(console, 'sending'));
-      //stream.on('message', console.log.bind(console, 'received'));
-      //stream.on('send-data', function(d) {
+      // stream.on('send-json', console.log.bind(console, 'sending'));
+      // stream.on('message', console.log.bind(console, 'received'));
+      // stream.on('send-data', function(d) {
       //  console.log('sending ' + d.length + ' bytes');
-      //});
+      // });
       return stream.promise();
     }).then(function(transcript) {
       assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
@@ -59,25 +59,25 @@ describe("WatsonSpeech.SpeechToText end-to-end", function() {
   // firefox can automatically approve getUserMedia, but not playback audio, so offline only
   // ...except on travis ci, where it gets NO_DEVICES_FOUND
   // chrome can do both, so it gets tested on and offline
-  (offline && !travis || chrome ? it : xit)("should transcribe mic input", function(done) {
+  (offline && !travis || chrome ? it : xit)('should transcribe mic input', function(done) {
     getConfig().then(function(cfg) {
       var stt = SpeechToText.recognizeMicrophone(cfg);
-      //stt.on('send-json', console.log.bind(console, 'sending'));
-      //stt.on('message', console.log.bind(console, 'received'));
-      //stt.on('send-data', function(d) {
+      // stt.on('send-json', console.log.bind(console, 'sending'));
+      // stt.on('message', console.log.bind(console, 'received'));
+      // stt.on('send-data', function(d) {
       //  console.log('sending ' + d.length + ' bytes');
-      //})
+      // })
       stt.on('error', done)
         .setEncoding('utf8')
-        .pipe(concat(function (transcript) {
+        .pipe(concat(function(transcript) {
           assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
           done();
         }));
       setTimeout(stt.stop.bind(stt), 8 * 1000);
 
-      //['end', 'close', 'data', /*'results',*/ 'result', 'error', 'stopping', 'finish', 'listening'].forEach(function (eventName) {
+      // ['end', 'close', 'data', /*'results',*/ 'result', 'error', 'stopping', 'finish', 'listening'].forEach(function (eventName) {
       //  stt.on(eventName, console.log.bind(console, eventName + ' event: '));
-      //});
+      // });
     })
       .catch(done);
   });

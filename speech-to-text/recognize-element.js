@@ -39,7 +39,7 @@ var WritableElementStream = require('./writable-element-stream');
  */
 module.exports = function recognizeElement(options) {
   if (!options || !options.token) {
-    throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
+    throw new Error('WatsonSpeechToText: missing required parameter: opts.token');
   }
 
   // the WritableElementStream works best in objectMode
@@ -75,7 +75,7 @@ module.exports = function recognizeElement(options) {
   recognizeStream.on('stop', sourceStream.stop.bind(sourceStream));
 
   if (options.outputElement) {
-    stream.pipe(new WritableElementStream(options))
+    stream.pipe(new WritableElementStream(options));
   }
 
   return stream;

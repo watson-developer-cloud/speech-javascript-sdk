@@ -1,20 +1,25 @@
 'use strict';
 
-var contentType = require('./content-type');
+var getContentTypeFromHeader = require('./content-type');
 
-function getContentType(file) {
-  return new Promise(function (resolve, reject) {
+/**
+ * Reads the first few bytes of a binary file and resolves to the content-type if recognized & supported
+ * @param {File|Blob} file
+ * @returns {Promise}
+ */
+function getContentTypeFromFile(file) {
+  return new Promise(function(resolve, reject) {
     var blobToText = new Blob([file]).slice(0, 4);
     var r = new FileReader();
     r.readAsText(blobToText);
-    r.onload = function () {
-      var ct = contentType(r.result);
+    r.onload = function() {
+      var ct = getContentTypeFromHeader(r.result);
       if (ct) {
         resolve(ct);
       } else {
         var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
         err.name = 'UNRECOGNIZED_FORMAT';
-        reject(err)
+        reject(err);
       }
     };
   });
@@ -22,8 +27,8 @@ function getContentType(file) {
 
 /**
  * Plays audio from File/Blob instances
- * @param file
- * @param contentType
+ * @param {File|Blob} file
+ * @param {String} contentType
  * @constructor
  */
 function FilePlayer(file, contentType) {
@@ -39,18 +44,26 @@ function FilePlayer(file, contentType) {
     err.contentType = contentType;
     throw err;
   }
+  /**
+   * Stops the audio
+   */
   this.stop = function stop() {
     audio.pause();
     audio.currentTime = 0;
-  }
+  };
 }
 
+/**
+ * Determines the file's content-type and then resolves to a FilePlayer instance
+ * @param {File|Blob} file
+ * @returns {Promise.<FilePlayer>}
+ */
 function playFile(file) {
-  return getContentType(file).then(function (contentType) {
+  return getContentTypeFromFile(file).then(function(contentType) {
     return new FilePlayer(file, contentType);
   });
 }
 
 module.exports = FilePlayer;
-module.exports.getContentType = getContentType;
+module.exports.getContentType = getContentTypeFromFile;
 module.exports.playFile = playFile;

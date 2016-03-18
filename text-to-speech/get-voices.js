@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+'use strict';
 
 /**
  * @module watson-speech/text-to-speech/get-voices
@@ -37,18 +37,18 @@
  Requires fetch (loading the top-level module automatically includes a pollyfill, but loading this sub-module directly doesn't.)
 
  * @todo define format in @returns statement
- * @param options
+ * @param {Object} options
  * @param {String} options.token auth token
  * @returns {Promise.<T>}
  */
 module.exports = function getVoices(options) {
   if (!options || !options.token) {
-    throw new Error("Watson TextToSpeech: missing required parameter: options.token");
+    throw new Error('Watson TextToSpeech: missing required parameter: options.token');
   }
   var reqOpts = {
     credentials: 'omit',
     headers: {
-      'accept': 'application/json'
+      accept: 'application/json'
     }
   };
   return fetch('https://stream.watsonplatform.net/text-to-speech/api/v1/voices?watson-token=' + options.token, reqOpts)

@@ -14,6 +14,7 @@ var TARGET_SAMPLE_RATE = 16000;
  *
  * Todo: support multi-channel audio (for use with <audio>/<video> elements) - will require interleaving audio channels
  *
+ * @param {Object} options
  * @constructor
  */
 function WebAudioL16Stream(options) {
@@ -57,18 +58,19 @@ WebAudioL16Stream.prototype.emitFormat = function emitFormat() {
  * This really belongs in it's own stream, but there's no way to create new AudioBuffer instances from JS, so its
  * fairly coupled to the wav conversion code.
  *
- * @param  {AudioBuffer} buffer Microphone/MediaElement audio chunk
+ * @param  {AudioBuffer} bufferNewSamples Microphone/MediaElement audio chunk
  * @return {Float32Array} 'audio/l16' chunk
  */
 WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
   var buffer = null,
     newSamples = bufferNewSamples.length,
-    unusedSamples = this.bufferUnusedSamples.length;
-
+    unusedSamples = this.bufferUnusedSamples.length,
+    i,
+    offset;
 
   if (unusedSamples > 0) {
     buffer = new Float32Array(unusedSamples + newSamples);
-    for (var i = 0; i < unusedSamples; ++i) {
+    for (i = 0; i < unusedSamples; ++i) {
       buffer[i] = this.bufferUnusedSamples[i];
     }
     for (i = 0; i < newSamples; ++i) {
@@ -88,16 +90,16 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
     nOutputSamples = Math.floor((buffer.length - filter.length) / (samplingRateRatio)) + 1,
     outputBuffer = new Float32Array(nOutputSamples);
 
-  for (var offset, i2 = 0; i2 + filter.length - 1 < buffer.length; i2++) {
-    offset = Math.round(samplingRateRatio * i2);
+  for (i = 0; i + filter.length - 1 < buffer.length; i++) {
+    offset = Math.round(samplingRateRatio * i);
     var sample = 0;
     for (var j = 0; j < filter.length; ++j) {
       sample += buffer[offset + j] * filter[j];
     }
-    outputBuffer[i2] = sample;
+    outputBuffer[i] = sample;
   }
 
-  var indexSampleAfterLastUsed = Math.round(samplingRateRatio * i2);
+  var indexSampleAfterLastUsed = Math.round(samplingRateRatio * i);
   var remaining = buffer.length - indexSampleAfterLastUsed;
   if (remaining > 0) {
     this.bufferUnusedSamples = new Float32Array(remaining);
@@ -108,7 +110,7 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
     this.bufferUnusedSamples = new Float32Array(0);
   }
 
-  return outputBuffer
+  return outputBuffer;
 };
 
 /**
@@ -120,23 +122,23 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
  * Filter & combine samples to reduce frequency, then multiply to by 0x7FFF (32767) to convert.
  * Store in little endian.
  *
- * @param input
+ * @param {Float32Array} input
  * @returns {Buffer}
  */
 WebAudioL16Stream.prototype.floatTo16BitPCM = function(input){
-  var output = new DataView(new ArrayBuffer(input.length*2)); // length is in bytes (8-bit), so *2 to get 16-bit length
+  var output = new DataView(new ArrayBuffer(input.length * 2)); // length is in bytes (8-bit), so *2 to get 16-bit length
   for (var i = 0; i < input.length; i++){
     var multiplier = input[i] < 0 ? 0x8000 : 0x7FFF; // 16-bit signed range is -32768 to 32767
-    output.setInt16(i*2, (input[i] * multiplier)|0, true); // index, value, little edian
+    output.setInt16(i * 2, (input[i] * multiplier) | 0, true); // index, value, little edian
   }
   return new Buffer(output.buffer);
 };
 
 /**
  * Does some one-time setup to grab sampleRate and emit format, then sets _transform to the actual audio buffer handler and calls it.
- * @param audioBuffer
- * @param encoding
- * @param next
+ * @param {AudioBuffer} audioBuffer
+ * @param {String} encoding
+ * @param {Function} next
  */
 WebAudioL16Stream.prototype.handleFirstAudioBuffer = function handleFirstAudioBuffer(audioBuffer, encoding, next) {
   this.options.sourceSampleRate = audioBuffer.sampleRate;
@@ -148,11 +150,11 @@ WebAudioL16Stream.prototype.handleFirstAudioBuffer = function handleFirstAudioBu
 /**
  * Accepts an AudioBuffer (for objectMode), then downsamples to 16000 and converts to a 16-bit pcm
  *
- * @param audioBuffer
- * @param encoding
- * @param next
+ * @param {AudioBuffer} audioBuffer
+ * @param {String} encoding
+ * @param {Function} next
  */
-WebAudioL16Stream.prototype.transformAudioBuffer = function (audioBuffer, encoding, next) {
+WebAudioL16Stream.prototype.transformAudioBuffer = function(audioBuffer, encoding, next) {
   var source = audioBuffer.getChannelData(0);
   if (this.options.downsample) {
     source = this.downsample(source);
@@ -164,11 +166,11 @@ WebAudioL16Stream.prototype.transformAudioBuffer = function (audioBuffer, encodi
 /**
  * Accepts a Buffer (for binary mode), then downsamples to 16000 and converts to a 16-bit pcm
  *
- * @param {Buffer} nodebufferok
- * @param encoding
- * @param next
+ * @param {Buffer} nodebuffer
+ * @param {String} encoding
+ * @param {Function} next
  */
-WebAudioL16Stream.prototype.transformBuffer = function (nodebuffer, encoding, next) {
+WebAudioL16Stream.prototype.transformBuffer = function(nodebuffer, encoding, next) {
   var source = new Float32Array(nodebuffer.buffer);
   if (this.options.downsample) {
     source = this.downsample(source);
@@ -176,7 +178,7 @@ WebAudioL16Stream.prototype.transformBuffer = function (nodebuffer, encoding, ne
   this.push(this.floatTo16BitPCM(source));
   next();
 };
-//new Float32Array(nodebuffer.buffer)
+// new Float32Array(nodebuffer.buffer)
 
 
 module.exports = WebAudioL16Stream;

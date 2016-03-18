@@ -25,7 +25,7 @@ var WritableElementStream = require('./writable-element-stream');
 var Readable = require('stream').Readable;
 
 var preservedMicStream;
-var bitBucket = new Readable;
+var bitBucket = new Readable();
 
 /**
  * @module watson-speech/speech-to-text/recognize-microphone
@@ -45,7 +45,7 @@ var bitBucket = new Readable;
  */
 module.exports = function recognizeMicrophone(options) {
   if (!options || !options.token) {
-    throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
+    throw new Error('WatsonSpeechToText: missing required parameter: opts.token');
   }
 
   // the WritableElementStream works best in objectMode
@@ -67,7 +67,7 @@ module.exports = function recognizeMicrophone(options) {
     preservedMicStream.unpipe(bitBucket);
     getMicStream = Promise.resolve(preservedMicStream);
   } else {
-    getMicStream = getUserMedia({video: false, audio: true}).then(function (mic) {
+    getMicStream = getUserMedia({video: false, audio: true}).then(function(mic) {
       var micStream = new MicrophoneStream(mic, {
         objectMode: true,
         bufferSize: options.bufferSize
@@ -88,7 +88,7 @@ module.exports = function recognizeMicrophone(options) {
   }
 
   if (options.outputElement) {
-    stream.pipe(new WritableElementStream(options))
+    stream.pipe(new WritableElementStream(options));
   }
 
   getMicStream.catch(function(err) {
@@ -102,9 +102,16 @@ module.exports = function recognizeMicrophone(options) {
       .pipe(l16Stream)
       .pipe(recognizeStream);
 
+    /**
+     * unpipes the mic stream to prevent any more audio from being sent over the wire
+     * temporarily re-pipes it to the bitBucket (basically /dev/null)  becuse
+     * otherwise it will buffer the audio from in between calls and prepend it to the next one
+     *
+     * @private
+     */
     function end() {
       micStream.unpipe(l16Stream);
-      micStream.pipe(bitBucket); // otherwise it will buffer the audio from in between calls and prepend it to the next one
+      micStream.pipe(bitBucket);
       l16Stream.end();
     }
     // trigger on both stop and end events:

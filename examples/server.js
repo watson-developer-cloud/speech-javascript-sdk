@@ -16,8 +16,8 @@
 
 'use strict';
 
-var express      = require('express'),
-    app          = express();
+var express = require('express'),
+  app = express();
 
 // allows environment properties to be set in a file named .env
 require('dotenv').load({silent: true});
@@ -31,7 +31,7 @@ app.use('/api/text-to-speech/', require('./tts-token.js'));
 
 var port = process.env.VCAP_APP_PORT || 3000;
 app.listen(port, function() {
-   console.log('Example IBM Watson Speech JS SDK client app & token server live at http://localhost:%s/', port);
+  console.log('Example IBM Watson Speech JS SDK client app & token server live at http://localhost:%s/', port);
 });
 
 // chrome requires https to access the user's microphone unless it's a localhost url so
@@ -39,15 +39,15 @@ app.listen(port, function() {
 // note: this is not suitable for production use
 // however bluemix automatically adds https support at http://<myapp>.mybluemix.net
 if (!process.env.VCAP_APP_PORT) {
-    var fs = require("fs"),
-        https = require("https"),
-        HTTPS_PORT = 3001;
+  var fs = require('fs'),
+    https = require('https'),
+    HTTPS_PORT = 3001;
 
-    var options = {
-        key: fs.readFileSync(__dirname + '/keys/localhost.pem'),
-        cert: fs.readFileSync(__dirname + '/keys/localhost.cert')
-    };
-    https.createServer(options, app).listen(HTTPS_PORT, function () {
-        console.log('Secure server live at https://localhost:%s/', HTTPS_PORT)
-    });
+  var options = {
+    key: fs.readFileSync(__dirname + '/keys/localhost.pem'),
+    cert: fs.readFileSync(__dirname + '/keys/localhost.cert')
+  };
+  https.createServer(options, app).listen(HTTPS_PORT, function() {
+    console.log('Secure server live at https://localhost:%s/', HTTPS_PORT);
+  });
 }

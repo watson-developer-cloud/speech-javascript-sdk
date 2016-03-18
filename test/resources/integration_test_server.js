@@ -1,3 +1,4 @@
+'use strict';
 var fs = require('fs');
 var watson = require('watson-developer-cloud');
 
@@ -13,7 +14,7 @@ var authorization = watson.authorization(auth);
 
 var serveStatic = require('serve-static');
 
-module.exports = function (app, log) {
+module.exports = function(app, log) {
   log.info('setting up token server for integration test');
 
   app.use(function(req, res, next) {
@@ -23,13 +24,13 @@ module.exports = function (app, log) {
 
   app.use(serveStatic(__dirname));
 
-  app.get('/token', function (req, res) {
+  app.get('/token', function(req, res) {
     res.header('Access-Control-Allow-Origin', '*'); // do *NOT* do this on a /token endpoint that's accessible to the internet
 
-    authorization.getToken({url: "https://stream.watsonplatform.net/speech-to-text/api"}, function (err, token) {
+    authorization.getToken({url: 'https://stream.watsonplatform.net/speech-to-text/api'}, function(err, token) {
       if (err) {
         log.error('error retrieving auth token:', err);
-        res.status(500).send('Error: unable to retrieve access token')
+        res.status(500).send('Error: unable to retrieve access token');
       } else {
         res.send({token: token});
       }

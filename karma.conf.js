@@ -1,5 +1,14 @@
 // Karma configuration
 // Generated on Fri Jan 15 2016 13:36:31 GMT-0500 (EST)
+'use strict';
+
+var testServer;
+if (process.env.TEST_MODE === 'integration') {
+  testServer = require('./test/resources/integration_test_server.js');
+} else {
+  testServer = require('./test/resources/offline_test_server.js');
+}
+
 
 module.exports = function(config) {
   config.set({
@@ -72,7 +81,12 @@ module.exports = function(config) {
       ChromeWithPrerecordedMic: {
         base: 'Chrome',
         // --no-sandbox is required for travis-ci
-        flags: ['--use-fake-device-for-media-stream','--use-fake-ui-for-media-stream', '--use-file-for-fake-audio-capture=test/resources/audio.wav', '--no-sandbox']
+        flags: [
+          '--use-fake-device-for-media-stream',
+          '--use-fake-ui-for-media-stream',
+          '--use-file-for-fake-audio-capture=test/resources/audio.wav',
+          '--no-sandbox'
+        ]
       },
       // automatically approve getUserMedia calls
       FirefoxAutoGUM: {
@@ -96,7 +110,7 @@ module.exports = function(config) {
       port: 9877,
       // this function takes express app object and allows you to modify it
       // to your liking. For more see http://expressjs.com/4x/api.html
-      appVisitor: (process.env.TEST_MODE === 'integration') ? require('./test/resources/integration_test_server.js') : require('./test/resources/offline_test_server.js')
+      appVisitor: testServer
     },
 
     browserDisconnectTimeout: 15000,

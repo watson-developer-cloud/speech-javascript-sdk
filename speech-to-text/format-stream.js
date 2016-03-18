@@ -12,9 +12,9 @@ var defaults = require('defaults');
  *  - Fix any "cruft" in the transcription
  *  - etc.
  *
- * @param opts
- * @param opts.model - some models / languages need special handling
- * @param [opts.hesitation='\u2026'] - what to put down for a "hesitation" event, defaults to an ellipsis (...)
+ * @param {Object} opts
+ * @param {String} opts.model - some models / languages need special handling
+ * @param {String} [opts.hesitation='\u2026'] - what to put down for a "hesitation" event, defaults to an ellipsis (...)
  * @param {Boolean} [options.objectMode=false] - emit `result` objects instead of string Buffers for the `data` events.
  * @constructor
  */
@@ -37,8 +37,8 @@ var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
 
 /**
  * Formats one or more words, removing special symbols, junk, and spacing for some languages
- * @param text
- * @param isFinal
+ * @param {String} text
+ * @param {Boolean} isFinal
  * @returns {String}
  */
 FormatStream.prototype.clean = function clean(text) {
@@ -62,7 +62,7 @@ FormatStream.prototype.clean = function clean(text) {
 
 /**
  * Capitalizes the first word of a sentence
- * @param text
+ * @param {String} text
  * @returns {string}
  */
 FormatStream.prototype.capitalize = function capitalize(text) {
@@ -72,11 +72,11 @@ FormatStream.prototype.capitalize = function capitalize(text) {
 
 /**
  * puts a period on the end of a sentence
- * @param text
+ * @param {String} text
  * @returns {string}
  */
 FormatStream.prototype.period = function period(text) {
-  return text + (this.isJaCn ? '。' : '. ')
+  return text + (this.isJaCn ? '。' : '. ');
 };
 
 FormatStream.prototype.formatString = function(chunk, encoding, next) {
@@ -87,24 +87,26 @@ FormatStream.prototype.formatString = function(chunk, encoding, next) {
 /**
  * Creates a new result with all transcriptions formatted
  *
- * @param result
+ * @param {Object} result
+ * @param {String} encoding
+ * @param {Function} next
  */
 FormatStream.prototype.formatResult = function formatResult(result, encoding, next) {
   result = clone(result);
   result.alternatives = result.alternatives.map(function(alt) {
     alt.transcript = this.capitalize(this.clean(alt.transcript));
     if (result.final) {
-      alt.transcript = this.period(alt.transcript)
+      alt.transcript = this.period(alt.transcript);
     }
     if (alt.timestamps) {
       alt.timestamps = alt.timestamps.map(function(ts, i, arr) {
         // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
         ts[0] = this.clean(ts[0]);
-        if (i===0) {
-          ts[0] = this.capitalize(ts[0])
+        if (i === 0) {
+          ts[0] = this.capitalize(ts[0]);
         }
-        if (i == arr.length-1 && result.final) {
-          ts[0] = this.period(ts[0])
+        if (i === arr.length - 1 && result.final) {
+          ts[0] = this.period(ts[0]);
         }
         return ts;
       }, this);

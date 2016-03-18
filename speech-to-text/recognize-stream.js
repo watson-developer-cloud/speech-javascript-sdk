@@ -28,7 +28,7 @@ var qs = require('../util/querystring.js');
 var OPENING_MESSAGE_PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
   'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold'];
 
-var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; //, 'X-Watson-Learning-Opt-Out' - should be allowed but currently isn't due to a service bug
+var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Opt-Out' - should be allowed but currently isn't due to a service bug
 
 
 /**
@@ -108,7 +108,7 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; //, 'X-Watson-Learning-Opt
 
 
  *
- * @param options
+ * @param {Object} options
  * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
  * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] base URL for service
  * @param {String} [options.content-type='audio/wav'] - content type of audio; can be automatically determined from file header in most cases. only wav, flac, and ogg/opus are supported
@@ -133,12 +133,16 @@ function RecognizeStream(options) {
   this.finished = false;
   var self = this;
 
-  // listening for `results` events should put the stream in flowing mode just like `data` events
+  /**
+   * listening for `results` events should put the stream in flowing mode just like `data` events
+   *
+   * @param {String} event
+   */
   function flowForResults(event) {
-    if (event == 'results' || event == 'result') {
+    if (event === 'results' || event === 'result') {
       self.removeListener('newListener', flowForResults);
-      process.nextTick(function () {
-        self.on('data', function () {
+      process.nextTick(function() {
+        self.on('data', function() {
         }); // todo: is there a better way to put a stream in flowing mode?
       });
       if (!options.silent) {
@@ -155,7 +159,7 @@ function RecognizeStream(options) {
 util.inherits(RecognizeStream, Duplex);
 
 
-RecognizeStream.prototype.initialize = function () {
+RecognizeStream.prototype.initialize = function() {
   var options = this.options;
 
   // todo: apply these corrections to other methods (?)
@@ -171,7 +175,7 @@ RecognizeStream.prototype.initialize = function () {
 
   var queryParams = util._extend({model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
   var queryString = qs.stringify(queryParams);
-  var url = (options.url || "wss://stream.watsonplatform.net/speech-to-text/api").replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
+  var url = (options.url || 'wss://stream.watsonplatform.net/speech-to-text/api').replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
   // turn off all the extras if we're just outputting text
   var textModeDefaults = {
@@ -204,25 +208,25 @@ RecognizeStream.prototype.initialize = function () {
 
   var self = this;
 
-  //node params: requestUrl, protocols, origin, headers, extraRequestOptions
+  // node params: requestUrl, protocols, origin, headers, extraRequestOptions
   // browser params: requestUrl, protocols (all others ignored)
   var socket = this.socket = new W3CWebSocket(url, null, null, options.headers, null);
 
   // when the input stops, let the service know that we're done
   self.on('finish', self.finish.bind(self));
 
-  socket.onerror = function (error) {
+  socket.onerror = function(error) {
     self.listening = false;
     self.emit('error', error);
   };
 
 
-  this.socket.onopen = function () {
+  this.socket.onopen = function() {
     self.sendJSON(openingMessage);
     self.emit('connect');
   };
 
-  this.socket.onclose = function (e) {
+  this.socket.onclose = function(e) {
     if (self.listening) {
       self.listening = false;
       self.push(null);
@@ -243,6 +247,9 @@ RecognizeStream.prototype.initialize = function () {
 
   /**
    * @event RecognizeStream#error
+   * @param {String} msg custom error message
+   * @param {*} [frame] unprocessed frame (should have a .data property with either string or binary data)
+   * @param {Error} [err]
    */
   function emitError(msg, frame, err) {
     if (err) {
@@ -254,7 +261,7 @@ RecognizeStream.prototype.initialize = function () {
     self.emit('error', err);
   }
 
-  socket.onmessage = function (frame) {
+  socket.onmessage = function(frame) {
     if (typeof frame.data !== 'string') {
       return emitError('Unexpected binary data received from server', frame);
     }
@@ -272,13 +279,13 @@ RecognizeStream.prototype.initialize = function () {
       emitError(data.error, frame);
     } else if (data.state === 'listening') {
       // this is emitted both when the server is ready for audio, and after we send the close message to indicate that it's done processing
-      if (!self.listening) {
-        self.listening = true;
-        self.emit('listening');
-      } else {
+      if (self.listening) {
         self.listening = false;
         self.push(null);
         socket.close();
+      } else {
+        self.listening = true;
+        self.emit('listening');
       }
     } else if (data.results) {
       /**
@@ -290,7 +297,7 @@ RecognizeStream.prototype.initialize = function () {
       self.emit('results', data.results);
 
       // note: currently there is always either 0 or 1 entries in the results array. However, this may change in the future.
-      data.results.forEach(function (result) {
+      data.results.forEach(function(result) {
         result.index = data.result_index;
         /**
          * Object with interim or final results, possibly including confidence scores, alternatives, and word timing.
@@ -320,12 +327,12 @@ RecognizeStream.prototype.initialize = function () {
     }
   };
 
-  //this.messages = [];
-  //var send = socket.send;
-  //socket.send = function(msg) {
+  // this.messages = [];
+  // var send = socket.send;
+  // socket.send = function(msg) {
   //  self.messages.push(msg);
   //  return send.apply(socket, arguments);
-  //};
+  // };
 
   this.initialized = true;
 };
@@ -340,12 +347,12 @@ RecognizeStream.prototype.sendData = function sendData(data) {
   return this.socket.send(data);
 };
 
-RecognizeStream.prototype._read = function (/*size*/) {
+RecognizeStream.prototype._read = function(/* size*/) {
   // there's no easy way to control reads from the underlying library
   // so, the best we can do here is a no-op
 };
 
-RecognizeStream.prototype._write = function (chunk, encoding, callback) {
+RecognizeStream.prototype._write = function(chunk, encoding, callback) {
   var self = this;
   if (self.finished) {
     // can't send any more data after the stop message (although this shouldn't happen normally...)
@@ -361,9 +368,9 @@ RecognizeStream.prototype._write = function (chunk, encoding, callback) {
       }
       this.initialize();
     }
-    this.once('listening', function () {
+    this.once('listening', function() {
       self.sendData(chunk);
-      this.afterSend(callback);
+      self.afterSend(callback);
     });
   }
 };
@@ -372,13 +379,13 @@ RecognizeStream.prototype._write = function (chunk, encoding, callback) {
 // todo: see if this can be improved
 RecognizeStream.prototype.afterSend = function afterSend(next) {
   if (this.socket.bufferedAmount <= this._writableState.highWaterMark || 0) {
-    next();
+    next(); // eslint-disable-line callback-return
   } else {
     setTimeout(this.afterSend.bind(this, next), 10);
   }
 };
 
-RecognizeStream.prototype.stop = function () {
+RecognizeStream.prototype.stop = function() {
   this.emit('stop');
   this.finish();
 };
@@ -394,7 +401,7 @@ RecognizeStream.prototype.finish = function finish() {
   if (self.socket && self.socket.readyState !== self.socket.CLOSED && self.socket.readyState !== self.socket.CLOSING) {
     self.sendJSON(closingMessage);
   } else {
-    this.once('connect', function () {
+    this.once('connect', function() {
       self.sendJSON(closingMessage);
     });
   }
@@ -403,7 +410,7 @@ RecognizeStream.prototype.finish = function finish() {
 RecognizeStream.prototype.promise = require('./to-promise');
 
 
-RecognizeStream.getContentType = function (buffer) {
+RecognizeStream.getContentType = function(buffer) {
   return contentType(buffer.slice(0, 4).toString());
 };
 

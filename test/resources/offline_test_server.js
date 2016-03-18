@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var WebSocketServer = require('websocket').server;
 var http = require('http');
@@ -6,7 +6,7 @@ var serveStatic = require('serve-static');
 var token = 'abc123';
 var API_PORT = 9878;
 
-module.exports = function (app, log) {
+module.exports = function(app, log) {
 
   log.info('setting up token & api servers for offline test');
 
@@ -17,47 +17,47 @@ module.exports = function (app, log) {
 
   app.use(serveStatic(__dirname));
 
-  app.get('/token', function (req, res) {
+  app.get('/token', function(req, res) {
     res.json({token: token, url: 'http://localhost:' + API_PORT + '/speech-to-text/api'});
   });
 
   // we don't have access to the actual http server in the karma-express plugin, so just creating a new one on a different port
   // url is /speech-to-text/api/v1/recognize
-  var server = http.createServer(function (request, response) {
+  var server = http.createServer(function(request, response) {
     log.debug('Received request for ' + request.url);
     response.writeHead(404);
     response.end();
   });
-  server.listen(API_PORT, function () {
+  server.listen(API_PORT, function() {
     log.debug('Mock API server listening at http://localhost:' + server.address().port + '/');
   });
 
   var wsServer = new WebSocketServer({
     httpServer: server,
     autoAcceptConnections: false, // true = emit 'request' events
-    maxReceivedFrameSize: 1024*1024 // filestream produces 1mb chunks
+    maxReceivedFrameSize: 1024 * 1024 // filestream produces 1mb chunks
   });
 
-  wsServer.on('request', function (request) {
+  wsServer.on('request', function(request) {
     log.debug('ws request for ' + request.resource);
     request.accept(null, request.origin);
   });
 
   var TEXT = 'thunderstorms could produce large hail isolated tornadoes and heavy rain ';
-  wsServer.on('connect', function (connection) {
+  wsServer.on('connect', function(connection) {
 
-    //log.debug('Connection accepted.');
+    // log.debug('Connection accepted.');
 
-    var interim_interval;
+    var interimInterval;
 
     function startInterim() {
       // send fake interim results
       var words = TEXT.split(' ');
       var i = 0;
-      return setInterval(function () {
+      return setInterval(function() {
         i++;
         if (i < words.length) {
-          //log.debug('sending interim result');
+          // log.debug('sending interim result');
           connection.sendUTF(JSON.stringify({
             results: [
               {
@@ -74,23 +74,23 @@ module.exports = function (app, log) {
       }, 700);
     }
 
-    connection.on('message', function (message) {
+    connection.on('message', function(message) {
       if (message.type === 'utf8') {
         log.debug('Received Message: ' + message.utf8Data);
         try {
           var msg = JSON.parse(message.utf8Data);
-          if (msg.action == 'start') {
-            //log.debug('starting');
+          if (msg.action === 'start') {
+            // log.debug('starting');
             connection.sendUTF('{"state":"listening"}');
             if (msg.interim_results) {
-              interim_interval = startInterim();
+              interimInterval = startInterim();
             }
-          } else if (msg.action == 'stop') {
-            clearInterval(interim_interval);
-            //log.debug('sending final result')
+          } else if (msg.action === 'stop') {
+            clearInterval(interimInterval);
+            // log.debug('sending final result')
             connection.sendUTF(JSON.stringify({
               results: [
-                //msg.results[0] && msg.results[0].final && msg.results[0].alternatives
+                // msg.results[0] && msg.results[0].final && msg.results[0].alternatives
                 {
                   final: true,
                   alternatives: [
@@ -102,24 +102,22 @@ module.exports = function (app, log) {
               ]
             }));
 
-            //connection.close();
+            // connection.close();
             connection.sendUTF('{"state":"listening"}'); // The server sends this message out at the end, and then we have to kill the connection from the client
           }
         } catch (ex) {
-          log.debug(ex)
+          log.debug(ex);
         }
-      }
-      else if (message.type === 'binary') {
+      } else if (message.type === 'binary') {
         // this is a mock server, so we aren't going to actually process the binary data
-        //log.debug('Received Binary Message of ' + message.binaryData.length + ' bytes');
+        log.debug('Received Binary Message of ' + message.binaryData.length + ' bytes');
       }
     });
-    connection.on('close', function (reasonCode, description) {
-      clearInterval(interim_interval);
-      if (reasonCode <=1001) {
+    connection.on('close', function(reasonCode, description) {
+      clearInterval(interimInterval);
+      if (reasonCode <= 1001) {
         log.debug('Normal disconnected:', connection.remoteAddress, reasonCode, description);
-      }
-      else {
+      } else {
         log.warn('%s disconnected with %s %s', connection.remoteAddress, reasonCode, description);
       }
     });

@@ -9,7 +9,7 @@ var defaults = require('defaults');
  *
  * Can show interim results when in objectMode
  *
- * @param options
+ * @param {Object} options
  * @param {String|DOMElement} options.outputElement
  * @param {String} [options.property] what property of the element should the text be set to. Defaults to `value` for `<input>`s and `<textarea>`s, `textContent` for everything else
  * @param {Boolean} [options.clear=true] delete any previous text
@@ -22,7 +22,7 @@ function WritableElementStream(options) {
     clear: true
   });
 
-  this.el = typeof options.outputElement === 'string' ?  document.querySelector(options.outputElement) : options.outputElement;
+  this.el = typeof options.outputElement === 'string' ? document.querySelector(options.outputElement) : options.outputElement;
 
   if (!this.el) {
     throw new Error('Watson Speech to Text WritableElementStream: missing outputElement');
@@ -61,7 +61,7 @@ WritableElementStream.prototype.writeObject = function writeObject(result, encod
     this.finalizedText += result.alternatives[0].transcript;
     this.el[this.prop] = this.finalizedText;
   } else {
-    this.el[this.prop] = this.finalizedText + result.alternatives[0].transcript
+    this.el[this.prop] = this.finalizedText + result.alternatives[0].transcript;
   }
   next();
 };

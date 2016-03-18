@@ -1,10 +1,10 @@
 'use strict';
 
-var express      = require('express'),
-  router          = express.Router(),
+var express = require('express'),
+  router = express.Router(), // eslint-disable-line new-cap
   vcapServices = require('vcap_services'),
-  extend       = require('util')._extend,
-  watson       = require('watson-developer-cloud');
+  extend = require('util')._extend,
+  watson = require('watson-developer-cloud');
 
 // another endpoint for the text to speech service
 
@@ -22,7 +22,8 @@ router.get('/token', function(req, res) {
   ttsAuthService.getToken({url: ttsConfig.url}, function(err, token) {
     if (err) {
       console.log('Error retrieving token: ', err);
-      return res.status(500).send('Error retrieving token')
+      res.status(500).send('Error retrieving token');
+      return;
     }
     res.send(token);
   });

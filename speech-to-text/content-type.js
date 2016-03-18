@@ -2,9 +2,9 @@
 
 // these are the only content-types currently supported by the speech-to-tet service
 var contentTypes = {
-  'fLaC': 'audio/flac',
-  'RIFF': 'audio/wav',
-  'OggS': 'audio/ogg; codecs=opus'
+  fLaC: 'audio/flac',
+  RIFF: 'audio/wav',
+  OggS: 'audio/ogg; codecs=opus'
 };
 
 /**

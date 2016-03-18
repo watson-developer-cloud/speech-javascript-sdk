@@ -58,7 +58,7 @@ describe('WritableElementStream', function() {
   ['<textarea/>','<input type="text"/>'].forEach(function(tag) {
     it('should set the correct value for ' + tag, function() {
       var $el = $(tag),
-          el = $el[0];
+        el = $el[0];
       var s = new WritableElementStream({outputElement: el, objectMode: true});
       s.write({final: true, alternatives: [{
         transcript: 'abc'

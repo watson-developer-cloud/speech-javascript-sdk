@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+'use strict';
 var pick = require('object.pick');
 var qs = require('../util/querystring.js');
 
@@ -28,7 +28,7 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'text', 'watson-token']
  *
  * Creates and returns a HTML5 `<audio>` element
  *
- * @param options
+ * @param {Object} options
  * @param {String} options.token auth token
  * @param {String} options.text text to speak
  * @param {String} [options.voice=en-US_MichaelVoice] what voice to use - call getVoices() for a complete list.
@@ -39,7 +39,7 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'text', 'watson-token']
  */
 module.exports = function synthesize(options) {
   if (!options || !options.token) {
-    throw new Error("Watson TextToSpeech: missing required parameter: options.token");
+    throw new Error('Watson TextToSpeech: missing required parameter: options.token');
   }
   options['watson-token'] = options.token;
   delete options.token;

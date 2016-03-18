@@ -43,7 +43,7 @@ var WritableElementStream = require('./writable-element-stream');
  */
 module.exports = function recognizeFile(options) {
   if (!options || !options.token) {
-    throw new Error("WatsonSpeechToText: missing required parameter: opts.token");
+    throw new Error('WatsonSpeechToText: missing required parameter: opts.token');
   }
 
   // the WritableElementStream works best in objectMode
@@ -55,7 +55,7 @@ module.exports = function recognizeFile(options) {
 
   // the timing stream requires timestamps to work, so enable them automatically
   if (realtime) {
-    options.timestamps = true
+    options.timestamps = true;
   }
 
   // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
@@ -77,15 +77,15 @@ module.exports = function recognizeFile(options) {
   stream.stop = recognizeStream.stop.bind(recognizeStream);
 
   if (options.play) {
-    FilePlayer.playFile(options.data).then(function (player) {
+    FilePlayer.playFile(options.data).then(function(player) {
       recognizeStream.on('stop', player.stop.bind(player));
-    }).catch(function (err) {
+    }).catch(function(err) {
       stream.emit('playback-error', err);
     });
   }
 
   if (options.outputElement) {
-    stream.pipe(new WritableElementStream(options))
+    stream.pipe(new WritableElementStream(options));
   }
 
   return stream;

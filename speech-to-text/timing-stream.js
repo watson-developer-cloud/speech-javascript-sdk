@@ -51,12 +51,12 @@ TimingStream.prototype._write = function(result, encoding, next) {
   next();
 };
 
-TimingStream.prototype._read = function(/*size*/) {
+TimingStream.prototype._read = function(/* size*/) {
   // ignore - we'll emit results once the time has come
 };
 
 TimingStream.prototype.cutoff = function cutoff() {
-  return (Date.now() - this.startTime)/1000 - this.options.delay;
+  return (Date.now() - this.startTime) / 1000 - this.options.delay;
 };
 
 TimingStream.prototype.withinRange = function(result, cutoff) {
@@ -79,13 +79,15 @@ TimingStream.prototype.completelyWithinRange = function(result, cutoff) {
 
 /**
  * Clones the given result and then crops out any words that occur later than the current cutoff
- * @param result
+ * @param {Object} result
+ * @param {Number} cutoff timestamp (in seconds)
+ * @returns {Object}
  */
 Duplex.prototype.crop = function crop(result, cutoff) {
   result = clone(result);
   result.alternatives = result.alternatives.map(function(alt) {
     var timestamps = [];
-    for (var i=0, timestamp; i<alt.timestamps.length; i++) {
+    for (var i = 0, timestamp; i < alt.timestamps.length; i++) {
       timestamp = alt.timestamps[i];
       if (timestamp[this.options.emitAt] <= cutoff) {
         timestamps.push(timestamp);
@@ -101,7 +103,7 @@ Duplex.prototype.crop = function crop(result, cutoff) {
   }, this);
   // "final" signifies both that the text won't change, and that we're at the end of a sentence. Only one of those is true here.
   result.final = false;
-  return result
+  return result;
 };
 
 /**
@@ -110,9 +112,9 @@ Duplex.prototype.crop = function crop(result, cutoff) {
  *  - a cropped clone of the next result if it's later than the current cutoff && in objectMode
  *  - the original next result object (removing it from the array) if it's completely earlier than the current cutoff (or we're in string mode with emitAt set to start)
  *
- * @param results
- * @param cutoff
- * @returns {*}
+ * @param {Object} results
+ * @param {Number} cutoff
+ * @returns {Object|undefined}
  */
 TimingStream.prototype.getCurrentResult = function getCurrentResult(results, cutoff) {
   if (results.length && this.withinRange(results[0], cutoff)) {
@@ -120,7 +122,7 @@ TimingStream.prototype.getCurrentResult = function getCurrentResult(results, cut
     if (this.options.objectMode || this.options.readableObjectMode) {
       // object mode: emit either a complete result or a cropped result
       return completeResult ? results.shift() : this.crop(results[0], cutoff);
-    } else if (completeResult || this.options.emitAt == TimingStream.START) {
+    } else if (completeResult || this.options.emitAt === TimingStream.START) {
       // string mode: emit either a complete result or nothing
       return results.shift();
     }
@@ -141,14 +143,15 @@ TimingStream.prototype.tick = function tick() {
     result = this.getCurrentResult(this.interim, cutoff);
   }
 
-  if(result) {
+  if (result) {
     if (this.options.objectMode || this.options.readableObjectMode) {
       this.push(result);
     } else {
       this.push(result.alternatives[0].transcript);
     }
     if (result.final) {
-      return this.nextTick = setTimeout(this.tick.bind(this), 0); // in case we are multiple results behind - don't schedule until we are out of final results that are due now
+      this.nextTick = setTimeout(this.tick.bind(this), 0); // in case we are multiple results behind - don't schedule until we are out of final results that are due now
+      return;
     }
   }
 
@@ -160,7 +163,8 @@ TimingStream.prototype.tick = function tick() {
  *
  * triggers the 'close' and 'end' events if the buffer is empty and no further results are expected
  *
- * @param cutoff
+ * @param {Number} cutoff
+ *
  */
 TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
 
@@ -169,10 +173,11 @@ TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
   if (nextResult) {
     // loop through the timestamps until we find one that comes after the current cutoff (there should always be one)
     var timestamps = nextResult.alternatives[0].timestamps;
-    for(var i=0; i<timestamps.length; i++) {
+    for (var i = 0; i < timestamps.length; i++) {
       var wordOffset = timestamps[i][this.options.emitAt];
       if (wordOffset > cutoff) {
-        return this.nextTick = setTimeout(this.tick.bind(this), this.startTime + (wordOffset*1000));
+        this.nextTick = setTimeout(this.tick.bind(this), this.startTime + (wordOffset * 1000));
+        return;
       }
     }
     throw new Error('No future words found'); // this shouldn't happen ever - getCurrentResult should automatically delete the result from the buffer if all of it's words are consumed
@@ -185,19 +190,25 @@ TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
   }
 };
 
+/**
+ * Returns true if the result is missing it's timestamps
+ * @param {Object} result
+ * @returns {Boolean}
+ */
 function noTimestamps(result) {
   var alt = result.alternatives && result.alternatives[0];
-  return alt && alt.transcript.trim() && !alt.timestamps || !alt.timestamps.length;
+  return !!(alt && alt.transcript.trim() && !alt.timestamps || !alt.timestamps.length);
 }
 
 /**
  * Creates a new result with all transcriptions formatted
  *
- * @param result
+ * @param {Object} result
  */
 TimingStream.prototype.handleResult = function handleResult(result) {
   if (noTimestamps(result)) {
-    return this.emit('error', new Error('TimingStream requires timestamps'));
+    this.emit('error', new Error('TimingStream requires timestamps'));
+    return;
   }
 
   // additional alternatives do not include timestamps, so we can't process and emit them correctly
@@ -206,7 +217,7 @@ TimingStream.prototype.handleResult = function handleResult(result) {
   }
 
   // loop through the buffer and delete any interim results with the same or lower index
-  while(this.interim.length && this.interim[0].index <= result.index) {
+  while (this.interim.length && this.interim[0].index <= result.index) {
     this.interim.shift();
   }
 
