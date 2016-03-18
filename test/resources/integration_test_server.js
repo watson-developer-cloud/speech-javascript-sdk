@@ -4,7 +4,7 @@ var watson = require('watson-developer-cloud');
 var AUTH_FILE = __dirname + '/stt-auth.json';
 
 if (!fs.existsSync(AUTH_FILE)) {
-  console.error('Missing required test/resources/auth.json for integration test - see https://github.com/watson-developer-cloud/node-sdk#getting-the-service-credentials');
+  console.error('Missing required test/resources/stt-auth.json for integration test - see https://github.com/watson-developer-cloud/node-sdk#getting-the-service-credentials');
   process.exit(1);
 }
 
