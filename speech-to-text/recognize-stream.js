@@ -142,6 +142,8 @@ function RecognizeStream(options) {
         }); // todo: is there a better way to put a stream in flowing mode?
       });
       if (!options.silent) {
+        // todo: move this to the node.js wrapper
+        // eslint-disable-next-line no-console
         console.log(new Error('Watson Speech to Text RecognizeStream: the ' + event + ' event is deprecated and will be removed from a future release. ' +
           'Please set {objectMode: true} and listen for the data event instead. ' +
           'Pass {silent: true} to disable this message.'));
@@ -338,7 +340,7 @@ RecognizeStream.prototype.sendData = function sendData(data) {
   return this.socket.send(data);
 };
 
-RecognizeStream.prototype._read = function (size) {
+RecognizeStream.prototype._read = function (/*size*/) {
   // there's no easy way to control reads from the underlying library
   // so, the best we can do here is a no-op
 };

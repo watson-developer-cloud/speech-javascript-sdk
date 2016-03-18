@@ -20,18 +20,18 @@ describe('FormatStream', function() {
 
   it('should format objects', function(done) {
     var stream = new FormatStream({objectMode: true});
-    var source = { alternatives:
-        [ {
+    var source = {alternatives:
+        [{
           confidence: 0.881,
           transcript: 'foo bar ',
-          final: true } ],
-      result_index: 0 };
-    var expected = { alternatives:
-      [ {
+          final: true}],
+      result_index: 0};
+    var expected = {alternatives:
+      [{
         confidence: 0.881,
         transcript: 'Foo bar. ',
-        final: true } ],
-      result_index: 0 };
+        final: true}],
+      result_index: 0};
     stream.on('data', function(actual) {
       assert(actual, expected);
       done();

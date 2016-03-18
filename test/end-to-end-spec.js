@@ -4,7 +4,6 @@ var assert = require('assert');
 
 var SpeechToText = require('../speech-to-text');
 
-var expect = require('expect.js');
 var concat = require('concat-stream');
 
 if (typeof fetch == "undefined") {

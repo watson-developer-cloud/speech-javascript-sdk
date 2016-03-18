@@ -51,7 +51,7 @@ TimingStream.prototype._write = function(result, encoding, next) {
   next();
 };
 
-TimingStream.prototype._read = function(size) {
+TimingStream.prototype._read = function(/*size*/) {
   // ignore - we'll emit results once the time has come
 };
 

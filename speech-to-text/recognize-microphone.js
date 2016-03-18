@@ -79,8 +79,20 @@ module.exports = function recognizeMicrophone(options) {
     });
   }
 
+  // set up the output first so that we have a place to emit errors
+  // if there's trouble with the input stream
+  var stream = recognizeStream;
+  if (options.format !== false) {
+    stream = stream.pipe(new FormatStream(options));
+    stream.stop = recognizeStream.stop.bind(recognizeStream);
+  }
+
+  if (options.outputElement) {
+    stream.pipe(new WritableElementStream(options))
+  }
+
   getMicStream.catch(function(err) {
-    console.log(err);
+    stream.emit('error', err);
   });
 
   getMicStream.then(function(micStream) {
@@ -109,16 +121,6 @@ module.exports = function recognizeMicrophone(options) {
 
   }).catch(recognizeStream.emit.bind(recognizeStream, 'error'));
 
-
-  var stream = recognizeStream;
-  if (options.format !== false) {
-    stream = stream.pipe(new FormatStream(options));
-    stream.stop = recognizeStream.stop.bind(recognizeStream);
-  }
-
-  if (options.outputElement) {
-    stream.pipe(new WritableElementStream(options))
-  }
 
   return stream;
 };

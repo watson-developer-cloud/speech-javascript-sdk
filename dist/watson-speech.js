@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.WatsonSpeech = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){ if(typeof exports==="object"&&typeof module!=="undefined"){ module.exports=f() }else if(typeof define==="function"&&define.amd){ define([],f) }else{ var g; if(typeof window!=="undefined"){ g=window }else if(typeof global!=="undefined"){ g=global }else if(typeof self!=="undefined"){ g=self }else{ g=this }g.WatsonSpeech = f() } })(function(){ var define,module,exports; return (function e(t,n,r){ function s(o,u){ if(!n[o]){ if(!t[o]){ var a=typeof require=="function"&&require; if(!u&&a)return a(o,!0); if(i)return i(o,!0); var f=new Error("Cannot find module '"+o+"'"); throw f.code="MODULE_NOT_FOUND",f }var l=n[o]={exports:{}}; t[o][0].call(l.exports,function(e){ var n=t[o][1][e]; return s(n?n:e) },l,l.exports,e,t,n,r) }return n[o].exports }var i=typeof require=="function"&&require; for(var o=0; o<r.length; o++)s(r[o]); return s })({1:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015 IBM Corp. All Rights Reserved.
@@ -539,7 +539,7 @@ Buffer.prototype.indexOf = function indexOf (val, byteOffset) {
     if (Buffer.TYPED_ARRAY_SUPPORT && Uint8Array.prototype.indexOf === 'function') {
       return Uint8Array.prototype.indexOf.call(this, val, byteOffset)
     }
-    return arrayIndexOf(this, [ val ], byteOffset)
+    return arrayIndexOf(this, [val], byteOffset)
   }
 
   function arrayIndexOf (arr, val, byteOffset) {
@@ -1521,7 +1521,7 @@ function blitBuffer (src, dst, offset, length) {
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"base64-js":4,"ieee754":5,"isarray":6}],4:[function(require,module,exports){
-;(function (exports) {
+(function (exports) {
   'use strict'
 
   var i
@@ -2338,12 +2338,12 @@ var EElistenerCount = function(emitter, type) {
 
 /*<replacement>*/
 var Stream;
-(function (){try{
+(function (){ try{
   Stream = require('st' + 'ream');
 }catch(_){}finally{
   if (!Stream)
     Stream = require('events').EventEmitter;
-}}())
+} }())
 /*</replacement>*/
 
 var Buffer = require('buffer').Buffer;
@@ -3520,12 +3520,12 @@ var internalUtil = {
 
 /*<replacement>*/
 var Stream;
-(function (){try{
+(function (){ try{
   Stream = require('st' + 'ream');
 }catch(_){}finally{
   if (!Stream)
     Stream = require('events').EventEmitter;
-}}())
+} }())
 /*</replacement>*/
 
 var Buffer = require('buffer').Buffer;
@@ -3641,14 +3641,14 @@ WritableState.prototype.getBuffer = function writableStateGetBuffer() {
   return out;
 };
 
-(function (){try {
+(function (){ try {
 Object.defineProperty(WritableState.prototype, 'buffer', {
   get: internalUtil.deprecate(function() {
     return this.getBuffer();
   }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' +
      'instead.')
 });
-}catch(_){}}());
+}catch(_){} }());
 
 
 var Duplex;
@@ -4976,7 +4976,7 @@ function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
 
 function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
   var name, str, desc;
-  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  desc = Object.getOwnPropertyDescriptor(value, key) || {value: value[key]};
   if (desc.get) {
     if (desc.set) {
       str = ctx.stylize('[Getter/Setter]', 'special');
@@ -5325,22 +5325,22 @@ clone.clonePrototype = function clonePrototype(parent) {
 
 function __objToStr(o) {
   return Object.prototype.toString.call(o);
-};
+}
 clone.__objToStr = __objToStr;
 
 function __isDate(o) {
   return typeof o === 'object' && __objToStr(o) === '[object Date]';
-};
+}
 clone.__isDate = __isDate;
 
 function __isArray(o) {
   return typeof o === 'object' && __objToStr(o) === '[object Array]';
-};
+}
 clone.__isArray = __isArray;
 
 function __isRegExp(o) {
   return typeof o === 'object' && __objToStr(o) === '[object RegExp]';
-};
+}
 clone.__isRegExp = __isRegExp;
 
 function __getRegExpFlags(re) {
@@ -5349,7 +5349,7 @@ function __getRegExpFlags(re) {
   if (re.ignoreCase) flags += 'i';
   if (re.multiline) flags += 'm';
   return flags;
-};
+}
 clone.__getRegExpFlags = __getRegExpFlags;
 
 return clone;
@@ -5728,7 +5728,7 @@ var has = Object.prototype.hasOwnProperty;
 var toStr = Object.prototype.toString;
 var slice = Array.prototype.slice;
 var isArgs = require('./isArguments');
-var hasDontEnumBug = !({ toString: null }).propertyIsEnumerable('toString');
+var hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString');
 var hasProtoEnumBug = function () {}.propertyIsEnumerable('prototype');
 var dontEnums = [
 	'toString',
@@ -5900,7 +5900,7 @@ var assignHasPendingExceptions = function () {
 	}
 	// Firefox 37 still has "pending exception" logic in its Object.assign implementation,
 	// which is 72% slower than our shim, and Firefox 40's native implementation.
-	var thrower = Object.preventExtensions({ 1: 2 });
+	var thrower = Object.preventExtensions({1: 2});
 	try {
 		Object.assign(thrower, 'xy');
 	} catch (e) {

@@ -1,0 +1,6 @@
+node_modules/
+dist/
+doc/
+examples/static/watson-speech.js
+examples/static/bower_components/
+examples/node_modules/

@@ -16,9 +16,6 @@ var ttsConfig = extend({
   password: process.env.TTS_PASSWORD || '<password>'
 }, vcapServices.getCredentials('text_to_speech'));
 
-// quick hack to make development easier
-try { extend(ttsConfig, require('../test/resources/tts-auth.json')) } catch (ex) {}
-
 var ttsAuthService = watson.authorization(ttsConfig);
 
 router.get('/token', function(req, res) {

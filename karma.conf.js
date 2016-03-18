@@ -15,7 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      '../*-spec.js'
+      'test/*-spec.js'
     ],
 
 
@@ -27,7 +27,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      '../*-spec.js': [ 'browserify' ]
+      'test/*-spec.js': ['browserify']
     },
 
     browserify: {
@@ -35,7 +35,7 @@ module.exports = function(config) {
       // 'brfs' makes fs.read* work
       // 'browserify-shim' wraps non-browserify modules
       // 'envify' makes process.env work
-      transform: [ 'envify' ]
+      transform: ['envify']
     },
 
 
@@ -96,7 +96,7 @@ module.exports = function(config) {
       port: 9877,
       // this function takes express app object and allows you to modify it
       // to your liking. For more see http://expressjs.com/4x/api.html
-      appVisitor: (process.env.TEST_MODE === 'integration') ? require('./integration_test_server.js') : require('./offline_test_server.js')
+      appVisitor: (process.env.TEST_MODE === 'integration') ? require('./test/resources/integration_test_server.js') : require('./test/resources/offline_test_server.js')
     },
 
     browserDisconnectTimeout: 15000,
