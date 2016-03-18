@@ -56,10 +56,10 @@ function MediaElementAudioStream(element, options) {
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
     // Possible values: null, 256, 512, 1024, 2048, 4096, 8192, 16384
     // however, webkitAudioContext (safari) requires it to be set
-    bufferSize: (typeof AudioContext != "undefined" ? null : 4096),
+    bufferSize: (typeof AudioContext == 'undefined' ? 4096 : null),
     muteSource: false,
     autoPlay: true,
-    crossOrigin: "anonymous", // required for cross-domain audio playback
+    crossOrigin: 'anonymous', // required for cross-domain audio playback
     objectMode: true // true = emit AudioBuffers w/ audio + some metadata, false = emite node.js Buffers (with binary data only
   });
 
@@ -94,14 +94,13 @@ function MediaElementAudioStream(element, options) {
     // onaudioprocess can be called at least once after we've stopped
     if (recording) {
       // todo: interleave channels in binary mode
-      self.push( options.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)) );
+      self.push(options.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)));
     }
   }
 
-  var AudioContext = window.AudioContext || window.webkitAudioContext;
   // cache the source node &amp; context since it's not possible to recreate it later
-  var context = element.context = element.context || new AudioContext();
-  var audioInput = element.node  = element.node || context.createMediaElementSource(element);
+  var context = element.context = element.context || new (window.AudioContext || window.webkitAudioContex)();
+  var audioInput = element.node = element.node || context.createMediaElementSource(element);
   var scriptProcessor = context.createScriptProcessor(options.bufferSize, inputChannels, outputChannels);
 
   scriptProcessor.onaudioprocess = processAudio;
@@ -117,46 +116,54 @@ function MediaElementAudioStream(element, options) {
    *
    * Delayed to avoid processing the stream of silence received before the file begins playing
    *
+   * @private
    */
   function connect() {
     audioInput.connect(scriptProcessor);
     // other half of workaround for chrome bugs
     scriptProcessor.connect(context.destination);
-    element.removeEventListener("playing", connect);
+    element.removeEventListener('playing', connect);
   }
-  element.addEventListener("playing", connect);
+  element.addEventListener('playing', connect);
 
-  // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
-  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+  /**
+   * https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
+   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+   * @private
+   */
   function start() {
     element.play();
-    element.removeEventListener("canplaythrough", start);
+    element.removeEventListener('canplaythrough', start);
   }
   if (options.autoPlay) {
     // play immediately if we have enough data, otherwise wait for the canplaythrough event
-    if(element.readyState === element.HAVE_ENOUGH_DATA) {
+    if (element.readyState === element.HAVE_ENOUGH_DATA) {
       element.play();
     } else {
-      element.addEventListener("canplaythrough", start);
+      element.addEventListener('canplaythrough', start);
     }
   }
 
+  /**
+   * clean up and emit a close event
+   * @private
+   */
   function end() {
     recording = false;
     scriptProcessor.disconnect();
     audioInput.disconnect();
-    //context.close(); // this prevents us from re-using the same audio element until the page is refreshed
+    // context.close(); // this prevents us from re-using the same audio element until the page is refreshed
     self.push(null);
     self.emit('close');
   }
-  element.addEventListener("ended", end);
+  element.addEventListener('ended', end);
 
   this.stop = function() {
     element.pause();
     end();
   };
 
-  element.addEventListener("error", this.emit.bind(this, 'error'));
+  element.addEventListener('error', this.emit.bind(this, 'error'));
 
   process.nextTick(function() {
     // this is more useful for binary mode than object mode, but it won't hurt either way
@@ -199,13 +206,13 @@ module.exports = MediaElementAudioStream;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Mar 17 2016 14:47:17 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Mar 18 2016 18:07:31 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

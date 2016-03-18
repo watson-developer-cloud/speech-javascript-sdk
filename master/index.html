@@ -89,7 +89,11 @@ Also note that Chrome requires https (with a few exceptions for localhost and su
 <li>it transcribes the audio as it is heard, so pausing or skipping will affect the transcription</li>
 <li>audio that is paused for too long will cause the socket to time out and disconnect, preventing further transcription (without setting things up again)</li>
 </ul>
-<p>Because of these limitations, it may be preferable to instead fetch the audio via ajax and then pass it the <code>recognizeFile()</code> API in some situations.</p>
+<p>Because of these limitations, there are two alternative methods that may be preferable in some situations:</p>
+<ul>
+<li>fetch the audio via ajax and then pass it to <code>recognizeFile()</code> - this resolves the issues around lossy conversion and inexact transcription, but the audio playback, if enabled, cannot be paused, rewound, etc.</li>
+<li>Pre-process the audio and generate a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Video_Text_Tracks_Format">WebVTT</a> subtitles file to insert in <code>&lt;track&gt;</code>, completely bypassing this SDK. This resolves all of the above issues, and gives you an opportunity to review and/or edit the subtitles if desired.</li>
+</ul>
 <p>Options: </p>
 <ul>
 <li><code>element</code>: an <code>&lt;audio&gt;</code> or <code>&lt;video&gt;</code> element (could be generated pragmatically, e.g. <code>new Audio()</code>)</li>
@@ -211,13 +215,13 @@ Standard <code>close</code> event will fire once the underlying websocket is clo
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Mar 17 2016 14:47:17 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Mar 18 2016 18:07:31 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

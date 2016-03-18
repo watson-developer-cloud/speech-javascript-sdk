@@ -28,21 +28,26 @@
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
 
-var contentType = require('./content-type');
+var getContentTypeFromHeader = require('./content-type');
 
-function getContentType(file) {
-  return new Promise(function (resolve, reject) {
+/**
+ * Reads the first few bytes of a binary file and resolves to the content-type if recognized &amp; supported
+ * @param {File|Blob} file
+ * @returns {Promise}
+ */
+function getContentTypeFromFile(file) {
+  return new Promise(function(resolve, reject) {
     var blobToText = new Blob([file]).slice(0, 4);
     var r = new FileReader();
     r.readAsText(blobToText);
-    r.onload = function () {
-      var ct = contentType(r.result);
+    r.onload = function() {
+      var ct = getContentTypeFromHeader(r.result);
       if (ct) {
         resolve(ct);
       } else {
         var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
         err.name = 'UNRECOGNIZED_FORMAT';
-        reject(err)
+        reject(err);
       }
     };
   });
@@ -50,8 +55,8 @@ function getContentType(file) {
 
 /**
  * Plays audio from File/Blob instances
- * @param file
- * @param contentType
+ * @param {File|Blob} file
+ * @param {String} contentType
  * @constructor
  */
 function FilePlayer(file, contentType) {
@@ -67,20 +72,28 @@ function FilePlayer(file, contentType) {
     err.contentType = contentType;
     throw err;
   }
+  /**
+   * Stops the audio
+   */
   this.stop = function stop() {
     audio.pause();
     audio.currentTime = 0;
-  }
+  };
 }
 
+/**
+ * Determines the file's content-type and then resolves to a FilePlayer instance
+ * @param {File|Blob} file
+ * @returns {Promise.&lt;FilePlayer>}
+ */
 function playFile(file) {
-  return getContentType(file).then(function (contentType) {
+  return getContentTypeFromFile(file).then(function(contentType) {
     return new FilePlayer(file, contentType);
   });
 }
 
 module.exports = FilePlayer;
-module.exports.getContentType = getContentType;
+module.exports.getContentType = getContentTypeFromFile;
 module.exports.playFile = playFile;
 </code></pre>
         </article>
@@ -92,13 +105,13 @@ module.exports.playFile = playFile;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-element.html">watson-speech/speech-to-text/recognize-element</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="MediaElementAudioStream.html">MediaElementAudioStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Mar 17 2016 14:47:17 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Mar 18 2016 18:07:31 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
