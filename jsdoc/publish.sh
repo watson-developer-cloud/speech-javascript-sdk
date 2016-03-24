@@ -21,6 +21,13 @@ if [ "$TRAVIS_REPO_SLUG" == "watson-developer-cloud/speech-javascript-sdk" ] && 
     mkdir $TRAVIS_BRANCH
     cp -Rf ../doc/watson-speech/*/* ./$TRAVIS_BRANCH
 
+    # update the latest/ symlink
+    # on tagged builds, $TRAVIS_TAG is set to the tag, but it's blank on regular builds, unlike $TRAVIS_BRANCH
+    if [ $TRAVIS_TAG ]; then
+      rm latest
+      ln -s ./$TRAVIS_TAG latest
+    fi
+
     ../jsdoc/generate_index_html.sh > index.html
 
     git add -f -A .
