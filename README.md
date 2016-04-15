@@ -161,6 +161,9 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 
 ## Changelog
 
+### v next
+* Added `options.element` to TextToSpeech.synthesize() to support playing through exiting elements
+
 ### v0.14
 * Moved getUserMedia shim to a [standalone library](https://www.npmjs.com/package/get-user-media-promise)
 * added a python token server example

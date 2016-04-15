@@ -34,6 +34,7 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'text', 'watson-token']
  * @param {String} [options.voice=en-US_MichaelVoice] what voice to use - call getVoices() for a complete list.
  * @param {Number} [options.X-WDC-PL-OPT-OUT=0] set to 1 to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.autoPlay=true] automatically play the audio
+ * @param {DOMAudioElement} [options.element] <audio> element - will be used instead of creating a new one if provided
  * @returns {Audio}
  * @see module:watson-speech/text-to-speech/get-voices
  */
@@ -43,7 +44,7 @@ module.exports = function synthesize(options) {
   }
   options['watson-token'] = options.token;
   delete options.token;
-  var audio = new Audio();
+  var audio = options.element || new Audio();
   audio.crossOrigin = true;
   audio.src = 'https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?' + qs.stringify(pick(options, QUERY_PARAMS_ALLOWED));
   if (options.autoPlay !== false) {
