@@ -8,7 +8,8 @@ module.exports = {
     // false meaning this code doesn't define it
     Promise: false,
     DataView: false,
-    ArrayBuffer: false
+    ArrayBuffer: false,
+    Float32Array: false
   },
   'myrules': {
     'consistent-return': 2,
@@ -202,7 +203,7 @@ module.exports = {
         'spaced-comment': 1,
         'strict': 2,
         'template-curly-spacing': 2,
-        'valid-jsdoc': [1, {
+        'valid-jsdoc': [2, {
           'requireReturn': false,
           'requireParamDescription': false,
           'requireReturnDescription': false
