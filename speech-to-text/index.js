@@ -26,22 +26,12 @@ module.exports = {
    */
   recognizeFile: require('./recognize-file'),
 
-  /**
-   * @see module:watson-speech/speech-to-text/recognize-element
-   */
-  recognizeElement: require('./recognize-element'),
-
 
   // individual components to build more customized solutions
   /**
    * @see WebAudioL16Stream
    */
   WebAudioL16Stream: require('./webaudio-l16-stream'),
-
-  /**
-   * @see MediaElementAudioStream
-   */
-  MediaElementAudioStream: require('./media-element-audio-stream'),
 
   /**
    * @see RecognizeStream

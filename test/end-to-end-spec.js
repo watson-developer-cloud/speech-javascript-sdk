@@ -28,33 +28,10 @@ function getAudio() {
 // integration = testing against actual watson servers
 var offline = process.env.TEST_MODE !== 'integration';
 var chrome = navigator.userAgent.indexOf('Chrome') >= 0;
-var firefox = navigator.userAgent.indexOf('Firefox') >= 0;
 var travis = !!process.env.TRAVIS;
 
 describe('WatsonSpeech.SpeechToText end-to-end', function() {
   this.timeout(30 * 1000); // eslint-disable-line no-invalid-this
-
-  // firefox on travis always times out for this test, not sure why (it might be due to travis's older version of ff)
-  (firefox && travis ? xit : it)('should transcribe <audio> elements', function(done) {
-    getConfig().then(function(cfg) {
-      var audioElement = new Audio();
-      audioElement.crossOrigin = 'anonymous';
-      audioElement.src = 'http://localhost:9877/audio.wav';
-      cfg.element = audioElement;
-      cfg.muteSource = true;
-      var stream = SpeechToText.recognizeElement(cfg);
-      // stream.on('send-json', console.log.bind(console, 'sending'));
-      // stream.on('message', console.log.bind(console, 'received'));
-      // stream.on('send-data', function(d) {
-      //  console.log('sending ' + d.length + ' bytes');
-      // });
-      return stream.promise();
-    }).then(function(transcript) {
-      assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
-      done();
-    })
-      .catch(done);
-  });
 
   // firefox can automatically approve getUserMedia, but not playback audio, so offline only
   // ...except on travis ci, where it gets NO_DEVICES_FOUND

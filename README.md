@@ -64,32 +64,7 @@ Also note that Chrome requires https (with a few exceptions for localhost and su
 
 Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
 
-Known issue: Firefox continues to display a microphone icon in the address bar even after recording has ceased. This is a browser bug.
-
-### `.recognizeElement({element, token})` -> `RecognizeStream`
-
-Extract audio from an `<audio>` or `<video>` element and transcribe speech. 
-
-This method has some limitations: 
- * the audio is run through two lossy conversions: first from the source format to WebAudio, and second to l16 (raw wav) for Watson
- * the WebAudio API does not guarantee the same exact output for the same file played twice, so it's possible to receive slight different transcriptions for the same file played repeatedly
- * it transcribes the audio as it is heard, so pausing or skipping will affect the transcription
- * audio that is paused for too long will cause the socket to time out and disconnect, preventing further transcription (without setting things up again)
- 
-Because of these limitations, there are two alternative methods that may be preferable in some situations:
- * fetch the audio via ajax and then pass it to `recognizeFile()` - this resolves the issues around lossy conversion and inexact transcription, but the audio playback, if enabled, cannot be paused, rewound, etc.
- * Pre-process the audio and generate a [WebVTT](https://developer.mozilla.org/en-US/docs/Web/API/Web_Video_Text_Tracks_Format) subtitles file to insert in `<track>`, completely bypassing this SDK. This resolves all of the above issues, and gives you an opportunity to review and/or edit the subtitles if desired.
-
-Options: 
-* `element`: an `<audio>` or `<video>` element (could be generated pragmatically, e.g. `new Audio()`)
-* Other options passed to MediaElementAudioStream and RecognizeStream
-* Other options passed to WritableElementStream if `options.outputElement` is set
-
-Requires that the browser support MediaElement and whatever audio codec is used in your media file.
-
-Will automatically call `.play()` the `element`, set `options.autoPlay=false` to  disable. Calling `.stop()` on the returned stream will automatically call `.stop()` on the `element`.
-
-Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
+Known issue: Firefox continues to display a microphone icon in the address bar after recording has ceased. This is a browser bug.
 
 ### `.recognizeFile({data, token})` -> `RecognizeStream`
 
@@ -161,7 +136,8 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 
 ## Changelog
 
-### v next
+### v0.15
+* Removed `SpeechToText.recognizeElement()` due to quality issues
 * Added `options.element` to TextToSpeech.synthesize() to support playing through exiting elements
 
 ### v0.14
