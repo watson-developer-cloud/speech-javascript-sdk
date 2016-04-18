@@ -1,0 +1,210 @@
+{
+  "results": [
+    {
+      "word_alternatives": [
+        {
+          "start_time": 1.48,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "thunderstorms"
+            }
+          ],
+          "end_time": 2.33
+        },
+        {
+          "start_time": 2.33,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "could"
+            }
+          ],
+          "end_time": 2.54
+        },
+        {
+          "start_time": 2.54,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "produce"
+            }
+          ],
+          "end_time": 2.99
+        },
+        {
+          "start_time": 2.99,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "large"
+            }
+          ],
+          "end_time": 3.35
+        },
+        {
+          "start_time": 3.35,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "hail"
+            }
+          ],
+          "end_time": 3.82
+        },
+        {
+          "start_time": 3.85,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "isolated"
+            }
+          ],
+          "end_time": 4.42
+        },
+        {
+          "start_time": 4.42,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "tornadoes"
+            }
+          ],
+          "end_time": 5.04
+        },
+        {
+          "start_time": 5.04,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "and"
+            }
+          ],
+          "end_time": 5.26
+        },
+        {
+          "start_time": 5.26,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "heavy"
+            }
+          ],
+          "end_time": 5.58
+        },
+        {
+          "start_time": 5.58,
+          "alternatives": [
+            {
+              "confidence": 1,
+              "word": "rain"
+            }
+          ],
+          "end_time": 6.14
+        }
+      ],
+      "alternatives": [
+        {
+          "word_confidence": [
+            [
+              "thunderstorms",
+              1
+            ],
+            [
+              "could",
+              1
+            ],
+            [
+              "produce",
+              1
+            ],
+            [
+              "large",
+              1
+            ],
+            [
+              "hail",
+              1
+            ],
+            [
+              "isolated",
+              1
+            ],
+            [
+              "tornadoes",
+              1
+            ],
+            [
+              "and",
+              1
+            ],
+            [
+              "heavy",
+              1
+            ],
+            [
+              "rain",
+              0.9904317537290094
+            ]
+          ],
+          "confidence": 0.999,
+          "transcript": "thunderstorms could produce large hail isolated tornadoes and heavy rain ",
+          "timestamps": [
+            [
+              "thunderstorms",
+              1.48,
+              2.33
+            ],
+            [
+              "could",
+              2.33,
+              2.54
+            ],
+            [
+              "produce",
+              2.54,
+              2.99
+            ],
+            [
+              "large",
+              2.99,
+              3.35
+            ],
+            [
+              "hail",
+              3.35,
+              3.82
+            ],
+            [
+              "isolated",
+              3.85,
+              4.42
+            ],
+            [
+              "tornadoes",
+              4.42,
+              5.04
+            ],
+            [
+              "and",
+              5.04,
+              5.26
+            ],
+            [
+              "heavy",
+              5.26,
+              5.58
+            ],
+            [
+              "rain",
+              5.58,
+              6.14
+            ]
+          ]
+        }
+      ],
+      "final": true
+    }
+  ],
+  "result_index": 0
+}

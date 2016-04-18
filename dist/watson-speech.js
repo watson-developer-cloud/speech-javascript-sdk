@@ -6490,7 +6490,7 @@ module.exports = {
   FilePlayer: require('./file-player'),
 
   /**
-   * @see FormatStream
+   * @see TimingStream
    */
   FormatStream: require('./format-stream'),
 

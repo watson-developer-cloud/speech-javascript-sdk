@@ -34,6 +34,7 @@
     "karma-mocha": "^0.2.2",
     "mocha": "^2.4.5",
     "serve-static": "^1.10.2",
+    "sinon": "^1.17.3",
     "uglify-js": "^2.6.2",
     "watchify": "^3.7.0",
     "watson-developer-cloud": "^1.4.1"

@@ -10,7 +10,7 @@ var defaults = require('defaults');
  *
  * Useful when running recognizeFile because the text can otherwise appear before the words are spoken
  *
- * @param {Object} opts
+ * @param {Object} [opts]
  * @param {*} [opts.emitAtt=TimingStream.START] - set to TimingStream.END to only emit text that has been completely spoken.
  * @param {Number} [opts.delay=0] - Additional delay (in seconds) to apply before emitting words, useful for precise syncing to audio tracks. May be negative
  * @constructor
@@ -35,6 +35,7 @@ function TimingStream(opts) {
   this.on('pipe', function(source) {
     source.on('end', function() {
       self.sourceEnded = true; // todo: see if there's anything built-in that does this for us
+      self.checkForEnd();
     });
   });
 }
@@ -176,17 +177,28 @@ TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
     for (var i = 0; i < timestamps.length; i++) {
       var wordOffset = timestamps[i][this.options.emitAt];
       if (wordOffset > cutoff) {
-        this.nextTick = setTimeout(this.tick.bind(this), this.startTime + (wordOffset * 1000));
+        var nextTime = this.startTime + (wordOffset * 1000);
+        this.nextTick = setTimeout(this.tick.bind(this), nextTime - Date.now());
         return;
       }
     }
     throw new Error('No future words found'); // this shouldn't happen ever - getCurrentResult should automatically delete the result from the buffer if all of it's words are consumed
   } else {
-    // if we have no next result in the buffer, and the source has ended, then we're done.
-    if (this.sourceEnded) {
-      this.emit('close');
-      this.push(null);
-    }
+    // clear the next tick
+    this.nextTick = null;
+    this.checkForEnd();
+  }
+};
+
+/**
+ * Triggers the 'close' and 'end' events if both pre-conditions are true:
+ *  - the previous stream must have already emitted it's 'end' event
+ *  - there must be no next tick scheduled, indicating that there are no results buffered for later delivery
+ */
+TimingStream.prototype.checkForEnd = function() {
+  if (this.sourceEnded && !this.nextTick) {
+    this.emit('close');
+    this.push(null);
   }
 };
 

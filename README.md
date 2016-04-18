@@ -6,7 +6,7 @@ IBM Watson Speech Services for Web Browsers
 
 Allows you to easily add voice recognition and synthesis to any web app with minimal code. 
 
-**Warning** This library is still early-stage and may see significant breaking changes.
+**Warning** This library is still has a few rough edges and may yet see breaking changes.
 
 **For Web Browsers Only** This library is primarily intended for use in browsers. 
 Check out [watson-developer-cloud](https://www.npmjs.com/package/watson-developer-cloud) to use Watson services (speech and others) from Node.js.
@@ -139,6 +139,7 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 ### v0.15
 * Removed `SpeechToText.recognizeElement()` due to quality issues
 * Added `options.element` to TextToSpeech.synthesize() to support playing through exiting elements
+* Fixed a couple of bugs in the TimingStream
 
 ### v0.14
 * Moved getUserMedia shim to a [standalone library](https://www.npmjs.com/package/get-user-media-promise)
@@ -184,17 +185,14 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 
 * Solidify API
 * break components into standalone npm modules where it makes sense
-* record which shim/pollyfills would be useful to extend partial support to older browsers (Promise, fetch, etc.)
 * run integration tests on travis (fall back to offline server for pull requests)
 * more tests in general
-* better cross-browser testing (saucelabs?)
+* better cross-browser testing (IE, Safari, mobile browsers - maybe saucelabs?)
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
 * move `result` and `results` events to node wrapper (along with the deprecation notice)
 * improve docs
 * consider a wrapper to match https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html
 * support a "hard" stop that prevents any further data events, even for already uploaded audio, ensure timing stream also implements this.
-* handle pause/resume in media element streams - perhaps just stop and then create a new stream on resume, using the same token
-* consider moving STT core to standalone module
 * look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)
 * fix bug where TimingStream shows words slightly before they're spoken
 * support jquery objects for element and targetElement
