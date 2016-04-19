@@ -26,7 +26,7 @@
     
 
 
-    <h3>watson-speech 0.15.1</h3>
+    <h3>watson-speech 0.16.0</h3>
 
 
 
@@ -54,7 +54,7 @@ The examples/ folder includes example Node.js and Python servers, and SDKs are a
 <a href="https://github.com/watson-developer-cloud/java-sdk">Java</a>, 
 <a href="https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py">Python</a>, 
 and there is also a <a href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-tokens.shtml">REST API</a>.</p>
-<h3>Installation - standalone</h3><p>Pre-compiled bundles are available from on GitHub Releases - just download the file and drop it into your project: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases</p>
+<h3>Installation - standalone</h3><p>Pre-compiled bundles are available from on GitHub Releases - just download the file and drop it into your website: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases</p>
 <h3>Installation - npm with browserify</h3><p>This library is built with <a href="http://browserify.org/">browserify</a> and easy to use in browserify-based projects :</p>
 <pre class="prettyprint source"><code>npm install --save watson-speech</code></pre><h2>API &amp; Examples</h2><p>The basic API is outlined below, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/</p>
 <p>See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/static/</p>
@@ -93,57 +93,18 @@ Will emit a <code>playback-error</code> on the RecognizeStream if playback fails
 Playback will automatically stop when <code>.stop()</code> is called on the RecognizeStream.</p>
 <p>Pipes results through a <a href="http://watson-developer-cloud.github.io/speech-javascript-sdk/master/TimingStream.html">TimingStream</a> by if <code>options.play=true</code>, set <code>options.realtime=false</code> to disable.</p>
 <p>Pipes results through a <a href="http://watson-developer-cloud.github.io/speech-javascript-sdk/master/FormatStream.html">FormatStream</a> by default, set <code>options.format=false</code> to disable.</p>
-<h2>Changelog</h2><h3>v0.15</h3><ul>
+<h2>Changes</h2><p>There have been a few breaking changes in recent releases:</p>
+<ul>
 <li>Removed <code>SpeechToText.recognizeElement()</code> due to quality issues</li>
-<li>Added <code>options.element</code> to TextToSpeech.synthesize() to support playing through exiting elements</li>
-<li>Fixed a couple of bugs in the TimingStream</li>
-<li>Added support for STT profanity_filter &amp;  documented keywords and words_alternatives options.</li>
-</ul>
-<h3>v0.14</h3><ul>
-<li>Moved getUserMedia shim to a <a href="https://www.npmjs.com/package/get-user-media-promise">standalone library</a></li>
-<li>added a python token server example</li>
-</ul>
-<h3>v0.13</h3><ul>
-<li>Fixed bug where <code>continuous: false</code> didn't close the microphone at end of recognition</li>
-<li>Added <code>keepMic</code> option to <code>recognizeMicrophone()</code> to prevent multiple permission popups in firefox</li>
-</ul>
-<h3>v0.12</h3><ul>
-<li>Added <code>autoPlay</code> option to <code>synthesize()</code></li>
-<li>Added proper parameter filtering to <code>synthesize()</code></li>
-</ul>
-<h3>v0.11</h3><ul>
 <li>renamed <code>recognizeBlob</code> to <code>recognizeFile</code> to make the primary usage more apparent</li>
-<li>Added support for <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> elements when using the <code>targetElement</code> option (or a <code>WritableElementStream</code>)</li>
-<li>For objectMode, changed defaults for <code>word_confidence</code> to <code>false</code>, <code>alternatives</code> to <code>1</code>, and <code>timing</code> to off unless required for <code>realtime</code> option. </li>
-<li>Fixed bug with calling <code>.promise()</code> on <code>objectMode</code> streams</li>
-<li>Fixed bug with calling <code>.promise()</code> on <code>recognizeFile({play: true})</code></li>
-</ul>
-<h3>v0.10</h3><ul>
-<li>Added ability to write text directly to targetElement, updated examples to use this</li>
-<li>converted examples from jQuery to vanilla JS (w/ fetch pollyfill when necessary)</li>
-<li>significantly improved JSDoc</li>
-</ul>
-<h3>v0.9</h3><ul>
-<li>Added basic text to speech support</li>
-</ul>
-<h3>v0.8</h3><ul>
-<li>deprecated <code>result</code> events in favor of <code>objectMode</code>.</li>
-<li>renamed the <code>autoplay</code> option to <code>autoPlay</code> on <code>recognizeElement()</code> (capital P)</li>
-</ul>
-<h3>v0.7</h3><ul>
 <li>Changed <code>playFile</code> option of <code>recognizeBlob()</code> to just <code>play</code>, corrected default</li>
-<li>Added <code>options.format=true</code> to <code>recognize*()</code> to pipe text through a FormatStream</li>
-<li>Added <code>options.realtime=options.play</code> to <code>recognizeBlob()</code> to automatically pipe results through a TimingStream when playing locally</li>
-<li>Added <code>close</code> and <code>end</code> events to TimingStream</li>
-<li>Added <code>delay</code> option to <code>TimingStream</code></li>
-<li>Moved compiled binary to GitHub Releases (in addition to uncompiled source on npm).</li>
-<li>Misc. doc and internal improvements</li>
 </ul>
+<p>See <a href="CHANGELOG.md">CHANGELOG.md</a> for a complete list of changes.</p>
 <h2>todo</h2><ul>
-<li>Solidify API</li>
+<li>Further solidify API</li>
 <li>break components into standalone npm modules where it makes sense</li>
 <li>run integration tests on travis (fall back to offline server for pull requests)</li>
-<li>more tests in general</li>
+<li>add even more tests</li>
 <li>better cross-browser testing (IE, Safari, mobile browsers - maybe saucelabs?)</li>
 <li>update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)</li>
 <li>move <code>result</code> and <code>results</code> events to node wrapper (along with the deprecation notice)</li>
@@ -152,7 +113,6 @@ Playback will automatically stop when <code>.stop()</code> is called on the Reco
 <li>support a &quot;hard&quot; stop that prevents any further data events, even for already uploaded audio, ensure timing stream also implements this.</li>
 <li>look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)</li>
 <li>fix bug where TimingStream shows words slightly before they're spoken</li>
-<li>support jquery objects for element and targetElement</li>
 </ul></article>
     </section>
 
@@ -164,13 +124,13 @@ Playback will automatically stop when <code>.stop()</code> is called on the Reco
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:results">results</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Apr 19 2016 19:34:18 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Apr 19 2016 20:17:34 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
