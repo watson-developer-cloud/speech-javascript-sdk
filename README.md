@@ -94,60 +94,22 @@ Pipes results through a [TimingStream] by if `options.play=true`, set `options.r
 Pipes results through a [FormatStream] by default, set `options.format=false` to disable.
 
 
-## Changelog
+## Changes
 
-### v0.15
+There have been a few breaking changes in recent releases:
+
 * Removed `SpeechToText.recognizeElement()` due to quality issues
-* Added `options.element` to TextToSpeech.synthesize() to support playing through exiting elements
-* Fixed a couple of bugs in the TimingStream
-* Added support for STT profanity_filter &  documented keywords and words_alternatives options.
-
-### v0.14
-* Moved getUserMedia shim to a [standalone library](https://www.npmjs.com/package/get-user-media-promise)
-* added a python token server example
-
-### v0.13
-* Fixed bug where `continuous: false` didn't close the microphone at end of recognition
-* Added `keepMic` option to `recognizeMicrophone()` to prevent multiple permission popups in firefox
-
-### v0.12
-* Added `autoPlay` option to `synthesize()`
-* Added proper parameter filtering to `synthesize()`
-
-### v0.11
 * renamed `recognizeBlob` to `recognizeFile` to make the primary usage more apparent
-* Added support for `<input>` and `<textarea>` elements when using the `targetElement` option (or a `WritableElementStream`)
-* For objectMode, changed defaults for `word_confidence` to `false`, `alternatives` to `1`, and `timing` to off unless required for `realtime` option. 
-* Fixed bug with calling `.promise()` on `objectMode` streams
-* Fixed bug with calling `.promise()` on `recognizeFile({play: true})`
-
-### v0.10
-* Added ability to write text directly to targetElement, updated examples to use this
-* converted examples from jQuery to vanilla JS (w/ fetch pollyfill when necessary)
-* significantly improved JSDoc
-
-### v0.9
-* Added basic text to speech support
-
-### v0.8
-* deprecated `result` events in favor of `objectMode`.
-* renamed the `autoplay` option to `autoPlay` on `recognizeElement()` (capital P)
-
-### v0.7
 * Changed `playFile` option of `recognizeBlob()` to just `play`, corrected default
-* Added `options.format=true` to `recognize*()` to pipe text through a FormatStream
-* Added `options.realtime=options.play` to `recognizeBlob()` to automatically pipe results through a TimingStream when playing locally
-* Added `close` and `end` events to TimingStream
-* Added `delay` option to `TimingStream`
-* Moved compiled binary to GitHub Releases (in addition to uncompiled source on npm).
-* Misc. doc and internal improvements
+
+See [CHANGELOG.md](CHANGELOG.md) for a complete list of changes.
 
 ## todo
 
-* Solidify API
+* Further solidify API
 * break components into standalone npm modules where it makes sense
 * run integration tests on travis (fall back to offline server for pull requests)
-* more tests in general
+* add even more tests
 * better cross-browser testing (IE, Safari, mobile browsers - maybe saucelabs?)
 * update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
 * move `result` and `results` events to node wrapper (along with the deprecation notice)
@@ -156,7 +118,6 @@ Pipes results through a [FormatStream] by default, set `options.format=false` to
 * support a "hard" stop that prevents any further data events, even for already uploaded audio, ensure timing stream also implements this.
 * look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)
 * fix bug where TimingStream shows words slightly before they're spoken
-* support jquery objects for element and targetElement
 
 [RecognizeStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/RecognizeStream.html
 [TimingStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/TimingStream.html

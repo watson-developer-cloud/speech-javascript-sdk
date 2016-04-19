@@ -38,8 +38,6 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Op
  *
  * By default, only finalized text is emitted in the data events, however in `readableObjectMode` (usually just `objectMode` when using a helper method).
  *
- * Todo: add keywords, word_alternatives to examples
- *
  *  An interim result looks like this:
  ```js
  { alternatives:
@@ -124,8 +122,6 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Op
  * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity
  * @param {Boolean} [options.readableObjectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Changes several other defaults.
  * @param {Number} [options.X-WDC-PL-OPT-OUT=0] - set to 1 to opt-out of allowing Watson to use this request to improve it's services
- *
- * //todo: investigate other options at http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/apis/#!/speech-to-text/recognizeSessionless
  *
  * @constructor
  */
@@ -240,7 +236,8 @@ RecognizeStream.prototype.initialize = function() {
      * @param {Number} reasonCode
      * @param {String} description
      */
-    self.emit('close', e.code, e.reason);    /**
+    self.emit('close', e.code, e.reason);
+    /**
      * @event RecognizeStream#connection-close
      * @param {Number} reasonCode
      * @param {String} description
@@ -330,13 +327,6 @@ RecognizeStream.prototype.initialize = function() {
       emitError('Unrecognised message from server', frame);
     }
   };
-
-  // this.messages = [];
-  // var send = socket.send;
-  // socket.send = function(msg) {
-  //  self.messages.push(msg);
-  //  return send.apply(socket, arguments);
-  // };
 
   this.initialized = true;
 };
