@@ -8,6 +8,7 @@ Allows you to easily add voice recognition and synthesis to any web app with min
 
 **Warning** This library is still has a few rough edges and may yet see breaking changes.
 
+
 ###  For Web Browsers Only
 This library is primarily intended for use in browsers. 
 Check out [watson-developer-cloud](https://www.npmjs.com/package/watson-developer-cloud) to use Watson services (speech and others) from Node.js.
@@ -18,26 +19,28 @@ The examples/ folder includes example Node.js and Python servers, and SDKs are a
 [Python](https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py), 
 and there is also a [REST API](http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-tokens.shtml).
 
-### Examples
-See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples
 
-### Installation - npm
+### Installation - standalone
+
+Pre-compiled bundles are available from on GitHub Releases - just download the file and drop it into your project: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases
+
+
+### Installation - npm with browserify
 
 This library is built with [browserify](http://browserify.org/) and easy to use in browserify-based projects :
 
     npm install --save watson-speech
 
-### Installation - standalone
 
-Pre-compiled bundles are also available from on GitHub Releases: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases
+API & Examples
+--------------
 
-API
----
+The basic API is outlined below, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/
 
-The basic API is outlined here, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/
+See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/static/
 
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
-(Snp teee examples/token-server.js for a basic example.)
+(See https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/ for a couple of basic examples in Node.js and Python.)
 
 ## [`WatsonSpeech.TextToSpeech`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_text-to-speech.html)
 
@@ -56,7 +59,7 @@ Options:
 ## [`WatsonSpeech.SpeechToText`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text.html)
 
 
-### [`.recognizeMicrophone({token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize_microphone.html) -> [`RecognizeStream`][RecognizeStream]
+### [`.recognizeMicrophone({token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-microphone.html) -> [`RecognizeStream`][RecognizeStream]
 
 Options: 
 * `keepMic`: if true, preserves the MicrophoneStream for subsequent calls, preventing additional permissions requests in Firefox
@@ -71,7 +74,7 @@ Pipes results through a [FormatStream] by default, set `options.format=false` to
 Known issue: Firefox continues to display a microphone icon in the address bar after recording has ceased. This is a browser bug.
 
 
-### [`.recognizeFile({data, token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize_file.html) -> [`RecognizeStream`][RecognizeStream]
+### [`.recognizeFile({data, token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-file.html) -> [`RecognizeStream`][RecognizeStream]
 
 Can recognize and optionally attempt to play a [File](https://developer.mozilla.org/en-US/docs/Web/API/File) or [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
 (such as from an `<input type="file"/>` or from an ajax request.)
