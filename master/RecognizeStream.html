@@ -50,7 +50,8 @@
     <p>pipe()-able Node.js Readable/Writeable stream - accepts binary audio and emits text/objects in it's <code>data</code> events.</p>
 <p>Uses WebSockets under the hood. For audio with no recognizable speech, no <code>data</code> events are emitted.</p>
 <p>By default, only finalized text is emitted in the data events, however in <code>readableObjectMode</code> (usually just <code>objectMode</code> when using a helper method).</p>
-<p> An interim result looks like this (assuming all features are enabled):</p>
+<p>Todo: add keywords, word_alternatives to examples</p>
+<p> An interim result looks like this:</p>
 <pre class="prettyprint source lang-js"><code> { alternatives:
    [ { timestamps:
         [ [ 'it', 20.9, 21.04 ],
@@ -70,7 +71,7 @@
           [ 'emotion', 24.58, 25.1 ] ],
        transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotion ' } ],
   final: false,
-  result_index: 3 }</code></pre><p> While a final result looks like this (again, assuming all features are enabled):</p>
+  result_index: 3 }</code></pre><p> While a final result looks like this (some features only appear in final results):</p>
 <pre class="prettyprint source lang-js"><code>  { alternatives:
      [ { word_confidence:
           [ [ 'it', 1 ],
@@ -503,6 +504,156 @@
 
         <tr>
             
+                <td class="name"><code>keywords</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>a list of keywords to search for in the audio</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>keywords_threshold</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Number between 0 and 1 representing the minimum confidence before including a keyword in the results. Required when options.keywords is set</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>word_alternatives_threshold</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Number between 0 and 1 representing the minimum confidence before including an alternative word in the results. Must be set to enable word alternatives,</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>profanity_filter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>set to true to filter out profanity and replace the words with *'s</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>inactivity_timeout</code></td>
             
 
@@ -662,7 +813,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line128">line 128</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line132">line 132</a>
     </li></ul></dd>
     
 
@@ -811,7 +962,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line141">line 141</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line145">line 145</a>
     </li></ul></dd>
     
 
@@ -969,7 +1120,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line234">line 234</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line238">line 238</a>
     </li></ul></dd>
     
 
@@ -1121,7 +1272,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line239">line 239</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line243">line 243</a>
     </li></ul></dd>
     
 
@@ -1252,7 +1403,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line317">line 317</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line321">line 321</a>
     </li></ul></dd>
     
 
@@ -1383,7 +1534,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line310">line 310</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line314">line 314</a>
     </li></ul></dd>
     
 
@@ -1586,7 +1737,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line248">line 248</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line252">line 252</a>
     </li></ul></dd>
     
 
@@ -1719,7 +1870,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line291">line 291</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line295">line 295</a>
     </li></ul></dd>
     
 
@@ -1852,7 +2003,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line302">line 302</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line306">line 306</a>
     </li></ul></dd>
     
 
@@ -1896,7 +2047,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Apr 18 2016 21:37:30 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Apr 19 2016 19:22:38 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
