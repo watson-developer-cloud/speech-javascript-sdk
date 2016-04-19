@@ -16,20 +16,19 @@
 'use strict';
 
 /**
- * @module watson-speech/text-to-speech/get-voices
+ * @module watson-speech/speech-to-text/get-models
  */
 
 /**
- Returns a promise that resolves to an array of objects representing the available voices.  Example:
+ Returns a promise that resolves to an array of objects representing the available voice models.  Example:
 
  ```js
  [{
-    "name": "en-US_MichaelVoice",
-    "language": "en-US",
-    "customizable": true,
-    "gender": "male",
-    "url": "https://stream.watsonplatform.net/text-to-speech/api/v1/voices/en-US_MichaelVoice",
-    "description": "Michael: American English male voice."
+    "url": "https://stream.watsonplatform.net/speech-to-text/api/v1/models/en-UK_BroadbandModel",
+    "rate": 16000,
+    "name": "en-UK_BroadbandModel",
+    "language": "en-UK",
+    "description": "UK English broadband model."
  },
  //...
  ]
@@ -41,9 +40,9 @@
  * @param {String} options.token auth token
  * @returns {Promise.<T>}
  */
-module.exports = function getVoices(options) {
+module.exports = function getModels(options) {
   if (!options || !options.token) {
-    throw new Error('Watson TextToSpeech: missing required parameter: options.token');
+    throw new Error('Watson SpeechToText: missing required parameter: options.token');
   }
   var reqOpts = {
     credentials: 'omit',
@@ -51,10 +50,10 @@ module.exports = function getVoices(options) {
       accept: 'application/json'
     }
   };
-  return fetch('https://stream.watsonplatform.net/text-to-speech/api/v1/voices?watson-token=' + options.token, reqOpts)
+  return fetch('https://stream.watsonplatform.net/speech-to-text/api/v1/models?watson-token=' + options.token, reqOpts)
     .then(function(response){
       return response.json();
     }).then(function(obj) {
-      return obj.voices;
+      return obj.models;
     });
 };

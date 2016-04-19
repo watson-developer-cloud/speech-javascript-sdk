@@ -22,7 +22,7 @@ and there is also a [REST API](http://www.ibm.com/smarterplanet/us/en/ibmwatson/
 
 ### Installation - standalone
 
-Pre-compiled bundles are available from on GitHub Releases - just download the file and drop it into your project: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases
+Pre-compiled bundles are available from on GitHub Releases - just download the file and drop it into your website: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases
 
 
 ### Installation - npm with browserify

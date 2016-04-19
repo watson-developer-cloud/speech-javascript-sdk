@@ -26,6 +26,11 @@ module.exports = {
    */
   recognizeFile: require('./recognize-file'),
 
+  /**
+   * @see module:watson-speech/speech-to-text/get-models
+   */
+  getModels: require('./get-models'),
+
 
   // individual components to build more customized solutions
   /**
