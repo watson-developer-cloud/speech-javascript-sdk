@@ -7,6 +7,7 @@ before_install:
 - sh -e /etc/init.d/xvfb start
 script:
 - npm test
+- sed -i "s/\/master\//\/$TRAVIS_BRANCH\//g" README.md # replace "master" in doc urls with current branch/tag
 - npm run doc
 after_success:
 - jsdoc/publish.sh
@@ -30,6 +31,7 @@ deploy:
   email: nathan@nfriedly.com
   api_key:
     secure: SPayKFCZfsEznCkOuH/tX9R1ZmtZZ98JkPOv6AiVatGrFIsAx0WWQWyebx1X9dvtxznTwslP0u/nv+i5ErtMdjutyhylz/rwJ7v1s0vR8+4E8JpnPOIOHX1YWybCz38N6u7Ue6+Km4AxmtnTeEhfChn3R4qgJK3qlit8GRxpOlBzUWDFbUYHz6TZOn3YnU2i1bruxcWLwfwXs0Pef1tIZrNC3LrvqpU39REX+vAFMSCTN+1F7u/Aax+zSp2POJkbpV9ijVXtQiNW643Di8XkaeGedzt7L/VtNG+6iJ//fqpULwYktTSdlNzwvNdu8IJ70VmhTOxVWWTcBlJOQNkjHXcU/E3N7keieQo7yE1dWoignNqUrTOaQIOnLxbmfjWAsRsieMSPNRIRvboXJfA5oppZ5lhfiAkyfJV8rNzc9Yt+KWO9uLbdfYJjok7CnICzlPhn2Ho7NHpfqLpJiT/V52C8I0UDMEDBMxCDee2/zHqoTJzzdJpbsGG/6LaEiLoO6+GWnreeBLlPSCE3GmIB1sJGaqJ7Zyfo0/LdTnCM+R2QHh1ju4YGLk8EKsSYfmlDRuat+qCstjOAEmpz3OmJENRAmTMHDkyaPL5v0RuR4S9uN/mlvAEPhSn4w4CZwuWLEpHolG4Zb7ltTgTsE6k4NpWUo2tx/uSb/D4cVzWB4u4=
+  skip_cleanup: true
   on:
     tags: true
     repo: watson-developer-cloud/speech-javascript-sdk

@@ -32,16 +32,16 @@ This library is built with [browserify](http://browserify.org/) and easy to use 
 Pre-compiled bundles are also available from on GitHub Releases: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases
 
 API
----------
+---
 
-The basic API is outlined here, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/
+The basic API is outlined here, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/
 
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
 (Snp teee examples/token-server.js for a basic example.)
 
-## `WatsonSpeech.TextToSpeech`
+## [`WatsonSpeech.TextToSpeech`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_text-to-speech.html)
 
-### `.synthesize({text, token})` -> `<audio>`
+### [`.synthesize({text, token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_text-to-speech_synthesize.html) -> `<audio>`
 
 Speaks the supplied text through an automatically-created `<audio>` element. 
 Currently limited to text that can fit within a GET URL (this is particularly an issue on [Internet Explorer before Windows 10](http://stackoverflow.com/questions/32267442/url-length-limitation-of-microsoft-edge)
@@ -53,24 +53,25 @@ Options:
 * autoPlay - set to false to prevent the audio from automatically playing
 
 
-## `WatsonSpeech.SpeechToText` 
+## [`WatsonSpeech.SpeechToText`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text.html)
 
 
-### `.recognizeMicrophone({token})` -> `RecognizeStream`
+### [`.recognizeMicrophone({token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize_microphone.html) -> [`RecognizeStream`][RecognizeStream]
 
 Options: 
 * `keepMic`: if true, preserves the MicrophoneStream for subsequent calls, preventing additional permissions requests in Firefox
-* Other options passed to MediaElementAudioStream and RecognizeStream
-* Other options passed to WritableElementStream if `options.outputElement` is set
+* Other options passed to [RecognizeStream]
+* Other options passed to [WritableElementStream] if `options.outputElement` is set
 
 Requires the `getUserMedia` API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
 Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features
 
-Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
+Pipes results through a [FormatStream] by default, set `options.format=false` to disable.
 
 Known issue: Firefox continues to display a microphone icon in the address bar after recording has ceased. This is a browser bug.
 
-### `.recognizeFile({data, token})` -> `RecognizeStream`
+
+### [`.recognizeFile({data, token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize_file.html) -> [`RecognizeStream`][RecognizeStream]
 
 Can recognize and optionally attempt to play a [File](https://developer.mozilla.org/en-US/docs/Web/API/File) or [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
 (such as from an `<input type="file"/>` or from an ajax request.)
@@ -78,64 +79,16 @@ Can recognize and optionally attempt to play a [File](https://developer.mozilla.
 Options: 
 * `data`: a `Blob` or `File` instance. 
 * `play`: (optional, default=`false`) Attempt to also play the file locally while uploading it for transcription 
-* Other options passed to RecognizeStream
-* Other options passed to WritableElementStream if `options.outputElement` is set
+* Other options passed to [RecognizeStream]
+* Other options passed to [WritableElementStream] if `options.outputElement` is set
 
 `play`requires that the browser support the format; most browsers support wav and ogg/opus, but not flac.) 
 Will emit a `playback-error` on the RecognizeStream if playback fails. 
 Playback will automatically stop when `.stop()` is called on the RecognizeStream.
 
-Pipes results through a `{TimingStream}` by if `options.play=true`, set `options.realtime=false` to disable.
+Pipes results through a [TimingStream] by if `options.play=true`, set `options.realtime=false` to disable.
 
-Pipes results through a `{FormatStream}` by default, set `options.format=false` to disable.
-
-### Class `RecognizeStream()`
-
-A [Node.js-style stream](https://nodejs.org/api/stream.html) of the final text, with some helpers and extra events built in.
-
-RecognizeStream is generally not instantiated directly but rather returned as the result of calling one of the recognize* methods.
-
-The RecognizeStream waits until after receiving data to open a connection. 
-If no `content-type` option is set, it will attempt to parse the first chunk of data to determine type.
-
-See speech-to-text/recognize-stream.js for other options.
- 
-#### Methods
-
-* `.promise()`: returns a promise that will resolve to the final text. 
-  Note that you must either set `continuous: false` or call `.stop()` on the stream to make the promise resolve in a timely manner.
-  
-* `.stop()`: stops the stream. No more data will be sent, but the stream may still receive additional results with the transcription of already-sent audio.
-  Standard `close` event will fire once the underlying websocket is closed and `end` once all of the data is consumed.
-
-#### Events
-Follows standard [Node.js stream events](https://nodejs.org/api/stream.html), in particular: 
-
-* `data`: emits either final Strings or final/interim result objects depending on if the stream is in objectMode
-* `end`: emitted once all data has been consumed.
-
-(Note: there are several custom events, but they are deprecated or intended for internal usage)
-
-### Class `FormatStream()`
-
-Pipe a `RecognizeStream` to a format stream, and the resulting text and `results` events will have basic formatting applied:
- *  Capitalize the first word of each sentence
- *  Add a period to the end
- *  Fix any "cruft" in the transcription
- *  A few other tweaks for asian languages and such.
-
-Inherits `.promise()` from the `RecognizeStream`.
-
-
-### Class `TimingStream()`
-
-For use with `.recognizeFile({play: true})` - slows the results down to match the audio. Pipe in the `RecognizeStream` (or `FormatStream`) and listen for results as usual.
-
-Inherits `.promise()` from the `RecognizeStream`.
-
-### Class `WritableElementStream()`
-
-Accepts input from `RecognizeStream()` and friends, writes text to supplied `outputElement`.
+Pipes results through a [FormatStream] by default, set `options.format=false` to disable.
 
 
 ## Changelog
@@ -201,3 +154,8 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 * look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)
 * fix bug where TimingStream shows words slightly before they're spoken
 * support jquery objects for element and targetElement
+
+[RecognizeStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/RecognizeStream.html
+[TimingStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/TimingStream.html
+[FormatStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/FormatStream.html
+[WritableElementStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/WritableElementStream.html
