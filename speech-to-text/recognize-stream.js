@@ -106,7 +106,7 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Op
     final: true,
     result_index: 3 }
  ```
- 
+
  *
  * @param {Object} options
  * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
