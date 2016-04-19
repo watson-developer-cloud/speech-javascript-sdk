@@ -8,7 +8,8 @@ Allows you to easily add voice recognition and synthesis to any web app with min
 
 **Warning** This library is still has a few rough edges and may yet see breaking changes.
 
-**For Web Browsers Only** This library is primarily intended for use in browsers. 
+###  For Web Browsers Only
+This library is primarily intended for use in browsers. 
 Check out [watson-developer-cloud](https://www.npmjs.com/package/watson-developer-cloud) to use Watson services (speech and others) from Node.js.
 
 However, a server-side component is required to generate auth tokens. 
@@ -17,15 +18,23 @@ The examples/ folder includes example Node.js and Python servers, and SDKs are a
 [Python](https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py), 
 and there is also a [REST API](http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-tokens.shtml).
 
+### Examples
 See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples
 
-This library is built with [browserify](http://browserify.org/) and easy to use in browserify-based projects (`npm install --save watson-speech`), but you can also grab the compiled bundle from the 
-`dist/` folder and use it as a standalone library.
+### Installation - npm
 
-Basic API
+This library is built with [browserify](http://browserify.org/) and easy to use in browserify-based projects :
+
+    npm install --save watson-speech
+
+### Installation - standalone
+
+Pre-compiled bundles are also available from on GitHub Releases: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases
+
+API
 ---------
 
-Complete API docs should be published at http://watson-developer-cloud.github.io/speech-javascript-sdk/
+The basic API is outlined here, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/
 
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
 (Snp teee examples/token-server.js for a basic example.)
@@ -43,11 +52,6 @@ Options:
 * voice - the desired playback voice's name - see .getVoices(). Note that the voices are language-specific.
 * autoPlay - set to false to prevent the audio from automatically playing
 
-### `.getVoices()` -> Promise
-
-Returns a promise that resolves to an array of objects containing the name, language, gender, and other details for each voice.
-
-Requires[window.fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), a [pollyfill](https://www.npmjs.com/package/whatwg-fetch) for IE/Edge and older Chrome/Firefox.
 
 ## `WatsonSpeech.SpeechToText` 
 
@@ -140,6 +144,7 @@ Accepts input from `RecognizeStream()` and friends, writes text to supplied `out
 * Removed `SpeechToText.recognizeElement()` due to quality issues
 * Added `options.element` to TextToSpeech.synthesize() to support playing through exiting elements
 * Fixed a couple of bugs in the TimingStream
+* Added support for STT profanity_filter &  documented keywords and words_alternatives options.
 
 ### v0.14
 * Moved getUserMedia shim to a [standalone library](https://www.npmjs.com/package/get-user-media-promise)

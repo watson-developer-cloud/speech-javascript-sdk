@@ -26,7 +26,7 @@ var defaults = require('defaults');
 var qs = require('../util/querystring.js');
 
 var OPENING_MESSAGE_PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
-  'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold'];
+  'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold', 'profanity_filter'];
 
 var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Opt-Out' - should be allowed but currently isn't due to a service bug
 
@@ -38,7 +38,9 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Op
  *
  * By default, only finalized text is emitted in the data events, however in `readableObjectMode` (usually just `objectMode` when using a helper method).
  *
- *  An interim result looks like this (assuming all features are enabled):
+ * Todo: add keywords, word_alternatives to examples
+ *
+ *  An interim result looks like this:
  ```js
  { alternatives:
    [ { timestamps:
@@ -62,7 +64,7 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Op
   result_index: 3 }
  ```
 
- While a final result looks like this (again, assuming all features are enabled):
+ While a final result looks like this (some features only appear in final results):
  ```js
   { alternatives:
      [ { word_confidence:
@@ -104,9 +106,7 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Op
     final: true,
     result_index: 3 }
  ```
-
-
-
+ 
  *
  * @param {Object} options
  * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
@@ -117,9 +117,13 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Op
  * @param {Boolean} [options.word_confidence=false] - include confidence scores with results. Defaults to true when in objectMode.
  * @param {Boolean} [options.timestamps=false] - include timestamps with results. Defaults to true when in objectMode.
  * @param {Number} [options.max_alternatives=1] - maximum number of alternative transcriptions to include. Defaults to 3 when in objectMode.
+ * @param {Array<String>} [options.keywords] - a list of keywords to search for in the audio
+ * @param {Number} [options.keywords_threshold] - Number between 0 and 1 representing the minimum confidence before including a keyword in the results. Required when options.keywords is set
+ * @param {Number} [options.word_alternatives_threshold] - Number between 0 and 1 representing the minimum confidence before including an alternative word in the results. Must be set to enable word alternatives,
+ * @param {Boolean} [options.profanity_filter=false] - set to true to filter out profanity and replace the words with *'s
  * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity
  * @param {Boolean} [options.readableObjectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Changes several other defaults.
- * @param {Number} [options.X-WDC-PL-OPT-OUT=0] set to 1 to opt-out of allowing Watson to use this request to improve it's services
+ * @param {Number} [options.X-WDC-PL-OPT-OUT=0] - set to 1 to opt-out of allowing Watson to use this request to improve it's services
  *
  * //todo: investigate other options at http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/apis/#!/speech-to-text/recognizeSessionless
  *
