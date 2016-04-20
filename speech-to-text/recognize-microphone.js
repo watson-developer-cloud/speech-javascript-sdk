@@ -41,7 +41,7 @@ var bitBucket = new Readable();
  * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
  *
- * @returns {RecognizeStream}
+ * @returns {RecognizeStream|FormatStream}
  */
 module.exports = function recognizeMicrophone(options) {
   if (!options || !options.token) {

@@ -59,7 +59,7 @@ Options:
 ## [`WatsonSpeech.SpeechToText`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text.html)
 
 
-### [`.recognizeMicrophone({token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-microphone.html) -> [`RecognizeStream`][RecognizeStream]
+### [`.recognizeMicrophone({token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-microphone.html) -> Stream
 
 Options: 
 * `keepMic`: if true, preserves the MicrophoneStream for subsequent calls, preventing additional permissions requests in Firefox
@@ -74,7 +74,7 @@ Pipes results through a [FormatStream] by default, set `options.format=false` to
 Known issue: Firefox continues to display a microphone icon in the address bar after recording has ceased. This is a browser bug.
 
 
-### [`.recognizeFile({data, token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-file.html) -> [`RecognizeStream`][RecognizeStream]
+### [`.recognizeFile({data, token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-file.html) -> Stream
 
 Can recognize and optionally attempt to play a [File](https://developer.mozilla.org/en-US/docs/Web/API/File) or [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
 (such as from an `<input type="file"/>` or from an ajax request.)

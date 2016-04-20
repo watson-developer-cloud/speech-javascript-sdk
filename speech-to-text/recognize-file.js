@@ -39,7 +39,7 @@ var WritableElementStream = require('./writable-element-stream');
  * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback.
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
  *
- * @returns {RecognizeStream}
+ * @returns {RecognizeStream|FormatStream|TimingStream}
  */
 module.exports = function recognizeFile(options) {
   if (!options || !options.token) {

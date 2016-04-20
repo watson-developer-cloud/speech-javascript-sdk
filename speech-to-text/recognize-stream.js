@@ -274,7 +274,11 @@ RecognizeStream.prototype.initialize = function() {
       return emitError('Invalid JSON received from service:', frame, jsonEx);
     }
 
-    self.emit('message', data);
+    /**
+     * @event RecognizeStream#receive-json
+     * @param {Object} msg - the raw JSON received from Watson - sometimes useful for debugging
+     */
+    self.emit('receive-json', data);
 
     if (data.error) {
       emitError(data.error, frame);
@@ -332,6 +336,10 @@ RecognizeStream.prototype.initialize = function() {
 };
 
 RecognizeStream.prototype.sendJSON = function sendJSON(msg) {
+  /**
+   * @event RecognizeStream#send-json
+   * @param {Object} msg - the raw JSON sent to Watson - sometimes useful for debugging
+   */
   this.emit('send-json', msg);
   return this.socket.send(JSON.stringify(msg));
 };
