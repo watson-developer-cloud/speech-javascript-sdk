@@ -110,7 +110,7 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Op
  * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
  * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] base URL for service
  * @param {String} [options.content-type='audio/wav'] - content type of audio; can be automatically determined from file header in most cases. only wav, flac, and ogg/opus are supported
- * @param {Boolean} [options.interim_results=false] - Send back non-final previews of each "sentence" as it is being processed. Defaults to true when in objectMode.
+ * @param {Boolean} [options.interim_results=true] - Send back non-final previews of each "sentence" as it is being processed. These results are ignored in text mode.
  * @param {Boolean} [options.continuous=true] - set to false to automatically stop the transcription after the first "sentence"
  * @param {Boolean} [options.word_confidence=false] - include confidence scores with results. Defaults to true when in objectMode.
  * @param {Boolean} [options.timestamps=false] - include timestamps with results. Defaults to true when in objectMode.
@@ -183,7 +183,7 @@ RecognizeStream.prototype.initialize = function() {
     'content-type': 'audio/wav',
     continuous: true,
     inactivity_timeout: 30,
-    interim_results: false,
+    interim_results: true,
     word_confidence: false,
     timestamps: false,
     max_alternatives: 1
