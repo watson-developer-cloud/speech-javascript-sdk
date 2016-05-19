@@ -150,7 +150,7 @@ describe('TimingStream', function() {
 
       assert.equal(actual.length, 1);
       assert.equal(actual[0].alternatives[0].transcript, 'thunderstorms');
-      
+
       stream.stop();
 
       clock.tick(6140 - 2320); // 6.141 seconds (total) - end of the last word
