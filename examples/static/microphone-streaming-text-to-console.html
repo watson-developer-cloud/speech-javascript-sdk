@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Watson Speech to Text client example</title>
+</head>
+<body>
+
+<section>
+    <h2>Transcribe from Microphone</h2>
+    <button id="button">Start Microphone Transcription</button>
+    <button id="stop">Stop</button>
+
+    <h2>Output:</h2>
+    <div id="output">Open your browser's console to view the output.</div>
+</section>
+
+<script src="watson-speech.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
+
+<h2>Code for this demo:</h2>
+
+<pre><code><script style="display: block;">
+document.querySelector('#button').onclick = function () {
+
+  fetch('/api/speech-to-text/token')
+  .then(function(response) {
+      return response.text();
+  }).then(function (token) {
+
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+        token: token
+    });
+
+    stream.setEncoding('utf8'); // get text instead of Buffers for on data events
+
+    stream.on('data', function(data) {
+      console.log(data);
+    });
+
+    stream.on('error', function(err) {
+        console.log(err);
+    });
+
+    document.querySelector('#stop').onclick = stream.stop.bind(stream);
+
+  }).catch(function(error) {
+      console.log(error);
+  });
+};
+
+</script></code></pre>
+
+</body>
+</html>
