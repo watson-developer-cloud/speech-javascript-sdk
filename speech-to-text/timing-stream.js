@@ -245,4 +245,12 @@ TimingStream.prototype.handleResult = function handleResult(result) {
 
 TimingStream.prototype.promise = require('./to-promise');
 
+// when stop is called, immediately stop emitting results
+TimingStream.prototype.stop = function stop() {
+  this.emit('stop');
+  clearTimeout(this.nextTick);
+  this.handleResult = function noop(){}; // RecognizeStream.stop() closes the connection gracefully, so we will usually see one more result
+  this.checkForEnd(); // in case the RecognizeStream already ended
+};
+
 module.exports = TimingStream;

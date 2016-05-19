@@ -1,5 +1,11 @@
 # Changelog
 
+### v0.17
+* Enabled interim_results by default for text mode because the service now buffers final results until the end otherwise. 
+  (They are not emitted in text mode, just used for the side effect of faster final results.)
+* Added examples to log data to console in text and object modes
+* Fixed a couple of bugs in .stop() behavior
+
 ### v0.16
 * Added STT.getModels() method to fetch the list of available voice models
 * Added support for STT profanity_filter &  documented keywords and words_alternatives options

@@ -126,5 +126,40 @@ describe('TimingStream', function() {
     });
   });
 
+  it('should .stop() when told to', function(done) {
+    var stream = new TimingStream({objectMode: true});
+    var actual = [];
+    stream.on('data', function(timedResult) {
+      actual.push(timedResult);
+    });
+    stream.on('error', done);
+    var stopFired = false;
+    stream.on('stop', function() {
+      stopFired = true;
+    });
+
+    assert.equal(stream.nextTick, null, 'nextTick should not yet be set');
+
+    stream.write(results[0]);
+    nextTick(function() { // write is always async (?)
+
+      assert.equal(actual.length, 0);
+      assert(stream.nextTick !== null, 'nextTick should be set');
+
+      clock.tick(2320); // 2.32 seconds - just before the end of the first word
+
+      assert.equal(actual.length, 1);
+      assert.equal(actual[0].alternatives[0].transcript, 'thunderstorms');
+      
+      stream.stop();
+
+      clock.tick(6140 - 2320); // 6.141 seconds (total) - end of the last word
+
+      assert.equal(actual.length, 1, 'no more results should be emitted after stop');
+      assert(stopFired, 'stop event should have fired');
+
+      done();
+    });
+  });
 
 });

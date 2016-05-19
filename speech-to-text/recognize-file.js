@@ -73,8 +73,10 @@ module.exports = function recognizeFile(options) {
   }
   if (realtime) {
     stream = stream.pipe(new TimingStream(options));
+    stream.on('stop', recognizeStream.stop.bind(recognizeStream));
+  } else {
+    stream.stop = recognizeStream.stop.bind(recognizeStream);
   }
-  stream.stop = recognizeStream.stop.bind(recognizeStream);
 
   if (options.play) {
     FilePlayer.playFile(options.data).then(function(player) {
