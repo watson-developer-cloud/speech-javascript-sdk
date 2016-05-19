@@ -45,7 +45,7 @@
     "eslint": "^2.8.0",
     "get-user-media-promise": "^1.0.0",
     "karma-eslint": "^2.1.0",
-    "microphone-stream": "^3.0.2",
+    "microphone-stream": "^3.0.5",
     "object.assign": "^4.0.3",
     "object.pick": "^1.1.2",
     "readable-blob-stream": "^1.1.0",
