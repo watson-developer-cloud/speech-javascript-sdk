@@ -29,6 +29,7 @@
     "karma": "^0.13.22",
     "karma-browserify": "^5.0.3",
     "karma-chrome-launcher": "^0.2.3",
+    "karma-eslint": "^2.1.0",
     "karma-express-http-server": "0.0.1",
     "karma-firefox-launcher": "^0.1.7",
     "karma-mocha": "^0.2.2",
@@ -42,9 +43,7 @@
   "dependencies": {
     "clone": "^1.0.2",
     "defaults": "^1.0.3",
-    "eslint": "^2.8.0",
     "get-user-media-promise": "^1.0.0",
-    "karma-eslint": "^2.1.0",
     "microphone-stream": "^3.0.5",
     "object.assign": "^4.0.3",
     "object.pick": "^1.1.2",
