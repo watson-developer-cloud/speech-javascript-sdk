@@ -32,8 +32,7 @@ var bitBucket = new Readable();
  */
 
 /**
- * Create and return a RecognizeStream from the user's microphone
- * If the options.file is set, it is used instead of the microphone
+ * Create and return a RecognizeStream sourcing audio from the user's microphone
  *
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
