@@ -34,7 +34,7 @@ var bitBucket = new Readable();
 /**
  * Create and return a RecognizeStream sourcing audio from the user's microphone
  *
- * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
+ * @param {Object} options - Also passed to {RecognizeStream}, and {FormatStream} when applicable
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {Boolean} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
  * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
