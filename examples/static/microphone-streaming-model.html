@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Watson Speech to Text client example - custom model</title>
+</head>
+<body>
+
+<section>
+    <h2>Transcribe from Microphone</h2>
+    <p>Model: <select id="model"></select> <small><i>Choose the model to be used for the speech recognition.</i></small></p>
+    <button id="button">Start Microphone Transcription</button>
+    <button id="stop">Stop</button>
+
+    <h2>Output:</h2>
+    <div id="output">--</div>
+</section>
+
+<script src="watson-speech.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
+
+<h2>Code for this demo:</h2>
+
+<pre><code><script style="display: block;">
+function getTtsToken() {
+  return fetch('/api/speech-to-text/token')
+    .then(function(response) {
+      return response.text();
+    });
+}
+
+// fetch the models and populate the dropdown
+getTtsToken()
+  .then(function (token) {
+    return WatsonSpeech.SpeechToText.getModels({token: token});
+  }).then(function (models) {
+
+    var dropdown = document.querySelector('#model');
+    models.forEach(function (m) {
+      var o = document.createElement('option');
+      o.value = m.name;
+      o.textContent = m.name;
+      if (m.name == 'en-US_BroadbandModel') {
+        o.selected = true;
+      }
+      dropdown.appendChild(o);
+    });
+
+  }).catch(console.error.bind(console));
+
+// recognize the text using the chosen model
+document.querySelector('#button').onclick = function () {
+  getTtsToken().then(function (token) {
+
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+        token: token,
+        model: document.querySelector('#model').value,
+        outputElement: '#output' // CSS selector or DOM Element
+    });
+
+    stream.on('error', function(err) {
+        console.log(err);
+    });
+
+    document.querySelector('#stop').onclick = stream.stop.bind(stream);
+
+  }).catch(function(error) {
+      console.log(error);
+  });
+};
+
+</script></code></pre>
+
+</body>
+</html>
