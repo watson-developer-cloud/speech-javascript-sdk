@@ -38,7 +38,9 @@ document.querySelector('#button').onclick = function () {
         console.log(err);
     });
 
-    document.querySelector('#stop').onclick = stream.stop.bind(stream);
+    document.querySelector('#stop').onclick = function() {
+      stream.stop();
+    };
 
   }).catch(function(error) {
       console.log(error);
