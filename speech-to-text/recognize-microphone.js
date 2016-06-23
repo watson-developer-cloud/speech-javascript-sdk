@@ -26,13 +26,13 @@ var Writable = require('stream').Writable;
 
 var preservedMicStream;
 var bitBucket = new Writable({
-  write(chunk, encoding, callback) {
+  write: function(chunk, encoding, callback) {
     // when the keepMicrophone option is enabled, unused audio data is sent here so that it isn't buffered by other streams.
     callback();
   },
   objectMode: true, // can still accept strings/buffers
   decodeStrings: false
-}); 
+});
 
 /**
  * @module watson-speech/speech-to-text/recognize-microphone
