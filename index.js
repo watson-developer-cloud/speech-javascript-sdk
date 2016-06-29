@@ -19,7 +19,7 @@
 /**
  * IBM Watson Speech JavaScript SDK
  *
- * Top-level module includes the version, a [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) pollyfill, and both of the speech libraries.
+ * Top-level module includes the version, and both of the speech libraries.
  *
  * If using a bundler such as browserify, you may optionally include sub-modules directly to reduce the size of the final bundle
  *
@@ -28,6 +28,10 @@
 
 /**
  * Release version
+ *
+ * (for pre-built bundles only - if using via npm, read the package.json to determine the version)
+ * 
+ * (This previously did `require('package.json').version` which works in browserify but causes webpack to choke with confusing errors unless extra plugins are included)
  *
  * envify automatically rewrites this during the release process
  */
