@@ -43,7 +43,7 @@ var bitBucket = new Writable({
  *
  * @param {Object} options - Also passed to {RecognizeStream}, and {FormatStream} when applicable
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
- * @param {Boolean} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
+ * @param {Boolean} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
  * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
  *
@@ -57,6 +57,13 @@ module.exports = function recognizeMicrophone(options) {
   // the WritableElementStream works best in objectMode
   if (options.outputElement && options.objectMode !== false) {
     options.objectMode = true;
+  }
+
+  // default format to true (capitals and periods)
+  // default smart_formatting to options.format value (dates, currency, etc.)
+  options.format = (options.format !== false);
+  if (typeof options.smart_formatting === 'undefined') {
+    options.smart_formatting = options.format;
   }
 
   // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
@@ -88,7 +95,7 @@ module.exports = function recognizeMicrophone(options) {
   // set up the output first so that we have a place to emit errors
   // if there's trouble with the input stream
   var stream = recognizeStream;
-  if (options.format !== false) {
+  if (options.format) {
     stream = stream.pipe(new FormatStream(options));
     stream.stop = recognizeStream.stop.bind(recognizeStream);
   }

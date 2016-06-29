@@ -26,7 +26,7 @@ var defaults = require('defaults');
 var qs = require('../util/querystring.js');
 
 var OPENING_MESSAGE_PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
-  'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold', 'profanity_filter'];
+  'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold', 'profanity_filter', 'smart_formatting'];
 
 var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Opt-Out' - should be allowed but currently isn't due to a service bug
 
@@ -122,6 +122,7 @@ var QUERY_PARAMS_ALLOWED = ['model', 'watson-token']; // , 'X-Watson-Learning-Op
  * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity
  * @param {Boolean} [options.readableObjectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Changes several other defaults.
  * @param {Number} [options.X-WDC-PL-OPT-OUT=0] - set to 1 to opt-out of allowing Watson to use this request to improve it's services
+ * @param {Boolean} [options.smart_formatting=false] - formats numeric values such as dates, times, currency, etc.
  *
  * @constructor
  */

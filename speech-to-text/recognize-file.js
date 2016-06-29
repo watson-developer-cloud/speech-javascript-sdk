@@ -35,7 +35,7 @@ var WritableElementStream = require('./writable-element-stream');
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {Blob|File} options.data - the raw audio data as a Blob or File instance
  * @param {Boolean} [options.play=false] - If a file is set, play it locally as it's being uploaded
- * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
+ * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
  * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback.
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
  *
@@ -49,6 +49,13 @@ module.exports = function recognizeFile(options) {
   // the WritableElementStream works best in objectMode
   if (options.outputElement && options.objectMode !== false) {
     options.objectMode = true;
+  }
+
+  // default format to true (capitals and periods)
+  // default smart_formatting to options.format value (dates, currency, etc.)
+  options.format = (options.format !== false);
+  if (typeof options.smart_formatting === 'undefined') {
+    options.smart_formatting = options.format;
   }
 
   var realtime = options.realtime || typeof options.realtime === 'undefined' && options.play;
@@ -68,7 +75,7 @@ module.exports = function recognizeFile(options) {
   var recognizeStream = new RecognizeStream(rsOpts);
   var stream = new BlobStream(options.data).pipe(recognizeStream);
 
-  if (options.format !== false) {
+  if (options.format) {
     stream = stream.pipe(new FormatStream(options));
   }
   if (realtime) {
