@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.19
+ * Added support for STT's `smart_formatting` option
+
 ### v0.17
 * Enabled interim_results by default for text mode because the service now buffers final results until the end otherwise. 
   (They are not emitted in text mode, just used for the side effect of faster final results.)
