@@ -41,7 +41,7 @@ var WritableElementStream = require('./writable-element-stream');
  *
  * @returns {RecognizeStream|FormatStream|TimingStream}
  */
-module.exports = function recognizeFile(options) {
+module.exports = function recognizeFile(options) { // eslint-disable-line complexity
   if (!options || !options.token) {
     throw new Error('WatsonSpeechToText: missing required parameter: opts.token');
   }
