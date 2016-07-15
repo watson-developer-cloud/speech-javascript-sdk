@@ -30,7 +30,7 @@
  * Release version
  *
  * (for pre-built bundles only - if using via npm, read the package.json to determine the version)
- * 
+ *
  * (This previously did `require('package.json').version` which works in browserify but causes webpack to choke with confusing errors unless extra plugins are included)
  *
  * envify automatically rewrites this during the release process
