@@ -10,7 +10,7 @@ There are also a few audio files to test with in the `static/` folder.
 Prerequisite
 ------------
 
-* IBM Watson Speech to Text service credentials - see http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-credentials.shtml
+* IBM Watson Speech to Text service credentials - see http://www.ibm.com/watson/developercloud/doc/getting_started/gs-credentials.shtml
 * Node.js OR Python
 
 
