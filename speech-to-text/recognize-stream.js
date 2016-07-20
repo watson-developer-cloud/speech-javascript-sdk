@@ -381,8 +381,8 @@ RecognizeStream.prototype._write = function(chunk, encoding, callback) {
 // flow control - don't ask for more data until we've finished what we have
 // todo: see if this can be improved
 RecognizeStream.prototype.afterSend = function afterSend(next) {
-  if (this.socket.bufferedAmount <= this._writableState.highWaterMark || 0) {
-    next(); // eslint-disable-line callback-return
+  if (this.socket.bufferedAmount <= (this._writableState.highWaterMark || 0)) {
+    process.nextTick(next);
   } else {
     setTimeout(this.afterSend.bind(this, next), 10);
   }
