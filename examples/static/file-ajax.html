@@ -9,11 +9,7 @@
 <section>
   <h1>Transcribe File via AJAX</h1>
   <button id="button">Load and Transcribe</button>
-  <p>Note: This method is sometimes preferable to embedding an <code>&lt;audio&gt;</code> element because it avoids two
-    lossy conversions (source to web audio, and then web audio to wav) and guarantees that the transcription will work
-    even if the browser cannot play the audio file's format.
-
-    The downside is that it (currently) requires the entire audio file be downloaded before playback or processing can begin, making it impractical for large files.</p>
+  <p>Note: this method requires the entire audio file be downloaded before playback or processing can begin, making it impractical for large files.</p>
 
   <h2>Output:</h2>
   <div id="output">--</div>
