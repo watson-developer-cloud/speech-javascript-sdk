@@ -8,10 +8,11 @@ describe('FormatStream', function() {
 
   it('should format strings', function(done) {
     var stream = new FormatStream();
+    stream.setEncoding('utf8');
     var source = 'foo bar ';
     var expected = 'Foo bar. ';
     stream.on('data', function(actual) {
-      assert(actual, expected);
+      assert.equal(actual, expected);
       done();
     });
     stream.on('error', done);
@@ -20,6 +21,7 @@ describe('FormatStream', function() {
 
   it('should format objects', function(done) {
     var stream = new FormatStream({objectMode: true});
+    stream.setEncoding('utf8');
     var source = {alternatives:
         [{
           confidence: 0.881,
@@ -33,13 +35,51 @@ describe('FormatStream', function() {
         final: true}],
       result_index: 0};
     stream.on('data', function(actual) {
-      assert(actual, expected);
+      assert.equal(actual, expected);
       done();
     });
     stream.on('error', done);
     stream.write(source);
   });
 
+  it('should drop repeated characters', function(done) {
+    var stream = new FormatStream();
+    stream.setEncoding('utf8');
+    var source = 'I, uh mmmmmmmmm ';
+    var expected = 'I, uh. ';
+    stream.on('data', function(actual) {
+      assert.equal(actual, expected);
+      done();
+    });
+    stream.on('error', done);
+    stream.write(source);
+  });
+
+  it('should not add a period to empty text', function(done) {
+    var stream = new FormatStream();
+    stream.setEncoding('utf8');
+    var source = 'mmmmmmmmm '; // this will be stripped by the repeated character check
+    var expected = ' ';
+    stream.on('data', function(actual) {
+      assert.equal(actual, expected);
+      done();
+    });
+    stream.on('error', done);
+    stream.write(source);
+  });
+
+  it('should not drop portions of numbers when smart formatting is enabled', function(done) {
+    var stream = new FormatStream();
+    stream.setEncoding('utf8');
+    var source = '1000101 ';
+    var expected = '1000101. ';
+    stream.on('data', function(actual) {
+      assert.equal(actual, expected);
+      done();
+    });
+    stream.on('error', done);
+    stream.write(source);
+  });
 
   /*
   { results:

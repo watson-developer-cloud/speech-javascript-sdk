@@ -31,8 +31,8 @@ function FormatStream(opts) {
 }
 util.inherits(FormatStream, Transform);
 
-var reHesitation = /%HESITATION\s/g; // when the service tetects a "hesitation" pause, it literally puts the string "%HESITATION" into the transcription
-var reRepeatedCharacter = /(.)\1{2,}/g; // detect the same character repeated three or more times and remove it
+var reHesitation = /%HESITATION\s/g; // when the service detects a "hesitation" pause, it literally puts the string "%HESITATION" into the transcription
+var reRepeatedCharacter = /([a-z])\1{2,}/ig; // detect the same character repeated three or more times and remove it
 var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
 
 /**
@@ -43,21 +43,16 @@ var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
  */
 FormatStream.prototype.clean = function clean(text) {
   // clean out "junk"
-  text = text.trim().replace(reHesitation, this.options.hesitation)
+  text = text.replace(reHesitation, this.options.hesitation)
     .replace(reRepeatedCharacter, '')
     .replace(reDUnderscoreWords,'');
-
-  // short-circuit if there's no actual text (avoids getting multiple periods after a pause)
-  if (!text) {
-    return text;
-  }
 
   // remove spaces for Japanese and Chinese
   if (this.isJaCn) {
     text = text.replace(/ /g,'');
   }
 
-  return text;
+  return text.trim();
 };
 
 /**
@@ -71,11 +66,15 @@ FormatStream.prototype.capitalize = function capitalize(text) {
 };
 
 /**
- * puts a period on the end of a sentence
+ * Puts a period on the end of a sentence
  * @param {String} text
  * @returns {string}
  */
 FormatStream.prototype.period = function period(text) {
+  // don't put a period down if the clean stage remove all of the text
+  if (!text) {
+    return ' ';
+  }
   return text + (this.isJaCn ? '。' : '. ');
 };
 
