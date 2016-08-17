@@ -6,10 +6,15 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "defaults": "^1.0.3",
     "dotenv": "^2.0.0",
     "express": "^4.13.3",
+    "express-browserify": "^1.0.2",
+    "object.assign": "^4.0.4",
     "vcap_services": "^0.1.7",
     "watson-developer-cloud": "^1.2.0",
-    "watson-speech": "*"
-  }
+    "watson-speech": "*",
+    "whatwg-fetch": "^1.0.0"
+  },
+  "license": "Apache-2.0"
 }
