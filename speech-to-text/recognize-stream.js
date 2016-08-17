@@ -176,7 +176,7 @@ RecognizeStream.prototype.initialize = function() {
     options['X-Watson-Learning-Opt-Out'] = options['X-WDC-PL-OPT-OUT'];
   }
 
-  var queryParams=util._extend('customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED):{model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
+  var queryParams = util._extend('customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED) : {model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
 
   var queryString = qs.stringify(queryParams);
   var url = (options.url || 'wss://stream.watsonplatform.net/speech-to-text/api').replace(/^http/, 'ws') + '/v1/recognize?' + queryString;

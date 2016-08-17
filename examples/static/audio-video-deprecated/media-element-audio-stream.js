@@ -30,10 +30,10 @@ function MediaElementAudioStream(element, options) {
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
     // Possible values: null, 256, 512, 1024, 2048, 4096, 8192, 16384
     // however, webkitAudioContext (safari) requires it to be set
-    bufferSize: (typeof AudioContext != "undefined" ? null : 4096),
+    bufferSize: (window.AudioContext ? 4096 : null),
     muteSource: false,
     autoPlay: true,
-    crossOrigin: "anonymous", // required for cross-domain audio playback
+    crossOrigin: 'anonymous', // required for cross-domain audio playback
     objectMode: true // true = emit AudioBuffers w/ audio + some metadata, false = emite node.js Buffers (with binary data only
   });
 
@@ -68,14 +68,14 @@ function MediaElementAudioStream(element, options) {
     // onaudioprocess can be called at least once after we've stopped
     if (recording) {
       // todo: interleave channels in binary mode
-      self.push( options.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)) );
+      self.push(options.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)));
     }
   }
 
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   // cache the source node & context since it's not possible to recreate it later
   var context = element.context = element.context || new AudioContext();
-  var audioInput = element.node  = element.node || context.createMediaElementSource(element);
+  var audioInput = element.node = element.node || context.createMediaElementSource(element);
   var scriptProcessor = context.createScriptProcessor(options.bufferSize, inputChannels, outputChannels);
 
   scriptProcessor.onaudioprocess = processAudio;
@@ -96,41 +96,49 @@ function MediaElementAudioStream(element, options) {
     audioInput.connect(scriptProcessor);
     // other half of workaround for chrome bugs
     scriptProcessor.connect(context.destination);
-    element.removeEventListener("playing", connect);
+    element.removeEventListener('playing', connect);
   }
-  element.addEventListener("playing", connect);
+  element.addEventListener('playing', connect);
 
-  // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
-  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Media_events
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+   */
   function start() {
     element.play();
-    element.removeEventListener("canplaythrough", start);
+    element.removeEventListener('canplaythrough', start);
   }
   if (options.autoPlay) {
     // play immediately if we have enough data, otherwise wait for the canplaythrough event
-    if(element.readyState === element.HAVE_ENOUGH_DATA) {
+    if (element.readyState === element.HAVE_ENOUGH_DATA) {
       element.play();
     } else {
-      element.addEventListener("canplaythrough", start);
+      element.addEventListener('canplaythrough', start);
     }
   }
 
+  /**
+   * cleanup
+   */
   function end() {
     recording = false;
     scriptProcessor.disconnect();
     audioInput.disconnect();
-    //context.close(); // this prevents us from re-using the same audio element until the page is refreshed
+    // context.close(); // this prevents us from re-using the same audio element until the page is refreshed
     self.push(null);
     self.emit('close');
   }
-  element.addEventListener("ended", end);
+  element.addEventListener('ended', end);
 
+  /**
+   * external API
+   */
   this.stop = function() {
     element.pause();
     end();
   };
 
-  element.addEventListener("error", this.emit.bind(this, 'error'));
+  element.addEventListener('error', this.emit.bind(this, 'error'));
 
   process.nextTick(function() {
     // this is more useful for binary mode than object mode, but it won't hurt either way
