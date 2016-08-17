@@ -1,7 +1,11 @@
 # Changelog
 
+### v0.20
+* Documented RecognizeStream's options.token
+
+
 ### v0.19
- * Added support for STT's `smart_formatting` option
+* Added support for STT's `smart_formatting` option
 
 ### v0.17
 * Enabled interim_results by default for text mode because the service now buffers final results until the end otherwise. 

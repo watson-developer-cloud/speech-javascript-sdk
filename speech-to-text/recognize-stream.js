@@ -109,6 +109,7 @@ var QUERY_PARAMS_ALLOWED = ['customization_id',' model', 'watson-token']; // , '
  * @param {Object} options
  * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
  * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] base URL for service
+ * @param {String} [options.token] - Auth token
  * @param {String} [options.content-type='audio/wav'] - content type of audio; can be automatically determined from file header in most cases. only wav, flac, and ogg/opus are supported
  * @param {Boolean} [options.interim_results=true] - Send back non-final previews of each "sentence" as it is being processed. These results are ignored in text mode.
  * @param {Boolean} [options.continuous=true] - set to false to automatically stop the transcription after the first "sentence"
