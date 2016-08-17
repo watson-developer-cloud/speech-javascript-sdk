@@ -2,7 +2,7 @@
 
 ### v0.20
 * Documented RecognizeStream's options.token
-
+* Added support for customization_id in SDK (not yet supported in public STT service)
 
 ### v0.19
 * Added support for STT's `smart_formatting` option
