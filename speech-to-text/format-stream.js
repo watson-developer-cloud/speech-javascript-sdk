@@ -31,7 +31,7 @@ function FormatStream(opts) {
 }
 util.inherits(FormatStream, Transform);
 
-var reHesitation = /%HESITATION\s/g; // when the service detects a "hesitation" pause, it literally puts the string "%HESITATION" into the transcription
+var reHesitation = /%HESITATION/g; // when the service detects a "hesitation" pause, it literally puts the string "%HESITATION" into the transcription
 var reRepeatedCharacter = /([a-z])\1{2,}/ig; // detect the same character repeated three or more times and remove it
 var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
 
@@ -74,6 +74,10 @@ FormatStream.prototype.period = function period(text) {
   // don't put a period down if the clean stage remove all of the text
   if (!text) {
     return ' ';
+  }
+  // just add a space if the sentence ends in an ellipse
+  if (this.options.hesitation && text.substr(-1) === this.options.hesitation) {
+    return text + ' ';
   }
   return text + (this.isJaCn ? '。' : '. ');
 };

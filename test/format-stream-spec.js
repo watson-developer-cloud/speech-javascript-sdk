@@ -81,6 +81,20 @@ describe('FormatStream', function() {
     stream.write(source);
   });
 
+  // https://github.com/watson-developer-cloud/speech-javascript-sdk/issues/13
+  it('should handle %HESITATIONs at the end of a sentence (and not add a period)', function(done) {
+    var stream = new FormatStream();
+    stream.setEncoding('utf8');
+    var source = '%HESITATION asdf %HESITATION ';
+    var expected = '… asdf … ';
+    stream.on('data', function(actual) {
+      assert.equal(actual, expected);
+      done();
+    });
+    stream.on('error', done);
+    stream.write(source);
+  });
+
   /*
   { results:
     [ { alternatives:
