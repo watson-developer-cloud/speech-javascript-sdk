@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.20.1
+* Fixed bug with ellipses at the ends of sentences
+
 ### v0.20
 * Documented RecognizeStream's options.token
 * Added support for customization_id in SDK (not yet supported in public STT service)
