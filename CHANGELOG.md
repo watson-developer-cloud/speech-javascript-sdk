@@ -1,5 +1,9 @@
 # Changelog
 
+### v0.20.2
+* Fixed bug where errors were not propagated to final stream (#10)
+* Fixed bug where RecognizeStream could attempt to send data on non-open WebSocket (#17)
+
 ### v0.20.1
 * Fixed bug with ellipses at the ends of sentences
 
