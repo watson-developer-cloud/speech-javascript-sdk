@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.20.3
+* Fixed broken model query param in STT RecognizeStream
+
 ### v0.20.2
 * Fixed bug where errors were not propagated to final stream (#10)
 * Fixed bug where RecognizeStream could attempt to send data on non-open WebSocket (#17)
