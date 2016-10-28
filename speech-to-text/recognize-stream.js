@@ -36,7 +36,8 @@ var QUERY_PARAMS_ALLOWED = ['customization_id','model', 'watson-token']; // , 'X
  *
  * Uses WebSockets under the hood. For audio with no recognizable speech, no `data` events are emitted.
  *
- * By default, only finalized text is emitted in the data events, however in `readableObjectMode` (usually just `objectMode` when using a helper method).
+ * By default, only finalized text is emitted in the data events, however when `objectMode`/`readableObjectMode` and `interim_results` are enabled, both interim and final results objects are emitted.
+ * WriteableElementStream uses this, for example, to live-update the DOM with word-by-word transcriptions.
  *
  *  An interim result looks like this:
  ```js
