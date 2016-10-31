@@ -146,8 +146,7 @@ function RecognizeStream(options) {
     if (event === 'results' || event === 'result') {
       self.removeListener('newListener', flowForResults);
       process.nextTick(function() {
-        self.on('data', function() {
-        }); // todo: is there a better way to put a stream in flowing mode?
+        self.resume(); // put this stream in flowing mode
       });
       if (!options.silent) {
         // todo: move this to the node.js wrapper
