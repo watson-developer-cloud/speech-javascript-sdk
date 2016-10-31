@@ -112,8 +112,10 @@ FormatStream.prototype.formatResult = function formatResult(result, encoding, ne
           ts[0] = this.period(ts[0]);
         }
         return ts;
-      }, this);
-      // todo: remove any timestamps without a word (due to cleaning out junk words)
+      }, this).filter(function(ts) {
+        return ts[0]; // remove any timestamps without a word (due to cleaning out junk words)
+
+      });
     }
     return alt;
   }, this);
