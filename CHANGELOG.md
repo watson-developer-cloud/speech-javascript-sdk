@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.20.4
+* Fix looping error propagation when not using FormatStream in recognizeMicrophone
+
 ### v0.20.3
 * Fixed broken model query param in STT RecognizeStream
 

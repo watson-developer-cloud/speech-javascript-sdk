@@ -141,17 +141,10 @@ module.exports = function recognizeMicrophone(options) {
 
   }).catch(recognizeStream.emit.bind(recognizeStream, 'error'));
 
-  /**
-   * Propagate error to new FormatStream
-   *
-   * @param {String} error message
-   */
-  function handleError(error) {
-    stream.emit('error', error);
-  }
-
   // Capture error from original RecognizeStream
-  recognizeStream.on('error', handleError);
+  if (stream !== recognizeStream) {
+    recognizeStream.on('error', stream.emit.bind(stream, 'error'));
+  }
 
   return stream;
 };
