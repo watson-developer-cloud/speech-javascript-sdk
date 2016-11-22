@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.21.0
+* Made FormatStream formatting methods available outside of streaming interface
+
 ### v0.20.4
 * Fix looping error propagation when not using FormatStream in recognizeMicrophone
 

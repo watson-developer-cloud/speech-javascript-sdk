@@ -7034,7 +7034,7 @@ RecognizeStream.prototype.initialize = function() {
     'content-type': 'audio/wav',
     continuous: true,
     inactivity_timeout: 30,
-    interim_results: true,
+    interim_results: false,
     word_confidence: false,
     timestamps: false,
     max_alternatives: 1

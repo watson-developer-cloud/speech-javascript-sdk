@@ -6,11 +6,13 @@ var clone = require('clone');
 var defaults = require('defaults');
 
 /**
- * Applies some basic formating to transcriptions:
+ * Applies some basic formatting to transcriptions:
  *  - Capitalize the first word of each sentence
  *  - Add a period to the end
  *  - Fix any "cruft" in the transcription
  *  - etc.
+ *
+ *  May be used as either a Stream, or a standalone helper.
  *
  * @param {Object} opts
  * @param {String} opts.model - some models / languages need special handling
@@ -27,7 +29,7 @@ function FormatStream(opts) {
   Transform.call(this, this.options);
 
   this.isJaCn = ((this.options.model.substring(0,5) === 'ja-JP') || (this.options.model.substring(0,5) === 'zh-CN'));
-  this._transform = this.options.objectMode ? this.formatResult : this.formatString;
+  this._transform = this.options.objectMode ? this.transformObject : this.transformString;
 }
 util.inherits(FormatStream, Transform);
 
@@ -82,25 +84,42 @@ FormatStream.prototype.period = function period(text) {
   return text + (this.isJaCn ? '。' : '. ');
 };
 
-FormatStream.prototype.formatString = function(chunk, encoding, next) {
-  this.push(this.period(this.capitalize(this.clean(chunk.toString()))));
+FormatStream.prototype.transformString = function(chunk, encoding, next) {
+  this.push(this.formatString(chunk.toString()));
   next();
+};
+
+FormatStream.prototype.transformObject = function formatResult(result, encoding, next) {
+  this.push(this.formatResult(result));
+  next();
+};
+
+/**
+ * Formats a single string result.
+ *
+ * May be used outside of Node.js streams
+ *
+ * @param {String} str - text to format
+ * @param {bool} [isInterim=false] - set to true to prevent adding a period to the end of the sentence
+ * @returns {String}
+ */
+FormatStream.prototype.formatString = function(str, isInterim) {
+  str = this.capitalize(this.clean(str));
+  return isInterim ? str : this.period(str);
 };
 
 /**
  * Creates a new result with all transcriptions formatted
  *
+ * May be used outside of Node.js streams
+ *
  * @param {Object} result
- * @param {String} encoding
- * @param {Function} next
+ * @returns {Object}
  */
-FormatStream.prototype.formatResult = function formatResult(result, encoding, next) {
+FormatStream.prototype.formatResult = function formatResult(result) {
   result = clone(result);
   result.alternatives = result.alternatives.map(function(alt) {
-    alt.transcript = this.capitalize(this.clean(alt.transcript));
-    if (result.final) {
-      alt.transcript = this.period(alt.transcript);
-    }
+    alt.transcript = this.formatString(alt.transcript, !result.final);
     if (alt.timestamps) {
       alt.timestamps = alt.timestamps.map(function(ts, i, arr) {
         // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
@@ -119,8 +138,7 @@ FormatStream.prototype.formatResult = function formatResult(result, encoding, ne
     }
     return alt;
   }, this);
-  this.push(result);
-  next();
+  return result;
 };
 
 FormatStream.prototype.promise = require('./to-promise');
