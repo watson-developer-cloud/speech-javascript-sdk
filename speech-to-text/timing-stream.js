@@ -44,11 +44,13 @@ util.inherits(TimingStream, Duplex);
 TimingStream.START = 1;
 TimingStream.END = 2;
 
-TimingStream.prototype._write = function(result, encoding, next) {
-  if (result instanceof Buffer) {
+TimingStream.prototype._write = function(data, encoding, next) {
+  if (data instanceof Buffer) {
     return this.emit('error', new Error('TimingStream requires the source to be in objectMode'));
   }
-  this.handleResult(result);
+  if (Array.isArray(data.results) && data.results.length) {
+    this.handleResult(data);
+  }
   next();
 };
 
@@ -61,7 +63,7 @@ TimingStream.prototype.cutoff = function cutoff() {
 };
 
 TimingStream.prototype.withinRange = function(result, cutoff) {
-  return result.alternatives.some(function(alt) {
+  return result.results[0].alternatives.some(function(alt) {
     // timestamp structure is ["word", startTime, endTime]
     // if the first timestamp ends before the cutoff, then it's at least partially within range
     var timestamp = alt.timestamps[0];
@@ -70,7 +72,7 @@ TimingStream.prototype.withinRange = function(result, cutoff) {
 };
 
 TimingStream.prototype.completelyWithinRange = function(result, cutoff) {
-  return result.alternatives.every(function(alt) {
+  return result.results[0].alternatives.every(function(alt) {
     // timestamp structure is ["word", startTime, endTime]
     // if the last timestamp ends before the cutoff, then it's completely within range
     var timestamp = alt.timestamps[alt.timestamps.length - 1];
@@ -80,12 +82,13 @@ TimingStream.prototype.completelyWithinRange = function(result, cutoff) {
 
 /**
  * Clones the given result and then crops out any words that occur later than the current cutoff
- * @param {Object} result
+ * @param {Object} data
  * @param {Number} cutoff timestamp (in seconds)
  * @returns {Object}
  */
-Duplex.prototype.crop = function crop(result, cutoff) {
-  result = clone(result);
+Duplex.prototype.crop = function crop(data, cutoff) {
+  data = clone(data);
+  var result = data.results[0];
   result.alternatives = result.alternatives.map(function(alt) {
     var timestamps = [];
     for (var i = 0, timestamp; i < alt.timestamps.length; i++) {
@@ -104,7 +107,7 @@ Duplex.prototype.crop = function crop(result, cutoff) {
   }, this);
   // "final" signifies both that the text won't change, and that we're at the end of a sentence. Only one of those is true here.
   result.final = false;
-  return result;
+  return data;
 };
 
 /**
@@ -148,9 +151,9 @@ TimingStream.prototype.tick = function tick() {
     if (this.options.objectMode || this.options.readableObjectMode) {
       this.push(result);
     } else {
-      this.push(result.alternatives[0].transcript);
+      this.push(result.results[0].alternatives[0].transcript);
     }
-    if (result.final) {
+    if (result.results[0].final) {
       this.nextTick = setTimeout(this.tick.bind(this), 0); // in case we are multiple results behind - don't schedule until we are out of final results that are due now
       return;
     }
@@ -173,7 +176,7 @@ TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
   var nextResult = this.final[0] || this.interim[0];
   if (nextResult) {
     // loop through the timestamps until we find one that comes after the current cutoff (there should always be one)
-    var timestamps = nextResult.alternatives[0].timestamps;
+    var timestamps = nextResult.results[0].alternatives[0].timestamps;
     for (var i = 0; i < timestamps.length; i++) {
       var wordOffset = timestamps[i][this.options.emitAt];
       if (wordOffset > cutoff) {
@@ -204,41 +207,56 @@ TimingStream.prototype.checkForEnd = function() {
 
 /**
  * Returns true if the result is missing it's timestamps
- * @param {Object} result
+ * @param {Object} data
  * @returns {Boolean}
  */
-function noTimestamps(result) {
-  var alt = result.alternatives && result.alternatives[0];
-  return !!(alt && alt.transcript.trim() && !alt.timestamps || !alt.timestamps.length);
+function noTimestamps(data) {
+  return data.results.some(function(result) {
+    var alt = result.alternatives && result.alternatives[0];
+    return !!(alt && (alt.transcript.trim() && !alt.timestamps || !alt.timestamps.length));
+  });
 }
 
 /**
  * Creates a new result with all transcriptions formatted
  *
- * @param {Object} result
+ * @param {Object} data
  */
-TimingStream.prototype.handleResult = function handleResult(result) {
-  if (noTimestamps(result)) {
+TimingStream.prototype.handleResult = function handleResult(data) {
+  if (noTimestamps(data)) {
     this.emit('error', new Error('TimingStream requires timestamps'));
     return;
   }
 
-  // additional alternatives do not include timestamps, so we can't process and emit them correctly
-  if (result.alternatives.length > 1) {
-    result.alternatives.length = 1;
-  }
+  // http://www.ibm.com/watson/developercloud/speech-to-text/api/v1/#SpeechRecognitionEvent
+  var index = data.results[0].result_index;
 
-  // loop through the buffer and delete any interim results with the same or lower index
-  while (this.interim.length && this.interim[0].index <= result.index) {
-    this.interim.shift();
-  }
+  // process each result individually
+  data.results.forEach(function(result) {
+    // additional alternatives do not include timestamps, so we can't process and emit them correctly
+    if (result.alternatives.length > 1) {
+      result.alternatives.length = 1;
+    }
 
-  if (result.final) {
-    // then add it to the final results array
-    this.final.push(result);
-  } else {
-    this.interim.push(result);
-  }
+    // loop through the buffer and delete any interim results with the same or lower index
+    while (this.interim.length && this.interim[0].result_index <= index) {
+      this.interim.shift();
+    }
+
+    // in case this data object had multiple results in it
+    var newData = clone(data);
+    data.results = [result];
+    data.result_index = index;
+
+    if (result.final) {
+      // then add it to the final results array
+      this.final.push(newData);
+    } else {
+      this.interim.push(newData);
+    }
+
+    index++;
+  }, this);
 
   this.tick();
 };

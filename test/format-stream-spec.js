@@ -22,18 +22,20 @@ describe('FormatStream', function() {
   it('should format objects', function(done) {
     var stream = new FormatStream({objectMode: true});
     stream.setEncoding('utf8');
-    var source = {alternatives:
+    var source = {results: [
+      {alternatives:
         [{
           confidence: 0.881,
           transcript: 'foo bar ',
           final: true}],
-      result_index: 0};
-    var expected = {alternatives:
+      result_index: 0}]};
+    var expected = {results: [
+      {alternatives:
       [{
         confidence: 0.881,
         transcript: 'Foo bar. ',
         final: true}],
-      result_index: 0};
+      result_index: 0}]};
     stream.on('data', function(actual) {
       assert.equal(actual, expected);
       done();

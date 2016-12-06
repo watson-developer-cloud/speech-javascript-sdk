@@ -1,5 +1,14 @@
 # Changelog
 
+
+### v0.22.0
+* Breaking: RecognizeStream now emits the original JSON message rather than the extracted results objects.
+* New ResultExtractor stream that can provide the old behavior
+* New `extract_results` option on recogniseFile/Microphone enables this.
+* Removed derecated `result` and `results` events from RecognizeStream.
+* Removed `receive-json` event from RecognizeStream because it now duplicates the behavior of the `data` event.
+
+
 ### v0.21.0
 * Made FormatStream formatting methods available outside of streaming interface
 

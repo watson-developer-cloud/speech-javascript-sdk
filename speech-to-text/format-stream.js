@@ -113,32 +113,36 @@ FormatStream.prototype.formatString = function(str, isInterim) {
  *
  * May be used outside of Node.js streams
  *
- * @param {Object} result
+ * @param {Object} data
  * @returns {Object}
  */
-FormatStream.prototype.formatResult = function formatResult(result) {
-  result = clone(result);
-  result.alternatives = result.alternatives.map(function(alt) {
-    alt.transcript = this.formatString(alt.transcript, !result.final);
-    if (alt.timestamps) {
-      alt.timestamps = alt.timestamps.map(function(ts, i, arr) {
-        // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
-        ts[0] = this.clean(ts[0]);
-        if (i === 0) {
-          ts[0] = this.capitalize(ts[0]);
-        }
-        if (i === arr.length - 1 && result.final) {
-          ts[0] = this.period(ts[0]);
-        }
-        return ts;
-      }, this).filter(function(ts) {
-        return ts[0]; // remove any timestamps without a word (due to cleaning out junk words)
+FormatStream.prototype.formatResult = function formatResult(data) {
+  data = clone(data);
+  if (Array.isArray(data.results)) {
+    data.results.forEach(function(result) {
+      result.alternatives = result.alternatives.map(function(alt) {
+        alt.transcript = this.formatString(alt.transcript, !result.final);
+        if (alt.timestamps) {
+          alt.timestamps = alt.timestamps.map(function(ts, i, arr) {
+            // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
+            ts[0] = this.clean(ts[0]);
+            if (i === 0) {
+              ts[0] = this.capitalize(ts[0]);
+            }
+            if (i === arr.length - 1 && result.final) {
+              ts[0] = this.period(ts[0]);
+            }
+            return ts;
+          }, this).filter(function(ts) {
+            return ts[0]; // remove any timestamps without a word (due to cleaning out junk words)
 
-      });
-    }
-    return alt;
-  }, this);
-  return result;
+          });
+        }
+        return alt;
+      }, this);
+    }, this);
+  }
+  return data;
 };
 
 FormatStream.prototype.promise = require('./to-promise');

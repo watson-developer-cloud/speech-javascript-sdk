@@ -25,10 +25,27 @@ var contentType = require('./content-type');
 var defaults = require('defaults');
 var qs = require('../util/querystring.js');
 
-var OPENING_MESSAGE_PARAMS_ALLOWED = ['continuous', 'max_alternatives', 'timestamps', 'word_confidence', 'inactivity_timeout',
-  'content-type', 'interim_results', 'keywords', 'keywords_threshold', 'word_alternatives_threshold', 'profanity_filter', 'smart_formatting'];
+var OPENING_MESSAGE_PARAMS_ALLOWED = [
+  'continuous',
+  'inactivity_timeout',
+  'timestamps',
+  'word_confidence',
+  'content-type',
+  'interim_results',
+  'keywords',
+  'keywords_threshold',
+  'max_alternatives',
+  'word_alternatives_threshold',
+  'profanity_filter',
+  'smart_formatting'
+];
 
-var QUERY_PARAMS_ALLOWED = ['customization_id','model', 'watson-token']; // , 'X-Watson-Learning-Opt-Out' - should be allowed but currently isn't due to a service bug
+var QUERY_PARAMS_ALLOWED = [
+  'customization_id',
+  'model',
+  'watson-token',
+  'X-Watson-Learning-Opt-Out'
+];
 
 
 /**
@@ -123,7 +140,7 @@ var QUERY_PARAMS_ALLOWED = ['customization_id','model', 'watson-token']; // , 'X
  * @param {Boolean} [options.profanity_filter=false] - set to true to filter out profanity and replace the words with *'s
  * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity
  * @param {Boolean} [options.readableObjectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Changes several other defaults.
- * @param {Number} [options.X-WDC-PL-OPT-OUT=0] - set to 1 to opt-out of allowing Watson to use this request to improve it's services
+ * @param {Number} [options.X-Watson-Learning-Opt-Out=false] - set to true to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.smart_formatting=false] - formats numeric values such as dates, times, currency, etc.
  * @param {String} [options.customization_id] - not yet supported on the public STT service
  *
@@ -278,12 +295,6 @@ RecognizeStream.prototype.initialize = function() {
       return emitError('Invalid JSON received from service:', frame, jsonEx);
     }
 
-    /**
-     * @event RecognizeStream#receive-json
-     * @param {Object} msg - the raw JSON received from Watson - sometimes useful for debugging
-     */
-    self.emit('receive-json', data);
-
     if (data.error) {
       emitError(data.error, frame);
     } else if (data.state === 'listening') {
@@ -296,43 +307,26 @@ RecognizeStream.prototype.initialize = function() {
         self.listening = true;
         self.emit('listening');
       }
-    } else if (data.results) {
-      /**
-       * Object with array of interim or final results, possibly including confidence scores, alternatives, and word timing. May have no results at all for empty audio files.
-       * @event RecognizeStream#results
-       * @param {Object} results
-       * @deprecated - use objectMode and listen for the 'data' event instead
-       */
-      self.emit('results', data.results);
-
-      // note: currently there is always either 0 or 1 entries in the results array. However, this may change in the future.
-      data.results.forEach(function(result) {
-        result.index = data.result_index;
+    } else {
+      if (options.objectMode || options.readableObjectMode) {
         /**
          * Object with interim or final results, possibly including confidence scores, alternatives, and word timing.
-         * @event RecognizeStream#results
-         * @param {Object} results
-         * @deprecated - use objectMode and listen for the 'data' event instead
+         * @event RecognizeStream#data
+         * @param {Object} data
          */
-        self.emit('result', result);
-        if (options.objectMode || options.readableObjectMode) {
-          /**
-           * Object with interim or final results, possibly including confidence scores, alternatives, and word timing.
-           * @event RecognizeStream#data
-           * @param {Object} data
-           */
-          self.push(result);
-        } else if (result.final && result.alternatives) {
-          /**
-           * Finalized text
-           * @event RecognizeStream#data
-           * @param {String} transcript
-           */
-          self.push(result.alternatives[0].transcript, 'utf8');
-        }
-      });
-    } else {
-      emitError('Unrecognised message from server', frame);
+        self.push(data);
+      } else if (Array.isArray(data.results)) {
+        data.results.forEach(function(result) {
+          if (result.final && result.alternatives) {
+            /**
+             * Finalized text
+             * @event RecognizeStream#data
+             * @param {String} transcript
+             */
+            self.push(result.alternatives[0].transcript, 'utf8');
+          }
+        });
+      }
     }
   };
 

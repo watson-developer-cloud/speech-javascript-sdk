@@ -22,6 +22,7 @@ var FormatStream = require('./format-stream.js');
 var TimingStream = require('./timing-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
+var ResultExtractor = require('./result-extractor');
 
 /**
  * @module watson-speech/speech-to-text/recognize-file
@@ -38,6 +39,7 @@ var WritableElementStream = require('./writable-element-stream');
  * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
  * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback.
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
+ * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Requires objectMode.
  *
  * @returns {RecognizeStream|FormatStream|TimingStream}
  */
@@ -48,6 +50,10 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
 
   // the WritableElementStream works best in objectMode
   if (options.outputElement && options.objectMode !== false) {
+    options.objectMode = true;
+  }
+  // the ResultExtractor only works in objectMode
+  if (options.extractResults && options.objectMode !== false) {
     options.objectMode = true;
   }
 
@@ -95,6 +101,17 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
 
   if (options.outputElement) {
     stream.pipe(new WritableElementStream(options));
+  }
+
+  if(options.extractResults) {
+    var stop = stream.stop.bind(stream);
+    stream = stream.pipe(new ResultExtractor());
+    stream.stop = stop;
+  }
+
+  // Capture error from original RecognizeStream
+  if (stream !== recognizeStream) {
+    recognizeStream.on('error', stream.emit.bind(stream, 'error'));
   }
 
   return stream;

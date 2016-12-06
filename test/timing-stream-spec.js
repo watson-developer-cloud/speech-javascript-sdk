@@ -6,7 +6,7 @@ var PassThrough = require('stream').PassThrough;
 
 var TimingStream = require('../speech-to-text/timing-stream.js');
 
-var results = require('./resources/results.json').results;
+var results = require('./resources/results.json');
 
 describe('TimingStream', function() {
 
@@ -34,7 +34,7 @@ describe('TimingStream', function() {
 
     assert.equal(stream.nextTick, null, 'nextTick should not yet be set');
 
-    stream.write(results[0]);
+    stream.write(results);
     nextTick(function() { // write is always async (?)
 
       assert.equal(actual.length, 0);
@@ -43,12 +43,12 @@ describe('TimingStream', function() {
       clock.tick(2320); // 2.32 seconds - just before the end of the first word
 
       assert.equal(actual.length, 1);
-      assert.equal(actual[0].alternatives[0].transcript, 'thunderstorms');
-      assert.equal(actual[0].final, false, 'split up results should be interim');
+      assert.equal(actual[0].results[0].alternatives[0].transcript, 'thunderstorms');
+      assert.equal(actual[0].results[0].final, false, 'split up results should be interim');
 
       clock.tick(6140 - 2320); // 6.141 seconds (total) - end of the last word
 
-      var lastResult = actual[actual.length - 1];
+      var lastResult = actual[actual.length - 1].results[0];
 
       assert.equal(lastResult.alternatives[0].transcript, 'thunderstorms could produce large hail isolated tornadoes and heavy rain ');
       assert.equal(lastResult.final, true, 'the end result should still be final');
@@ -72,7 +72,7 @@ describe('TimingStream', function() {
       endFired = true;
     });
 
-    source.end(results[0]);
+    source.end(results);
     nextTick(function() { // write is always async (?)
 
       clock.tick(6140); // 6.140 seconds - end of the last word
@@ -105,7 +105,7 @@ describe('TimingStream', function() {
       endFired = true;
     });
 
-    source.write(results[0]);
+    source.write(results);
     nextTick(function() { // write is always async (?)
 
       clock.tick(6140); // 6.140 seconds - end of the last word
@@ -140,7 +140,7 @@ describe('TimingStream', function() {
 
     assert.equal(stream.nextTick, null, 'nextTick should not yet be set');
 
-    stream.write(results[0]);
+    stream.write(results);
     nextTick(function() { // write is always async (?)
 
       assert.equal(actual.length, 0);
@@ -149,7 +149,7 @@ describe('TimingStream', function() {
       clock.tick(2320); // 2.32 seconds - just before the end of the first word
 
       assert.equal(actual.length, 1);
-      assert.equal(actual[0].alternatives[0].transcript, 'thunderstorms');
+      assert.equal(actual[0].results[0].alternatives[0].transcript, 'thunderstorms');
 
       stream.stop();
 

@@ -12,7 +12,7 @@
     <button id="stop">Stop</button>
 
     <h2>Output:</h2>
-    <div id="output">Open your browser's console to view the output.</div>
+    <div id="output">Open your browser's console to view the output. The results are simplified by removing the outer JSON (this was the default behavior before v0.22).</div>
 </section>
 
 <script src="watson-speech.js"></script>
@@ -31,10 +31,9 @@ document.querySelector('#button').onclick = function () {
 
     var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
         token: token,
-        speaker_labels: true
+        objectMode: true, // send objects instead of text
+        extractResults: true // convert {results: [{alternatives:[...]}], result_index: 0} to {alternatives: [...], index: 0}
     });
-
-    stream.setEncoding('utf8'); // get text instead of Buffers for on data events
 
     stream.on('data', function(data) {
       console.log(data);

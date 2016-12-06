@@ -23,6 +23,7 @@ var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 var Writable = require('stream').Writable;
+var ResultExtractor = require('./result-extractor');
 
 var preservedMicStream;
 var bitBucket = new Writable({
@@ -46,6 +47,7 @@ var bitBucket = new Writable({
  * @param {Boolean} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
  * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
+ * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Requires objectMode.
  *
  * @returns {RecognizeStream|FormatStream}
  */
@@ -56,6 +58,10 @@ module.exports = function recognizeMicrophone(options) {
 
   // the WritableElementStream works best in objectMode
   if (options.outputElement && options.objectMode !== false) {
+    options.objectMode = true;
+  }
+  // the ResultExtractor only works in objectMode
+  if (options.extractResults && options.objectMode !== false) {
     options.objectMode = true;
   }
 
@@ -97,11 +103,14 @@ module.exports = function recognizeMicrophone(options) {
   var stream = recognizeStream;
   if (options.format) {
     stream = stream.pipe(new FormatStream(options));
-    stream.stop = recognizeStream.stop.bind(recognizeStream);
   }
 
   if (options.outputElement) {
     stream.pipe(new WritableElementStream(options));
+  }
+
+  if(options.extractResults) {
+    stream = stream.pipe(new ResultExtractor());
   }
 
   getMicStream.catch(function(err) {
@@ -144,6 +153,7 @@ module.exports = function recognizeMicrophone(options) {
   // Capture error from original RecognizeStream
   if (stream !== recognizeStream) {
     recognizeStream.on('error', stream.emit.bind(stream, 'error'));
+    stream.stop = recognizeStream.stop.bind(recognizeStream);
   }
 
   return stream;

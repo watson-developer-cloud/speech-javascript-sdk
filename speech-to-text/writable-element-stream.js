@@ -56,12 +56,16 @@ WritableElementStream.prototype.writeString = function writeString(text, encodin
   next();
 };
 
-WritableElementStream.prototype.writeObject = function writeObject(result, encoding, next) {
-  if (result.final) {
-    this.finalizedText += result.alternatives[0].transcript;
-    this.el[this.prop] = this.finalizedText;
-  } else {
-    this.el[this.prop] = this.finalizedText + result.alternatives[0].transcript;
+WritableElementStream.prototype.writeObject = function writeObject(data, encoding, next) {
+  if (Array.isArray(data.results)) {
+    data.results.forEach(function(result) {
+      if (result.final) {
+        this.finalizedText += result.alternatives[0].transcript;
+        this.el[this.prop] = this.finalizedText;
+      } else {
+        this.el[this.prop] = this.finalizedText + result.alternatives[0].transcript;
+      }
+    }, this);
   }
   next();
 };
