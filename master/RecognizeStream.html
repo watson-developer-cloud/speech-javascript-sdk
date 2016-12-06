@@ -769,7 +769,7 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
 
         <tr>
             
-                <td class="name"><code>X-WDC-PL-OPT-OUT</code></td>
+                <td class="name"><code>X-Watson-Learning-Opt-Out</code></td>
             
 
             <td class="type">
@@ -796,12 +796,12 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
             
                 <td class="default">
                 
-                    0
+                    false
                 
                 </td>
             
 
-            <td class="description last"><p>set to 1 to opt-out of allowing Watson to use this request to improve it's services</p></td>
+            <td class="description last"><p>set to true to opt-out of allowing Watson to use this request to improve it's services</p></td>
         </tr>
 
     
@@ -925,7 +925,7 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line132">line 132</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line150">line 150</a>
     </li></ul></dd>
     
 
@@ -1074,7 +1074,7 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line145">line 145</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line163">line 163</a>
     </li></ul></dd>
     
 
@@ -1232,7 +1232,7 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line238">line 238</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line256">line 256</a>
     </li></ul></dd>
     
 
@@ -1384,7 +1384,7 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line244">line 244</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line262">line 262</a>
     </li></ul></dd>
     
 
@@ -1515,7 +1515,7 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line326">line 326</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line322">line 322</a>
     </li></ul></dd>
     
 
@@ -1646,7 +1646,7 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line319">line 319</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line313">line 313</a>
     </li></ul></dd>
     
 
@@ -1849,400 +1849,7 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line253">line 253</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="event:receive-json">receive-json</h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>the raw JSON received from Watson - sometimes useful for debugging</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line281">line 281</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="event:results">results</h4>
-
-    
-
-
-
-<div class="description">
-    <p>Object with interim or final results, possibly including confidence scores, alternatives, and word timing.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>results</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>- use objectMode and listen for the 'data' event instead</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line311">line 311</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="event:results">results</h4>
-
-    
-
-
-
-<div class="description">
-    <p>Object with array of interim or final results, possibly including confidence scores, alternatives, and word timing. May have no results at all for empty audio files.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>results</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>- use objectMode and listen for the 'data' event instead</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line300">line 300</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line271">line 271</a>
     </li></ul></dd>
     
 
@@ -2369,7 +1976,7 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line343">line 343</a>
+        <a href="speech-to-text_recognize-stream.js.html">speech-to-text/recognize-stream.js</a>, <a href="speech-to-text_recognize-stream.js.html#line338">line 338</a>
     </li></ul></dd>
     
 
@@ -2407,13 +2014,13 @@ WriteableElementStream uses this, for example, to live-update the DOM with word-
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:receive-json">receive-json</a></li><li><a href="RecognizeStream.html#event:results">results</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultExtractor.html">ResultExtractor</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Tue Nov 01 2016 15:47:08 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Dec 06 2016 22:44:44 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

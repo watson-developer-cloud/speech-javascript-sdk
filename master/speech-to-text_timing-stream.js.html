@@ -56,7 +56,9 @@ function TimingStream(opts) {
   // buffer to store future results
   this.final = [];
   this.interim = [];
+  this.speakerLabels = [];
   this.nextTick = null;
+  this.nextSpeakerLabelsTick = null;
   this.sourceEnded = false;
 
   var self = this;
@@ -72,11 +74,16 @@ util.inherits(TimingStream, Duplex);
 TimingStream.START = 1;
 TimingStream.END = 2;
 
-TimingStream.prototype._write = function(result, encoding, next) {
-  if (result instanceof Buffer) {
+TimingStream.prototype._write = function(data, encoding, next) {
+  if (data instanceof Buffer) {
     return this.emit('error', new Error('TimingStream requires the source to be in objectMode'));
   }
-  this.handleResult(result);
+  if (Array.isArray(data.results) &amp;&amp; data.results.length) {
+    this.handleResult(data);
+  }
+  if (Array.isArray(data.speaker_labels) &amp;&amp; data.speaker_labels.length) {
+    this.handleSpeakerLabels(data);
+  }
   next();
 };
 
@@ -89,7 +96,7 @@ TimingStream.prototype.cutoff = function cutoff() {
 };
 
 TimingStream.prototype.withinRange = function(result, cutoff) {
-  return result.alternatives.some(function(alt) {
+  return result.results[0].alternatives.some(function(alt) {
     // timestamp structure is ["word", startTime, endTime]
     // if the first timestamp ends before the cutoff, then it's at least partially within range
     var timestamp = alt.timestamps[0];
@@ -98,7 +105,7 @@ TimingStream.prototype.withinRange = function(result, cutoff) {
 };
 
 TimingStream.prototype.completelyWithinRange = function(result, cutoff) {
-  return result.alternatives.every(function(alt) {
+  return result.results[0].alternatives.every(function(alt) {
     // timestamp structure is ["word", startTime, endTime]
     // if the last timestamp ends before the cutoff, then it's completely within range
     var timestamp = alt.timestamps[alt.timestamps.length - 1];
@@ -108,12 +115,13 @@ TimingStream.prototype.completelyWithinRange = function(result, cutoff) {
 
 /**
  * Clones the given result and then crops out any words that occur later than the current cutoff
- * @param {Object} result
+ * @param {Object} data
  * @param {Number} cutoff timestamp (in seconds)
  * @returns {Object}
  */
-Duplex.prototype.crop = function crop(result, cutoff) {
-  result = clone(result);
+Duplex.prototype.crop = function crop(data, cutoff) {
+  data = clone(data);
+  var result = data.results[0];
   result.alternatives = result.alternatives.map(function(alt) {
     var timestamps = [];
     for (var i = 0, timestamp; i &lt; alt.timestamps.length; i++) {
@@ -132,7 +140,7 @@ Duplex.prototype.crop = function crop(result, cutoff) {
   }, this);
   // "final" signifies both that the text won't change, and that we're at the end of a sentence. Only one of those is true here.
   result.final = false;
-  return result;
+  return data;
 };
 
 /**
@@ -176,15 +184,39 @@ TimingStream.prototype.tick = function tick() {
     if (this.options.objectMode || this.options.readableObjectMode) {
       this.push(result);
     } else {
-      this.push(result.alternatives[0].transcript);
+      this.push(result.results[0].alternatives[0].transcript);
     }
-    if (result.final) {
+    if (result.results[0].final) {
       this.nextTick = setTimeout(this.tick.bind(this), 0); // in case we are multiple results behind - don't schedule until we are out of final results that are due now
       return;
     }
   }
 
   this.scheduleNextTick(cutoff);
+};
+
+/**
+ * Given a speaker labels message, returns the final to time
+ * @param {Object} msg
+ * @returns {Number}
+ */
+function getEnd(msg) {
+  return msg.speaker_labels[msg.speaker_labels.length - 1].to;
+}
+
+TimingStream.prototype.tickSpeakerLables = function tickSpeakerLabels() {
+  clearTimeout(this.nextSpeakerLabelsTick);
+  if (getEnd(this.speakerLabels[0]) &lt;= this.cutoff()) {
+    this.push(this.speakerLabels.shift());
+  }
+  if (this.speakerLabels.length) {
+    var nextMsg = this.speakerLabels[0];
+    var nextTime = this.startTime + (getEnd(nextMsg) * 1000);
+    this.nextSpeakerLabelsTick = setTimeout(this.tickSpeakerLables.bind(this, nextTime - Date.now()));
+  } else {
+    this.nextSpeakerLabelsTick = null;
+    this.checkForEnd();
+  }
 };
 
 /**
@@ -201,7 +233,7 @@ TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
   var nextResult = this.final[0] || this.interim[0];
   if (nextResult) {
     // loop through the timestamps until we find one that comes after the current cutoff (there should always be one)
-    var timestamps = nextResult.alternatives[0].timestamps;
+    var timestamps = nextResult.results[0].alternatives[0].timestamps;
     for (var i = 0; i &lt; timestamps.length; i++) {
       var wordOffset = timestamps[i][this.options.emitAt];
       if (wordOffset > cutoff) {
@@ -224,7 +256,7 @@ TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
  *  - there must be no next tick scheduled, indicating that there are no results buffered for later delivery
  */
 TimingStream.prototype.checkForEnd = function() {
-  if (this.sourceEnded &amp;&amp; !this.nextTick) {
+  if (this.sourceEnded &amp;&amp; !this.nextTick &amp;&amp; !this.nextSpeakerLabelsTick) {
     this.emit('close');
     this.push(null);
   }
@@ -232,43 +264,65 @@ TimingStream.prototype.checkForEnd = function() {
 
 /**
  * Returns true if the result is missing it's timestamps
- * @param {Object} result
+ * @param {Object} data
  * @returns {Boolean}
  */
-function noTimestamps(result) {
-  var alt = result.alternatives &amp;&amp; result.alternatives[0];
-  return !!(alt &amp;&amp; alt.transcript.trim() &amp;&amp; !alt.timestamps || !alt.timestamps.length);
+function noTimestamps(data) {
+  return data.results.some(function(result) {
+    var alt = result.alternatives &amp;&amp; result.alternatives[0];
+    return !!(alt &amp;&amp; (alt.transcript.trim() &amp;&amp; !alt.timestamps || !alt.timestamps.length));
+  });
 }
 
 /**
  * Creates a new result with all transcriptions formatted
  *
- * @param {Object} result
+ * @param {Object} data
  */
-TimingStream.prototype.handleResult = function handleResult(result) {
-  if (noTimestamps(result)) {
+TimingStream.prototype.handleResult = function handleResult(data) {
+  if (noTimestamps(data)) {
     this.emit('error', new Error('TimingStream requires timestamps'));
     return;
   }
 
-  // additional alternatives do not include timestamps, so we can't process and emit them correctly
-  if (result.alternatives.length > 1) {
-    result.alternatives.length = 1;
-  }
+  // http://www.ibm.com/watson/developercloud/speech-to-text/api/v1/#SpeechRecognitionEvent
+  var index = data.results[0].result_index;
 
-  // loop through the buffer and delete any interim results with the same or lower index
-  while (this.interim.length &amp;&amp; this.interim[0].index &lt;= result.index) {
-    this.interim.shift();
-  }
+  // process each result individually
+  data.results.forEach(function(result) {
+    // additional alternatives do not include timestamps, so we can't process and emit them correctly
+    if (result.alternatives.length > 1) {
+      result.alternatives.length = 1;
+    }
 
-  if (result.final) {
-    // then add it to the final results array
-    this.final.push(result);
-  } else {
-    this.interim.push(result);
-  }
+    // loop through the buffer and delete any interim results with the same or lower index
+    while (this.interim.length &amp;&amp; this.interim[0].result_index &lt;= index) {
+      this.interim.shift();
+    }
+
+    // in case this data object had multiple results in it
+    var newData = clone(data);
+    data.results = [result];
+    data.result_index = index;
+
+    if (result.final) {
+      // then add it to the final results array
+      this.final.push(newData);
+      // and reset the interim results array because anything there has now been superseded and should not be emitted.
+      this.interim = [];
+    } else {
+      this.interim.push(newData);
+    }
+
+    index++;
+  }, this);
 
   this.tick();
+};
+
+TimingStream.prototype.handleSpeakerLabels = function handleSpeakerLabels(data) {
+  this.speakerLabels.push(data);
+  this.tickSpeakerLables();
 };
 
 TimingStream.prototype.promise = require('./to-promise');
@@ -277,7 +331,8 @@ TimingStream.prototype.promise = require('./to-promise');
 TimingStream.prototype.stop = function stop() {
   this.emit('stop');
   clearTimeout(this.nextTick);
-  this.handleResult = function noop(){}; // RecognizeStream.stop() closes the connection gracefully, so we will usually see one more result
+  clearTimeout(this.nextSpeakerLabelsTick);
+  this.handleResult = this.handleSpeakerLabels = function noop(){}; // RecognizeStream.stop() closes the connection gracefully, so we will usually see one more result
   this.checkForEnd(); // in case the RecognizeStream already ended
 };
 
@@ -292,13 +347,13 @@ module.exports = TimingStream;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:receive-json">receive-json</a></li><li><a href="RecognizeStream.html#event:results">results</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultExtractor.html">ResultExtractor</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Tue Nov 01 2016 15:47:08 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Dec 06 2016 22:44:44 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

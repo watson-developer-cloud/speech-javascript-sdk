@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: speech-to-text/content-type.js</title>
+    <title>JSDoc: Class: ResultExtractor</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,36 +17,179 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: speech-to-text/content-type.js</h1>
+    <h1 class="page-title">Class: ResultExtractor</h1>
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>'use strict';
+        <h2>ResultExtractor</h2>
+        
+    
+</header>
 
-// these are the only content-types currently supported by the speech-to-tet service
-var contentTypes = {
-  fLaC: 'audio/flac',
-  RIFF: 'audio/wav',
-  OggS: 'audio/ogg; codecs=opus'
-};
+<article>
+    <div class="container-overview">
+    
+        
 
-/**
- * Takes the beginning of an audio file and returns the associated content-type / mime type
- *
- * @param {String} header first 4 characters of the file as a UTF-8 string
- * @returns {String|undefined} - the contentType of undefined
- */
-module.exports = function contentType(header) {
-  return contentTypes[header];
-};
-</code></pre>
-        </article>
-    </section>
+    
+
+    <h4 class="name" id="ResultExtractor"><span class="type-signature"></span>new ResultExtractor<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Object-Mode stream that pulls result objects from the results array</p>
+<p>Also copies the top-level result_index to the individual results as .index</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="speech-to-text_result-extractor.js.html">speech-to-text/result-extractor.js</a>, <a href="speech-to-text_result-extractor.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

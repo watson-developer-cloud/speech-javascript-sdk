@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: speech-to-text/content-type.js</title>
+    <title>JSDoc: Source: speech-to-text/result-extractor.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: speech-to-text/content-type.js</h1>
+    <h1 class="page-title">Source: speech-to-text/result-extractor.js</h1>
 
     
 
@@ -26,24 +26,63 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>'use strict';
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright 2014 IBM Corp. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-// these are the only content-types currently supported by the speech-to-tet service
-var contentTypes = {
-  fLaC: 'audio/flac',
-  RIFF: 'audio/wav',
-  OggS: 'audio/ogg; codecs=opus'
-};
+'use strict';
+
+
+var Transform = require('stream').Transform;
+var util = require('util');
+var clone = require('clone');
 
 /**
- * Takes the beginning of an audio file and returns the associated content-type / mime type
+ * Object-Mode stream that pulls result objects from the results array
  *
- * @param {String} header first 4 characters of the file as a UTF-8 string
- * @returns {String|undefined} - the contentType of undefined
+ * Also copies the top-level result_index to the individual results as .index
+ *
+ * @constructor
+ * @param {Object} options
  */
-module.exports = function contentType(header) {
-  return contentTypes[header];
+function ResultExtractor(options) {
+  options = options || {};
+  options.objectMode = true;
+  Transform.call(this, options);
+  this.options = options;
+}
+util.inherits(ResultExtractor, Transform);
+
+ResultExtractor.prototype._transform = function(data, encoding, next) {
+  // when speaker_labels is enabled, some messages won't have a results array
+  if (Array.isArray(data.results)) {
+    // usually there is exactly 1 result, but there can be 0 in some circumstances, and potentially more in future iterations
+    data.results.forEach(function(result) {
+      var cloned = clone(result);
+      cloned.index = data.result_index;
+      this.push(cloned);
+    }, this);
+  } else {
+    this.push(data);
+  }
+  next();
 };
+
+ResultExtractor.prototype.promise = require('./to-promise');
+
+module.exports = ResultExtractor;
 </code></pre>
         </article>
     </section>

@@ -26,7 +26,7 @@
     
 
 
-    <h3>watson-speech 0.20.4</h3>
+    <h3>watson-speech 0.22.0</h3>
 
 
 
@@ -56,7 +56,11 @@ The examples/ folder includes example Node.js and Python servers, and SDKs are a
 and there is also a <a href="http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-tokens.shtml">REST API</a>.</p>
 <h3>Installation - standalone</h3><p>Pre-compiled bundles are available from on GitHub Releases - just download the file and drop it into your website: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases</p>
 <h3>Installation - npm with browserify</h3><p>This library is built with <a href="http://browserify.org/">browserify</a> and easy to use in browserify-based projects :</p>
-<pre class="prettyprint source"><code>npm install --save watson-speech</code></pre><h2>API &amp; Examples</h2><p>The basic API is outlined below, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/</p>
+<pre class="prettyprint source"><code>npm install --save watson-speech</code></pre><h2>Breaking change for v0.22.0</h2><p>The format of objects emitted in objectMode has changed from <code>{alternatives: [...], index: 1}</code> to <code>{results: [{alternatives: [...]}], result_index: 1}</code>.
+This was done to enable the new <code>speaker_labels</code> feature.
+There is a new <code>ResultExtractor</code> class and <code>recognizeMicrophone()</code> and <code>recognizeFile()</code> both accept a new <code>extract_results</code> option to restore the old behavior.</p>
+<p>The format now exactly matches what the Watson Speech to Text service returns and shouldn't change again unless the Watson service changes.</p>
+<h2>API &amp; Examples</h2><p>The basic API is outlined below, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/</p>
 <p>See several examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/static/</p>
 <p>All API methods require an auth token that must be <a href="https://github.com/watson-developer-cloud/node-sdk#authorization">generated server-side</a>. 
 (See https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/ for a couple of basic examples in Node.js and Python.)</p>
@@ -98,6 +102,7 @@ Playback will automatically stop when <code>.stop()</code> is called on the Reco
 <li>Removed <code>SpeechToText.recognizeElement()</code> due to quality issues</li>
 <li>renamed <code>recognizeBlob</code> to <code>recognizeFile</code> to make the primary usage more apparent</li>
 <li>Changed <code>playFile</code> option of <code>recognizeBlob()</code> to just <code>play</code>, corrected default</li>
+<li>Changed format of objects emitted in objectMode to exactly match what service sends. Added <code>ResultExtractor</code> class and <code>extract_results</code> option to enable older behavior.</li>
 </ul>
 <p>See <a href="CHANGELOG.md">CHANGELOG.md</a> for a complete list of changes.</p>
 <h2>todo</h2><ul>
@@ -124,13 +129,13 @@ Playback will automatically stop when <code>.stop()</code> is called on the Reco
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:receive-json">receive-json</a></li><li><a href="RecognizeStream.html#event:results">results</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultExtractor.html">ResultExtractor</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Tue Nov 01 2016 15:47:08 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Dec 06 2016 22:44:44 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
