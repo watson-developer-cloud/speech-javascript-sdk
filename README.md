@@ -31,6 +31,15 @@ This library is built with [browserify](http://browserify.org/) and easy to use 
 
     npm install --save watson-speech
 
+Breaking change for v0.22.0
+----------------------------
+
+The format of objects emitted in objectMode has changed from `{alternatives: [...], index: 1}` to `{results: [{alternatives: [...]}], result_index: 1}`.
+This was done to enable the new `speaker_labels` feature.
+There is a new `ResultExtractor` class and `recognizeMicrophone()` and `recognizeFile()` both accept a new `extract_results` option to restore the old behavior.
+
+The format now exactly matches what the Watson Speech to Text service returns and shouldn't change again unless the Watson service changes.
+
 
 API & Examples
 --------------
@@ -101,6 +110,7 @@ There have been a few breaking changes in recent releases:
 * Removed `SpeechToText.recognizeElement()` due to quality issues
 * renamed `recognizeBlob` to `recognizeFile` to make the primary usage more apparent
 * Changed `playFile` option of `recognizeBlob()` to just `play`, corrected default
+* Changed format of objects emitted in objectMode to exactly match what service sends. Added `ResultExtractor` class and `extract_results` option to enable older behavior.
 
 See [CHANGELOG.md](CHANGELOG.md) for a complete list of changes.
 
