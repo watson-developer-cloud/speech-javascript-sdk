@@ -46,6 +46,8 @@ ResultExtractor.prototype._transform = function(data, encoding, next) {
       cloned.index = data.result_index;
       this.push(cloned);
     }, this);
+  } else {
+    this.push(data);
   }
   next();
 };
