@@ -109,7 +109,7 @@ module.exports = function recognizeMicrophone(options) {
     stream.pipe(new WritableElementStream(options));
   }
 
-  if(options.extractResults) {
+  if (options.extractResults) {
     stream = stream.pipe(new ResultExtractor());
   }
 

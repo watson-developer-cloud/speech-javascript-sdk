@@ -7,6 +7,7 @@ var PassThrough = require('stream').PassThrough;
 var TimingStream = require('../speech-to-text/timing-stream.js');
 
 var results = require('./resources/results.json');
+var messageStream = require('./resources/car_loan_stream.json');
 
 describe('TimingStream', function() {
 
@@ -157,6 +158,78 @@ describe('TimingStream', function() {
 
       assert.equal(actual.length, 1, 'no more results should be emitted after stop');
       assert(stopFired, 'stop event should have fired');
+
+      done();
+    });
+  });
+
+  it('should not emit interim results after the final result for a given index', function(done) {
+    var stream = new TimingStream({objectMode: true});
+    var actual = [];
+    stream.on('data', function(timedResult) {
+      actual.push(timedResult);
+    });
+    stream.on('error', done);
+
+    messageStream.forEach(function(msg) {
+      if (msg.results) {
+        stream.write(msg);
+      }
+    });
+
+    var numTicks = 37.26 * 1000;
+
+    for (var i = 0; i < numTicks; i++) {
+      clock.tick(1);
+    }
+
+    nextTick(function() { // write is always async (?)
+
+      actual.reduce(function(lastIndex, msg) {
+        assert.equal(msg.result_index, lastIndex);
+        // index should always increment after a final message
+        return (msg.results[0].final) ? lastIndex + 1 : lastIndex;
+      }, 0);
+
+      done();
+    });
+  });
+
+  it('should pass through speaker_labels after the matching final results', function(done) {
+    var stream = new TimingStream({objectMode: true});
+    var actual = [];
+    stream.on('data', function(timedResult) {
+      actual.push(timedResult);
+    });
+    stream.on('error', done);
+
+    messageStream.forEach(function(msg) {
+      stream.write(msg);
+    });
+
+    var numTicks = 37.26 * 1000;
+
+    for (var i = 0; i < numTicks; i++) {
+      clock.tick(1);
+    }
+
+    nextTick(function() { // write is always async (?)
+
+      var wasFinal = false;
+      var endTime = 0;
+      var speakerLabelsMessages = 0;
+      actual.forEach(function(msg) {
+        if (msg.speaker_labels) {
+          speakerLabelsMessages++;
+          assert(wasFinal, 'message preceding speaker_labels message was final');
+          var spealerLabelsEndTime = msg.speaker_labels[msg.speaker_labels.length - 1].to;
+          assert.equal(spealerLabelsEndTime, endTime);
+        } else {
+          wasFinal = msg.results[0].final;
+          var timestamps = msg.results[0].alternatives[0].timestamps;
+          endTime = timestamps[timestamps.length - 1][2];
+        }
+      });
 
       done();
     });

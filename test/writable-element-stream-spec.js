@@ -41,7 +41,7 @@ describe('WritableElementStream', function() {
     };
   });
 
-    it('should accept strings/buffers and write out contents when in string mode', function() {
+  it('should accept strings/buffers and write out contents when in string mode', function() {
     var el = document.createElement('div');
     var s = new WritableElementStream({outputElement: el});
     s.write('abc');
@@ -70,7 +70,7 @@ describe('WritableElementStream', function() {
     var s = new WritableElementStream({outputElement: el, objectMode: true});
     s.write(RESULT_ABC);
     s.write(RESULT_123_INTERIM);
-    var RESULT_DEF = clone(RESULT_123_INTERIM)
+    var RESULT_DEF = clone(RESULT_123_INTERIM);
     RESULT_DEF.results[0].alternatives[0].transcript = 'def';
     s.write(RESULT_DEF);
     assert.equal(el.textContent, 'abcdef');

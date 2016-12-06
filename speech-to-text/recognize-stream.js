@@ -37,7 +37,8 @@ var OPENING_MESSAGE_PARAMS_ALLOWED = [
   'max_alternatives',
   'word_alternatives_threshold',
   'profanity_filter',
-  'smart_formatting'
+  'smart_formatting',
+  'speaker_labels'
 ];
 
 var QUERY_PARAMS_ALLOWED = [

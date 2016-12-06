@@ -1,7 +1,7 @@
 'use strict';
 
 var assert = require('assert');
-
+var clone = require('clone');
 var FormatStream = require('../speech-to-text/format-stream.js');
 
 describe('FormatStream', function() {
@@ -91,6 +91,24 @@ describe('FormatStream', function() {
     var expected = '… asdf … ';
     stream.on('data', function(actual) {
       assert.equal(actual, expected);
+      done();
+    });
+    stream.on('error', done);
+    stream.write(source);
+  });
+
+  it('should pass through speaker_labels messages', function(done) {
+    var stream = new FormatStream({objectMode: true});
+    var source = {speaker_labels: [{
+      from: 28.92,
+      to: 29.17,
+      speaker: 1,
+      confidence: 0.641,
+      final: false
+    }]};
+    var expected = clone(source);
+    stream.on('data', function(actual) {
+      assert.deepEqual(actual, expected);
       done();
     });
     stream.on('error', done);

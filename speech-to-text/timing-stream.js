@@ -28,7 +28,9 @@ function TimingStream(opts) {
   // buffer to store future results
   this.final = [];
   this.interim = [];
+  this.speakerLabels = [];
   this.nextTick = null;
+  this.nextSpeakerLabelsTick = null;
   this.sourceEnded = false;
 
   var self = this;
@@ -50,6 +52,9 @@ TimingStream.prototype._write = function(data, encoding, next) {
   }
   if (Array.isArray(data.results) && data.results.length) {
     this.handleResult(data);
+  }
+  if (Array.isArray(data.speaker_labels) && data.speaker_labels.length) {
+    this.handleSpeakerLabels(data);
   }
   next();
 };
@@ -163,6 +168,30 @@ TimingStream.prototype.tick = function tick() {
 };
 
 /**
+ * Given a speaker labels message, returns the final to time
+ * @param {Object} msg
+ * @returns {Number}
+ */
+function getEnd(msg) {
+  return msg.speaker_labels[msg.speaker_labels.length - 1].to;
+}
+
+TimingStream.prototype.tickSpeakerLables = function tickSpeakerLabels() {
+  clearTimeout(this.nextSpeakerLabelsTick);
+  if (getEnd(this.speakerLabels[0]) <= this.cutoff()) {
+    this.push(this.speakerLabels.shift());
+  }
+  if (this.speakerLabels.length) {
+    var nextMsg = this.speakerLabels[0];
+    var nextTime = this.startTime + (getEnd(nextMsg) * 1000);
+    this.nextSpeakerLabelsTick = setTimeout(this.tickSpeakerLables.bind(this, nextTime - Date.now()));
+  } else {
+    this.nextSpeakerLabelsTick = null;
+    this.checkForEnd();
+  }
+};
+
+/**
  * Schedules next tick if possible. Requires previous stream to emit recognize objects (objectMode or readableObjectMode)
  *
  * triggers the 'close' and 'end' events if the buffer is empty and no further results are expected
@@ -199,7 +228,7 @@ TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
  *  - there must be no next tick scheduled, indicating that there are no results buffered for later delivery
  */
 TimingStream.prototype.checkForEnd = function() {
-  if (this.sourceEnded && !this.nextTick) {
+  if (this.sourceEnded && !this.nextTick && !this.nextSpeakerLabelsTick) {
     this.emit('close');
     this.push(null);
   }
@@ -251,6 +280,8 @@ TimingStream.prototype.handleResult = function handleResult(data) {
     if (result.final) {
       // then add it to the final results array
       this.final.push(newData);
+      // and reset the interim results array because anything there has now been superseded and should not be emitted.
+      this.interim = [];
     } else {
       this.interim.push(newData);
     }
@@ -261,13 +292,19 @@ TimingStream.prototype.handleResult = function handleResult(data) {
   this.tick();
 };
 
+TimingStream.prototype.handleSpeakerLabels = function handleSpeakerLabels(data) {
+  this.speakerLabels.push(data);
+  this.tickSpeakerLables();
+};
+
 TimingStream.prototype.promise = require('./to-promise');
 
 // when stop is called, immediately stop emitting results
 TimingStream.prototype.stop = function stop() {
   this.emit('stop');
   clearTimeout(this.nextTick);
-  this.handleResult = function noop(){}; // RecognizeStream.stop() closes the connection gracefully, so we will usually see one more result
+  clearTimeout(this.nextSpeakerLabelsTick);
+  this.handleResult = this.handleSpeakerLabels = function noop(){}; // RecognizeStream.stop() closes the connection gracefully, so we will usually see one more result
   this.checkForEnd(); // in case the RecognizeStream already ended
 };
 

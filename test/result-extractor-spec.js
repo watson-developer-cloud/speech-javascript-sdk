@@ -8,7 +8,7 @@ describe('ResultExtractor', function() {
   it('should extract results', function(done) {
     var stream = new ResultExtractor();
     var source = {results: [{alternatives: [{transcript: 'foo'}]}], result_index: 1};
-    var expected = {alternatives: [{transcript: 'foo'}], index: 1}
+    var expected = {alternatives: [{transcript: 'foo'}], index: 1};
     stream.on('data', function(actual) {
       assert.deepEqual(actual, expected);
       done();

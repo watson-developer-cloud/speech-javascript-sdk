@@ -103,7 +103,7 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
     stream.pipe(new WritableElementStream(options));
   }
 
-  if(options.extractResults) {
+  if (options.extractResults) {
     var stop = stream.stop.bind(stream);
     stream = stream.pipe(new ResultExtractor());
     stream.stop = stop;
