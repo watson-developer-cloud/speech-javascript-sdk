@@ -111,6 +111,7 @@ There have been a few breaking changes in recent releases:
 * renamed `recognizeBlob` to `recognizeFile` to make the primary usage more apparent
 * Changed `playFile` option of `recognizeBlob()` to just `play`, corrected default
 * Changed format of objects emitted in objectMode to exactly match what service sends. Added `ResultExtractor` class and `extract_results` option to enable older behavior.
+* Changed `playback-error` event to just `error` when recognizing and playing a file. Check for `error.name == 'UNSUPPORTED_FORMAT'` to identify playback errors
 
 See [CHANGELOG.md](CHANGELOG.md) for a complete list of changes.
 

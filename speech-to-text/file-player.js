@@ -18,7 +18,7 @@ function getContentTypeFromFile(file) {
         resolve(ct);
       } else {
         var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
-        err.name = 'UNRECOGNIZED_FORMAT';
+        err.name = 'UNSUPPORTED_FORMAT';
         reject(err);
       }
     };

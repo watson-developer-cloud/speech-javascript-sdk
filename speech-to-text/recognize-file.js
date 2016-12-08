@@ -94,8 +94,9 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
   if (options.play) {
     FilePlayer.playFile(options.data).then(function(player) {
       recognizeStream.on('stop', player.stop.bind(player));
+      recognizeStream.on('error', player.stop.bind(player));
     }).catch(function(err) {
-      stream.emit('playback-error', err);
+      stream.emit('error', err);
     });
   }
 

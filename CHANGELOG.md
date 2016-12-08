@@ -1,5 +1,10 @@
 # Changelog
 
+### v0.23.0
+* Changed file player error.name from `UNRECOGNIZED_FORMAT` to `UNSUPPORTED_FORMAT`
+  (There are now two potential errors with this name: the file is recognized but the browser cannot play it, and the file type is not recognized.)
+* Changed the `playback-error` event to just `error`
+* Automatically stop file playback in the event of a RecognizeStream error
 
 ### v0.22.0
 * Breaking: RecognizeStream now emits the original JSON message rather than the extracted results objects.
