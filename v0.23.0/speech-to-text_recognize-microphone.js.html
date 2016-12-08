@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: speech-to-text/recognize-microphone.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: speech-to-text/recognize-microphone.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright 2015 IBM Corp. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+'use strict';
+var getUserMedia = require('get-user-media-promise');
+var MicrophoneStream = require('microphone-stream');
+var RecognizeStream = require('./recognize-stream.js');
+var L16 = require('./webaudio-l16-stream.js');
+var FormatStream = require('./format-stream.js');
+var assign = require('object.assign/polyfill')();
+var WritableElementStream = require('./writable-element-stream');
+var Writable = require('stream').Writable;
+var ResultExtractor = require('./result-extractor');
+
+var preservedMicStream;
+var bitBucket = new Writable({
+  write: function(chunk, encoding, callback) {
+    // when the keepMicrophone option is enabled, unused audio data is sent here so that it isn't buffered by other streams.
+    callback();
+  },
+  objectMode: true, // can still accept strings/buffers
+  decodeStrings: false
+});
+
+/**
+ * @module watson-speech/speech-to-text/recognize-microphone
+ */
+
+/**
+ * Create and return a RecognizeStream sourcing audio from the user's microphone
+ *
+ * @param {Object} options - Also passed to {RecognizeStream}, and {FormatStream} when applicable
+ * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
+ * @param {Boolean} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
+ * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
+ * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
+ * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Requires objectMode.
+ *
+ * @returns {RecognizeStream|FormatStream}
+ */
+module.exports = function recognizeMicrophone(options) {
+  if (!options || !options.token) {
+    throw new Error('WatsonSpeechToText: missing required parameter: opts.token');
+  }
+
+  // the WritableElementStream works best in objectMode
+  if (options.outputElement &amp;&amp; options.objectMode !== false) {
+    options.objectMode = true;
+  }
+  // the ResultExtractor only works in objectMode
+  if (options.extractResults &amp;&amp; options.objectMode !== false) {
+    options.objectMode = true;
+  }
+
+  // default format to true (capitals and periods)
+  // default smart_formatting to options.format value (dates, currency, etc.)
+  options.format = (options.format !== false);
+  if (typeof options.smart_formatting === 'undefined') {
+    options.smart_formatting = options.format;
+  }
+
+  // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
+  var rsOpts = assign({}, options);
+  rsOpts.readableObjectMode = options.objectMode;
+  rsOpts['content-type'] = 'audio/l16;rate=16000';
+  delete rsOpts.objectMode;
+
+  var recognizeStream = new RecognizeStream(rsOpts);
+
+  var keepMic = options.keepMicrophone;
+  var getMicStream;
+  if (keepMic &amp;&amp; preservedMicStream) {
+    preservedMicStream.unpipe(bitBucket);
+    getMicStream = Promise.resolve(preservedMicStream);
+  } else {
+    getMicStream = getUserMedia({video: false, audio: true}).then(function(mic) {
+      var micStream = new MicrophoneStream(mic, {
+        objectMode: true,
+        bufferSize: options.bufferSize
+      });
+      if (keepMic) {
+        preservedMicStream = micStream;
+      }
+      return Promise.resolve(micStream);
+    });
+  }
+
+  // set up the output first so that we have a place to emit errors
+  // if there's trouble with the input stream
+  var stream = recognizeStream;
+  if (options.format) {
+    stream = stream.pipe(new FormatStream(options));
+  }
+
+  if (options.outputElement) {
+    stream.pipe(new WritableElementStream(options));
+  }
+
+  if (options.extractResults) {
+    stream = stream.pipe(new ResultExtractor());
+  }
+
+  getMicStream.catch(function(err) {
+    stream.emit('error', err);
+  });
+
+  getMicStream.then(function(micStream) {
+    var l16Stream = new L16({writableObjectMode: true});
+
+    micStream
+      .pipe(l16Stream)
+      .pipe(recognizeStream);
+
+    /**
+     * unpipes the mic stream to prevent any more audio from being sent over the wire
+     * temporarily re-pipes it to the bitBucket (basically /dev/null)  becuse
+     * otherwise it will buffer the audio from in between calls and prepend it to the next one
+     *
+     * @private
+     */
+    function end() {
+      micStream.unpipe(l16Stream);
+      micStream.pipe(bitBucket);
+      l16Stream.end();
+    }
+    // trigger on both stop and end events:
+    // stop will not fire when a stream ends due to a timeout or having continuous: false
+    // but when stop does fire, we want to honor it immediately
+    // end will always fire, but it may take a few moments after stop
+    if (keepMic) {
+      recognizeStream.on('end', end);
+      recognizeStream.on('stop', end);
+    } else {
+      recognizeStream.on('end', micStream.stop.bind(micStream));
+      recognizeStream.on('stop', micStream.stop.bind(micStream));
+    }
+
+  }).catch(recognizeStream.emit.bind(recognizeStream, 'error'));
+
+  // Capture error from original RecognizeStream
+  if (stream !== recognizeStream) {
+    recognizeStream.on('error', stream.emit.bind(stream, 'error'));
+    stream.stop = recognizeStream.stop.bind(recognizeStream);
+  }
+
+  return stream;
+};
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultExtractor.html">ResultExtractor</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Dec 08 2016 15:27:54 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
