@@ -235,4 +235,42 @@ describe('TimingStream', function() {
     });
   });
 
+  it('should not emit the same transcript twice', function(done) {
+    var stream = new TimingStream({objectMode: true});
+    var actual = [];
+    stream.on('data', function(timedResult) {
+      actual.push(timedResult);
+    });
+    stream.on('error', done);
+
+    messageStream.forEach(function(msg) {
+      if (msg.results) {
+        stream.write(msg);
+      }
+    });
+
+    var numTicks = 37.26 * 1000;
+
+    for (var i = 0; i < numTicks; i++) {
+      clock.tick(1);
+    }
+
+    nextTick(function() { // write is always async (?)
+
+      var lastTranscript = '';
+      actual.forEach(function(msg) {
+        var transcript = msg.results[0].alternatives[0].transcript;
+        var final = msg.results[0].final;
+        // a final result  may have the same text as the previous result (regardless of weather the previous was interim or final)
+        if (!final) {
+          assert.notEqual(transcript, lastTranscript);
+          assert.notEqual(transcript.trim(), lastTranscript.trim());
+        }
+        lastTranscript = transcript;
+      });
+
+      done();
+    });
+  });
+
 });
