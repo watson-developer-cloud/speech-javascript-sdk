@@ -58,6 +58,11 @@ module.exports = {
   TimingStream: require('./timing-stream'),
 
   /**
+   * @see ResultStream
+   */
+  ResultStream: require('./result-stream'),
+
+  /**
    * @see WritableElementStream
    */
   WritableElementStream: require('./writable-element-stream'),
