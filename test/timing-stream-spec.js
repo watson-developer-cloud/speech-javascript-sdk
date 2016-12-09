@@ -3,7 +3,7 @@
 var assert = require('assert');
 var sinon = require('sinon');
 var PassThrough = require('stream').PassThrough;
-
+var clone = require('clone');
 var TimingStream = require('../speech-to-text/timing-stream.js');
 
 var results = require('./resources/results.json');
@@ -271,6 +271,22 @@ describe('TimingStream', function() {
 
       done();
     });
+  });
+
+  it('should error if given results with no timestamps', function(done) {
+    var noTimestamps = require('../speech-to-text/no-timestamps');
+    assert(noTimestamps.ERROR_NO_TIMESTAMPS, 'noTimestamps.ERROR_NO_TIMESTAMPS should be defined');
+    var stream = new TimingStream({objectMode: true});
+    var data = clone(require('./resources/results.json'));
+    delete data.results[0].alternatives[0].timestamps;
+    stream.on('data', function(data) {
+      assert.fail(data, undefined, "data emitted")
+    });
+    stream.on('error', function(err) {
+      assert.equal(err.name, noTimestamps.ERROR_NO_TIMESTAMPS);
+      done();
+    });
+    stream.end(data);
   });
 
 });

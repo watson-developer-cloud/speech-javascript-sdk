@@ -4,6 +4,7 @@ var Duplex = require('stream').Duplex;
 var util = require('util');
 var clone = require('clone');
 var defaults = require('defaults');
+var noTimestamps = require('./no-timestamps');
 
 /**
  * Slows results down to no faster than real time.
@@ -234,17 +235,6 @@ TimingStream.prototype.checkForEnd = function() {
   }
 };
 
-/**
- * Returns true if the result is missing it's timestamps
- * @param {Object} data
- * @returns {Boolean}
- */
-function noTimestamps(data) {
-  return data.results.some(function(result) {
-    var alt = result.alternatives && result.alternatives[0];
-    return !!(alt && (alt.transcript.trim() && !alt.timestamps || !alt.timestamps.length));
-  });
-}
 
 /**
  * Creates a new result with all transcriptions formatted
@@ -253,8 +243,9 @@ function noTimestamps(data) {
  */
 TimingStream.prototype.handleResult = function handleResult(data) {
   if (noTimestamps(data)) {
-    this.emit('error', new Error('TimingStream requires timestamps'));
-    return;
+    var err = new Error('TimingStream requires timestamps');
+    err.name = noTimestamps.ERROR_NO_TIMESTAMPS;
+    return this.emit('error', err);
   }
 
   // http://www.ibm.com/watson/developercloud/speech-to-text/api/v1/#SpeechRecognitionEvent
