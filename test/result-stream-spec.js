@@ -2,9 +2,9 @@
 
 var assert = require('assert');
 var clone = require('clone');
-var ResultExtractor = require('../speech-to-text/result-extractor.js');
+var ResultStream = require('../speech-to-text/result-stream.js');
 
-describe('ResultExtractor', function() {
+describe('ResultStream', function() {
 
   it('should extract results', function(done) {
     var stream = new ResultExtractor();

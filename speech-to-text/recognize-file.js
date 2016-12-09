@@ -22,7 +22,7 @@ var FormatStream = require('./format-stream.js');
 var TimingStream = require('./timing-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
-var ResultExtractor = require('./result-extractor');
+var ResultStream = require('./result-stream');
 
 /**
  * @module watson-speech/speech-to-text/recognize-file
@@ -106,7 +106,7 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
 
   if (options.extractResults) {
     var stop = stream.stop.bind(stream);
-    stream = stream.pipe(new ResultExtractor());
+    stream = stream.pipe(new ResultStream());
     stream.stop = stop;
   }
 

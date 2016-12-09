@@ -23,7 +23,7 @@ var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 var Writable = require('stream').Writable;
-var ResultExtractor = require('./result-extractor');
+var ResultStream = require('./result-stream');
 
 var preservedMicStream;
 var bitBucket = new Writable({
@@ -110,7 +110,7 @@ module.exports = function recognizeMicrophone(options) {
   }
 
   if (options.extractResults) {
-    stream = stream.pipe(new ResultExtractor());
+    stream = stream.pipe(new ResultStream());
   }
 
   getMicStream.catch(function(err) {

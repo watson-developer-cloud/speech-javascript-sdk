@@ -29,15 +29,14 @@ var clone = require('clone');
  * @constructor
  * @param {Object} options
  */
-function ResultExtractor(options) {
+function ResultStream(options) {
   options = options || {};
   options.objectMode = true;
   Transform.call(this, options);
-  this.options = options;
 }
-util.inherits(ResultExtractor, Transform);
+util.inherits(ResultStream, Transform);
 
-ResultExtractor.prototype._transform = function(data, encoding, next) {
+ResultStream.prototype._transform = function(data, encoding, next) {
   // when speaker_labels is enabled, some messages won't have a results array
   if (Array.isArray(data.results)) {
     // usually there is exactly 1 result, but there can be 0 in some circumstances, and potentially more in future iterations
@@ -52,6 +51,6 @@ ResultExtractor.prototype._transform = function(data, encoding, next) {
   next();
 };
 
-ResultExtractor.prototype.promise = require('./to-promise');
+ResultStream.prototype.promise = require('./to-promise');
 
-module.exports = ResultExtractor;
+module.exports = ResultStream;
