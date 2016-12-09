@@ -2,6 +2,8 @@
 
 var getContentTypeFromHeader = require('./content-type');
 
+
+
 /**
  * Reads the first few bytes of a binary file and resolves to the content-type if recognized & supported
  * @param {File|Blob} file
@@ -18,7 +20,7 @@ function getContentTypeFromFile(file) {
         resolve(ct);
       } else {
         var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
-        err.name = 'UNSUPPORTED_FORMAT';
+        err.name = FilePlayer.ERROR_UNSUPPORTED_FORMAT;
         reject(err);
       }
     };
@@ -40,7 +42,7 @@ function FilePlayer(file, contentType) {
     // if we emit an error, it prevents the promise from returning the actual result
     // however, most browsers do not support flac, so this is a reasonably scenario
     var err = new Error('Current browser is unable to play back ' + contentType);
-    err.name = 'UNSUPPORTED_FORMAT';
+    err.name = FilePlayer.ERROR_UNSUPPORTED_FORMAT;
     err.contentType = contentType;
     throw err;
   }
@@ -52,6 +54,8 @@ function FilePlayer(file, contentType) {
     audio.currentTime = 0;
   };
 }
+
+FilePlayer.ERROR_UNSUPPORTED_FORMAT = 'UNSUPPORTED_FORMAT';
 
 /**
  * Determines the file's content-type and then resolves to a FilePlayer instance
