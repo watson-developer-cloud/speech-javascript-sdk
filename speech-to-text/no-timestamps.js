@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Returns true if the result is missing it's timestamps
  * @param {Object} data

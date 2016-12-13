@@ -231,6 +231,8 @@ describe('TimingStream', function() {
         }
       });
 
+      assert.equal(speakerLabelsMessages, 3);
+
       done();
     });
   });
@@ -277,16 +279,16 @@ describe('TimingStream', function() {
     var noTimestamps = require('../speech-to-text/no-timestamps');
     assert(noTimestamps.ERROR_NO_TIMESTAMPS, 'noTimestamps.ERROR_NO_TIMESTAMPS should be defined');
     var stream = new TimingStream({objectMode: true});
-    var data = clone(require('./resources/results.json'));
-    delete data.results[0].alternatives[0].timestamps;
+    var message = clone(require('./resources/results.json'));
+    delete message.results[0].alternatives[0].timestamps;
     stream.on('data', function(data) {
-      assert.fail(data, undefined, "data emitted")
+      assert.fail(data, null, 'data emitted');
     });
     stream.on('error', function(err) {
       assert.equal(err.name, noTimestamps.ERROR_NO_TIMESTAMPS);
       done();
     });
-    stream.end(data);
+    stream.end(message);
   });
 
 });

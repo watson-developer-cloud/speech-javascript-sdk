@@ -2,31 +2,6 @@
 
 var getContentTypeFromHeader = require('./content-type');
 
-
-
-/**
- * Reads the first few bytes of a binary file and resolves to the content-type if recognized & supported
- * @param {File|Blob} file
- * @returns {Promise}
- */
-function getContentTypeFromFile(file) {
-  return new Promise(function(resolve, reject) {
-    var blobToText = new Blob([file]).slice(0, 4);
-    var r = new FileReader();
-    r.readAsText(blobToText);
-    r.onload = function() {
-      var ct = getContentTypeFromHeader(r.result);
-      if (ct) {
-        resolve(ct);
-      } else {
-        var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
-        err.name = FilePlayer.ERROR_UNSUPPORTED_FORMAT;
-        reject(err);
-      }
-    };
-  });
-}
-
 /**
  * Plays audio from File/Blob instances
  * @param {File|Blob} file
@@ -56,6 +31,29 @@ function FilePlayer(file, contentType) {
 }
 
 FilePlayer.ERROR_UNSUPPORTED_FORMAT = 'UNSUPPORTED_FORMAT';
+
+/**
+ * Reads the first few bytes of a binary file and resolves to the content-type if recognized & supported
+ * @param {File|Blob} file
+ * @returns {Promise}
+ */
+function getContentTypeFromFile(file) {
+  return new Promise(function(resolve, reject) {
+    var blobToText = new Blob([file]).slice(0, 4);
+    var r = new FileReader();
+    r.readAsText(blobToText);
+    r.onload = function() {
+      var ct = getContentTypeFromHeader(r.result);
+      if (ct) {
+        resolve(ct);
+      } else {
+        var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
+        err.name = FilePlayer.ERROR_UNSUPPORTED_FORMAT;
+        reject(err);
+      }
+    };
+  });
+}
 
 /**
  * Determines the file's content-type and then resolves to a FilePlayer instance

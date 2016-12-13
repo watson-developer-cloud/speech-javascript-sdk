@@ -24,18 +24,18 @@ describe('FormatStream', function() {
     stream.setEncoding('utf8');
     var source = {results: [
       {alternatives:
-        [{
-          confidence: 0.881,
-          transcript: 'foo bar ',
-          final: true}],
-      result_index: 0}]};
+      [{
+        confidence: 0.881,
+        transcript: 'foo bar ',
+        final: true}],
+        result_index: 0}]};
     var expected = {results: [
       {alternatives:
       [{
         confidence: 0.881,
         transcript: 'Foo bar. ',
         final: true}],
-      result_index: 0}]};
+        result_index: 0}]};
     stream.on('data', function(actual) {
       assert.equal(actual, expected);
       done();

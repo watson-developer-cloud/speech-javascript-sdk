@@ -245,7 +245,8 @@ TimingStream.prototype.handleResult = function handleResult(data) {
   if (noTimestamps(data)) {
     var err = new Error('TimingStream requires timestamps');
     err.name = noTimestamps.ERROR_NO_TIMESTAMPS;
-    return this.emit('error', err);
+    this.emit('error', err);
+    return;
   }
 
   // http://www.ibm.com/watson/developercloud/speech-to-text/api/v1/#SpeechRecognitionEvent
