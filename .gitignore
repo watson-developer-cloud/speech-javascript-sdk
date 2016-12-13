@@ -8,3 +8,4 @@ test/resources/tts-auth.json
 doc/
 *-auth.json
 .env
+dist/*.min.js
