@@ -24,6 +24,7 @@ var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 var Writable = require('stream').Writable;
 var ResultStream = require('./result-stream');
+var SpeakerStream = require('./speaker-stream');
 
 var preservedMicStream;
 var bitBucket = new Writable({
@@ -44,12 +45,13 @@ var bitBucket = new Writable({
  *
  * @param {Object} options - Also passed to {RecognizeStream}, and {FormatStream} when applicable
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
- * @param {Boolean} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
+ * @param {Boolean} [options.format=true] - pipe the text through a FormatStream which performs light formatting. Also controls smart_formatting option unless explicitly set.
  * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
- * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
+ * @param {String|DOMElement} [options.outputElement] pipe the text to a [WriteableElementStream](WritableElementStream.html) targeting the specified element. Also defaults objectMode to true to enable interim results.
  * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Requires objectMode.
+ * @param {Boolean} [options.resultsBySpeaker=false] pipe results through a SpeakerStream. Causes each data event to include multiple results, each with a speaker field. Automatically enables objectMode and speaker_labels. Adds some delay to processing.
  *
- * @returns {RecognizeStream|FormatStream}
+ * @returns {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
  */
 module.exports = function recognizeMicrophone(options) {
   if (!options || !options.token) {
@@ -61,8 +63,13 @@ module.exports = function recognizeMicrophone(options) {
     options.objectMode = true;
   }
   // the ResultExtractor only works in objectMode
-  if (options.extractResults && options.objectMode !== false) {
+  if (options.extractResults) {
     options.objectMode = true;
+  }
+  // SpeakerStream requires objectMode and speaker_labels
+  if (options.resultsBySpeaker) {
+    options.objectMode = true;
+    options.speaker_labels = true;
   }
 
   // default format to true (capitals and periods)
@@ -79,6 +86,7 @@ module.exports = function recognizeMicrophone(options) {
   delete rsOpts.objectMode;
 
   var recognizeStream = new RecognizeStream(rsOpts);
+  var streams = [recognizeStream]; // collect all of the streams so that we can bundle up errors and send them to the last one
 
   var keepMic = options.keepMicrophone;
   var getMicStream;
@@ -101,16 +109,25 @@ module.exports = function recognizeMicrophone(options) {
   // set up the output first so that we have a place to emit errors
   // if there's trouble with the input stream
   var stream = recognizeStream;
+
+  if (options.resultsBySpeaker) {
+    stream = stream.pipe(new SpeakerStream(options));
+    streams.push(stream);
+  }
+
   if (options.format) {
     stream = stream.pipe(new FormatStream(options));
+    streams.push(stream);
   }
 
   if (options.outputElement) {
-    stream.pipe(new WritableElementStream(options));
+    // we don't want to return the WES, just send data to it
+    streams.push(stream.pipe(new WritableElementStream(options)));
   }
 
   if (options.extractResults) {
     stream = stream.pipe(new ResultStream());
+    streams.push(stream);
   }
 
   getMicStream.catch(function(err) {
@@ -118,11 +135,15 @@ module.exports = function recognizeMicrophone(options) {
   });
 
   getMicStream.then(function(micStream) {
+    streams.push(micStream);
+
     var l16Stream = new L16({writableObjectMode: true});
 
     micStream
       .pipe(l16Stream)
       .pipe(recognizeStream);
+
+    streams.push(l16Stream);
 
     /**
      * unpipes the mic stream to prevent any more audio from being sent over the wire
@@ -150,11 +171,18 @@ module.exports = function recognizeMicrophone(options) {
 
   }).catch(recognizeStream.emit.bind(recognizeStream, 'error'));
 
-  // Capture error from original RecognizeStream
+  // Capture errors from any stream except the last one and emit them on the last one
+  streams.forEach(function(prevStream) {
+    if (prevStream !== stream) {
+      prevStream.on('error', stream.emit.bind(stream, 'error'));
+    }
+  });
+
+  // add a stop button to whatever the final stream ends up being
   if (stream !== recognizeStream) {
-    recognizeStream.on('error', stream.emit.bind(stream, 'error'));
     stream.stop = recognizeStream.stop.bind(recognizeStream);
   }
+
 
   return stream;
 };

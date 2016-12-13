@@ -11,6 +11,9 @@ var noTimestamps = require('./no-timestamps');
  *
  * Useful when running recognizeFile because the text can otherwise appear before the words are spoken
  *
+ * Note: when combined with a SpeakerStream, the TimingStream must come first
+ * @todo: fix TimingStream to work with the output of the SpeakerStream
+ *
  * @param {Object} [opts]
  * @param {*} [opts.emitAtt=TimingStream.START] - set to TimingStream.END to only emit text that has been completely spoken.
  * @param {Number} [opts.delay=0] - Additional delay (in seconds) to apply before emitting words, useful for precise syncing to audio tracks. May be negative

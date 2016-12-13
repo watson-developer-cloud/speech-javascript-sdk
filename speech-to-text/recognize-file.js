@@ -23,6 +23,7 @@ var TimingStream = require('./timing-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 var ResultStream = require('./result-stream');
+var SpeakerStream = require('./speaker-stream');
 
 /**
  * @module watson-speech/speech-to-text/recognize-file
@@ -37,11 +38,12 @@ var ResultStream = require('./result-stream');
  * @param {Blob|File} options.data - the raw audio data as a Blob or File instance
  * @param {Boolean} [options.play=false] - If a file is set, play it locally as it's being uploaded
  * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
- * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback.
+ * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback. Not currently compatible with resultsBySpeaker option.
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
- * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Requires objectMode.
+ * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Automatically enables objectMode.
+ * @param {Boolean} [options.resultsBySpeaker=false] pipe results through a SpeakerStream. Causes each data event to include multiple results, each with a speaker field. Automatically enables objectMode and speaker_labels. Automatically disables the realtime option due to incompatibilities. Adds some delay to processing.
  *
- * @returns {RecognizeStream|FormatStream|TimingStream}
+ * @returns {RecognizeStream|SpeakerStream|FormatStream|ResultStream|TimingStream}
  */
 module.exports = function recognizeFile(options) { // eslint-disable-line complexity
   if (!options || !options.token) {
@@ -53,8 +55,14 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
     options.objectMode = true;
   }
   // the ResultExtractor only works in objectMode
-  if (options.extractResults && options.objectMode !== false) {
+  if (options.extractResults) {
     options.objectMode = true;
+  }
+  // SpeakerStream requires objectMode and speaker_labels
+  if (options.resultsBySpeaker) {
+    options.objectMode = true;
+    options.speaker_labels = true;
+    options.realtime = false;
   }
 
   // default format to true (capitals and periods)
@@ -78,17 +86,32 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
   delete rsOpts.objectMode;
 
 
-  var recognizeStream = new RecognizeStream(rsOpts);
-  var stream = new BlobStream(options.data).pipe(recognizeStream);
 
-  if (options.format) {
-    stream = stream.pipe(new FormatStream(options));
-  }
+  var stream = new BlobStream(options.data);
+  var recognizeStream = new RecognizeStream(rsOpts);
+  var streams = [stream, recognizeStream]; // collect all of the streams so that we can bundle up errors and send them to the last one
+  stream = stream.pipe(recognizeStream);
+
+  // note: the TimingStream cannot currently handle results as regrouped by the SpeakerStream
+  // so it must come first
+  var timingStream;
   if (realtime) {
-    stream = stream.pipe(new TimingStream(options));
+    timingStream = new TimingStream(options);
+    stream = stream.pipe(timingStream);
+    streams.push(stream);
     stream.on('stop', recognizeStream.stop.bind(recognizeStream));
   } else {
     stream.stop = recognizeStream.stop.bind(recognizeStream);
+  }
+
+  if (options.resultsBySpeaker) {
+    stream = stream.pipe(new SpeakerStream(options));
+    streams.push(stream);
+  }
+
+  if (options.format) {
+    stream = stream.pipe(new FormatStream(options));
+    streams.push(stream);
   }
 
   if (options.play) {
@@ -101,18 +124,30 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
   }
 
   if (options.outputElement) {
-    stream.pipe(new WritableElementStream(options));
+    // we don't want to return the WES, just send data to it
+    streams.push(stream.pipe(new WritableElementStream(options)));
   }
 
   if (options.extractResults) {
-    var stop = stream.stop.bind(stream);
+    var stop = stream.stop ? stream.stop.bind(stream) : recognizeStream.stop.bind(recognizeStream);
     stream = stream.pipe(new ResultStream());
     stream.stop = stop;
+    streams.push(stream);
   }
 
-  // Capture error from original RecognizeStream
-  if (stream !== recognizeStream) {
-    recognizeStream.on('error', stream.emit.bind(stream, 'error'));
+  // Capture errors from any stream except the last one and emit them on the last one
+  streams.forEach(function(prevStream) {
+    if (prevStream !== stream) {
+      prevStream.on('error', stream.emit.bind(stream, 'error'));
+    }
+  });
+
+  if (!stream.stop) {
+    if (timingStream) {
+      stream.stop = timingStream.stop.bind(timingStream);
+    } else {
+      stream.stop = recognizeStream.stop.bind(recognizeStream);
+    }
   }
 
   return stream;

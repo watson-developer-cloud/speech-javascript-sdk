@@ -63,6 +63,11 @@ module.exports = {
   ResultStream: require('./result-stream'),
 
   /**
+   * @see SpeakerStream
+   */
+  SpeakerStream: require('./speaker-stream'),
+
+  /**
    * @see WritableElementStream
    */
   WritableElementStream: require('./writable-element-stream'),

@@ -7,7 +7,7 @@
 <body>
 
 <section>
-  <h2>Transcribe from Microphone</h2>
+  <h2>Transcribe from file with <code>{speaker_labels: true}</code>, output to console</h2>
   <button id="button">Transcribe File</button>
   <button id="stop">Stop</button>
 
@@ -47,15 +47,12 @@
         model: 'en-US_NarrowbandModel',
         objectMode: true, // send objects instead of text
         realtime: true, // don't slow down the results if transcription occurs faster than playback
-        format: false,
+        format: false, // enable resultsBySpeaker when formatting for multiple speakers
         play: true
       });
 
-      window.allResults = [];
-
       stream.on('data', function(data) {
         console.log(data);
-        allResults.push(data);
       });
 
       stream.on('error', function(err) {

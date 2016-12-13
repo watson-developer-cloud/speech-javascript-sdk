@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Watson Speech to Text client example</title>
+</head>
+<body>
+
+<section>
+  <h2>Transcribe from file with <code>{resultsBySpeaker: true}</code>, output HTML</h2>
+  <button id="button">Transcribe File</button>
+  <button id="stop">Stop</button>
+
+  <h2>Output:</h2>
+  <div id="output"></div>
+</section>
+
+<script src="watson-speech.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
+
+<h2>Code for this demo:</h2>
+
+<pre><code><script style="display: block;">
+
+  // preloading the data for a smoother experience
+  var preloadTokenAndAudio = Promise.all([
+    fetch('/api/speech-to-text/token').then(function(response) {
+      return response.text();
+    }),
+    fetch('/en-us-multi-speaker-narrowband.wav').then(function(response) {
+      return response.blob();
+    })
+  ]);
+
+  document.querySelector('#button').onclick = function () {
+    preloadTokenAndAudio.then(function (values) {
+      var token = values[0];
+      var file = values[1];
+
+      document.querySelector('#output').innerHTML = 'Processing. Note: it will take some time for the first results to appear.';
+
+      var stream = WatsonSpeech.SpeechToText.recognizeFile({
+        token: token,
+        data: file,
+        speaker_labels: true,
+        // only certain models support speaker labels currently,
+        // see http://www.ibm.com/watson/developercloud/doc/speech-to-text/output.shtml#speaker_labels
+        model: 'en-US_NarrowbandModel',
+        resultsBySpeaker: true, // pipes results through a SpeakerStream, and also enables speaker_labels and objectMode
+        play: true
+      });
+
+      stream.on('data', function(data) {
+        // With resultsBySpeaker, the data events are different in that most include multiple result objects, and
+        // currently, they are all interim until the last data event.
+
+        // The result objects look similar to normal ones, except that they each have a `speaker` key with a numeric
+        // value. Additionally, extra features, such as alternatives and word alternatives will be lost.
+
+        var lines = data.results.map(function(result) {
+            return '<div class="line speaker-' + result.speaker + '">' +
+              '<b class="speaker-label">Speaker ' + result.speaker + ':</b> ' +
+              result.alternatives[0].transcript +
+            '</div>';
+        });
+
+        document.querySelector('#output').innerHTML = lines.join('\n');
+      });
+
+      stream.on('error', function(err) {
+        console.log(err);
+      });
+
+      document.querySelector('#stop').onclick = stream.stop.bind(stream);
+
+    }).catch(function(error) {
+      console.log(error);
+    });
+  };
+
+</script></code></pre>
+
+</body>
+</html>
