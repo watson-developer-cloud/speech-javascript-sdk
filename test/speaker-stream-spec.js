@@ -3,6 +3,7 @@
 var assert = require('assert');
 var clone = require('clone');
 var SpeakerStream = require('../speech-to-text/speaker-stream.js');
+var sinon = require('sinon');
 
 describe('SpeakerStream', function() {
 
@@ -201,7 +202,9 @@ describe('SpeakerStream', function() {
   it('should not produce two results in a row from the same speaker', function(done) {
     var stream = new SpeakerStream();
     stream.on('error', done);
+    var called = false;
     stream.on('data', function assertNoRepeats(data) {
+      called = true;
       var lastSpeaker = -1;
       assert(Array.isArray(data.results), 'data should have a results array');
       assert(data.results.length, 'results array should be non-empty');
@@ -211,6 +214,26 @@ describe('SpeakerStream', function() {
         lastSpeaker = speaker;
       });
     });
+    stream.on('end', function() {
+      assert(called);
+      done()
+    });
+    var messageStream = require('./resources/car_loan_stream.json');
+    messageStream.forEach(function(msg) {
+      stream.write(msg);
+    });
+    stream.end();
+  });
+
+  it('should not emit identical interim messages when nothing has changed', function(done) {
+    var stream = new SpeakerStream();
+    stream.on('error', done);
+    var lastMsg;
+    stream.on('data', function (msg) {
+      assert(msg);
+      assert.notDeepEqual(msg, lastMsg);
+      lastMsg = msg;
+    });
     stream.on('end', done);
     var messageStream = require('./resources/car_loan_stream.json');
     messageStream.forEach(function(msg) {
@@ -218,6 +241,55 @@ describe('SpeakerStream', function() {
     });
     stream.end();
   });
+
+  describe('with TimingStream', function() {
+    var clock;
+    beforeEach(function() {
+      clock = sinon.useFakeTimers();
+    });
+
+    afterEach(function() {
+      clock.restore();
+    });
+
+    it('should produce the same output with results from a TimingStream', function(done) {
+      var inputMessages = require('./resources/car_loan_stream.json');
+      var TimingStream = require('../speech-to-text/timing-stream.js');
+      var actualSpeakerStream = new SpeakerStream();
+      var expectedSpeakerStream = new SpeakerStream();
+      var timingStream = new TimingStream({objectMode: true});
+      timingStream.pipe(actualSpeakerStream);
+
+      timingStream.on('error', done);
+
+      var actual = [];
+      actualSpeakerStream.on('data', function(timedResult) {
+        actual.push(timedResult);
+      });
+      actualSpeakerStream.on('error', done);
+
+      var expected = [];
+      expectedSpeakerStream.on('data', function(timedResult) {
+        expected.push(timedResult);
+      });
+      expectedSpeakerStream.on('error', done);
+
+      inputMessages.forEach(function(msg) {
+        timingStream.write(msg);
+        expectedSpeakerStream.write(msg);
+      });
+      timingStream.end();
+      expectedSpeakerStream.end();
+
+      clock.tick(37.26 * 1000);
+
+      process.nextTick(function() { // write is always async (?)
+        assert.deepEqual(actual, expected);
+        done();
+      });
+    });
+  });
+
 
   describe('speakerLabelsSorter', function() {
     it('should correctly sort speaker labels by start time and then by end time', function() {
@@ -290,7 +362,6 @@ describe('SpeakerStream', function() {
       ];
 
       assert.deepEqual(input.sort(SpeakerStream.speakerLabelsSorter), expected);
-
     });
   });
 });

@@ -38,10 +38,10 @@ var SpeakerStream = require('./speaker-stream');
  * @param {Blob|File} options.data - the raw audio data as a Blob or File instance
  * @param {Boolean} [options.play=false] - If a file is set, play it locally as it's being uploaded
  * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
- * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback. Not currently compatible with resultsBySpeaker option.
+ * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback.
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
  * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Automatically enables objectMode.
- * @param {Boolean} [options.resultsBySpeaker=false] pipe results through a SpeakerStream. Causes each data event to include multiple results, each with a speaker field. Automatically enables objectMode and speaker_labels. Automatically disables the realtime option due to incompatibilities. Adds some delay to processing.
+ * @param {Boolean} [options.resultsBySpeaker=false] pipe results through a SpeakerStream. Causes each data event to include multiple results, each with a speaker field. Automatically enables objectMode and speaker_labels.  Adds some delay to processing.
  *
  * @returns {RecognizeStream|SpeakerStream|FormatStream|ResultStream|TimingStream}
  */
@@ -62,7 +62,6 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
   if (options.resultsBySpeaker) {
     options.objectMode = true;
     options.speaker_labels = true;
-    options.realtime = false;
   }
 
   // default format to true (capitals and periods)
@@ -109,6 +108,7 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
     streams.push(stream);
   }
 
+  // note: the format stream should come after the speaker stream to format sentences correctly
   if (options.format) {
     stream = stream.pipe(new FormatStream(options));
     streams.push(stream);

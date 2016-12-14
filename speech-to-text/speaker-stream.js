@@ -224,8 +224,8 @@ SpeakerStream.prototype._transform = function(data, encoding, next) {
   }
   if (Array.isArray(data.speaker_labels)) {
     this.handleSpeakerLabels(data);
+    this.process();
   }
-  this.process();
   next();
 };
 
