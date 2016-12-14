@@ -1,5 +1,11 @@
 # Changelog
 
+### v0.24.0
+* Renamed `ResultExtractor` to `ResultStream`, exposed it in speech-to-text/index.js
+* Added new SpeakerStream class to split results by speaker
+* Added new `resultsBySpeaker` option to `recognizeFile()` and `recognizeMicrophone()` to enable SpeakerStream
+* Fixed a bug in TimingStream where result_indexes would be lost (introduced in v0.22.0)
+
 ### v0.23.0
 * Changed file player error.name from `UNRECOGNIZED_FORMAT` to `UNSUPPORTED_FORMAT`
   (There are now two potential errors with this name: the file is recognized but the browser cannot play it, and the file type is not recognized.)
