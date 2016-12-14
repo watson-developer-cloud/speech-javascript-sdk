@@ -49,6 +49,7 @@
 <div class="description">
     <p>Slows results down to no faster than real time.</p>
 <p>Useful when running recognizeFile because the text can otherwise appear before the words are spoken</p>
+<p>Note: when combined with a SpeakerStream, the TimingStream must come first</p>
 </div>
 
 
@@ -261,7 +262,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line18">line 18</a>
+        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -365,7 +366,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line230">line 230</a>
+        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line234">line 234</a>
     </li></ul></dd>
     
 
@@ -524,7 +525,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line128">line 128</a>
+        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line132">line 132</a>
     </li></ul></dd>
     
 
@@ -676,7 +677,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line254">line 254</a>
+        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line247">line 247</a>
     </li></ul></dd>
     
 
@@ -808,7 +809,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line202">line 202</a>
+        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line206">line 206</a>
     </li></ul></dd>
     
 
@@ -890,7 +891,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line145">line 145</a>
+        <a href="speech-to-text_timing-stream.js.html">speech-to-text/timing-stream.js</a>, <a href="speech-to-text_timing-stream.js.html#line149">line 149</a>
     </li></ul></dd>
     
 
@@ -932,13 +933,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultExtractor.html">ResultExtractor</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Dec 08 2016 15:27:49 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Dec 14 2016 01:20:29 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

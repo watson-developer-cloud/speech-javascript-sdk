@@ -32,11 +32,15 @@ var Duplex = require('stream').Duplex;
 var util = require('util');
 var clone = require('clone');
 var defaults = require('defaults');
+var noTimestamps = require('./no-timestamps');
 
 /**
  * Slows results down to no faster than real time.
  *
  * Useful when running recognizeFile because the text can otherwise appear before the words are spoken
+ *
+ * Note: when combined with a SpeakerStream, the TimingStream must come first
+ * @todo: fix TimingStream to work with the output of the SpeakerStream
  *
  * @param {Object} [opts]
  * @param {*} [opts.emitAtt=TimingStream.START] - set to TimingStream.END to only emit text that has been completely spoken.
@@ -206,7 +210,7 @@ function getEnd(msg) {
 
 TimingStream.prototype.tickSpeakerLables = function tickSpeakerLabels() {
   clearTimeout(this.nextSpeakerLabelsTick);
-  if (getEnd(this.speakerLabels[0]) &lt;= this.cutoff()) {
+  while (this.speakerLabels.length &amp;&amp; getEnd(this.speakerLabels[0]) &lt;= this.cutoff()) {
     this.push(this.speakerLabels.shift());
   }
   if (this.speakerLabels.length) {
@@ -262,17 +266,6 @@ TimingStream.prototype.checkForEnd = function() {
   }
 };
 
-/**
- * Returns true if the result is missing it's timestamps
- * @param {Object} data
- * @returns {Boolean}
- */
-function noTimestamps(data) {
-  return data.results.some(function(result) {
-    var alt = result.alternatives &amp;&amp; result.alternatives[0];
-    return !!(alt &amp;&amp; (alt.transcript.trim() &amp;&amp; !alt.timestamps || !alt.timestamps.length));
-  });
-}
 
 /**
  * Creates a new result with all transcriptions formatted
@@ -281,12 +274,14 @@ function noTimestamps(data) {
  */
 TimingStream.prototype.handleResult = function handleResult(data) {
   if (noTimestamps(data)) {
-    this.emit('error', new Error('TimingStream requires timestamps'));
+    var err = new Error('TimingStream requires timestamps');
+    err.name = noTimestamps.ERROR_NO_TIMESTAMPS;
+    this.emit('error', err);
     return;
   }
 
   // http://www.ibm.com/watson/developercloud/speech-to-text/api/v1/#SpeechRecognitionEvent
-  var index = data.results[0].result_index;
+  var index = data.result_index;
 
   // process each result individually
   data.results.forEach(function(result) {
@@ -301,9 +296,12 @@ TimingStream.prototype.handleResult = function handleResult(data) {
     }
 
     // in case this data object had multiple results in it
-    var newData = clone(data);
-    data.results = [result];
-    data.result_index = index;
+    var newData = {
+      results: [result],
+      result_index: index
+    };
+
+    index++;
 
     if (result.final) {
       // then add it to the final results array
@@ -314,7 +312,6 @@ TimingStream.prototype.handleResult = function handleResult(data) {
       this.interim.push(newData);
     }
 
-    index++;
   }, this);
 
   this.tick();
@@ -347,13 +344,13 @@ module.exports = TimingStream;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultExtractor.html">ResultExtractor</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#noTimestamps">noTimestamps</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Dec 08 2016 15:27:49 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Dec 14 2016 01:20:29 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

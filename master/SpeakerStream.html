@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: FilePlayer</title>
+    <title>JSDoc: Class: SpeakerStream</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: FilePlayer</h1>
+    <h1 class="page-title">Class: SpeakerStream</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2>FilePlayer</h2>
+        <h2>SpeakerStream</h2>
         
     
 </header>
@@ -40,14 +40,19 @@
 
     
 
-    <h4 class="name" id="FilePlayer"><span class="type-signature"></span>new FilePlayer<span class="signature">(file, contentType)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="SpeakerStream"><span class="type-signature"></span>new SpeakerStream<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Plays audio from File/Blob instances</p>
+    <p>Object-Mode stream that splits up results by speaker.</p>
+<p>Output format is similar to existing results formats, but with an extra speaker field,</p>
+<p>Output results array will usually contain multiple results.
+All results are interim until the final batch; the text will not change, but the speaker may, and so the text may move from one interim result to another.</p>
+<p>Note: when combined with a TimingStream, data events may contain a combination of final and interim results (with the last one sometimes being interim)</p>
+<p>Ignores interim results from the service.</p>
 </div>
 
 
@@ -83,39 +88,13 @@
 
         <tr>
             
-                <td class="name"><code>file</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">File</span>
-|
-
-<span class="param-type">Blob</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>contentType</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
+<span class="param-type">Object</span>
 
 
             
@@ -166,7 +145,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_file-player.js.html">speech-to-text/file-player.js</a>, <a href="speech-to-text_file-player.js.html#line11">line 11</a>
+        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line40">line 40</a>
     </li></ul></dd>
     
 
@@ -215,14 +194,14 @@
 
     
 
-    <h4 class="name" id="stop"><span class="type-signature"></span>stop<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="handleResults"><span class="type-signature"></span>handleResults<span class="signature">(data)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Stops the audio</p>
+    <p>Captures the timestamps out of results or errors if timestamps are missing</p>
 </div>
 
 
@@ -231,6 +210,55 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -266,7 +294,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_file-player.js.html">speech-to-text/file-player.js</a>, <a href="speech-to-text_file-player.js.html#line27">line 27</a>
+        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line174">line 174</a>
     </li></ul></dd>
     
 
@@ -297,6 +325,143 @@
 
     
 
+    
+        <h3 class="subsection-title">Events</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="event:data">data</h4>
+
+    
+
+
+
+<div class="description">
+    <p>Emit an object similar to the normal results object, only with multiple entries in the results Array (a new one
+each time the speaker changes), and with a speaker field on the results.</p>
+<p>result_index is always 0 because the results always includes the entire conversation so far.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>results-format</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>message with multiple results and an extra speaker field on each result</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line157">line 157</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
 </article>
 

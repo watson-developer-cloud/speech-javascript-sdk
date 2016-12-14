@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: text-to-speech/synthesize.js</title>
+    <title>JSDoc: Source: speech-to-text/result-stream.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: text-to-speech/synthesize.js</h1>
+    <h1 class="page-title">Source: speech-to-text/result-stream.js</h1>
 
     
 
@@ -27,7 +27,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Copyright 2015 IBM Corp. All Rights Reserved.
+ * Copyright 2014 IBM Corp. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,46 +41,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 'use strict';
-var pick = require('object.pick');
-var qs = require('../util/querystring.js');
 
-var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'text', 'watson-token'];
 
-/**
- * @module watson-speech/text-to-speech/synthesize
- */
+var Transform = require('stream').Transform;
+var util = require('util');
+var clone = require('clone');
 
 /**
- * Synthesize and play the supplied text over the computers speakers.
+ * Object-Mode stream that pulls result objects from the results array
  *
- * Creates and returns a HTML5 `&lt;audio>` element
+ * Also copies the top-level result_index to the individual results as .index
  *
+ * @constructor
  * @param {Object} options
- * @param {String} options.token auth token
- * @param {String} options.text text to speak
- * @param {String} [options.voice=en-US_MichaelVoice] what voice to use - call getVoices() for a complete list.
- * @param {Number} [options.X-WDC-PL-OPT-OUT=0] set to 1 to opt-out of allowing Watson to use this request to improve it's services
- * @param {Boolean} [options.autoPlay=true] automatically play the audio
- * @param {DOMAudioElement} [options.element] &lt;audio> element - will be used instead of creating a new one if provided
- * @returns {Audio}
- * @see module:watson-speech/text-to-speech/get-voices
  */
-module.exports = function synthesize(options) {
-  if (!options || !options.token) {
-    throw new Error('Watson TextToSpeech: missing required parameter: options.token');
+function ResultStream(options) {
+  options = options || {};
+  options.objectMode = true;
+  Transform.call(this, options);
+}
+util.inherits(ResultStream, Transform);
+
+ResultStream.prototype._transform = function(data, encoding, next) {
+  // when speaker_labels is enabled, some messages won't have a results array
+  if (Array.isArray(data.results)) {
+    // usually there is exactly 1 result, but there can be 0 in some circumstances, and potentially more in future iterations
+    data.results.forEach(function(result) {
+      var cloned = clone(result);
+      cloned.index = data.result_index;
+      this.push(cloned);
+    }, this);
+  } else {
+    this.push(data);
   }
-  options['watson-token'] = options.token;
-  delete options.token;
-  var audio = options.element || new Audio();
-  audio.crossOrigin = true;
-  audio.src = 'https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?' + qs.stringify(pick(options, QUERY_PARAMS_ALLOWED));
-  if (options.autoPlay !== false) {
-    audio.play();
-  }
-  return audio;
+  next();
 };
 
+ResultStream.prototype.promise = require('./to-promise');
+
+module.exports = ResultStream;
 </code></pre>
         </article>
     </section>
