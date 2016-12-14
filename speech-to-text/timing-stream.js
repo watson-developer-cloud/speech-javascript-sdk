@@ -182,7 +182,7 @@ function getEnd(msg) {
 
 TimingStream.prototype.tickSpeakerLables = function tickSpeakerLabels() {
   clearTimeout(this.nextSpeakerLabelsTick);
-  if (getEnd(this.speakerLabels[0]) <= this.cutoff()) {
+  while (this.speakerLabels.length && getEnd(this.speakerLabels[0]) <= this.cutoff()) {
     this.push(this.speakerLabels.shift());
   }
   if (this.speakerLabels.length) {
@@ -253,7 +253,7 @@ TimingStream.prototype.handleResult = function handleResult(data) {
   }
 
   // http://www.ibm.com/watson/developercloud/speech-to-text/api/v1/#SpeechRecognitionEvent
-  var index = data.results[0].result_index;
+  var index = data.result_index;
 
   // process each result individually
   data.results.forEach(function(result) {
@@ -268,9 +268,12 @@ TimingStream.prototype.handleResult = function handleResult(data) {
     }
 
     // in case this data object had multiple results in it
-    var newData = clone(data);
-    data.results = [result];
-    data.result_index = index;
+    var newData = {
+      results: [result],
+      result_index: index
+    };
+
+    index++;
 
     if (result.final) {
       // then add it to the final results array
@@ -281,7 +284,6 @@ TimingStream.prototype.handleResult = function handleResult(data) {
       this.interim.push(newData);
     }
 
-    index++;
   }, this);
 
   this.tick();

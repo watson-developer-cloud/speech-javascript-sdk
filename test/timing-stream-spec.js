@@ -7,7 +7,7 @@ var clone = require('clone');
 var TimingStream = require('../speech-to-text/timing-stream.js');
 
 var results = require('./resources/results.json');
-var messageStream = require('./resources/car_loan_stream.json');
+var messages = require('./resources/car_loan_stream.json');
 
 describe('TimingStream', function() {
 
@@ -171,22 +171,19 @@ describe('TimingStream', function() {
     });
     stream.on('error', done);
 
-    messageStream.forEach(function(msg) {
+    messages.forEach(function(msg) {
       if (msg.results) {
         stream.write(msg);
       }
     });
+    stream.end();
 
-    var numTicks = 37.26 * 1000;
-
-    for (var i = 0; i < numTicks; i++) {
-      clock.tick(1);
-    }
+    clock.tick(37.26 * 1000);
 
     nextTick(function() { // write is always async (?)
-
+      assert(actual.length);
       actual.reduce(function(lastIndex, msg) {
-        assert.equal(msg.result_index, lastIndex);
+        assert.equal(msg.result_index, lastIndex, "wrong index on result, expecting " + lastIndex + " got " + JSON.stringify(msg, null, 2));
         // index should always increment after a final message
         return (msg.results[0].final) ? lastIndex + 1 : lastIndex;
       }, 0);
@@ -203,15 +200,12 @@ describe('TimingStream', function() {
     });
     stream.on('error', done);
 
-    messageStream.forEach(function(msg) {
+    messages.forEach(function(msg) {
       stream.write(msg);
     });
+    stream.end();
 
-    var numTicks = 37.26 * 1000;
-
-    for (var i = 0; i < numTicks; i++) {
-      clock.tick(1);
-    }
+    clock.tick(37.26 * 1000);
 
     nextTick(function() { // write is always async (?)
 
@@ -245,17 +239,13 @@ describe('TimingStream', function() {
     });
     stream.on('error', done);
 
-    messageStream.forEach(function(msg) {
+    messages.forEach(function(msg) {
       if (msg.results) {
         stream.write(msg);
       }
     });
 
-    var numTicks = 37.26 * 1000;
-
-    for (var i = 0; i < numTicks; i++) {
-      clock.tick(1);
-    }
+    clock.tick(37.26 * 1000);
 
     nextTick(function() { // write is always async (?)
 
