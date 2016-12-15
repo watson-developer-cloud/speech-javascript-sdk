@@ -1,5 +1,11 @@
 # Changelog
 
+### v0.25.0
+* Fixed bug with recognizeStream failing to auto-detect content-type
+* RecognizeStream no longer sets any default options
+* recognizeMicrophone() and recognizeFile() methods now do set default options that were previously set by RecognizeStream
+* added new 'message' event to RecognizeStream that emits any message received over the WebSocket (mainly for debugging and demo usage)
+
 ### v0.24.0
 * Renamed `ResultExtractor` to `ResultStream`, exposed it in speech-to-text/index.js
 * Added new SpeakerStream class to split results by speaker
