@@ -181,10 +181,10 @@ module.exports = function recognizeMicrophone(options) {
   if (stream !== recognizeStream) {
     // add a stop button to whatever the final stream ends up being
     stream.stop = recognizeStream.stop.bind(recognizeStream);
-
-    // expose the original stream to for debugging (and to support the JSON tab on the STT demo)
-    stream.recognizeStream = recognizeStream;
   }
+
+  // expose the original stream to for debugging (and to support the JSON tab on the STT demo)
+  stream.recognizeStream = recognizeStream;
 
   return stream;
 };

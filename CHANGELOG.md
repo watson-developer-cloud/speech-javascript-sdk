@@ -5,6 +5,7 @@
 * RecognizeStream no longer sets any default options
 * recognizeMicrophone() and recognizeFile() methods now do set default options that were previously set by RecognizeStream
 * added new 'message' event to RecognizeStream that emits any message received over the WebSocket (mainly for debugging and demo usage)
+* exposed recognizeStream property on any stream returned from recognizeMicrophone() or recognizeFile() (for debugging)
 
 ### v0.24.0
 * Renamed `ResultExtractor` to `ResultStream`, exposed it in speech-to-text/index.js
