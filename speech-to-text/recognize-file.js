@@ -31,7 +31,7 @@ var SpeakerStream = require('./speaker-stream');
 
 /**
  * Create and return a RecognizeStream from a File or Blob
- * (e.g. from a file <input>, a dtagdrop targe, or an ajax request)
+ * (e.g. from a file <input>, a dragdrop target, or an ajax request)
  *
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
