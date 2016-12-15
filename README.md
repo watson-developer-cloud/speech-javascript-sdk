@@ -4,13 +4,10 @@ IBM Watson Speech Services for Web Browsers
 [![Build Status](https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk)
 [![npm-version](https://img.shields.io/npm/v/watson-speech.svg)](https://www.npmjs.com/package/watson-speech)
 
-Allows you to easily add voice recognition and synthesis to any web app with minimal code. 
+Allows you to easily add voice recognition and synthesis to any web app with minimal code.
 
-**Warning** This library is still has a few rough edges and may yet see breaking changes.
-
-
-###  For Web Browsers Only
-This library is primarily intended for use in browsers. 
+### Build for Browsers
+This library is primarily intended for use in web browsers.
 Check out [watson-developer-cloud](https://www.npmjs.com/package/watson-developer-cloud) to use Watson services (speech and others) from Node.js.
 
 However, a server-side component is required to generate auth tokens. 

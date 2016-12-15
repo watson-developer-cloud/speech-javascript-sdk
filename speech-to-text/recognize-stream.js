@@ -49,85 +49,20 @@ var QUERY_PARAMS_ALLOWED = [
 
 
 /**
- * pipe()-able Node.js Readable/Writeable stream - accepts binary audio and emits text/objects in it's `data` events.
+ * pipe()-able Node.js Duplex stream - accepts binary audio and emits text/objects in it's `data` events.
  *
  * Uses WebSockets under the hood. For audio with no recognizable speech, no `data` events are emitted.
  *
  * By default, only finalized text is emitted in the data events, however when `objectMode`/`readableObjectMode` and `interim_results` are enabled, both interim and final results objects are emitted.
  * WriteableElementStream uses this, for example, to live-update the DOM with word-by-word transcriptions.
  *
- *  An interim result looks like this:
- ```js
- { alternatives:
-   [ { timestamps:
-        [ [ 'it', 20.9, 21.04 ],
-          [ 'is', 21.04, 21.17 ],
-          [ 'a', 21.17, 21.25 ],
-          [ 'site', 21.25, 21.56 ],
-          [ 'that', 21.56, 21.7 ],
-          [ 'hardly', 21.7, 22.06 ],
-          [ 'anyone', 22.06, 22.49 ],
-          [ 'can', 22.49, 22.67 ],
-          [ 'behold', 22.67, 23.13 ],
-          [ 'without', 23.13, 23.46 ],
-          [ 'some', 23.46, 23.67 ],
-          [ 'sort', 23.67, 23.91 ],
-          [ 'of', 23.91, 24 ],
-          [ 'unwanted', 24, 24.58 ],
-          [ 'emotion', 24.58, 25.1 ] ],
-       transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotion ' } ],
-  final: false,
-  result_index: 3 }
- ```
-
- While a final result looks like this (some features only appear in final results):
- ```js
-  { alternatives:
-     [ { word_confidence:
-          [ [ 'it', 1 ],
-            [ 'is', 0.956286624429304 ],
-            [ 'a', 0.8105753725270362 ],
-            [ 'site', 1 ],
-            [ 'that', 1 ],
-            [ 'hardly', 1 ],
-            [ 'anyone', 1 ],
-            [ 'can', 1 ],
-            [ 'behold', 0.5273598005406737 ],
-            [ 'without', 1 ],
-            [ 'some', 1 ],
-            [ 'sort', 1 ],
-            [ 'of', 1 ],
-            [ 'unwanted', 1 ],
-            [ 'emotion', 0.49401837076320887 ] ],
-         confidence: 0.881,
-         transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotion ',
-         timestamps:
-          [ [ 'it', 20.9, 21.04 ],
-            [ 'is', 21.04, 21.17 ],
-            [ 'a', 21.17, 21.25 ],
-            [ 'site', 21.25, 21.56 ],
-            [ 'that', 21.56, 21.7 ],
-            [ 'hardly', 21.7, 22.06 ],
-            [ 'anyone', 22.06, 22.49 ],
-            [ 'can', 22.49, 22.67 ],
-            [ 'behold', 22.67, 23.13 ],
-            [ 'without', 23.13, 23.46 ],
-            [ 'some', 23.46, 23.67 ],
-            [ 'sort', 23.67, 23.91 ],
-            [ 'of', 23.91, 24 ],
-            [ 'unwanted', 24, 24.58 ],
-            [ 'emotion', 24.58, 25.1 ] ] },
-       { transcript: 'it is a sight that hardly anyone can behold without some sort of unwanted emotion ' },
-       { transcript: 'it is a site that hardly anyone can behold without some sort of unwanted emotions ' } ],
-    final: true,
-    result_index: 3 }
- ```
-
+ * Note that the WebSocket connection is not established until the first chunk of data is recieved. This allows for auto-detection of content type (for wav/flac/opus audio).
  *
  * @param {Object} options
  * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
  * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] base URL for service
  * @param {String} [options.token] - Auth token
+ * @param {Object} [options.headers] - Only works in Node.js, not in browsers. Allows for custom headers to be set, including an Authorization header (preventing the need for auth tokens)
  * @param {String} [options.content-type='audio/wav'] - content type of audio; can be automatically determined from file header in most cases. only wav, flac, and ogg/opus are supported
  * @param {Boolean} [options.interim_results=true] - Send back non-final previews of each "sentence" as it is being processed. These results are ignored in text mode.
  * @param {Boolean} [options.continuous=true] - set to false to automatically stop the transcription after the first "sentence"
@@ -226,6 +161,10 @@ RecognizeStream.prototype.initialize = function() {
 
   this.socket.onopen = function() {
     self.sendJSON(openingMessage);
+    /**
+     * emitted once the WebSocket connection has been established
+     * @event RecognizeStream#connect
+     */
     self.emit('connect');
   };
 
@@ -297,6 +236,10 @@ RecognizeStream.prototype.initialize = function() {
         socket.close();
       } else {
         self.listening = true;
+        /**
+         * Emitted when the Watson Service indicates readieness to transcribe audio. Any audio sent before this point will be buffered until now.
+         * @event RecognizeStream#listening
+         */
         self.emit('listening');
       }
     } else {
@@ -383,7 +326,15 @@ RecognizeStream.prototype.afterSend = function afterSend(next) {
   }
 };
 
+/**
+ * Prevents any more audio from being sent over the WebSocket and gracefully closes the connection.
+ * Additional data may still be emitted up until the `end` event is triggered.
+ */
 RecognizeStream.prototype.stop = function() {
+  /**
+   * Event emitted when the stop method is called. Mainly for synchronising with file reading and playback.
+   * @event RecognizeStream#stop
+   */
   this.emit('stop');
   this.finish();
 };
