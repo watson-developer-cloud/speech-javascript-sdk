@@ -407,7 +407,9 @@ RecognizeStream.prototype.promise = require('./to-promise');
 
 
 RecognizeStream.getContentType = function(buffer) {
-  return contentType(buffer.slice(0, 4).toString());
+  // the substr really shouldn't be necessary, but there's a bug somewhere that can cause buffer.slice(0,4) to return
+  // the entire contents of the buffer, so it's a failsafe to catch that
+  return contentType(buffer.slice(0, 4).toString().substr(0,4));
 };
 
 

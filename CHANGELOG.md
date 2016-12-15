@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.25.1
+* Workaround for browser bug that was breaking automatic content-type detection in certain cases
+
 ### v0.25.0
 * Fixed bug with recognizeStream failing to auto-detect content-type
 * RecognizeStream no longer sets any default options
