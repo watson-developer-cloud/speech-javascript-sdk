@@ -266,13 +266,6 @@ RecognizeStream.prototype.initialize = function() {
   }
 
   socket.onmessage = function(frame) {
-    /**
-     * Emit any messages received over the wire, mainly used for debugging.
-     *
-     * @event RecognizeStream#message
-     * @param {Object} message - frame object with a data attribute that's either a string or a Buffer/TypedArray
-     */
-    self.emit('message', frame);
 
     if (typeof frame.data !== 'string') {
       return emitError('Unexpected binary data received from server', frame);
@@ -284,6 +277,15 @@ RecognizeStream.prototype.initialize = function() {
     } catch (jsonEx) {
       return emitError('Invalid JSON received from service:', frame, jsonEx);
     }
+
+    /**
+     * Emit any messages received over the wire, mainly used for debugging.
+     *
+     * @event RecognizeStream#message
+     * @param {Object} message - frame object with a data attribute that's either a string or a Buffer/TypedArray
+     * @param {Object} [data] - parsed JSON object (if possible);
+     */
+    self.emit('message', frame, data);
 
     if (data.error) {
       emitError(data.error, frame);
