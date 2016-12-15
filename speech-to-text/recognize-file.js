@@ -150,6 +150,12 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
     }
   }
 
+  // expose the original stream to for debugging (and to support the JSON tab on the STT demo)
+  if (stream !== recognizeStream) {
+    stream.recognizeStream = recognizeStream;
+  }
+
+
   return stream;
 };
 

@@ -285,6 +285,14 @@ RecognizeStream.prototype.initialize = function() {
   }
 
   socket.onmessage = function(frame) {
+    /**
+     * Emit any messages received over the wire, mainly used for debugging.
+     *
+     * @event RecognizeStream#message
+     * @param {Object} message - frame object with a data attribute that's either a string or a Buffer/TypedArray
+     */
+    this.emit('message', frame);
+
     if (typeof frame.data !== 'string') {
       return emitError('Unexpected binary data received from server', frame);
     }
@@ -336,14 +344,20 @@ RecognizeStream.prototype.initialize = function() {
 
 RecognizeStream.prototype.sendJSON = function sendJSON(msg) {
   /**
+   * Emits any JSON object sent to the service from the client. Mainly used for debugging.
    * @event RecognizeStream#send-json
-   * @param {Object} msg - the raw JSON sent to Watson - sometimes useful for debugging
+   * @param {Object} msg
    */
   this.emit('send-json', msg);
   return this.socket.send(JSON.stringify(msg));
 };
 
 RecognizeStream.prototype.sendData = function sendData(data) {
+  /**
+   * Emits any Binary object sent to the service from the client. Mainly used for debugging.
+   * @event RecognizeStream#send-data
+   * @param {Object} msg
+   */
   this.emit('send-data', data);
   return this.socket.send(data);
 };
