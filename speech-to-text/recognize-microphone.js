@@ -79,11 +79,11 @@ module.exports = function recognizeMicrophone(options) {
     options.smart_formatting = options.format;
   }
 
-  // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
-  var rsOpts = assign({}, options);
-  rsOpts.readableObjectMode = options.objectMode;
-  rsOpts['content-type'] = 'audio/l16;rate=16000';
-  delete rsOpts.objectMode;
+  var rsOpts = assign({
+    continuous: true,
+    'content-type': 'audio/l16;rate=16000',
+    interim_results: true,
+  }, options);
 
   var recognizeStream = new RecognizeStream(rsOpts);
   var streams = [recognizeStream]; // collect all of the streams so that we can bundle up errors and send them to the last one

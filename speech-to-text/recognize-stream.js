@@ -22,7 +22,6 @@ var util = require('util');
 var pick = require('object.pick');
 var W3CWebSocket = require('websocket').w3cwebsocket;
 var contentType = require('./content-type');
-var defaults = require('defaults');
 var qs = require('../util/querystring.js');
 
 var OPENING_MESSAGE_PARAMS_ALLOWED = [
@@ -140,7 +139,8 @@ var QUERY_PARAMS_ALLOWED = [
  * @param {Number} [options.word_alternatives_threshold] - Number between 0 and 1 representing the minimum confidence before including an alternative word in the results. Must be set to enable word alternatives,
  * @param {Boolean} [options.profanity_filter=false] - set to true to filter out profanity and replace the words with *'s
  * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity
- * @param {Boolean} [options.readableObjectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Changes several other defaults.
+ * @param {Boolean} [options.readableObjectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Does not affect input (which must be binary)
+ * @param {Boolean} [options.objectMode=false] - alias for options.readableObjectMode
  * @param {Number} [options.X-Watson-Learning-Opt-Out=false] - set to true to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.smart_formatting=false] - formats numeric values such as dates, times, currency, etc.
  * @param {String} [options.customization_id] - not yet supported on the public STT service
@@ -148,6 +148,12 @@ var QUERY_PARAMS_ALLOWED = [
  * @constructor
  */
 function RecognizeStream(options) {
+  // this stream only supports objectMode on the output side.
+  // It must receive binary data input.
+  if (options.objectMode) {
+    options.readableObjectMode = true;
+    delete options.objectMode;
+  }
   Duplex.call(this, options);
   this.options = options;
   this.listening = false;
@@ -161,7 +167,7 @@ function RecognizeStream(options) {
    * @param {String} event
    */
   function flowForResults(event) {
-    if (event === 'results' || event === 'result') {
+    if (event === 'results' || event === 'result' || event === 'speaker_labels') {
       self.removeListener('newListener', flowForResults);
       process.nextTick(function() {
         self.resume(); // put this stream in flowing mode
@@ -199,34 +205,9 @@ RecognizeStream.prototype.initialize = function() {
   var queryString = qs.stringify(queryParams);
   var url = (options.url || 'wss://stream.watsonplatform.net/speech-to-text/api').replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
-  // turn off all the extras if we're just outputting text
-  var textModeDefaults = {
-    action: 'start',
-    'content-type': 'audio/wav',
-    continuous: true,
-    inactivity_timeout: 30,
-    interim_results: true,
-    word_confidence: false,
-    timestamps: false,
-    max_alternatives: 1
-  };
 
-  // but turn everything on if we're in objectMode and the end user can consume it
-  var objectModeDefaults = {
-    action: 'start',
-    'content-type': 'audio/wav',
-    continuous: true,
-    inactivity_timeout: 30,
-    interim_results: true,
-    word_confidence: false,
-    timestamps: false,
-    max_alternatives: 1
-  };
-
-  var openingMessage = defaults(
-    pick(options, OPENING_MESSAGE_PARAMS_ALLOWED),
-    (options.objectMode || options.readableObjectMode) ? objectModeDefaults : textModeDefaults
-  );
+  var openingMessage = pick(options, OPENING_MESSAGE_PARAMS_ALLOWED);
+  openingMessage.action = 'start';
 
   var self = this;
 
@@ -291,7 +272,7 @@ RecognizeStream.prototype.initialize = function() {
      * @event RecognizeStream#message
      * @param {Object} message - frame object with a data attribute that's either a string or a Buffer/TypedArray
      */
-    this.emit('message', frame);
+    self.emit('message', frame);
 
     if (typeof frame.data !== 'string') {
       return emitError('Unexpected binary data received from server', frame);
@@ -317,7 +298,7 @@ RecognizeStream.prototype.initialize = function() {
         self.emit('listening');
       }
     } else {
-      if (options.objectMode || options.readableObjectMode) {
+      if (options.readableObjectMode) {
         /**
          * Object with interim or final results, possibly including confidence scores, alternatives, and word timing.
          * @event RecognizeStream#data

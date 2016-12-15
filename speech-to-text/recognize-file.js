@@ -78,13 +78,10 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
     options.timestamps = true;
   }
 
-  // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
-  // unless were in realtime mode - in which case the timing stream requires objectMode input.
-  var rsOpts = assign({}, options);
-  rsOpts.readableObjectMode = options.objectMode || realtime;
-  delete rsOpts.objectMode;
-
-
+  var rsOpts = assign({
+    continuous: true,
+    interim_results: true,
+  }, options);
 
   var stream = new BlobStream(options.data);
   var recognizeStream = new RecognizeStream(rsOpts);

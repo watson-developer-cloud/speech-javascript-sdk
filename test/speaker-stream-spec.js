@@ -216,7 +216,7 @@ describe('SpeakerStream', function() {
     });
     stream.on('end', function() {
       assert(called);
-      done()
+      done();
     });
     var messageStream = require('./resources/car_loan_stream.json');
     messageStream.forEach(function(msg) {
@@ -229,7 +229,7 @@ describe('SpeakerStream', function() {
     var stream = new SpeakerStream();
     stream.on('error', done);
     var lastMsg;
-    stream.on('data', function (msg) {
+    stream.on('data', function(msg) {
       assert(msg);
       assert.notDeepEqual(msg, lastMsg);
       lastMsg = msg;

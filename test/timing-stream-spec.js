@@ -183,7 +183,7 @@ describe('TimingStream', function() {
     nextTick(function() { // write is always async (?)
       assert(actual.length);
       actual.reduce(function(lastIndex, msg) {
-        assert.equal(msg.result_index, lastIndex, "wrong index on result, expecting " + lastIndex + " got " + JSON.stringify(msg, null, 2));
+        assert.equal(msg.result_index, lastIndex, 'wrong index on result, expecting ' + lastIndex + ' got ' + JSON.stringify(msg, null, 2));
         // index should always increment after a final message
         return (msg.results[0].final) ? lastIndex + 1 : lastIndex;
       }, 0);
