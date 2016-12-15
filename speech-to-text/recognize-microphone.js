@@ -49,7 +49,7 @@ var bitBucket = new Writable({
  * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
  * @param {String|DOMElement} [options.outputElement] pipe the text to a [WriteableElementStream](WritableElementStream.html) targeting the specified element. Also defaults objectMode to true to enable interim results.
  * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Requires objectMode.
- * @param {Boolean} [options.resultsBySpeaker=false] pipe results through a SpeakerStream. Causes each data event to include multiple results, each with a speaker field. Automatically enables objectMode and speaker_labels. Adds some delay to processing.
+ * @param {Boolean} [options.resultsBySpeaker=false] Not currently functional because microphone input provides broadband audio, but during the current beta release, speaker recognition only works on narrowband models.
  *
  * @returns {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
  */
