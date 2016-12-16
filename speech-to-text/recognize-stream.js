@@ -94,32 +94,32 @@ function RecognizeStream(options) {
   this.listening = false;
   this.initialized = false;
   this.finished = false;
-  var self = this;
 
-  /**
-   * listening for `results` events should put the stream in flowing mode just like `data` events
-   *
-   * @param {String} event
-   */
-  function flowForResults(event) {
-    if (event === 'results' || event === 'result' || event === 'speaker_labels') {
-      self.removeListener('newListener', flowForResults);
-      process.nextTick(function() {
-        self.resume(); // put this stream in flowing mode
-      });
-      if (!options.silent) {
-        // todo: move this to the node.js wrapper
+  this.on('newListener', function(event) {
+    if (!options.silent) {
+      if (event === 'results' || event === 'result' || event === 'speaker_labels') {
         // eslint-disable-next-line no-console
-        console.log(new Error('Watson Speech to Text RecognizeStream: the ' + event + ' event is deprecated and will be removed from a future release. ' +
-          'Please set {objectMode: true} and listen for the data event instead. ' +
+        console.log(new Error('Watson Speech to Text RecognizeStream: the ' + event + ' event was deprecated. ' +
+          'Please set {objectMode: true} and listen for the \'data\' event instead. ' +
+          'Pass {silent: true} to disable this message.'));
+      } else if (event === 'connection-close') {
+        // eslint-disable-next-line no-console
+        console.log(new Error('Watson Speech to Text RecognizeStream: the ' + event + ' event was deprecated. ' +
+          'Please listen for the \'close\' event instead. ' +
+          'Pass {silent: true} to disable this message.'));
+      } else if (event === 'connect') {
+        // eslint-disable-next-line no-console
+        console.log(new Error('Watson Speech to Text RecognizeStream: the ' + event + ' event was deprecated. ' +
+          'Please listen for the \'open\' event instead. ' +
           'Pass {silent: true} to disable this message.'));
       }
     }
-  }
-  this.on('newListener', flowForResults);
+  });
 }
 util.inherits(RecognizeStream, Duplex);
 
+
+RecognizeStream.WEBSOCKET_CONNECTION_ERROR = 'WebSocket connection error';
 
 RecognizeStream.prototype.initialize = function() {
   var options = this.options;
@@ -153,9 +153,19 @@ RecognizeStream.prototype.initialize = function() {
   // when the input stops, let the service know that we're done
   self.on('finish', self.finish.bind(self));
 
-  socket.onerror = function(error) {
+  /**
+   * This can happen if the credentials are invalid - in that case, the response from DataPower doesn't include the
+   * necessary CORS headers, so JS can't even read it :(
+   *
+   * @param {Event} event - event object with essentially no useful information
+   */
+  socket.onerror = function(event) {
     self.listening = false;
-    self.emit('error', error);
+    var err = new Error('WebSocket connection error');
+    err.name = RecognizeStream.WEBSOCKET_CONNECTION_ERROR;
+    err.event = event;
+    self.emit('error', err);
+    self.push(null);
   };
 
 
@@ -163,29 +173,22 @@ RecognizeStream.prototype.initialize = function() {
     self.sendJSON(openingMessage);
     /**
      * emitted once the WebSocket connection has been established
-     * @event RecognizeStream#connect
+     * @event RecognizeStream#open
      */
-    self.emit('connect');
+    self.emit('open');
   };
 
   this.socket.onclose = function(e) {
-    if (self.listening) {
-      self.listening = false;
-      self.push(null);
-    }
+    // if (self.listening) {
+    self.listening = false;
+    self.push(null);
+    // }
     /**
      * @event RecognizeStream#close
      * @param {Number} reasonCode
      * @param {String} description
      */
     self.emit('close', e.code, e.reason);
-    /**
-     * @event RecognizeStream#connection-close
-     * @param {Number} reasonCode
-     * @param {String} description
-     * @deprecated
-     */
-    self.emit('connection-close', e.code, e.reason);
   };
 
   /**
@@ -232,7 +235,6 @@ RecognizeStream.prototype.initialize = function() {
       // this is emitted both when the server is ready for audio, and after we send the close message to indicate that it's done processing
       if (self.listening) {
         self.listening = false;
-        self.push(null);
         socket.close();
       } else {
         self.listening = true;
