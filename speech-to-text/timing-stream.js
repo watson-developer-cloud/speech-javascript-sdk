@@ -38,11 +38,9 @@ function TimingStream(opts) {
   this.sourceEnded = false;
 
   var self = this;
-  this.on('pipe', function(source) {
-    source.on('end', function() {
-      self.sourceEnded = true; // todo: see if there's anything built-in that does this for us
-      self.checkForEnd();
-    });
+  this.on('finish', function() {
+    self.sourceEnded = true; // todo: see if there's anything built-in that does this for us
+    self.checkForEnd();
   });
 }
 util.inherits(TimingStream, Duplex);
