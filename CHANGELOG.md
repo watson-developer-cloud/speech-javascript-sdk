@@ -1,6 +1,6 @@
 # Changelog
 
-### vNext
+### v0.26.0
 * Renamed RecognizeStream 'connect' event to 'open' to match 'close' event
 * Removed deprecated connection-close event
 * Corrected deprecation notices for unsupported events (results, result, speaker_labels, connect, connection-close)
