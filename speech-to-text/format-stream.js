@@ -16,14 +16,14 @@ var defaults = require('defaults');
  *
  * @param {Object} opts
  * @param {String} opts.model - some models / languages need special handling
- * @param {String} [opts.hesitation='\u2026'] - what to put down for a "hesitation" event, defaults to an ellipsis (...)
+ * @param {String} [opts.hesitation=''] - what to put down for a "hesitation" event, also consider \u2026 (ellipsis: ...)
  * @param {Boolean} [options.objectMode=false] - emit `result` objects instead of string Buffers for the `data` events.
  * @constructor
  */
 function FormatStream(opts) {
   this.options = defaults(opts, {
     model: '', // some models should have all spaces removed
-    hesitation: '\u2026', // ellipsis
+    hesitation: '',
     decodeStrings: false // false = don't convert strings to buffers before passing to _write
   });
   Transform.call(this, this.options);
@@ -33,7 +33,7 @@ function FormatStream(opts) {
 }
 util.inherits(FormatStream, Transform);
 
-var reHesitation = /%HESITATION/g; // when the service detects a "hesitation" pause, it literally puts the string "%HESITATION" into the transcription
+var reHesitation = /%HESITATION ?/g; // http://www.ibm.com/watson/developercloud/doc/speech-to-text/output.shtml#hesitation - D_ is handled below
 var reRepeatedCharacter = /([a-z])\1{2,}/ig; // detect the same character repeated three or more times and remove it
 var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
 
@@ -45,7 +45,7 @@ var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
  */
 FormatStream.prototype.clean = function clean(text) {
   // clean out "junk"
-  text = text.replace(reHesitation, this.options.hesitation)
+  text = text.replace(reHesitation, this.options.hesitation ? this.options.hesitation.trim() + ' ' : this.options.hesitation)
     .replace(reRepeatedCharacter, '')
     .replace(reDUnderscoreWords,'');
 
@@ -54,7 +54,7 @@ FormatStream.prototype.clean = function clean(text) {
     text = text.replace(/ /g,'');
   }
 
-  return text.trim();
+  return text.trim() + ' '; // we want exactly 1 space at the end
 };
 
 /**
@@ -73,12 +73,13 @@ FormatStream.prototype.capitalize = function capitalize(text) {
  * @returns {string}
  */
 FormatStream.prototype.period = function period(text) {
+  text = text.trim();
   // don't put a period down if the clean stage remove all of the text
   if (!text) {
     return ' ';
   }
   // just add a space if the sentence ends in an ellipse
-  if (this.options.hesitation && text.substr(-1) === this.options.hesitation) {
+  if (text.substr(-1) === '\u2026') {
     return text + ' ';
   }
   return text + (this.isJaCn ? '。' : '. ');
@@ -119,17 +120,23 @@ FormatStream.prototype.formatString = function(str, isInterim) {
 FormatStream.prototype.formatResult = function formatResult(data) {
   data = clone(data);
   if (Array.isArray(data.results)) {
-    data.results.forEach(function(result) {
+    data.results.forEach(function(result, i) {
+
+      // if there are multiple interim results (as produced by the speaker stream),
+      // treat the text as final in all but the last result
+      var textFinal = result.final || (i !== (data.results.length - 1));
+
       result.alternatives = result.alternatives.map(function(alt) {
-        alt.transcript = this.formatString(alt.transcript, !result.final);
+        alt.transcript = this.formatString(alt.transcript, !textFinal);
         if (alt.timestamps) {
-          alt.timestamps = alt.timestamps.map(function(ts, i, arr) {
+          alt.timestamps = alt.timestamps.map(function(ts, j, arr) {
             // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
             ts[0] = this.clean(ts[0]);
-            if (i === 0) {
+            if (j === 0) {
               ts[0] = this.capitalize(ts[0]);
             }
-            if (i === arr.length - 1 && result.final) {
+
+            if (j === arr.length - 1 && textFinal) {
               ts[0] = this.period(ts[0]);
             }
             return ts;

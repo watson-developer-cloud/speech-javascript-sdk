@@ -83,9 +83,22 @@ describe('FormatStream', function() {
     stream.write(source);
   });
 
-  // https://github.com/watson-developer-cloud/speech-javascript-sdk/issues/13
-  it('should handle %HESITATIONs at the end of a sentence (and not add a period)', function(done) {
+  it('should handle %HESITATIONs at the beginning, middle, and end of a sentence', function(done) {
     var stream = new FormatStream();
+    stream.setEncoding('utf8');
+    var source = '%HESITATION asdf %HESITATION bsdf %HESITATION ';
+    var expected = 'Asdf bsdf. ';
+    stream.on('data', function(actual) {
+      assert.equal(actual, expected);
+      done();
+    });
+    stream.on('error', done);
+    stream.write(source);
+  });
+
+  // https://github.com/watson-developer-cloud/speech-javascript-sdk/issues/13
+  it('should handle %HESITATIONs at the end of a sentence (and not add a period) when set to ellipsis', function(done) {
+    var stream = new FormatStream({hesitation: '\u2026'});
     stream.setEncoding('utf8');
     var source = '%HESITATION asdf %HESITATION ';
     var expected = '… asdf … ';
