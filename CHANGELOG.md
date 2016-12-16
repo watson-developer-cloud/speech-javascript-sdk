@@ -1,5 +1,14 @@
 # Changelog
 
+### vNext
+* Renamed RecognizeStream 'connect' event to 'open' to match 'close' event
+* Removed deprecated connection-close event
+* Corrected deprecation notices for unsupported events (results, result, speaker_labels, connect, connection-close)
+* Tweaked error handling to still fire `end` event when possible
+* FormatStream: Changed default %HESITATION replacement from '\u2026' (ellipse - ...) to ''
+* FormatStream: add space to end of interim transcripts to match service behavior
+* SpeakerStream: add speakerlessInterim option to allow faster UI updating
+
 ### v0.25.1
 * Workaround for browser bug that was breaking automatic content-type detection in certain cases
 
