@@ -26,7 +26,7 @@
     
 
 
-    <h3>watson-speech 0.25.1</h3>
+    <h3>watson-speech 0.26.0</h3>
 
 
 
@@ -45,9 +45,8 @@
     <section>
         <article><h1>IBM Watson Speech Services for Web Browsers</h1><p><a href="https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk"><img src="https://travis-ci.org/watson-developer-cloud/speech-javascript-sdk.svg?branch=master" alt="Build Status"></a>
 <a href="https://www.npmjs.com/package/watson-speech"><img src="https://img.shields.io/npm/v/watson-speech.svg" alt="npm-version"></a></p>
-<p>Allows you to easily add voice recognition and synthesis to any web app with minimal code. </p>
-<p><strong>Warning</strong> This library is still has a few rough edges and may yet see breaking changes.</p>
-<h3>For Web Browsers Only</h3><p>This library is primarily intended for use in browsers. 
+<p>Allows you to easily add voice recognition and synthesis to any web app with minimal code.</p>
+<h3>Build for Browsers</h3><p>This library is primarily intended for use in web browsers.
 Check out <a href="https://www.npmjs.com/package/watson-developer-cloud">watson-developer-cloud</a> to use Watson services (speech and others) from Node.js.</p>
 <p>However, a server-side component is required to generate auth tokens. 
 The examples/ folder includes example Node.js and Python servers, and SDKs are available for <a href="https://github.com/watson-developer-cloud/node-sdk#authorization">Node.js</a>, 
@@ -130,13 +129,13 @@ Playback will automatically stop when <code>.stop()</code> is called on the Reco
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:connection-close">connection-close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:listening">listening</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:open">open</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="RecognizeStream.html#event:stop">stop</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Dec 15 2016 23:58:08 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Dec 16 2016 21:56:11 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
