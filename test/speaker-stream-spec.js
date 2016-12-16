@@ -291,6 +291,96 @@ describe('SpeakerStream', function() {
   });
 
 
+  it('should provide early results when options.speakerlessInterim=true', function(done) {
+    var stream = new SpeakerStream({speakerlessInterim: true});
+    stream.on('error', done);
+    var actual = [];
+    stream.on('data', function(data) {
+      actual.push(data);
+    });
+
+    var expected = [{
+      results: [{
+        alternatives: [{
+          timestamps: [
+            ['hi', 0.06, 0.28],
+          ],
+          transcript: 'hi '
+        }],
+        final: false
+      }],
+      result_index: 0
+    }, {
+      results: [{
+        speaker: 0,
+        alternatives: [{
+          timestamps: [
+            ['hi', 0.06, 0.28],
+          ],
+          transcript: 'hi '
+        }],
+        final: true
+      },
+        {
+          speaker: 1,
+          alternatives: [{
+            timestamps: [
+              ['hello', 0.28, 0.37],
+            ],
+            transcript: 'hello '
+          }],
+          final: true
+        }],
+      result_index: 0
+    }];
+
+    stream.on('end', function() {
+      assert.deepEqual(actual, expected);
+      done();
+    });
+
+    stream.write({
+      results: [{
+        alternatives: [{
+          timestamps: [
+            ['hi', 0.06, 0.28],
+          ],
+          transcript: 'hi '
+        }],
+        final: false
+      }],
+      result_index: 0
+    });
+    stream.write({
+      results: [{
+        alternatives: [{
+          timestamps: [
+            ['hi', 0.06, 0.28],
+            ['hello', 0.28, 0.37],
+          ],
+          transcript: 'hi hello '
+        }],
+        final: true
+      }],
+      result_index: 0
+    });
+    stream.end({
+      speaker_labels: [{
+        from: 0.06,
+        to: 0.28,
+        speaker: 0,
+        confidence: 0.512,
+        final: false
+      }, {
+        from: 0.28,
+        to: 0.37,
+        speaker: 1,
+        confidence: 0.512,
+        final: true
+      }]
+    });
+  });
+
   describe('speakerLabelsSorter', function() {
     it('should correctly sort speaker labels by start time and then by end time', function() {
       var input = [

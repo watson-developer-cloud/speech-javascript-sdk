@@ -36,10 +36,12 @@ var noTimestamps = require('./no-timestamps');
  *
  * @constructor
  * @param {Object} options
+ * @param {boolean} [options.speakerlessInterim=false] - emit interim results before initial speaker has been identified (allows UI to update more quickly)
  */
 function SpeakerStream(options) {
   options = options || {};
   options.objectMode = true;
+  this.options = options;
   Transform.call(this, options);
   /**
    * timestamps is a 2-d array.
@@ -80,7 +82,6 @@ function SpeakerStream(options) {
    * @private
    */
   this.speaker_labels = [];
-
 }
 util.inherits(SpeakerStream, Transform);
 
@@ -96,8 +97,11 @@ var TO = 2;
 
 SpeakerStream.ERROR_MISMATCH = 'MISMATCH';
 
-
-SpeakerStream.prototype.process = function() {
+/**
+ * Builds a results object with everything we've got so far
+ * @returns {*}
+ */
+SpeakerStream.prototype.buildMessage = function() {
   var final = this.isFinal();
   var errored = false;
 
@@ -153,18 +157,8 @@ SpeakerStream.prototype.process = function() {
     return arr;
   }, []);
 
-  if (results.length) {
-    /**
-     * Emit an object similar to the normal results object, only with multiple entries in the results Array (a new one
-     * each time the speaker changes), and with a speaker field on the results.
-     *
-     * result_index is always 0 because the results always includes the entire conversation so far.
-     *
-     * @event SpeakerStream#data
-     * @param {Object} results-format message with multiple results and an extra speaker field on each result
-     */
-    this.push({results: results, result_index: 0});
-  }
+  // result_index is always 0 because the results always includes the entire conversation so far.
+  return {results: results, result_index: 0};
 };
 
 /**
@@ -219,12 +213,29 @@ SpeakerStream.prototype.handleSpeakerLabels = function(data) {
 };
 
 SpeakerStream.prototype._transform = function(data, encoding, next) {
+  var message;
   if (Array.isArray(data.results)) {
     this.handleResults(data);
+    if (this.options.speakerlessInterim && data.results.length && data.results[0].final === false) {
+      message = this.buildMessage();
+      message.results = message.results.concat(data.results);
+    }
   }
   if (Array.isArray(data.speaker_labels)) {
     this.handleSpeakerLabels(data);
-    this.process();
+    message = this.buildMessage();
+  }
+  if (message) {
+    /**
+     * Emit an object similar to the normal results object, only with multiple entries in the results Array (a new one
+     * each time the speaker changes), and with a speaker field on the results.
+     *
+     * result_index is always 0 because the results always includes the entire conversation so far.
+     *
+     * @event SpeakerStream#data
+     * @param {Object} results-format message with multiple results and an extra speaker field on each result
+     */
+    this.push(message);
   }
   next();
 };
@@ -241,7 +252,8 @@ SpeakerStream.prototype._flush = function(done) {
     if (this.timestamps.length && !this.speaker_labels.length) {
       msg = 'No speaker_labels found. SpeakerStream requires speaker_labels to be enabled.';
     } else {
-      msg = 'Mismatch between number of word timestamps (' + this.timestamps.length + ') and number of speaker_labels (' + this.speaker_labels.length + ') - some data may be lost.';
+      msg = 'Mismatch between number of word timestamps (' + this.timestamps.length + ') and number of speaker_labels (' +
+        this.speaker_labels.length + ') - some data may be lost.';
     }
     var err = new Error(msg);
     err.name = SpeakerStream.ERROR_MISMATCH;
