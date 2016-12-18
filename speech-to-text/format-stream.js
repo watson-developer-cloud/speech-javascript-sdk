@@ -15,7 +15,7 @@ var defaults = require('defaults');
  *  May be used as either a Stream, or a standalone helper.
  *
  * @param {Object} opts
- * @param {String} opts.model - some models / languages need special handling
+ * @param {String} [opts.model] - some models / languages need special handling
  * @param {String} [opts.hesitation=''] - what to put down for a "hesitation" event, also consider \u2026 (ellipsis: ...)
  * @param {Boolean} [options.objectMode=false] - emit `result` objects instead of string Buffers for the `data` events.
  * @constructor
