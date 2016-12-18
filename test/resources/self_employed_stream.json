@@ -1,0 +1,1386 @@
+[{
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["so", 0.04, 0.34],
+        ["how", 0.34, 0.54],
+        ["are", 0.54, 0.63],
+        ["you", 0.63, 0.77],
+        ["doing", 0.77, 1.03],
+        ["these", 1.03, 1.22],
+        ["days", 1.22, 1.6]
+      ],
+      "transcript": "so how are you doing these days "
+    }],
+    "final": false
+  }],
+  "result_index": 0
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["so", 0.04, 0.34],
+        ["how", 0.34, 0.54],
+        ["are", 0.54, 0.63],
+        ["you", 0.63, 0.77],
+        ["doing", 0.77, 1.03],
+        ["these", 1.03, 1.22],
+        ["days", 1.22, 1.6],
+        ["things", 2, 2.24],
+        ["are", 2.24, 2.32],
+        ["going", 2.32, 2.54],
+        ["very", 2.54, 2.8],
+        ["well", 2.8, 3.15],
+        ["glad", 3.3, 3.6],
+        ["to", 3.6, 3.72],
+        ["hear", 3.72, 3.93]
+      ],
+      "transcript": "so how are you doing these days things are going very well glad to hear "
+    }],
+    "final": false
+  }],
+  "result_index": 0
+}, {
+  "results": [{
+    "keywords_result": {},
+    "alternatives": [{
+      "timestamps": [
+        ["so", 0.04, 0.34],
+        ["how", 0.34, 0.54],
+        ["are", 0.54, 0.63],
+        ["you", 0.63, 0.77],
+        ["doing", 0.77, 1.03],
+        ["these", 1.03, 1.22],
+        ["days", 1.22, 1.6],
+        ["things", 2, 2.24],
+        ["are", 2.24, 2.32],
+        ["going", 2.32, 2.54],
+        ["very", 2.54, 2.8],
+        ["well", 2.8, 3.15],
+        ["glad", 3.3, 3.6],
+        ["to", 3.6, 3.72],
+        ["hear", 3.72, 4.16]
+      ],
+      "confidence": 0.944,
+      "transcript": "so how are you doing these days things are going very well glad to hear "
+    }],
+    "final": true
+  }],
+  "result_index": 0
+}, {
+  "speaker_labels": [{
+    "from": 0.04,
+    "to": 0.34,
+    "speaker": 0,
+    "confidence": 0.472,
+    "final": false
+  }, {
+    "from": 0.34,
+    "to": 0.54,
+    "speaker": 0,
+    "confidence": 0.472,
+    "final": false
+  }, {
+    "from": 0.54,
+    "to": 0.63,
+    "speaker": 0,
+    "confidence": 0.472,
+    "final": false
+  }, {
+    "from": 0.63,
+    "to": 0.77,
+    "speaker": 0,
+    "confidence": 0.472,
+    "final": false
+  }, {
+    "from": 0.77,
+    "to": 1.03,
+    "speaker": 0,
+    "confidence": 0.472,
+    "final": false
+  }, {
+    "from": 1.03,
+    "to": 1.22,
+    "speaker": 0,
+    "confidence": 0.472,
+    "final": false
+  }, {
+    "from": 1.22,
+    "to": 1.6,
+    "speaker": 0,
+    "confidence": 0.472,
+    "final": false
+  }, {
+    "from": 2,
+    "to": 2.24,
+    "speaker": 1,
+    "confidence": 0.538,
+    "final": false
+  }, {
+    "from": 2.24,
+    "to": 2.32,
+    "speaker": 1,
+    "confidence": 0.538,
+    "final": false
+  }, {
+    "from": 2.32,
+    "to": 2.54,
+    "speaker": 1,
+    "confidence": 0.538,
+    "final": false
+  }, {
+    "from": 2.54,
+    "to": 2.8,
+    "speaker": 1,
+    "confidence": 0.538,
+    "final": false
+  }, {
+    "from": 2.8,
+    "to": 3.15,
+    "speaker": 1,
+    "confidence": 0.538,
+    "final": false
+  }, {
+    "from": 3.3,
+    "to": 3.6,
+    "speaker": 2,
+    "confidence": 0.484,
+    "final": false
+  }, {
+    "from": 3.6,
+    "to": 3.72,
+    "speaker": 2,
+    "confidence": 0.484,
+    "final": false
+  }, {
+    "from": 3.72,
+    "to": 4.16,
+    "speaker": 2,
+    "confidence": 0.484,
+    "final": false
+  }]
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["okay", 5, 5.23],
+        ["pension", 5.23, 5.68]
+      ],
+      "transcript": "okay pension "
+    }],
+    "final": false
+  }],
+  "result_index": 1
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["okay", 5, 5.24],
+        ["mentioned", 5.24, 5.67],
+        ["before", 5.67, 6.08],
+        ["that", 6.08, 6.42],
+        ["there's", 6.62, 6.85],
+        ["a", 6.85, 6.91],
+        ["company", 6.91, 7.34],
+        ["now", 7.34, 7.54],
+        ["that", 7.54, 7.73],
+        ["I'm", 7.73, 7.93]
+      ],
+      "transcript": "okay mentioned before that there's a company now that I'm "
+    }],
+    "final": false
+  }],
+  "result_index": 1
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["okay", 5, 5.24],
+        ["mentioned", 5.24, 5.67],
+        ["before", 5.67, 6.08],
+        ["that", 6.08, 6.42],
+        ["there's", 6.62, 6.85],
+        ["a", 6.85, 6.91],
+        ["company", 6.91, 7.34],
+        ["now", 7.34, 7.54],
+        ["that", 7.54, 7.73],
+        ["I'm", 7.73, 7.84],
+        ["working", 7.84, 8.17],
+        ["with", 8.17, 8.42],
+        ["which", 8.79, 9.02],
+        ["is", 9.02, 9.18],
+        ["very", 9.18, 9.44],
+        ["much", 9.44, 9.91]
+      ],
+      "transcript": "okay mentioned before that there's a company now that I'm working with which is very much "
+    }],
+    "final": false
+  }],
+  "result_index": 1
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["okay", 5, 5.24],
+        ["mentioned", 5.24, 5.67],
+        ["before", 5.67, 6.08],
+        ["that", 6.08, 6.42],
+        ["there's", 6.62, 6.85],
+        ["a", 6.85, 6.91],
+        ["company", 6.91, 7.34],
+        ["now", 7.34, 7.54],
+        ["that", 7.54, 7.73],
+        ["I'm", 7.73, 7.84],
+        ["working", 7.84, 8.17],
+        ["with", 8.17, 8.42],
+        ["which", 8.79, 9.02],
+        ["is", 9.02, 9.18],
+        ["very", 9.18, 9.44],
+        ["much", 9.44, 9.74],
+        ["just", 9.74, 10.03],
+        ["just", 10.22, 10.52],
+        ["myself", 10.52, 10.93],
+        ["and", 10.93, 11.04],
+        ["Chris", 11.04, 11.56]
+      ],
+      "transcript": "okay mentioned before that there's a company now that I'm working with which is very much just just myself and Chris "
+    }],
+    "final": false
+  }],
+  "result_index": 1
+}, {
+  "results": [{
+    "keywords_result": {
+      "Chris": [{
+        "normalized_text": "Chris",
+        "start_time": 11.04,
+        "confidence": 0.964,
+        "end_time": 11.56
+      }]
+    },
+    "alternatives": [{
+      "timestamps": [
+        ["okay", 5, 5.24],
+        ["mentioned", 5.24, 5.67],
+        ["before", 5.67, 6.08],
+        ["that", 6.08, 6.42],
+        ["there's", 6.62, 6.85],
+        ["a", 6.85, 6.91],
+        ["company", 6.91, 7.34],
+        ["now", 7.34, 7.54],
+        ["that", 7.54, 7.73],
+        ["I'm", 7.73, 7.84],
+        ["working", 7.84, 8.17],
+        ["with", 8.17, 8.42],
+        ["which", 8.79, 9.02],
+        ["is", 9.02, 9.18],
+        ["very", 9.18, 9.44],
+        ["much", 9.44, 9.74],
+        ["just", 9.74, 10.03],
+        ["just", 10.22, 10.52],
+        ["myself", 10.52, 10.93],
+        ["and", 10.93, 11.04],
+        ["Chris", 11.04, 11.56],
+        ["no", 11.77, 11.93],
+        ["you", 11.93, 12.07],
+        ["hadn't", 12.07, 12.3],
+        ["mentioned", 12.3, 12.65],
+        ["%HESITATION", 13.02, 13.37],
+        ["okay", 13.4, 13.84]
+      ],
+      "confidence": 0.873,
+      "transcript": "okay mentioned before that there's a company now that I'm working with which is very much just just myself and Chris no you hadn't mentioned %HESITATION okay "
+    }],
+    "final": true
+  }],
+  "result_index": 1
+}, {
+  "speaker_labels": [{
+    "from": 3.3,
+    "to": 3.6,
+    "speaker": 0,
+    "confidence": 0.62,
+    "final": false
+  }, {
+    "from": 3.6,
+    "to": 3.72,
+    "speaker": 0,
+    "confidence": 0.62,
+    "final": false
+  }, {
+    "from": 3.72,
+    "to": 4.16,
+    "speaker": 0,
+    "confidence": 0.62,
+    "final": false
+  }, {
+    "from": 5,
+    "to": 5.24,
+    "speaker": 1,
+    "confidence": 0.383,
+    "final": false
+  }, {
+    "from": 5.24,
+    "to": 5.67,
+    "speaker": 1,
+    "confidence": 0.383,
+    "final": false
+  }, {
+    "from": 5.67,
+    "to": 6.08,
+    "speaker": 1,
+    "confidence": 0.383,
+    "final": false
+  }, {
+    "from": 6.08,
+    "to": 6.42,
+    "speaker": 1,
+    "confidence": 0.383,
+    "final": false
+  }, {
+    "from": 6.62,
+    "to": 6.85,
+    "speaker": 1,
+    "confidence": 0.423,
+    "final": false
+  }, {
+    "from": 6.85,
+    "to": 6.91,
+    "speaker": 1,
+    "confidence": 0.423,
+    "final": false
+  }, {
+    "from": 6.91,
+    "to": 7.34,
+    "speaker": 1,
+    "confidence": 0.423,
+    "final": false
+  }, {
+    "from": 7.34,
+    "to": 7.54,
+    "speaker": 1,
+    "confidence": 0.423,
+    "final": false
+  }, {
+    "from": 7.54,
+    "to": 7.73,
+    "speaker": 1,
+    "confidence": 0.423,
+    "final": false
+  }, {
+    "from": 7.73,
+    "to": 7.84,
+    "speaker": 1,
+    "confidence": 0.423,
+    "final": false
+  }, {
+    "from": 7.84,
+    "to": 8.17,
+    "speaker": 1,
+    "confidence": 0.423,
+    "final": false
+  }, {
+    "from": 8.17,
+    "to": 8.42,
+    "speaker": 1,
+    "confidence": 0.423,
+    "final": false
+  }, {
+    "from": 8.79,
+    "to": 9.02,
+    "speaker": 1,
+    "confidence": 0.549,
+    "final": false
+  }, {
+    "from": 9.02,
+    "to": 9.18,
+    "speaker": 1,
+    "confidence": 0.549,
+    "final": false
+  }, {
+    "from": 9.18,
+    "to": 9.44,
+    "speaker": 1,
+    "confidence": 0.549,
+    "final": false
+  }, {
+    "from": 9.44,
+    "to": 9.74,
+    "speaker": 1,
+    "confidence": 0.549,
+    "final": false
+  }, {
+    "from": 9.74,
+    "to": 10.03,
+    "speaker": 1,
+    "confidence": 0.549,
+    "final": false
+  }, {
+    "from": 10.22,
+    "to": 10.52,
+    "speaker": 1,
+    "confidence": 0.56,
+    "final": false
+  }, {
+    "from": 10.52,
+    "to": 10.93,
+    "speaker": 1,
+    "confidence": 0.56,
+    "final": false
+  }, {
+    "from": 10.93,
+    "to": 11.04,
+    "speaker": 1,
+    "confidence": 0.56,
+    "final": false
+  }, {
+    "from": 11.04,
+    "to": 11.56,
+    "speaker": 1,
+    "confidence": 0.56,
+    "final": false
+  }, {
+    "from": 11.77,
+    "to": 11.93,
+    "speaker": 0,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 11.93,
+    "to": 12.07,
+    "speaker": 0,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 12.07,
+    "to": 12.3,
+    "speaker": 0,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 12.3,
+    "to": 12.65,
+    "speaker": 0,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 13.02,
+    "to": 13.37,
+    "speaker": 1,
+    "confidence": 0.571,
+    "final": false
+  }, {
+    "from": 13.4,
+    "to": 13.84,
+    "speaker": 1,
+    "confidence": 0.421,
+    "final": false
+  }]
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["he", 14.57, 14.66],
+        ["told", 14.66, 14.86],
+        ["me", 14.86, 14.94],
+        ["that", 14.94, 15.05],
+        ["you", 15.05, 15.14],
+        ["were", 15.14, 15.21],
+        ["leaving", 15.21, 15.52],
+        ["the", 15.52, 15.62],
+        ["company", 15.62, 16.19]
+      ],
+      "transcript": "he told me that you were leaving the company "
+    }],
+    "final": false
+  }],
+  "result_index": 2
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["he", 14.57, 14.66],
+        ["told", 14.66, 14.86],
+        ["me", 14.86, 14.94],
+        ["that", 14.94, 15.05],
+        ["you", 15.05, 15.14],
+        ["were", 15.14, 15.21],
+        ["leaving", 15.21, 15.52],
+        ["the", 15.52, 15.62],
+        ["company", 15.62, 16.26],
+        ["that", 16.46, 16.61],
+        ["you", 16.61, 16.73],
+        ["were", 16.73, 16.86],
+        ["at", 16.86, 17.22],
+        ["and", 17.26, 17.46],
+        ["you", 17.46, 17.54],
+        ["were", 17.54, 17.68],
+        ["entertaining", 17.68, 18.22]
+      ],
+      "transcript": "he told me that you were leaving the company that you were at and you were entertaining "
+    }],
+    "final": false
+  }],
+  "result_index": 2
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["he", 14.57, 14.66],
+        ["told", 14.66, 14.86],
+        ["me", 14.86, 14.94],
+        ["that", 14.94, 15.05],
+        ["you", 15.05, 15.14],
+        ["were", 15.14, 15.21],
+        ["leaving", 15.21, 15.52],
+        ["the", 15.52, 15.62],
+        ["company", 15.62, 16.26],
+        ["that", 16.46, 16.61],
+        ["you", 16.61, 16.73],
+        ["were", 16.73, 16.86],
+        ["at", 16.86, 17.22],
+        ["and", 17.26, 17.46],
+        ["you", 17.46, 17.54],
+        ["were", 17.54, 17.68],
+        ["entertaining", 17.68, 18.25],
+        ["offers", 18.25, 18.79],
+        ["well", 19.16, 19.53],
+        ["it", 19.62, 19.76],
+        ["seemed", 19.76, 19.93],
+        ["to", 19.93, 20.01],
+        ["make", 20.01, 20.22]
+      ],
+      "transcript": "he told me that you were leaving the company that you were at and you were entertaining offers well it seemed to make "
+    }],
+    "final": false
+  }],
+  "result_index": 2
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["he", 14.57, 14.66],
+        ["told", 14.66, 14.86],
+        ["me", 14.86, 14.94],
+        ["that", 14.94, 15.05],
+        ["you", 15.05, 15.14],
+        ["were", 15.14, 15.21],
+        ["leaving", 15.21, 15.52],
+        ["the", 15.52, 15.62],
+        ["company", 15.62, 16.26],
+        ["that", 16.46, 16.61],
+        ["you", 16.61, 16.73],
+        ["were", 16.73, 16.86],
+        ["at", 16.86, 17.22],
+        ["and", 17.26, 17.46],
+        ["you", 17.46, 17.54],
+        ["were", 17.54, 17.68],
+        ["entertaining", 17.68, 18.25],
+        ["offers", 18.25, 18.79],
+        ["well", 19.16, 19.53],
+        ["it", 19.62, 19.76],
+        ["seemed", 19.76, 19.93],
+        ["to", 19.93, 20.01],
+        ["make", 20.01, 20.22],
+        ["sense", 20.22, 20.76],
+        ["since", 20.89, 21.14],
+        ["I", 21.14, 21.19],
+        ["had", 21.19, 21.35],
+        ["a", 21.35, 21.4],
+        ["client", 21.4, 21.76],
+        ["to", 21.76, 21.86],
+        ["do", 21.86, 22.05],
+        ["just", 22.05, 22.22]
+      ],
+      "transcript": "he told me that you were leaving the company that you were at and you were entertaining offers well it seemed to make sense since I had a client to do just "
+    }],
+    "final": false
+  }],
+  "result_index": 2
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["he", 14.57, 14.66],
+        ["told", 14.66, 14.86],
+        ["me", 14.86, 14.94],
+        ["that", 14.94, 15.05],
+        ["you", 15.05, 15.14],
+        ["were", 15.14, 15.21],
+        ["leaving", 15.21, 15.52],
+        ["the", 15.52, 15.62],
+        ["company", 15.62, 16.26],
+        ["that", 16.46, 16.61],
+        ["you", 16.61, 16.73],
+        ["were", 16.73, 16.86],
+        ["at", 16.86, 17.22],
+        ["and", 17.26, 17.46],
+        ["you", 17.46, 17.54],
+        ["were", 17.54, 17.68],
+        ["entertaining", 17.68, 18.25],
+        ["offers", 18.25, 18.79],
+        ["well", 19.16, 19.53],
+        ["it", 19.62, 19.76],
+        ["seemed", 19.76, 19.93],
+        ["to", 19.93, 20.01],
+        ["make", 20.01, 20.22],
+        ["sense", 20.22, 20.76],
+        ["since", 20.89, 21.14],
+        ["I", 21.14, 21.19],
+        ["had", 21.19, 21.35],
+        ["a", 21.35, 21.4],
+        ["client", 21.4, 21.76],
+        ["to", 21.76, 21.86],
+        ["to", 21.86, 22.05],
+        ["just", 22.05, 22.3],
+        ["kind", 22.3, 22.53],
+        ["of", 22.53, 22.63],
+        ["set", 22.63, 22.87],
+        ["up", 22.87, 23],
+        ["my", 23, 23.17],
+        ["own", 23.17, 23.33],
+        ["company", 23.33, 23.77],
+        ["of", 23.77, 23.88],
+        ["sorts", 23.88, 24.22]
+      ],
+      "transcript": "he told me that you were leaving the company that you were at and you were entertaining offers well it seemed to make sense since I had a client to to just kind of set up my own company of sorts "
+    }],
+    "final": false
+  }],
+  "result_index": 2
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["he", 14.57, 14.66],
+        ["told", 14.66, 14.86],
+        ["me", 14.86, 14.94],
+        ["that", 14.94, 15.05],
+        ["you", 15.05, 15.14],
+        ["were", 15.14, 15.21],
+        ["leaving", 15.21, 15.52],
+        ["the", 15.52, 15.62],
+        ["company", 15.62, 16.26],
+        ["that", 16.46, 16.61],
+        ["you", 16.61, 16.73],
+        ["were", 16.73, 16.86],
+        ["at", 16.86, 17.22],
+        ["and", 17.26, 17.46],
+        ["you", 17.46, 17.54],
+        ["were", 17.54, 17.68],
+        ["entertaining", 17.68, 18.25],
+        ["offers", 18.25, 18.79],
+        ["well", 19.16, 19.53],
+        ["it", 19.62, 19.76],
+        ["seemed", 19.76, 19.93],
+        ["to", 19.93, 20.01],
+        ["make", 20.01, 20.22],
+        ["sense", 20.22, 20.76],
+        ["since", 20.89, 21.14],
+        ["I", 21.14, 21.19],
+        ["had", 21.19, 21.35],
+        ["a", 21.35, 21.4],
+        ["client", 21.4, 21.76],
+        ["to", 21.76, 21.86],
+        ["to", 21.86, 22.05],
+        ["just", 22.05, 22.3],
+        ["kind", 22.3, 22.53],
+        ["of", 22.53, 22.63],
+        ["set", 22.63, 22.87],
+        ["up", 22.87, 23],
+        ["my", 23, 23.17],
+        ["own", 23.17, 23.33],
+        ["company", 23.33, 23.77],
+        ["of", 23.77, 23.88],
+        ["sorts", 23.88, 24.4],
+        ["%HESITATION", 24.76, 25.11],
+        ["how", 25.37, 25.57],
+        ["are", 25.57, 25.66],
+        ["things", 25.66, 25.95],
+        ["going", 25.95, 26.22]
+      ],
+      "transcript": "he told me that you were leaving the company that you were at and you were entertaining offers well it seemed to make sense since I had a client to to just kind of set up my own company of sorts %HESITATION how are things going "
+    }],
+    "final": false
+  }],
+  "result_index": 2
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["he", 14.57, 14.66],
+        ["told", 14.66, 14.86],
+        ["me", 14.86, 14.94],
+        ["that", 14.94, 15.05],
+        ["you", 15.05, 15.14],
+        ["were", 15.14, 15.21],
+        ["leaving", 15.21, 15.52],
+        ["the", 15.52, 15.62],
+        ["company", 15.62, 16.26],
+        ["that", 16.46, 16.61],
+        ["you", 16.61, 16.73],
+        ["were", 16.73, 16.86],
+        ["at", 16.86, 17.22],
+        ["and", 17.26, 17.46],
+        ["you", 17.46, 17.54],
+        ["were", 17.54, 17.68],
+        ["entertaining", 17.68, 18.25],
+        ["offers", 18.25, 18.79],
+        ["well", 19.16, 19.53],
+        ["it", 19.62, 19.76],
+        ["seemed", 19.76, 19.93],
+        ["to", 19.93, 20.01],
+        ["make", 20.01, 20.22],
+        ["sense", 20.22, 20.76],
+        ["since", 20.89, 21.14],
+        ["I", 21.14, 21.19],
+        ["had", 21.19, 21.35],
+        ["a", 21.35, 21.4],
+        ["client", 21.4, 21.76],
+        ["to", 21.76, 21.86],
+        ["to", 21.86, 22.05],
+        ["just", 22.05, 22.3],
+        ["kind", 22.3, 22.53],
+        ["of", 22.53, 22.63],
+        ["set", 22.63, 22.87],
+        ["up", 22.87, 23],
+        ["my", 23, 23.17],
+        ["own", 23.17, 23.33],
+        ["company", 23.33, 23.77],
+        ["of", 23.77, 23.88],
+        ["sorts", 23.88, 24.4],
+        ["%HESITATION", 24.76, 25.11],
+        ["how", 25.37, 25.57],
+        ["are", 25.57, 25.66],
+        ["things", 25.66, 25.95],
+        ["going", 25.95, 26.19],
+        ["with", 26.19, 26.32],
+        ["the", 26.46, 26.55],
+        ["new", 26.55, 26.71],
+        ["company", 26.71, 27.26],
+        ["extremely", 27.39, 28.21]
+      ],
+      "transcript": "he told me that you were leaving the company that you were at and you were entertaining offers well it seemed to make sense since I had a client to to just kind of set up my own company of sorts %HESITATION how are things going with the new company extremely "
+    }],
+    "final": false
+  }],
+  "result_index": 2
+}, {
+  "results": [{
+    "keywords_result": {
+      "new company": [{
+        "normalized_text": "new company",
+        "start_time": 26.55,
+        "confidence": 0.997,
+        "end_time": 27.26
+      }],
+      "client": [{
+        "normalized_text": "client",
+        "start_time": 21.4,
+        "confidence": 0.387,
+        "end_time": 21.76
+      }]
+    },
+    "alternatives": [{
+      "timestamps": [
+        ["he", 14.57, 14.66],
+        ["told", 14.66, 14.86],
+        ["me", 14.86, 14.94],
+        ["that", 14.94, 15.05],
+        ["you", 15.05, 15.14],
+        ["were", 15.14, 15.21],
+        ["leaving", 15.21, 15.52],
+        ["the", 15.52, 15.62],
+        ["company", 15.62, 16.26],
+        ["that", 16.46, 16.61],
+        ["you", 16.61, 16.73],
+        ["were", 16.73, 16.86],
+        ["at", 16.86, 17.22],
+        ["and", 17.26, 17.46],
+        ["you", 17.46, 17.54],
+        ["were", 17.54, 17.68],
+        ["entertaining", 17.68, 18.25],
+        ["offers", 18.25, 18.79],
+        ["well", 19.16, 19.53],
+        ["it", 19.62, 19.76],
+        ["seemed", 19.76, 19.93],
+        ["to", 19.93, 20.01],
+        ["make", 20.01, 20.22],
+        ["sense", 20.22, 20.76],
+        ["since", 20.89, 21.14],
+        ["I", 21.14, 21.19],
+        ["had", 21.19, 21.35],
+        ["a", 21.35, 21.4],
+        ["client", 21.4, 21.76],
+        ["to", 21.76, 21.86],
+        ["to", 21.86, 22.05],
+        ["just", 22.05, 22.3],
+        ["kind", 22.3, 22.53],
+        ["of", 22.53, 22.63],
+        ["set", 22.63, 22.87],
+        ["up", 22.87, 23],
+        ["my", 23, 23.17],
+        ["own", 23.17, 23.33],
+        ["company", 23.33, 23.77],
+        ["of", 23.77, 23.88],
+        ["sorts", 23.88, 24.4],
+        ["%HESITATION", 24.76, 25.11],
+        ["how", 25.37, 25.57],
+        ["are", 25.57, 25.66],
+        ["things", 25.66, 25.95],
+        ["going", 25.95, 26.19],
+        ["with", 26.19, 26.32],
+        ["the", 26.46, 26.55],
+        ["new", 26.55, 26.71],
+        ["company", 26.71, 27.26],
+        ["extremely", 27.39, 28.13],
+        ["well", 28.13, 28.6]
+      ],
+      "confidence": 0.9,
+      "transcript": "he told me that you were leaving the company that you were at and you were entertaining offers well it seemed to make sense since I had a client to to just kind of set up my own company of sorts %HESITATION how are things going with the new company extremely well "
+    }],
+    "final": true
+  }],
+  "result_index": 2
+}, {
+  "speaker_labels": [{
+    "from": 14.57,
+    "to": 14.66,
+    "speaker": 0,
+    "confidence": 0.6,
+    "final": false
+  }, {
+    "from": 14.66,
+    "to": 14.86,
+    "speaker": 0,
+    "confidence": 0.6,
+    "final": false
+  }, {
+    "from": 14.86,
+    "to": 14.94,
+    "speaker": 0,
+    "confidence": 0.6,
+    "final": false
+  }, {
+    "from": 14.94,
+    "to": 15.05,
+    "speaker": 0,
+    "confidence": 0.6,
+    "final": false
+  }, {
+    "from": 15.05,
+    "to": 15.14,
+    "speaker": 0,
+    "confidence": 0.6,
+    "final": false
+  }, {
+    "from": 15.14,
+    "to": 15.21,
+    "speaker": 0,
+    "confidence": 0.6,
+    "final": false
+  }, {
+    "from": 15.21,
+    "to": 15.52,
+    "speaker": 0,
+    "confidence": 0.6,
+    "final": false
+  }, {
+    "from": 15.52,
+    "to": 15.62,
+    "speaker": 0,
+    "confidence": 0.6,
+    "final": false
+  }, {
+    "from": 15.62,
+    "to": 16.26,
+    "speaker": 0,
+    "confidence": 0.6,
+    "final": false
+  }, {
+    "from": 16.46,
+    "to": 16.61,
+    "speaker": 0,
+    "confidence": 0.59,
+    "final": false
+  }, {
+    "from": 16.61,
+    "to": 16.73,
+    "speaker": 0,
+    "confidence": 0.59,
+    "final": false
+  }, {
+    "from": 16.73,
+    "to": 16.86,
+    "speaker": 0,
+    "confidence": 0.59,
+    "final": false
+  }, {
+    "from": 16.86,
+    "to": 17.22,
+    "speaker": 0,
+    "confidence": 0.59,
+    "final": false
+  }, {
+    "from": 17.26,
+    "to": 17.46,
+    "speaker": 0,
+    "confidence": 0.606,
+    "final": false
+  }, {
+    "from": 17.46,
+    "to": 17.54,
+    "speaker": 0,
+    "confidence": 0.606,
+    "final": false
+  }, {
+    "from": 17.54,
+    "to": 17.68,
+    "speaker": 0,
+    "confidence": 0.606,
+    "final": false
+  }, {
+    "from": 17.68,
+    "to": 18.25,
+    "speaker": 0,
+    "confidence": 0.606,
+    "final": false
+  }, {
+    "from": 18.25,
+    "to": 18.79,
+    "speaker": 0,
+    "confidence": 0.606,
+    "final": false
+  }, {
+    "from": 19.16,
+    "to": 19.53,
+    "speaker": 1,
+    "confidence": 0.523,
+    "final": false
+  }, {
+    "from": 19.62,
+    "to": 19.76,
+    "speaker": 1,
+    "confidence": 0.521,
+    "final": false
+  }, {
+    "from": 19.76,
+    "to": 19.93,
+    "speaker": 1,
+    "confidence": 0.521,
+    "final": false
+  }, {
+    "from": 19.93,
+    "to": 20.01,
+    "speaker": 1,
+    "confidence": 0.521,
+    "final": false
+  }, {
+    "from": 20.01,
+    "to": 20.22,
+    "speaker": 1,
+    "confidence": 0.521,
+    "final": false
+  }, {
+    "from": 20.22,
+    "to": 20.76,
+    "speaker": 1,
+    "confidence": 0.521,
+    "final": false
+  }, {
+    "from": 20.89,
+    "to": 21.14,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 21.14,
+    "to": 21.19,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 21.19,
+    "to": 21.35,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 21.35,
+    "to": 21.4,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 21.4,
+    "to": 21.76,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 21.76,
+    "to": 21.86,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 21.86,
+    "to": 22.05,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 22.05,
+    "to": 22.3,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 22.3,
+    "to": 22.53,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 22.53,
+    "to": 22.63,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 22.63,
+    "to": 22.87,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 22.87,
+    "to": 23,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 23,
+    "to": 23.17,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 23.17,
+    "to": 23.33,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 23.33,
+    "to": 23.77,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 23.77,
+    "to": 23.88,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 23.88,
+    "to": 24.4,
+    "speaker": 1,
+    "confidence": 0.611,
+    "final": false
+  }, {
+    "from": 24.76,
+    "to": 25.11,
+    "speaker": 0,
+    "confidence": 0.426,
+    "final": false
+  }, {
+    "from": 25.37,
+    "to": 25.57,
+    "speaker": 0,
+    "confidence": 0.569,
+    "final": false
+  }, {
+    "from": 25.57,
+    "to": 25.66,
+    "speaker": 0,
+    "confidence": 0.569,
+    "final": false
+  }, {
+    "from": 25.66,
+    "to": 25.95,
+    "speaker": 0,
+    "confidence": 0.569,
+    "final": false
+  }, {
+    "from": 25.95,
+    "to": 26.19,
+    "speaker": 0,
+    "confidence": 0.569,
+    "final": false
+  }, {
+    "from": 26.19,
+    "to": 26.32,
+    "speaker": 0,
+    "confidence": 0.569,
+    "final": false
+  }, {
+    "from": 26.46,
+    "to": 26.55,
+    "speaker": 0,
+    "confidence": 0.629,
+    "final": false
+  }, {
+    "from": 26.55,
+    "to": 26.71,
+    "speaker": 0,
+    "confidence": 0.629,
+    "final": false
+  }, {
+    "from": 26.71,
+    "to": 27.26,
+    "speaker": 0,
+    "confidence": 0.629,
+    "final": false
+  }, {
+    "from": 27.39,
+    "to": 28.13,
+    "speaker": 1,
+    "confidence": 0.572,
+    "final": false
+  }, {
+    "from": 28.13,
+    "to": 28.6,
+    "speaker": 1,
+    "confidence": 0.572,
+    "final": false
+  }]
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["initially", 29.48, 30.07],
+        ["I", 30.07, 30.18],
+        ["had", 30.18, 30.39],
+        ["just", 30.39, 30.71],
+        ["one", 30.71, 30.87]
+      ],
+      "transcript": "initially I had just one "
+    }],
+    "final": false
+  }],
+  "result_index": 3
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["initially", 29.48, 30.07],
+        ["I", 30.07, 30.18],
+        ["had", 30.18, 30.39],
+        ["just", 30.39, 30.71],
+        ["one", 30.71, 30.85],
+        ["client", 30.85, 31.33],
+        ["but", 31.6, 31.72],
+        ["I've", 31.72, 31.81],
+        ["been", 31.81, 31.94],
+        ["getting", 31.94, 32.15],
+        ["substantially", 32.15, 32.82],
+        ["more", 32.82, 33]
+      ],
+      "transcript": "initially I had just one client but I've been getting substantially more "
+    }],
+    "final": false
+  }],
+  "result_index": 3
+}, {
+  "results": [{
+    "alternatives": [{
+      "timestamps": [
+        ["initially", 29.48, 30.07],
+        ["I", 30.07, 30.18],
+        ["had", 30.18, 30.39],
+        ["just", 30.39, 30.71],
+        ["one", 30.71, 30.85],
+        ["client", 30.85, 31.33],
+        ["but", 31.6, 31.72],
+        ["I've", 31.72, 31.81],
+        ["been", 31.81, 31.94],
+        ["getting", 31.94, 32.15],
+        ["substantially", 32.15, 32.82],
+        ["more", 32.82, 33],
+        ["work", 33, 33.44],
+        ["since", 33.64, 33.96],
+        ["then", 33.96, 34.33],
+        ["so", 34.4, 34.63],
+        ["I'm", 34.63, 34.73],
+        ["quite", 34.73, 35]
+      ],
+      "transcript": "initially I had just one client but I've been getting substantially more work since then so I'm quite "
+    }],
+    "final": false
+  }],
+  "result_index": 3
+}, {
+  "results": [{
+    "keywords_result": {
+      "client": [{
+        "normalized_text": "client",
+        "start_time": 30.85,
+        "confidence": 0.967,
+        "end_time": 31.33
+      }]
+    },
+    "alternatives": [{
+      "timestamps": [
+        ["initially", 29.48, 30.07],
+        ["I", 30.07, 30.18],
+        ["had", 30.18, 30.39],
+        ["just", 30.39, 30.71],
+        ["one", 30.71, 30.85],
+        ["client", 30.85, 31.33],
+        ["but", 31.6, 31.72],
+        ["I've", 31.72, 31.81],
+        ["been", 31.81, 31.94],
+        ["getting", 31.94, 32.15],
+        ["substantially", 32.15, 32.82],
+        ["more", 32.82, 33],
+        ["work", 33, 33.44],
+        ["since", 33.64, 33.96],
+        ["then", 33.96, 34.33],
+        ["so", 34.4, 34.63],
+        ["I'm", 34.63, 34.73],
+        ["quite", 34.73, 35.04],
+        ["pleased", 35.04, 35.48]
+      ],
+      "confidence": 0.959,
+      "transcript": "initially I had just one client but I've been getting substantially more work since then so I'm quite pleased "
+    }],
+    "final": true
+  }],
+  "result_index": 3
+}, {
+  "speaker_labels": [{
+    "from": 29.48,
+    "to": 30.07,
+    "speaker": 1,
+    "confidence": 0.507,
+    "final": false
+  }, {
+    "from": 30.07,
+    "to": 30.18,
+    "speaker": 1,
+    "confidence": 0.507,
+    "final": false
+  }, {
+    "from": 30.18,
+    "to": 30.39,
+    "speaker": 1,
+    "confidence": 0.507,
+    "final": false
+  }, {
+    "from": 30.39,
+    "to": 30.71,
+    "speaker": 1,
+    "confidence": 0.507,
+    "final": false
+  }, {
+    "from": 30.71,
+    "to": 30.85,
+    "speaker": 1,
+    "confidence": 0.507,
+    "final": false
+  }, {
+    "from": 30.85,
+    "to": 31.33,
+    "speaker": 1,
+    "confidence": 0.507,
+    "final": false
+  }, {
+    "from": 31.6,
+    "to": 31.72,
+    "speaker": 1,
+    "confidence": 0.5,
+    "final": false
+  }, {
+    "from": 31.72,
+    "to": 31.81,
+    "speaker": 1,
+    "confidence": 0.5,
+    "final": false
+  }, {
+    "from": 31.81,
+    "to": 31.94,
+    "speaker": 1,
+    "confidence": 0.5,
+    "final": false
+  }, {
+    "from": 31.94,
+    "to": 32.15,
+    "speaker": 1,
+    "confidence": 0.5,
+    "final": false
+  }, {
+    "from": 32.15,
+    "to": 32.82,
+    "speaker": 1,
+    "confidence": 0.5,
+    "final": false
+  }, {
+    "from": 32.82,
+    "to": 33,
+    "speaker": 1,
+    "confidence": 0.5,
+    "final": false
+  }, {
+    "from": 33,
+    "to": 33.44,
+    "speaker": 1,
+    "confidence": 0.5,
+    "final": false
+  }, {
+    "from": 33.64,
+    "to": 33.96,
+    "speaker": 1,
+    "confidence": 0.629,
+    "final": false
+  }, {
+    "from": 33.96,
+    "to": 34.33,
+    "speaker": 1,
+    "confidence": 0.629,
+    "final": false
+  }, {
+    "from": 34.4,
+    "to": 34.63,
+    "speaker": 1,
+    "confidence": 0.539,
+    "final": false
+  }, {
+    "from": 34.63,
+    "to": 34.73,
+    "speaker": 1,
+    "confidence": 0.539,
+    "final": false
+  }, {
+    "from": 34.73,
+    "to": 35.04,
+    "speaker": 1,
+    "confidence": 0.539,
+    "final": false
+  }, {
+    "from": 35.04,
+    "to": 35.48,
+    "speaker": 1,
+    "confidence": 0.539,
+    "final": false
+  }]
+}, {
+  "speaker_labels": [{
+    "from": 35.04,
+    "to": 35.48,
+    "speaker": 1,
+    "confidence": 0.539,
+    "final": true
+  }]
+}]

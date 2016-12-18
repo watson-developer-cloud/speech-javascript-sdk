@@ -2,7 +2,6 @@
 
 var Duplex = require('stream').Duplex;
 var util = require('util');
-var clone = require('clone');
 var defaults = require('defaults');
 var noTimestamps = require('./no-timestamps');
 
@@ -15,7 +14,7 @@ var noTimestamps = require('./no-timestamps');
  * @todo: fix TimingStream to work with the output of the SpeakerStream
  *
  * @param {Object} [opts]
- * @param {*} [opts.emitAtt=TimingStream.START] - set to TimingStream.END to only emit text that has been completely spoken.
+ * @param {*} [opts.emitAt=TimingStream.START] - set to TimingStream.END to only emit text that has been completely spoken.
  * @param {Number} [opts.delay=0] - Additional delay (in seconds) to apply before emitting words, useful for precise syncing to audio tracks. May be negative
  * @constructor
  */
@@ -29,12 +28,14 @@ function TimingStream(opts) {
   Duplex.call(this, opts);
 
   this.startTime = Date.now();
-  // buffer to store future results
-  this.final = [];
-  this.interim = [];
-  this.speakerLabels = [];
+
+  // queue to store future messages
+  this.messages = [];
+
+  // setTimeout handle. if null, next tick will occur whenever new data arrives
   this.nextTick = null;
-  this.nextSpeakerLabelsTick = null;
+
+  // this stream cannot end until both the messages queue is empty and the source stream has ended
   this.sourceEnded = false;
 
   var self = this;
@@ -48,15 +49,21 @@ util.inherits(TimingStream, Duplex);
 TimingStream.START = 1;
 TimingStream.END = 2;
 
-TimingStream.prototype._write = function(data, encoding, next) {
-  if (data instanceof Buffer) {
+TimingStream.prototype._write = function(msg, encoding, next) {
+  if (msg instanceof Buffer) {
     return this.emit('error', new Error('TimingStream requires the source to be in objectMode'));
   }
-  if (Array.isArray(data.results) && data.results.length) {
-    this.handleResult(data);
+  if (Array.isArray(msg.results) && msg.results.length && noTimestamps(msg)) {
+    var err = new Error('TimingStream requires timestamps');
+    err.name = noTimestamps.ERROR_NO_TIMESTAMPS;
+    this.emit('error', err);
+    return;
   }
-  if (Array.isArray(data.speaker_labels) && data.speaker_labels.length) {
-    this.handleSpeakerLabels(data);
+
+  this.messages.push(msg);
+
+  if (!this.nextTick) {
+    this.scheduleNextTick();
   }
   next();
 };
@@ -69,108 +76,73 @@ TimingStream.prototype.cutoff = function cutoff() {
   return (Date.now() - this.startTime) / 1000 - this.options.delay;
 };
 
-TimingStream.prototype.withinRange = function(result, cutoff) {
-  return result.results[0].alternatives.some(function(alt) {
-    // timestamp structure is ["word", startTime, endTime]
-    // if the first timestamp ends before the cutoff, then it's at least partially within range
-    var timestamp = alt.timestamps[0];
-    return !!timestamp && timestamp[this.options.emitAt] <= cutoff;
-  }, this);
-};
-
-TimingStream.prototype.completelyWithinRange = function(result, cutoff) {
-  return result.results[0].alternatives.every(function(alt) {
-    // timestamp structure is ["word", startTime, endTime]
-    // if the last timestamp ends before the cutoff, then it's completely within range
-    var timestamp = alt.timestamps[alt.timestamps.length - 1];
-    return timestamp[this.options.emitAt] <= cutoff;
-  }, this);
-};
-
 /**
- * Clones the given result and then crops out any words that occur later than the current cutoff
- * @param {Object} data
- * @param {Number} cutoff timestamp (in seconds)
- * @returns {Object}
+ * Grabs the appropriate timestamp from the given message, depending on options.emitAt and the type of message
+ *
+ * @private
+ * @param {Object} msg
+ * @returns {Number} timestamp
  */
-Duplex.prototype.crop = function crop(data, cutoff) {
-  data = clone(data);
-  var result = data.results[0];
-  result.alternatives = result.alternatives.map(function(alt) {
-    var timestamps = [];
-    for (var i = 0, timestamp; i < alt.timestamps.length; i++) {
-      timestamp = alt.timestamps[i];
-      if (timestamp[this.options.emitAt] <= cutoff) {
-        timestamps.push(timestamp);
-      } else {
-        break;
-      }
+TimingStream.prototype.getMessageTime = function(msg) {
+  if (this.options.emitAt === TimingStream.START) {
+    if (Array.isArray(msg.results) && msg.results.length) {
+      return msg.results[0].alternatives[0].timestamps[0][TimingStream.START];
+    } else if (Array.isArray(msg.speaker_labels) && msg.speaker_labels.length) {
+      return msg.speaker_labels[0].from;
     }
-    alt.timestamps = timestamps;
-    alt.transcript = timestamps.map(function(ts) {
-      return ts[0];
-    }).join(' ');
-    return alt;
-  }, this);
-  // "final" signifies both that the text won't change, and that we're at the end of a sentence. Only one of those is true here.
-  result.final = false;
-  return data;
+  } else {
+    if (Array.isArray(msg.results) && msg.results.length) {
+      var timestamps = msg.results[msg.results.length - 1].alternatives[0].timestamps;
+      return timestamps[timestamps.length - 1][TimingStream.END];
+    } else if (Array.isArray(msg.speaker_labels) && msg.speaker_labels.length) {
+      return msg.speaker_labels[msg.speaker_labels.length - 1].to;
+    }
+  }
+  return 0; // failsafe for unknown message types
 };
 
 /**
  * Returns one of:
- *  - undefined if the next result is completely later than the current cutoff
- *  - a cropped clone of the next result if it's later than the current cutoff && in objectMode
- *  - the original next result object (removing it from the array) if it's completely earlier than the current cutoff (or we're in string mode with emitAt set to start)
+ *  - null if the next result is completely later than the current cutoff
+ *  - the original next result object (removing it from the array) if it's completely earlier than the current cutoff
+ *  (or it's partially within range and emitAt is set to start)
  *
- * @param {Object} results
- * @param {Number} cutoff
- * @returns {Object|undefined}
+ * @private
+ * @returns {Object|null}
  */
-TimingStream.prototype.getCurrentResult = function getCurrentResult(results, cutoff) {
-  if (results.length && this.withinRange(results[0], cutoff)) {
-    var completeResult = this.completelyWithinRange(results[0], cutoff);
-    if (this.options.objectMode || this.options.readableObjectMode) {
-      // object mode: emit either a complete result or a cropped result
-      return completeResult ? results.shift() : this.crop(results[0], cutoff);
-    } else if (completeResult || this.options.emitAt === TimingStream.START) {
-      // string mode: emit either a complete result or nothing
-      return results.shift();
-    }
+TimingStream.prototype.getCurrentResult = function getCurrentResult() {
+  if (!this.messages.length) {
+    return null;
+  }
+  if (this.getMessageTime(this.messages[0]) <= this.cutoff()) {
+    return this.messages.shift();
   }
 };
 
 
 /**
  * Tick emits any buffered words that have a timestamp before the current time, then calls scheduleNextTick()
+ *
+ * @private
  */
 TimingStream.prototype.tick = function tick() {
-  var cutoff = this.cutoff();
-
-  clearTimeout(this.nextTick);
-  var result = this.getCurrentResult(this.final, cutoff);
-
-  if (!result) {
-    result = this.getCurrentResult(this.interim, cutoff);
-  }
-
-  if (result) {
+  var msg;
+  // eslint-disable-next-line no-cond-assign
+  while (msg = this.getCurrentResult()) {
     if (this.options.objectMode || this.options.readableObjectMode) {
-      this.push(result);
-    } else {
-      this.push(result.results[0].alternatives[0].transcript);
-    }
-    if (result.results[0].final) {
-      this.nextTick = setTimeout(this.tick.bind(this), 0); // in case we are multiple results behind - don't schedule until we are out of final results that are due now
-      return;
+      this.push(msg);
+    } else if (Array.isArray(msg.results && msg.results.length)) {
+      this.push(msg.results[0].alternatives[0].transcript);
     }
   }
 
-  this.scheduleNextTick(cutoff);
+  this.scheduleNextTick();
 };
 
 /**
  * Given a speaker labels message, returns the final to time
+ *
+ * @private
  * @param {Object} msg
  * @returns {Number}
  */
@@ -180,7 +152,7 @@ function getEnd(msg) {
 
 TimingStream.prototype.tickSpeakerLables = function tickSpeakerLabels() {
   clearTimeout(this.nextSpeakerLabelsTick);
-  while (this.speakerLabels.length && getEnd(this.speakerLabels[0]) <= this.cutoff()) {
+  if (this.speakerLabels.length && getEnd(this.speakerLabels[0]) <= this.cutoff()) {
     this.push(this.speakerLabels.shift());
   }
   if (this.speakerLabels.length) {
@@ -194,31 +166,18 @@ TimingStream.prototype.tickSpeakerLables = function tickSpeakerLabels() {
 };
 
 /**
- * Schedules next tick if possible. Requires previous stream to emit recognize objects (objectMode or readableObjectMode)
+ * Schedules next tick or checks for the end of the results
  *
- * triggers the 'close' and 'end' events if the buffer is empty and no further results are expected
- *
- * @param {Number} cutoff
- *
+ * @private
  */
-TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
-
-  // prefer final results over interim - when final results are added, any older interim ones are automatically deleted.
-  var nextResult = this.final[0] || this.interim[0];
-  if (nextResult) {
-    // loop through the timestamps until we find one that comes after the current cutoff (there should always be one)
-    var timestamps = nextResult.results[0].alternatives[0].timestamps;
-    for (var i = 0; i < timestamps.length; i++) {
-      var wordOffset = timestamps[i][this.options.emitAt];
-      if (wordOffset > cutoff) {
-        var nextTime = this.startTime + (wordOffset * 1000);
-        this.nextTick = setTimeout(this.tick.bind(this), nextTime - Date.now());
-        return;
-      }
-    }
-    throw new Error('No future words found'); // this shouldn't happen ever - getCurrentResult should automatically delete the result from the buffer if all of it's words are consumed
+TimingStream.prototype.scheduleNextTick = function scheduleNextTick() {
+  clearTimeout(this.nextTick); // just in case
+  if (this.messages.length) {
+    var messageTime = this.getMessageTime(this.messages[0]);
+    var nextTickTime = this.startTime + (messageTime * 1000); // ms since epoch
+    var nextTickOffset = Math.min(0, nextTickTime - Date.now()); // ms from right now
+    this.nextTick = setTimeout(this.tick.bind(this), nextTickOffset);
   } else {
-    // clear the next tick
     this.nextTick = null;
     this.checkForEnd();
   }
@@ -228,79 +187,25 @@ TimingStream.prototype.scheduleNextTick = function scheduleNextTick(cutoff) {
  * Triggers the 'close' and 'end' events if both pre-conditions are true:
  *  - the previous stream must have already emitted it's 'end' event
  *  - there must be no next tick scheduled, indicating that there are no results buffered for later delivery
+ *
+ * @private
  */
 TimingStream.prototype.checkForEnd = function() {
-  if (this.sourceEnded && !this.nextTick && !this.nextSpeakerLabelsTick) {
+  if (this.sourceEnded && !this.nextTick) {
     this.emit('close');
     this.push(null);
   }
 };
 
 
-/**
- * Creates a new result with all transcriptions formatted
- *
- * @param {Object} data
- */
-TimingStream.prototype.handleResult = function handleResult(data) {
-  if (noTimestamps(data)) {
-    var err = new Error('TimingStream requires timestamps');
-    err.name = noTimestamps.ERROR_NO_TIMESTAMPS;
-    this.emit('error', err);
-    return;
-  }
-
-  // http://www.ibm.com/watson/developercloud/speech-to-text/api/v1/#SpeechRecognitionEvent
-  var index = data.result_index;
-
-  // process each result individually
-  data.results.forEach(function(result) {
-    // additional alternatives do not include timestamps, so we can't process and emit them correctly
-    if (result.alternatives.length > 1) {
-      result.alternatives.length = 1;
-    }
-
-    // loop through the buffer and delete any interim results with the same or lower index
-    while (this.interim.length && this.interim[0].result_index <= index) {
-      this.interim.shift();
-    }
-
-    // in case this data object had multiple results in it
-    var newData = {
-      results: [result],
-      result_index: index
-    };
-
-    index++;
-
-    if (result.final) {
-      // then add it to the final results array
-      this.final.push(newData);
-      // and reset the interim results array because anything there has now been superseded and should not be emitted.
-      this.interim = [];
-    } else {
-      this.interim.push(newData);
-    }
-
-  }, this);
-
-  this.tick();
-};
-
-TimingStream.prototype.handleSpeakerLabels = function handleSpeakerLabels(data) {
-  this.speakerLabels.push(data);
-  this.tickSpeakerLables();
-};
-
 TimingStream.prototype.promise = require('./to-promise');
 
 // when stop is called, immediately stop emitting results
 TimingStream.prototype.stop = function stop() {
   this.emit('stop');
-  clearTimeout(this.nextTick);
-  clearTimeout(this.nextSpeakerLabelsTick);
-  this.handleResult = this.handleSpeakerLabels = function noop(){}; // RecognizeStream.stop() closes the connection gracefully, so we will usually see one more result
   this.checkForEnd(); // in case the RecognizeStream already ended
+  clearTimeout(this.nextTick);
+  this.nextTick = -1; // fake timer to prevent _write from scheduling new ticks
 };
 
 module.exports = TimingStream;

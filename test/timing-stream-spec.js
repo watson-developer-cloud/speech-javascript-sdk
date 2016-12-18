@@ -6,7 +6,7 @@ var PassThrough = require('stream').PassThrough;
 var clone = require('clone');
 var TimingStream = require('../speech-to-text/timing-stream.js');
 
-var results = require('./resources/results.json');
+var message = require('./resources/results.json');
 var messages = require('./resources/car_loan_stream.json');
 
 describe('TimingStream', function() {
@@ -35,7 +35,7 @@ describe('TimingStream', function() {
 
     assert.equal(stream.nextTick, null, 'nextTick should not yet be set');
 
-    stream.write(results);
+    stream.write(message);
     nextTick(function() { // write is always async (?)
 
       assert.equal(actual.length, 0);
@@ -44,8 +44,31 @@ describe('TimingStream', function() {
       clock.tick(2320); // 2.32 seconds - just before the end of the first word
 
       assert.equal(actual.length, 1);
-      assert.equal(actual[0].results[0].alternatives[0].transcript, 'thunderstorms');
-      assert.equal(actual[0].results[0].final, false, 'split up results should be interim');
+      assert.equal(actual[0].results[0].alternatives[0].transcript, 'thunderstorms could produce large hail isolated tornadoes and heavy rain ');
+
+      done();
+    });
+  });
+
+  it('should delay results longer when options.emitAt == TimingStream.END', function(done) {
+    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.END});
+    var actual = [];
+    stream.on('data', function(timedResult) {
+      actual.push(timedResult);
+    });
+    stream.on('error', done);
+
+    assert.equal(stream.nextTick, null, 'nextTick should not yet be set');
+
+    stream.write(message);
+    nextTick(function() { // write is always async (?)
+
+      assert.equal(actual.length, 0);
+      assert(stream.nextTick !== null, 'nextTick should be set');
+
+      clock.tick(2320); // 2.32 seconds - just before the end of the first word
+
+      assert.equal(actual.length, 0);
 
       clock.tick(6140 - 2320); // 6.141 seconds (total) - end of the last word
 
@@ -73,7 +96,7 @@ describe('TimingStream', function() {
       endFired = true;
     });
 
-    source.end(results);
+    source.end(message);
     nextTick(function() { // write is always async (?)
 
       clock.tick(6140); // 6.140 seconds - end of the last word
@@ -106,7 +129,7 @@ describe('TimingStream', function() {
       endFired = true;
     });
 
-    source.write(results);
+    source.write(message);
     nextTick(function() { // write is always async (?)
 
       clock.tick(6140); // 6.140 seconds - end of the last word
@@ -129,35 +152,57 @@ describe('TimingStream', function() {
 
   it('should .stop() when told to', function(done) {
     var stream = new TimingStream({objectMode: true});
+
     var actual = [];
     stream.on('data', function(timedResult) {
       actual.push(timedResult);
     });
     stream.on('error', done);
+
     var stopFired = false;
     stream.on('stop', function() {
       stopFired = true;
     });
 
-    assert.equal(stream.nextTick, null, 'nextTick should not yet be set');
+    var finalMessages = require('./resources/self_employed_stream.json').filter(function(m) {
+      return m.results && m.results[0].final;
+    });
+    stream.write(finalMessages[0]);
+    stream.write(finalMessages[1]);
 
-    stream.write(results);
     nextTick(function() { // write is always async (?)
 
       assert.equal(actual.length, 0);
       assert(stream.nextTick !== null, 'nextTick should be set');
 
-      clock.tick(2320); // 2.32 seconds - just before the end of the first word
+      clock.tick(1000); // into the first result
 
       assert.equal(actual.length, 1);
-      assert.equal(actual[0].results[0].alternatives[0].transcript, 'thunderstorms');
+      assert.equal(actual[0].results[0].alternatives[0].transcript, 'so how are you doing these days things are going very well glad to hear ');
 
       stream.stop();
 
-      clock.tick(6140 - 2320); // 6.141 seconds (total) - end of the last word
-
-      assert.equal(actual.length, 1, 'no more results should be emitted after stop');
       assert(stopFired, 'stop event should have fired');
+
+      stream.write(finalMessages[2]);
+      nextTick(function() {
+        clock.tick(14 * 1000);
+        assert.equal(actual.length, 1, 'no more results should be emitted after stop');
+
+        clock.tick(30 * 1000);
+        stream.write(finalMessages[3]);
+        nextTick(function() {
+          assert.equal(actual.length, 1, 'no more results should be emitted after stop, even if past due at writing time');
+
+          stream.end();
+          nextTick(function() {
+            assert.equal(actual.length, 1, 'no more results should be emitted after stop, even if source ends');
+          });
+        });
+      });
+
+      clock.tick(35 * 1000); // past the end of the final result
+
 
       done();
     });
@@ -269,8 +314,8 @@ describe('TimingStream', function() {
     var noTimestamps = require('../speech-to-text/no-timestamps');
     assert(noTimestamps.ERROR_NO_TIMESTAMPS, 'noTimestamps.ERROR_NO_TIMESTAMPS should be defined');
     var stream = new TimingStream({objectMode: true});
-    var message = clone(require('./resources/results.json'));
-    delete message.results[0].alternatives[0].timestamps;
+    var noTsMessage = clone(message);
+    delete noTsMessage.results[0].alternatives[0].timestamps;
     stream.on('data', function(data) {
       assert.fail(data, null, 'data emitted');
     });
@@ -278,7 +323,7 @@ describe('TimingStream', function() {
       assert.equal(err.name, noTimestamps.ERROR_NO_TIMESTAMPS);
       done();
     });
-    stream.end(message);
+    stream.end(noTsMessage);
   });
 
 });
