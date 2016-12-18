@@ -49,6 +49,7 @@ var Transform = require('stream').Transform;
 var util = require('util');
 var pullAllWith = require('lodash.pullallwith');
 var noTimestamps = require('./no-timestamps');
+var clone = require('clone');
 
 /**
  * Object-Mode stream that splits up results by speaker.
@@ -56,11 +57,11 @@ var noTimestamps = require('./no-timestamps');
  * Output format is similar to existing results formats, but with an extra speaker field,
  *
  * Output results array will usually contain multiple results.
- * All results are interim until the final batch; the text will not change, but the speaker may, and so the text may move from one interim result to another.
+ * All results are interim until the final batch; the text may change (if options.speakerlessInterim is enabled) or move from one interim result to another.
  *
- * Note: when combined with a TimingStream, data events may contain a combination of final and interim results (with the last one sometimes being interim)
+ * Keywords, words_alternatives, and other features may appear on results that come slightly earlier than the timestamp due to the way things are split up.
  *
- * Ignores interim results from the service.
+ * Ignores interim results from the service unless options.speakerlessInterim is enabled.
  *
  * @constructor
  * @param {Object} options
@@ -83,7 +84,7 @@ function SpeakerStream(options) {
    * @type {Array&lt;Array>}
    * @private
    */
-  this.timestamps = [];
+  this.results = [];
   /**
    * speaker_labels is an array of objects.
    * Example:
@@ -110,6 +111,12 @@ function SpeakerStream(options) {
    * @private
    */
   this.speaker_labels = [];
+
+  this.mismatchErrorEmitted = false;
+
+  // flag to signal that labels were recieved before results, and therefore
+  // the stream needs to emit on the next batch of final results
+  this.extraLabels = false;
 }
 util.inherits(SpeakerStream, Transform);
 
@@ -131,59 +138,110 @@ SpeakerStream.ERROR_MISMATCH = 'MISMATCH';
  */
 SpeakerStream.prototype.buildMessage = function() {
   var final = this.isFinal();
-  var errored = false;
+  this.extraLabels = false;
 
+  // first match all speaker_labeles to the appropriate word and result
   // assumes that each speaker_label will have a matching word timestamp at the same index
   // stops processing and emits an error if this assumption is violated
-  var pairs = this.speaker_labels.map(function(label, i) {
-    var timestamp = this.timestamps[i];
-    if (!timestamp || timestamp[FROM] !== label.from || timestamp[TO] !== label.to) {
-      if (!errored) {
+  var resultIndex = 0;
+  var timestampIndex = -1;
+  // eslint-disable-next-line camelcase
+  var words = this.speaker_labels.map(function(speaker_label) {
+    var result = this.results[resultIndex];
+    timestampIndex++;
+    var timestamp = result.alternatives[0].timestamps[timestampIndex];
+    if (!timestamp) {
+      timestampIndex = 0;
+      resultIndex++;
+      result = this.results[resultIndex];
+      timestamp = result &amp;&amp; result.alternatives[0].timestamps[timestampIndex];
+    }
+    if (!timestamp) {
+      // this shouldn't happen normally, but the TimingStream could inadvertently cause a
+      // speaker_labels to be emitted before a result
+      this.extraLabels = true;
+      return null;
+    }
+    if (timestamp[FROM] !== speaker_label.from || timestamp[TO] !== speaker_label.to) {
+      if (!this.mismatchErrorEmitted) {
         var err = new Error('Mismatch between speaker_label and word timestamp');
         err.name = SpeakerStream.ERROR_MISMATCH;
-        err.speaker_label = label;
+        // eslint-disable-next-line camelcase
+        err.speaker_label = speaker_label;
         err.timestamp = timestamp;
+        // eslint-disable-next-line camelcase
         err.speaker_labels = this.speaker_labels;
-        err.timestamps = this.timestamps;
+        err.results = this.results;
         this.emit('error', err);
-        errored = true;
+        this.mismatchErrorEmitted = true; // If one is off, then a bunch probably are. Just emit one error.
       }
       return null;
     }
-    return [timestamp, label];
+    return {
+      timestamp: timestamp,
+      speaker: speaker_label.speaker,
+      result: result
+    };
   }, this);
 
-  if (errored) {
+  // assume that there's nothing new to emit right now,
+  // wait for new results to match our new labels
+  if (this.extraLabels) {
     return;
   }
 
-  var results = pairs.reduce(function(arr, pair) {
-    // this turns our pairs into something that looks like a regular results object, only with a speaker field
-    // each result represents a single "line" from a particular speaker
-    // todo: consider also splitting results up at pauses (where they are split when they arrive from the service) - FormatStream helps here
-    var currentResult = arr[arr.length - 1];
-    if (!currentResult || currentResult.speaker !== pair[1].speaker) {
-      // new speaker - start a new result
-      // todo: consider trying to include word alternatives and other features in these results
-      currentResult = {
-        speaker: pair[1].speaker,
-        alternatives: [{
-          transcript: pair[0][WORD] + ' ',
-          timestamps: [
-            pair[0]
-          ]
-        }],
-        final: final
+  // filter out any nulls
+  words = words.filter(function(w) {
+    return w;
+  });
+
+  // group the words together into utterances by speaker
+  var utterances = words.reduce(function(arr, word) {
+    var utterance = arr[arr.length - 1];
+    // any time the speaker changes or the (original) result changes, create a new utterance
+    if (!utterance || utterance.speaker !== word.speaker || utterance.result !== word.result) {
+      utterance = {
+        speaker: word.speaker,
+        timestamps: [word.timestamp],
+        result: word.result
       };
       // and add it to the list
-      arr.push(currentResult);
+      arr.push(utterance);
     } else {
       // otherwise just append the current word to the current result
-      currentResult.alternatives[0].transcript += pair[0][WORD] + ' ';
-      currentResult.alternatives[0].timestamps.push(pair[0]);
+      utterance.timestamps.push(word.timestamp);
     }
     return arr;
   }, []);
+
+  // create new results
+  var results = utterances.map(function(utterance, i) {
+
+    // if this is the first usage of this result, clone the original (to keep keywords and such)
+    // otherwise create a new one
+    var result;
+    var lastUtterance = utterances[i - 1] || {};
+    if (utterance.result === lastUtterance.result) {
+      result = {alternatives: [{}]};
+    } else {
+      result = clone(utterance.result);
+    }
+
+    // update the result object
+    // set the speaker
+    result.speaker = utterance.speaker;
+    // overwrite the transcript and timestamps on the first alternative
+    var alt = result.alternatives[0];
+    alt.transcript = utterance.timestamps.map(function(ts) {
+      return ts[WORD];
+    }).join(' ') + ' ';
+    alt.timestamps = utterance.timestamps;
+    // overwrite the final value
+    result.final = final;
+    // todo: split up words_alternatives, keywords, etc and copy to appropriate result for time
+
+    return result;
+  });
 
   // result_index is always 0 because the results always includes the entire conversation so far.
   return {results: results, result_index: 0};
@@ -203,7 +261,7 @@ SpeakerStream.prototype.handleResults = function(data) {
   data.results.filter(function(result) {
     return result.final;
   }).forEach(function(result) {
-    this.timestamps = this.timestamps.concat(result.alternatives[0].timestamps);
+    this.results.push(result);
   }, this);
 };
 
@@ -248,6 +306,10 @@ SpeakerStream.prototype._transform = function(data, encoding, next) {
       message = this.buildMessage();
       message.results = message.results.concat(data.results);
     }
+    // clean up if things got out of order
+    if (this.extraLabels &amp;&amp; data.results.length &amp;&amp; data.results[0].final === true) {
+      message = this.buildMessage();
+    }
   }
   if (Array.isArray(data.speaker_labels)) {
     this.handleSpeakerLabels(data);
@@ -275,18 +337,23 @@ SpeakerStream.prototype._transform = function(data, encoding, next) {
  * @private
  */
 SpeakerStream.prototype._flush = function(done) {
-  if (this.timestamps.length !== this.speaker_labels.length) {
+  var timestamps = this.results.map(function(r) {
+    return r.alternatives[0].timestamps;
+  }).reduce(function(a,b) {
+    return a.concat(b);
+  }, []);
+  if (timestamps.length !== this.speaker_labels.length) {
     var msg;
-    if (this.timestamps.length &amp;&amp; !this.speaker_labels.length) {
+    if (timestamps.length &amp;&amp; !this.speaker_labels.length) {
       msg = 'No speaker_labels found. SpeakerStream requires speaker_labels to be enabled.';
     } else {
-      msg = 'Mismatch between number of word timestamps (' + this.timestamps.length + ') and number of speaker_labels (' +
+      msg = 'Mismatch between number of word timestamps (' + timestamps.length + ') and number of speaker_labels (' +
         this.speaker_labels.length + ') - some data may be lost.';
     }
     var err = new Error(msg);
     err.name = SpeakerStream.ERROR_MISMATCH;
     err.speaker_labels = this.speaker_labels;
-    err.timestamps = this.timestamps;
+    err.timestamps = this.results;
     this.emit('error', err);
   }
   done();
@@ -305,13 +372,13 @@ module.exports = SpeakerStream;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:listening">listening</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:open">open</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="RecognizeStream.html#event:stop">stop</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:listening">listening</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:open">open</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="RecognizeStream.html#event:stop">stop</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Dec 16 2016 21:56:11 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Dec 18 2016 19:36:00 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

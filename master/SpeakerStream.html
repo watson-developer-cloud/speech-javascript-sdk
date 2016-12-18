@@ -50,9 +50,9 @@
     <p>Object-Mode stream that splits up results by speaker.</p>
 <p>Output format is similar to existing results formats, but with an extra speaker field,</p>
 <p>Output results array will usually contain multiple results.
-All results are interim until the final batch; the text will not change, but the speaker may, and so the text may move from one interim result to another.</p>
-<p>Note: when combined with a TimingStream, data events may contain a combination of final and interim results (with the last one sometimes being interim)</p>
-<p>Ignores interim results from the service.</p>
+All results are interim until the final batch; the text may change (if options.speakerlessInterim is enabled) or move from one interim result to another.</p>
+<p>Keywords, words_alternatives, and other features may appear on results that come slightly earlier than the timestamp due to the way things are split up.</p>
+<p>Ignores interim results from the service unless options.speakerlessInterim is enabled.</p>
 </div>
 
 
@@ -214,7 +214,7 @@ All results are interim until the final batch; the text will not change, but the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line41">line 41</a>
+        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line42">line 42</a>
     </li></ul></dd>
     
 
@@ -314,7 +314,7 @@ All results are interim until the final batch; the text will not change, but the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line104">line 104</a>
+        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line111">line 111</a>
     </li></ul></dd>
     
 
@@ -463,7 +463,7 @@ All results are interim until the final batch; the text will not change, but the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line168">line 168</a>
+        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line226">line 226</a>
     </li></ul></dd>
     
 
@@ -604,7 +604,7 @@ each time the speaker changes), and with a speaker field on the results.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line229">line 229</a>
+        <a href="speech-to-text_speaker-stream.js.html">speech-to-text/speaker-stream.js</a>, <a href="speech-to-text_speaker-stream.js.html#line291">line 291</a>
     </li></ul></dd>
     
 
@@ -642,13 +642,13 @@ each time the speaker changes), and with a speaker field on the results.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:listening">listening</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:open">open</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="RecognizeStream.html#event:stop">stop</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#getEnd">getEnd</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:listening">listening</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:open">open</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="RecognizeStream.html#event:stop">stop</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Dec 16 2016 21:56:11 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Dec 18 2016 19:36:00 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
