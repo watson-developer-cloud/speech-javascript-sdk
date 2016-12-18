@@ -25,8 +25,8 @@ describe('TimingStream', function() {
     clock.tick(1); // for browsers (where process.next tick is actually setTimeout 0)
   }
 
-  it('should delay results', function(done) {
-    var stream = new TimingStream({objectMode: true});
+  it('should delay results w/ emitAt: START', function(done) {
+    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.START});
     var actual = [];
     stream.on('data', function(timedResult) {
       actual.push(timedResult);
@@ -42,6 +42,33 @@ describe('TimingStream', function() {
       assert(stream.nextTick !== null, 'nextTick should be set');
 
       clock.tick(2320); // 2.32 seconds - just before the end of the first word
+
+      assert.equal(actual.length, 1);
+      assert.equal(actual[0].results[0].alternatives[0].transcript, 'thunderstorms could produce large hail isolated tornadoes and heavy rain ');
+
+      done();
+    });
+  });
+
+  it('should delay results w/ emitAt: END', function(done) {
+    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.END});
+    var actual = [];
+    stream.on('data', function(timedResult) {
+      actual.push(timedResult);
+    });
+    stream.on('error', done);
+
+    assert.equal(stream.nextTick, null, 'nextTick should not yet be set');
+
+    stream.write(message);
+    nextTick(function() { // write is always async (?)
+
+      clock.tick(2 * 1000); // first word is at 1.48s
+
+      assert.equal(actual.length, 0);
+      assert(stream.nextTick !== null, 'nextTick should be set');
+
+      clock.tick(5 * 1000); // last word ends at 6.14s (4.14 after previous tick)
 
       assert.equal(actual.length, 1);
       assert.equal(actual[0].results[0].alternatives[0].transcript, 'thunderstorms could produce large hail isolated tornadoes and heavy rain ');
@@ -150,8 +177,8 @@ describe('TimingStream', function() {
     });
   });
 
-  it('should .stop() when told to', function(done) {
-    var stream = new TimingStream({objectMode: true});
+  it('should .stop() when told to w/ emitAt: START', function(done) {
+    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.START});
 
     var actual = [];
     stream.on('data', function(timedResult) {
@@ -176,6 +203,64 @@ describe('TimingStream', function() {
       assert(stream.nextTick !== null, 'nextTick should be set');
 
       clock.tick(1000); // into the first result
+
+      assert.equal(actual.length, 1);
+      assert.equal(actual[0].results[0].alternatives[0].transcript, 'so how are you doing these days things are going very well glad to hear ');
+
+      stream.stop();
+
+      assert(stopFired, 'stop event should have fired');
+
+      stream.write(finalMessages[2]);
+      nextTick(function() {
+        clock.tick(14 * 1000);
+        assert.equal(actual.length, 1, 'no more results should be emitted after stop');
+
+        clock.tick(30 * 1000);
+        stream.write(finalMessages[3]);
+        nextTick(function() {
+          assert.equal(actual.length, 1, 'no more results should be emitted after stop, even if past due at writing time');
+
+          stream.end();
+          nextTick(function() {
+            assert.equal(actual.length, 1, 'no more results should be emitted after stop, even if source ends');
+          });
+        });
+      });
+
+      clock.tick(35 * 1000); // past the end of the final result
+
+
+      done();
+    });
+  });
+
+  it('should .stop() when told to w/ emitAtt: EMD', function(done) {
+    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.END});
+
+    var actual = [];
+    stream.on('data', function(timedResult) {
+      actual.push(timedResult);
+    });
+    stream.on('error', done);
+
+    var stopFired = false;
+    stream.on('stop', function() {
+      stopFired = true;
+    });
+
+    var finalMessages = require('./resources/self_employed_stream.json').filter(function(m) {
+      return m.results && m.results[0].final;
+    });
+    stream.write(finalMessages[0]);
+    stream.write(finalMessages[1]);
+
+    nextTick(function() { // write is always async (?)
+
+      assert.equal(actual.length, 0);
+      assert(stream.nextTick !== null, 'nextTick should be set');
+
+      clock.tick(5 * 1000); // first result ends at 4.16
 
       assert.equal(actual.length, 1);
       assert.equal(actual[0].results[0].alternatives[0].transcript, 'so how are you doing these days things are going very well glad to hear ');

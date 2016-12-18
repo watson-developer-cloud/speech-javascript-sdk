@@ -1,5 +1,12 @@
 # Changelog
 
+### v0.27.0
+* TimingStream rewrite - now emits exact results received from the service, always in the exact order recieved
+  * old version created extra interim results and could emit speaker_labels before their matching final result in certain circumstances
+  * emitAt now defaults to END to allow for interim results even when final is cached
+* SpeakerStream now emits keywords, alternatives, etc, although sometimes on a slightly earlier result then where the word is mentioned
+* SpeakerStream now gracefully handles situations where labels arrive before the matching final result
+
 ### v0.26.0
 * Renamed RecognizeStream 'connect' event to 'open' to match 'close' event
 * Removed deprecated connection-close event

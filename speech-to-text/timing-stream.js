@@ -14,13 +14,13 @@ var noTimestamps = require('./no-timestamps');
  * @todo: fix TimingStream to work with the output of the SpeakerStream
  *
  * @param {Object} [opts]
- * @param {*} [opts.emitAt=TimingStream.START] - set to TimingStream.END to only emit text that has been completely spoken.
+ * @param {*} [opts.emitAt=TimingStream.END] - set to TimingStream.START for a more subtitles-like output where results are returned as soon as the utterance begins
  * @param {Number} [opts.delay=0] - Additional delay (in seconds) to apply before emitting words, useful for precise syncing to audio tracks. May be negative
  * @constructor
  */
 function TimingStream(opts) {
   this.options = defaults(opts, {
-    emitAt: TimingStream.START,
+    emitAt: TimingStream.END,
     delay: 0,
     allowHalfOpen: true, // keep the readable side open after the source closes
     writableObjectMode: true

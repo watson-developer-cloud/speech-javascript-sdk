@@ -242,7 +242,105 @@ describe('SpeakerStream', function() {
     stream.end();
   });
 
+  it('should handle early speaker_labels gracefully', function(done) {
+    // there is/was a bug in the timing stream that could cause this in certain scenarios
+    var stream = new SpeakerStream();
+    stream.on('error', done);
+    var actual = [];
+    stream.on('data', function(data) {
+      actual.push(data);
+    });
+
+    var expected = [{
+      results: [{
+        speaker: 0,
+        alternatives: [{
+          timestamps: [
+            ['hi', 0.06, 0.28],
+          ],
+          transcript: 'hi '
+        }],
+        final: false
+      }],
+      result_index: 0
+    }, {
+      results: [{
+        speaker: 0,
+        alternatives: [{
+          timestamps: [
+            ['hi', 0.06, 0.28],
+          ],
+          transcript: 'hi '
+        }],
+        final: true
+      },
+        {
+          speaker: 1,
+          alternatives: [{
+            timestamps: [
+              ['hello', 0.28, 0.37],
+            ],
+            transcript: 'hello '
+          }],
+          final: true
+        }],
+      result_index: 0
+    }];
+
+    stream.on('end', function() {
+      assert.deepEqual(actual, expected);
+      done();
+    });
+
+    stream.write({
+      results: [{
+        alternatives: [{
+          timestamps: [
+            ['hi', 0.06, 0.28],
+          ],
+          transcript: 'hi '
+        }],
+        final: true,
+      }],
+      result_index: 0
+    });
+    stream.write({
+      speaker_labels: [{
+        from: 0.06,
+        to: 0.28,
+        speaker: 0,
+        confidence: 0.512,
+        final: false
+      }]
+    });
+    // this one is early
+    stream.write({
+      speaker_labels: [{
+        from: 0.28,
+        to: 0.37,
+        speaker: 1,
+        confidence: 0.512,
+        final: true
+      }]
+    });
+    // or, this is late
+    stream.write({
+      results: [{
+        alternatives: [{
+          timestamps: [
+            ['hello', 0.28, 0.37],
+          ],
+          transcript: 'hello '
+        }],
+        final: true
+      }],
+      result_index: 0
+    });
+    stream.end();
+  });
+
   describe('with TimingStream', function() {
+    var TimingStream = require('../speech-to-text/timing-stream.js');
     var clock;
     beforeEach(function() {
       clock = sinon.useFakeTimers();
@@ -252,9 +350,8 @@ describe('SpeakerStream', function() {
       clock.restore();
     });
 
-    it('should produce the same output with results from a TimingStream', function(done) {
+    it('should produce the same output with and without a TimingStream', function(done) {
       var inputMessages = require('./resources/car_loan_stream.json');
-      var TimingStream = require('../speech-to-text/timing-stream.js');
       var actualSpeakerStream = new SpeakerStream();
       var expectedSpeakerStream = new SpeakerStream();
       var timingStream = new TimingStream({objectMode: true});
@@ -289,7 +386,6 @@ describe('SpeakerStream', function() {
       });
     });
   });
-
 
   it('should provide early results when options.speakerlessInterim=true', function(done) {
     var stream = new SpeakerStream({speakerlessInterim: true});
