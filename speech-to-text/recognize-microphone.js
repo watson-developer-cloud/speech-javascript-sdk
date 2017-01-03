@@ -132,7 +132,7 @@ module.exports = function recognizeMicrophone(options) {
 
   getMicStream.catch(function(err) {
     stream.emit('error', err);
-    if (err.name == 'NotSupportedError') {
+    if (err.name === 'NotSupportedError') {
       stream.end(); // end the stream
     }
   });

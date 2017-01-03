@@ -1,6 +1,6 @@
 # Changelog
 
-### v0.27.1
+### v0.27.2
 * stream from recognizeMicrophone emits an `end` event when microphone access is not avaliable
 
 ### v0.27.0
