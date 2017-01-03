@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.27.1
+* stream from recognizeMicrophone emits an `end` event when microphone access is not avaliable
+
 ### v0.27.0
 * TimingStream rewrite - now emits exact results received from the service, always in the exact order recieved
   * old version created extra interim results and could emit speaker_labels before their matching final result in certain circumstances
