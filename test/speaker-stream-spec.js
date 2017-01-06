@@ -26,16 +26,16 @@ describe('SpeakerStream', function() {
         }],
         final: true
       },
-        {
-          speaker: 1,
-          alternatives: [{
-            timestamps: [
+      {
+        speaker: 1,
+        alternatives: [{
+          timestamps: [
               ['hello', 0.28, 0.37],
-            ],
-            transcript: 'hello '
-          }],
-          final: true
+          ],
+          transcript: 'hello '
         }],
+        final: true
+      }],
       result_index: 0
     }];
 
@@ -274,16 +274,16 @@ describe('SpeakerStream', function() {
         }],
         final: true
       },
-        {
-          speaker: 1,
-          alternatives: [{
-            timestamps: [
+      {
+        speaker: 1,
+        alternatives: [{
+          timestamps: [
               ['hello', 0.28, 0.37],
-            ],
-            transcript: 'hello '
-          }],
-          final: true
+          ],
+          transcript: 'hello '
         }],
+        final: true
+      }],
       result_index: 0
     }];
 
@@ -416,16 +416,16 @@ describe('SpeakerStream', function() {
         }],
         final: true
       },
-        {
-          speaker: 1,
-          alternatives: [{
-            timestamps: [
+      {
+        speaker: 1,
+        alternatives: [{
+          timestamps: [
               ['hello', 0.28, 0.37],
-            ],
-            transcript: 'hello '
-          }],
-          final: true
+          ],
+          transcript: 'hello '
         }],
+        final: true
+      }],
       result_index: 0
     }];
 

@@ -1,6 +1,6 @@
 # Changelog
 
-### v0.28.1
+### v0.28.2
 * Fix regression introduced in v0.23 with playback-error change - transcription now continues after a playback error.
 
 ### v0.28.0

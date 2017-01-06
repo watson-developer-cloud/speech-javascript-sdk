@@ -125,10 +125,10 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
       //   3. re-pipe the source streams
 
       var sources = streams.filter(function(s) {
-        return s._readableState
-          && s._readableState.pipes
-          && (s._readableState.pipes === stream
-            || (Array.isArray(s._readableState.pipes) && s._readableState.pipes.indexOf(stream) !== -1)
+        return s._readableState &&
+          s._readableState.pipes &&
+          (s._readableState.pipes === stream ||
+            (Array.isArray(s._readableState.pipes) && s._readableState.pipes.indexOf(stream) !== -1)
           );
       });
 
