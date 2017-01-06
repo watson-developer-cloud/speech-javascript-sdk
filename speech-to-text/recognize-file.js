@@ -116,7 +116,27 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
       recognizeStream.on('stop', player.stop.bind(player));
       recognizeStream.on('error', player.stop.bind(player));
     }).catch(function(err) {
+
+      // Node.js automatically unpipes any source stream(s) when an error is emitted (on the assumption that the previous stream's output caused the error.)
+      // In this case, we don't want that behavior - a playback error should not stop the transcription
+      // So, we have to:
+      //   1. find the source streams
+      //   2. emit the error (causing the automatic unpipe)
+      //   3. re-pipe the source streams
+
+      var sources = streams.filter(function(s) {
+        return s._readableState
+          && s._readableState.pipes
+          && (s._readableState.pipes === stream
+            || (Array.isArray(s._readableState.pipes) && s._readableState.pipes.indexOf(stream) !== -1)
+          );
+      });
+
       stream.emit('error', err);
+
+      sources.forEach(function(s) {
+        s.pipe(stream);
+      });
     });
   }
 

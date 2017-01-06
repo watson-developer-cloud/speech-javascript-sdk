@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.28.1
+* Fix regression introduced in v0.23 with playback-error change - transcription now continues after a playback error.
+
 ### v0.28.0
 * Significantly simplified TimingStream, fixing one bug in the process
 
