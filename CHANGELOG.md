@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.28.0
+* Significantly simplified TimingStream, fixing one bug in the process
+
 ### v0.27.2
 * stream from recognizeMicrophone emits an `end` event when microphone access is not avaliable
 

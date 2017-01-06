@@ -380,10 +380,9 @@ describe('SpeakerStream', function() {
 
       clock.tick(37.26 * 1000);
 
-      process.nextTick(function() { // write is always async (?)
-        assert.deepEqual(actual, expected);
-        done();
-      });
+      clock.tick(2);
+      assert.deepEqual(actual, expected);
+      done();
     });
   });
 
