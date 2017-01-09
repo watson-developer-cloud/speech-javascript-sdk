@@ -210,7 +210,34 @@ SpeakerStream.prototype.buildMessage = function() {
     alt.timestamps = utterance.timestamps;
     // overwrite the final value
     result.final = final;
-    // todo: split up words_alternatives, keywords, etc and copy to appropriate result for time
+
+    var start = utterance.timestamps[0][1];
+    var end = utterance.timestamps[utterance.timestamps.length - 1][2];
+
+    // overwrite the word_alternatives
+    if (utterance.result.word_alternatives) {
+      var alts = utterance.result.word_alternatives.filter(function(walt) {
+        return walt.start_time >= start && walt.end_time <= end;
+      });
+      result.word_alternatives = alts;
+    }
+
+    // overwrite the keywords spotted
+    /* eslint-disable camelcase */
+    var original_keywords_result = utterance.result.keywords_result;
+    if (original_keywords_result) {
+      var keywords_result = {};
+      Object.keys(original_keywords_result).forEach(function(keyword) {
+        var spottings = original_keywords_result[keyword].filter(function(spotting) {
+          return spotting.start_time >= start && spotting.end_time <= end;
+        });
+        if (spottings.length) {
+          keywords_result[keyword] = spottings;
+        }
+      });
+      result.keywords_result = keywords_result;
+    }
+    /* eslint-enable camelcase */
 
     return result;
   });

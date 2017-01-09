@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.28.3
+* Made SpeakerStream put keywords_result and word_alternatives on the correct result
+
 ### v0.28.2
 * Fix regression introduced in v0.23 with playback-error change - transcription now continues after a playback error.
 

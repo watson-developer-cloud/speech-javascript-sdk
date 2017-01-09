@@ -199,32 +199,6 @@ describe('SpeakerStream', function() {
     stream.end(message);
   });
 
-  it('should not produce two results in a row from the same speaker', function(done) {
-    var stream = new SpeakerStream();
-    stream.on('error', done);
-    var called = false;
-    stream.on('data', function assertNoRepeats(data) {
-      called = true;
-      var lastSpeaker = -1;
-      assert(Array.isArray(data.results), 'data should have a results array');
-      assert(data.results.length, 'results array should be non-empty');
-      data.results.forEach(function(result) {
-        var speaker = result.speaker;
-        assert.notEqual(speaker, lastSpeaker, 'each subsequent result should have a different speaker id. Current speaker id: ' + speaker + ', previous speaker id: ' + lastSpeaker + '.');
-        lastSpeaker = speaker;
-      });
-    });
-    stream.on('end', function() {
-      assert(called);
-      done();
-    });
-    var messageStream = require('./resources/car_loan_stream.json');
-    messageStream.forEach(function(msg) {
-      stream.write(msg);
-    });
-    stream.end();
-  });
-
   it('should not emit identical interim messages when nothing has changed', function(done) {
     var stream = new SpeakerStream();
     stream.on('error', done);
@@ -335,6 +309,152 @@ describe('SpeakerStream', function() {
         final: true
       }],
       result_index: 0
+    });
+    stream.end();
+  });
+
+  it('should put word alternatives on the correct result', function(done) {
+    /*
+    {
+    "results": [
+      {
+        "word_alternatives": [
+          {
+            "start_time": 0.06,
+            "alternatives": [
+              {
+                "confidence": 1,
+                "word": "thank"
+              }
+            ],
+            "end_time": 0.28
+          },
+     */
+    var stream = new SpeakerStream();
+    stream.on('error', done);
+    var msgs = [];
+    stream.on('data', function(msg) {
+      msgs.push(msg);
+    });
+
+    var source = require('./resources/car_loan_stream.json').filter(function(msg) {
+      return msg.speaker_labels || msg.results && msg.results[0].final;
+    });
+    var expectedNumAlts = source.reduce(function(count, msg) {
+      if (msg.speaker_labels) {
+        return count;
+      }
+      return count + msg.results[0].word_alternatives.length;
+    }, 0);
+    assert(expectedNumAlts);
+
+    stream.on('end', function() {
+      assert(msgs.length);
+      var numAlts = 0;
+      msgs.filter(function(msg) {
+        // speaker stream creates new interim results where the text is final but the speaker label is not.
+        // We only want the final one
+        return msg.results[0].final;
+      }).forEach(function(msg) {
+        msg.results.forEach(function(res) {
+          if (res.word_alternatives) {
+            numAlts += res.word_alternatives.length;
+            var timestamps = res.alternatives[0].timestamps;
+            var start = timestamps[0][1];
+            var end = timestamps[timestamps.length - 1][2];
+            res.word_alternatives.forEach(function(alt) {
+              assert(alt.start_time >= start);
+              assert(alt.end_time <= end);
+            });
+          }
+        });
+      });
+      assert.equal(numAlts, expectedNumAlts, 'should have the same number of word alternatives before and after speaker-izing');
+      done();
+    });
+    source.forEach(function(msg) {
+      stream.write(msg);
+    });
+    stream.end();
+  });
+
+  it('should put spotted keywords on the correct result', function(done) {
+    /*
+      "keywords_result": {
+          "car": [
+            {
+              "normalized_text": "car",
+              "start_time": 22.69,
+              "confidence": 1,
+              "end_time": 22.88
+            },
+            {
+              "normalized_text": "car",
+              "start_time": 24.35,
+              "confidence": 0.995,
+              "end_time": 24.75
+            }
+          ],
+          "vehicle": [
+            {
+              "normalized_text": "vehicle",
+              "start_time": 14.29,
+              "confidence": 0.981,
+              "end_time": 14.74
+            }
+          ]
+        },
+     */
+    var stream = new SpeakerStream();
+    stream.on('error', done);
+    var msgs = [];
+    stream.on('data', function(msg) {
+      msgs.push(msg);
+    });
+
+    var source = require('./resources/car_loan_stream.json').filter(function(msg) {
+      return msg.speaker_labels || msg.results && msg.results[0].final;
+    });
+    var expectedNumKeywords = source.reduce(function(count, msg) {
+      if (msg.speaker_labels || !msg.results[0].keywords_result) {
+        return count;
+      }
+      var kws = msg.results[0].keywords_result;
+      return count + Object.keys(kws).reduce(function(subCount, keyword) {
+        return subCount + kws[keyword].length;
+      },0);
+    }, 0);
+    assert(expectedNumKeywords);
+
+    stream.on('end', function() {
+      assert(msgs.length);
+      var numAlts = 0;
+      msgs.filter(function(msg) {
+        // speaker stream creates new interim results where the text is final but the speaker label is not.
+        // We only want the final one
+        return msg.results[0].final;
+      }).forEach(function(msg) {
+        msg.results.forEach(function(res) {
+          if (res.keywords_result) {
+            var timestamps = res.alternatives[0].timestamps;
+            var start = timestamps[0][1];
+            var end = timestamps[timestamps.length - 1][2];
+            Object.keys(res.keywords_result).forEach(function(keyword) {
+              var spottings = res.keywords_result[keyword];
+              numAlts += spottings.length;
+              spottings.forEach(function(spotting) {
+                assert(spotting.start_time >= start);
+                assert(spotting.end_time <= end);
+              });
+            });
+          }
+        });
+      });
+      assert.equal(numAlts, expectedNumKeywords, 'should have the same number of word alternatives before and after speaker-izing');
+      done();
+    });
+    source.forEach(function(msg) {
+      stream.write(msg);
     });
     stream.end();
   });
