@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.28.4
+* Prevent RecognizeStream from sending a blank content-type header - now emits an error if content-type is unset and unable to be automatically determined.
+
 ### v0.28.3
 * Made SpeakerStream put keywords_result and word_alternatives on the correct result
 

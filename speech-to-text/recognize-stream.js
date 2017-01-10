@@ -295,6 +295,8 @@ RecognizeStream.prototype._read = function(/* size*/) {
   // so, the best we can do here is a no-op
 };
 
+RecognizeStream.ERROR_UNRECOGNIZED_FORMAT = 'UNRECOGNIZED_FORMAT';
+
 RecognizeStream.prototype._write = function(chunk, encoding, callback) {
   var self = this;
   if (self.finished) {
@@ -307,7 +309,16 @@ RecognizeStream.prototype._write = function(chunk, encoding, callback) {
   } else {
     if (!this.initialized) {
       if (!this.options['content-type']) {
-        this.options['content-type'] = RecognizeStream.getContentType(chunk);
+        var ct = RecognizeStream.getContentType(chunk);
+        if (ct) {
+          this.options['content-type'] = ct;
+        } else {
+          var err = new Error('Unable to determine content-type from file header, please specify manually.');
+          err.name = RecognizeStream.ERROR_UNRECOGNIZED_FORMAT;
+          this.emit('error', err);
+          this.push(null);
+          return;
+        }
       }
       this.initialize();
     }
