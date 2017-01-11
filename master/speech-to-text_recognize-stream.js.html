@@ -152,7 +152,6 @@ RecognizeStream.WEBSOCKET_CONNECTION_ERROR = 'WebSocket connection error';
 RecognizeStream.prototype.initialize = function() {
   var options = this.options;
 
-  // todo: apply these corrections to other methods (?)
   if (options.token &amp;&amp; !options['watson-token']) {
     options['watson-token'] = options.token;
   }
@@ -163,7 +162,10 @@ RecognizeStream.prototype.initialize = function() {
     options['X-Watson-Learning-Opt-Out'] = options['X-WDC-PL-OPT-OUT'];
   }
 
-  var queryParams = util._extend('customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED) : {model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
+  var queryParams = util._extend(
+    'customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED) : {model: 'en-US_BroadbandModel'},
+    pick(options, QUERY_PARAMS_ALLOWED)
+  );
 
   var queryString = qs.stringify(queryParams);
   var url = (options.url || 'wss://stream.watsonplatform.net/speech-to-text/api').replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
@@ -357,8 +359,24 @@ RecognizeStream.prototype._write = function(chunk, encoding, callback) {
   }
 };
 
-// flow control - don't ask for more data until we've finished what we have
-// todo: see if this can be improved
+/**
+ * Flow control - don't ask for more data until we've finished what we have
+ *
+ * Notes:
+ *
+ * This limits upload speed to 100 * options.highWaterMark / second.
+ *
+ * The default highWaterMark is 16kb, so the default max upload speed is ~1.6mb/s.
+ *
+ * Microphone input provides audio at a (downsampled) rate of:
+ *   16000 samples/s * 16-bits * 1 channel = 31.25kb/s
+ * (note the bits to bytes conversion there)
+ *
+ * @private
+ * @param next
+ */
+//
+
 RecognizeStream.prototype.afterSend = function afterSend(next) {
   if (this.socket.bufferedAmount &lt;= (this._writableState.highWaterMark || 0)) {
     process.nextTick(next);
@@ -418,13 +436,13 @@ module.exports = RecognizeStream;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:listening">listening</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:open">open</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="RecognizeStream.html#event:stop">stop</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="UrlPlayer.html">UrlPlayer</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:listening">listening</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:open">open</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="RecognizeStream.html#event:stop">stop</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Jan 10 2017 15:19:36 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Jan 11 2017 19:39:43 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>

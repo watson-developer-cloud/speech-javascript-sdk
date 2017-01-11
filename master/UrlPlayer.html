@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: watson-speech/text-to-speech/get-voices</title>
+    <title>JSDoc: Class: UrlPlayer</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: watson-speech/text-to-speech/get-voices</h1>
+    <h1 class="page-title">Class: UrlPlayer</h1>
 
     
 
@@ -28,8 +28,7 @@
 
 <header>
     
-        
-            
+        <h2>UrlPlayer</h2>
         
     
 </header>
@@ -39,29 +38,17 @@
     
         
 
-        
-            
-
     
 
-    <h4 class="name" id="module:watson-speech/text-to-speech/get-voices"><span class="type-signature"></span>(require("watson-speech/text-to-speech/get-voices"))<span class="signature">(options)</span><span class="type-signature"> &rarr; {Promise.&lt;T>}</span></h4>
+    <h4 class="name" id="UrlPlayer"><span class="type-signature"></span>new UrlPlayer<span class="signature">(url)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Returns a promise that resolves to an array of objects representing the available voices.  Example:</p>
-<pre class="prettyprint source lang-js"><code> [{
-    &quot;name&quot;: &quot;en-US_MichaelVoice&quot;,
-    &quot;language&quot;: &quot;en-US&quot;,
-    &quot;customizable&quot;: true,
-    &quot;gender&quot;: &quot;male&quot;,
-    &quot;url&quot;: &quot;https://stream.watsonplatform.net/text-to-speech/api/v1/voices/en-US_MichaelVoice&quot;,
-    &quot;description&quot;: &quot;Michael: American English male voice.&quot;
- },
- //...
- ]</code></pre><p> Requires fetch, pollyfill available at https://github.com/github/fetch</p>
+    <p>Plays audio from a URL
+Compatible with Mobile Safari if triggered in direct response to a user interaction (e.g. click)</p>
 </div>
 
 
@@ -97,49 +84,7 @@
 
         <tr>
             
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>token</code></td>
+                <td class="name"><code>url</code></td>
             
 
             <td class="type">
@@ -155,14 +100,7 @@
 
             
 
-            <td class="description last"><p>auth token</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -203,7 +141,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="text-to-speech_get-voices.js.html">text-to-speech/get-voices.js</a>, <a href="text-to-speech_get-voices.js.html#line44">line 44</a>
+        <a href="speech-to-text_file-player.js.html">speech-to-text/file-player.js</a>, <a href="speech-to-text_file-player.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -212,13 +150,6 @@
     
 
     
-    <dt class="tag-todo">To Do:</dt>
-    <dd class="tag-todo">
-        <ul>
-            <li>define format in @returns statement</li>
-        </ul>
-    </dd>
-    
 </dl>
 
 
@@ -233,28 +164,9 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise.&lt;T></span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
-        
     
     </div>
 
@@ -270,6 +182,92 @@
 
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="stop"><span class="type-signature"></span>stop<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Stops the audio</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="speech-to-text_file-player.js.html">speech-to-text/file-player.js</a>, <a href="speech-to-text_file-player.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
 
     

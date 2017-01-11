@@ -26,7 +26,7 @@
     
 
 
-    <h3>watson-speech 0.28.3</h3>
+    <h3>watson-speech 0.29.1</h3>
 
 
 
@@ -81,19 +81,19 @@ where the max length is around 1000 characters after the token is accounted for.
 <p>Requires the <code>getUserMedia</code> API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
 Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features</p>
 <p>Pipes results through a <a href="http://watson-developer-cloud.github.io/speech-javascript-sdk/master/FormatStream.html">FormatStream</a> by default, set <code>options.format=false</code> to disable.</p>
-<p>Known issue: Firefox continues to display a microphone icon in the address bar after recording has ceased. This is a browser bug.</p>
 <h3><a href="http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-file.html"><code>.recognizeFile({data, token})</code></a> -&gt; Stream</h3><p>Can recognize and optionally attempt to play a <a href="https://developer.mozilla.org/en-US/docs/Web/API/File">File</a> or <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob">Blob</a>
 (such as from an <code>&lt;input type=&quot;file&quot;/&gt;</code> or from an ajax request.)</p>
 <p>Options: </p>
 <ul>
-<li><code>data</code>: a <code>Blob</code> or <code>File</code> instance. </li>
+<li><code>file</code>: a String URL or a <code>Blob</code> or <code>File</code> instance.</li>
 <li><code>play</code>: (optional, default=<code>false</code>) Attempt to also play the file locally while uploading it for transcription </li>
 <li>Other options passed to <a href="http://watson-developer-cloud.github.io/speech-javascript-sdk/master/RecognizeStream.html">RecognizeStream</a></li>
 <li>Other options passed to <a href="http://watson-developer-cloud.github.io/speech-javascript-sdk/master/WritableElementStream.html">WritableElementStream</a> if <code>options.outputElement</code> is set</li>
 </ul>
 <p><code>play</code>requires that the browser support the format; most browsers support wav and ogg/opus, but not flac.) 
-Will emit a <code>playback-error</code> on the RecognizeStream if playback fails. 
-Playback will automatically stop when <code>.stop()</code> is called on the RecognizeStream.</p>
+Will emit an <code>UNSUPPORTED_FORMAT</code> error on the RecognizeStream if playback fails.
+Playback will automatically stop when <code>.stop()</code> is called on the returned stream.
+For Mobile Safari compatibility, a URL must be provided, and <code>recognizeFile()</code> must be called in direct response to a user interaction (so the token must be pre-loaded).</p>
 <p>Pipes results through a <a href="http://watson-developer-cloud.github.io/speech-javascript-sdk/master/TimingStream.html">TimingStream</a> by if <code>options.play=true</code>, set <code>options.realtime=false</code> to disable.</p>
 <p>Pipes results through a <a href="http://watson-developer-cloud.github.io/speech-javascript-sdk/master/FormatStream.html">FormatStream</a> by default, set <code>options.format=false</code> to disable.</p>
 <h2>Changes</h2><p>There have been a few breaking changes in recent releases:</p>
@@ -103,6 +103,7 @@ Playback will automatically stop when <code>.stop()</code> is called on the Reco
 <li>Changed <code>playFile</code> option of <code>recognizeBlob()</code> to just <code>play</code>, corrected default</li>
 <li>Changed format of objects emitted in objectMode to exactly match what service sends. Added <code>ResultStrean</code> class and <code>extract_results</code> option to enable older behavior.</li>
 <li>Changed <code>playback-error</code> event to just <code>error</code> when recognizing and playing a file. Check for <code>error.name == 'UNSUPPORTED_FORMAT'</code> to identify playback errors</li>
+<li>Renamed <code>recognizeFile()</code>'s <code>data</code> option to <code>file</code> because it now may be a URL. Using a URL enables faster playback and mobile Safari support</li>
 </ul>
 <p>See <a href="CHANGELOG.md">CHANGELOG.md</a> for a complete list of changes.</p>
 <h2>todo</h2><ul>
@@ -129,13 +130,13 @@ Playback will automatically stop when <code>.stop()</code> is called on the Reco
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:listening">listening</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:open">open</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="RecognizeStream.html#event:stop">stop</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-watson-speech.html">watson-speech</a></li><li><a href="module-watson-speech_speech-to-text.html">watson-speech/speech-to-text</a></li><li><a href="module-watson-speech_speech-to-text_get-models.html">watson-speech/speech-to-text/get-models</a></li><li><a href="module-watson-speech_speech-to-text_recognize-file.html">watson-speech/speech-to-text/recognize-file</a></li><li><a href="module-watson-speech_speech-to-text_recognize-microphone.html">watson-speech/speech-to-text/recognize-microphone</a></li><li><a href="module-watson-speech_text-to-speech.html">watson-speech/text-to-speech</a></li><li><a href="module-watson-speech_text-to-speech_get-voices.html">watson-speech/text-to-speech/get-voices</a></li><li><a href="module-watson-speech_text-to-speech_synthesize.html">watson-speech/text-to-speech/synthesize</a></li></ul><h3>Classes</h3><ul><li><a href="FilePlayer.html">FilePlayer</a></li><li><a href="FormatStream.html">FormatStream</a></li><li><a href="RecognizeStream.html">RecognizeStream</a></li><li><a href="ResultStream.html">ResultStream</a></li><li><a href="SpeakerStream.html">SpeakerStream</a></li><li><a href="TimingStream.html">TimingStream</a></li><li><a href="UrlPlayer.html">UrlPlayer</a></li><li><a href="WebAudioL16Stream.html">WebAudioL16Stream</a></li><li><a href="WritableElementStream.html">WritableElementStream</a></li></ul><h3>Events</h3><ul><li><a href="RecognizeStream.html#event:close">close</a></li><li><a href="RecognizeStream.html#event:data">data</a></li><li><a href="RecognizeStream.html#event:error">error</a></li><li><a href="RecognizeStream.html#event:listening">listening</a></li><li><a href="RecognizeStream.html#event:message">message</a></li><li><a href="RecognizeStream.html#event:open">open</a></li><li><a href="RecognizeStream.html#event:send-data">send-data</a></li><li><a href="RecognizeStream.html#event:send-json">send-json</a></li><li><a href="RecognizeStream.html#event:stop">stop</a></li><li><a href="SpeakerStream.html#event:data">data</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getContentTypeFromFile">getContentTypeFromFile</a></li><li><a href="global.html#playFile">playFile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Jan 10 2017 15:19:36 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Jan 11 2017 19:39:43 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
