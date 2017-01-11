@@ -26,8 +26,7 @@
   document.querySelector('#button').onclick = function () {
     fetch('/api/speech-to-text/token').then(function(response) {
       return response.text();
-    }).then(function (values) {
-      var token = values[0];
+    }).then(function (token) {
 
       document.querySelector('#output').innerHTML = 'Processing. Note: it will take some time for the first results to appear.';
 

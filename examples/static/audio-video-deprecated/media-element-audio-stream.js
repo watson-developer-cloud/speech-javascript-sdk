@@ -17,9 +17,6 @@ var defaults = require('defaults');
  * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement
  * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
  *
- * @todo: add option for whether to keep or destroy the context
- * @todo: test what happens if source has multiple channels
- *
  * @constructor
  */
 function MediaElementAudioStream(element, options) {
@@ -67,7 +64,7 @@ function MediaElementAudioStream(element, options) {
   function processAudio(e) {
     // onaudioprocess can be called at least once after we've stopped
     if (recording) {
-      // todo: interleave channels in binary mode
+      // warning: this doesn't interleave channels in binary mode
       self.push(options.objectMode ? e.inputBuffer : new Buffer(e.inputBuffer.getChannelData(0)));
     }
   }

@@ -22,19 +22,16 @@
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
 
-  // preloading the data for a smoother experience
-  var preloadTokenAndAudio = Promise.all([
-    fetch('/api/speech-to-text/token').then(function(response) {
-      return response.text();
-    }),
-    fetch('/Us_English_Broadband_Sample_1.wav').then(function(response) {
-      return response.blob();
-    })
-  ]);
-
   document.querySelector('#button').onclick = function () {
 
-      preloadTokenAndAudio.then(function (values) {
+    Promise.all([
+      fetch('/api/speech-to-text/token').then(function(response) {
+        return response.text();
+      }),
+      fetch('/Us_English_Broadband_Sample_1.wav').then(function(response) {
+        return response.blob();
+      })
+    ]).then(function (values) {
         var token = values[0];
         var file = values[1];
 

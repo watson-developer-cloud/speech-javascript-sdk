@@ -124,7 +124,6 @@ RecognizeStream.WEBSOCKET_CONNECTION_ERROR = 'WebSocket connection error';
 RecognizeStream.prototype.initialize = function() {
   var options = this.options;
 
-  // todo: apply these corrections to other methods (?)
   if (options.token && !options['watson-token']) {
     options['watson-token'] = options.token;
   }
@@ -135,7 +134,10 @@ RecognizeStream.prototype.initialize = function() {
     options['X-Watson-Learning-Opt-Out'] = options['X-WDC-PL-OPT-OUT'];
   }
 
-  var queryParams = util._extend('customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED) : {model: 'en-US_BroadbandModel'}, pick(options, QUERY_PARAMS_ALLOWED));
+  var queryParams = util._extend(
+    'customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED) : {model: 'en-US_BroadbandModel'},
+    pick(options, QUERY_PARAMS_ALLOWED)
+  );
 
   var queryString = qs.stringify(queryParams);
   var url = (options.url || 'wss://stream.watsonplatform.net/speech-to-text/api').replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
@@ -329,8 +331,24 @@ RecognizeStream.prototype._write = function(chunk, encoding, callback) {
   }
 };
 
-// flow control - don't ask for more data until we've finished what we have
-// todo: see if this can be improved
+/**
+ * Flow control - don't ask for more data until we've finished what we have
+ *
+ * Notes:
+ *
+ * This limits upload speed to 100 * options.highWaterMark / second.
+ *
+ * The default highWaterMark is 16kb, so the default max upload speed is ~1.6mb/s.
+ *
+ * Microphone input provides audio at a (downsampled) rate of:
+ *   16000 samples/s * 16-bits * 1 channel = 31.25kb/s
+ * (note the bits to bytes conversion there)
+ *
+ * @private
+ * @param next
+ */
+//
+
 RecognizeStream.prototype.afterSend = function afterSend(next) {
   if (this.socket.bufferedAmount <= (this._writableState.highWaterMark || 0)) {
     process.nextTick(next);
