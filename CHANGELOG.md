@@ -1,5 +1,10 @@
 # Changelog
 
+### v0.29.0
+* BREAKING: recognizeFile()'s data option renamed to file
+* File option may be a string URL. This enables streaming transcription/playback and mobile Safari support.
+* Added support for 'X-Watson-Learning-Opt-Out' and 'accept' params in TTS synthesize()
+
 ### v0.28.4
 * Prevent RecognizeStream from sending a blank content-type header - now emits an error if content-type is unset and unable to be automatically determined.
 
