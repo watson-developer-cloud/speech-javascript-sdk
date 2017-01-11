@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Promise Example - Watson Speech to Text</title>
+</head>
+<body>
+
+    <section>
+        <h1>Transcribe URL, return a promise with content</h1>
+        <button id="button">Play and Transcribe</button>
+
+        <h2>Output:</h2>
+        <div id="output">--</div>
+    </section>
+
+    <script src="watson-speech.js"></script>
+    <!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+    <script src="bower_components/fetch/fetch.js"></script>
+
+    <h2>Code for this demo:</h2>
+<pre><code><script style="display: block;">
+document.querySelector('#button').onclick = function () {
+
+  var output = document.querySelector('#output');
+  output.textContent = 'Processing...';
+
+  fetch('/api/speech-to-text/token').then(function(response) {
+    return response.text();
+  }).then(function (token) {
+
+    return WatsonSpeech.SpeechToText.recognizeFile({
+        token: token,
+        file: '/Us_English_Broadband_Sample_1.wav',
+        outputElement: output
+      })
+      .promise()
+      .then(function(text) {
+          output.textContent = text;
+      });
+  })
+  .catch(function(err) {
+    console.log(err);
+    output.textContent = err.message;
+  });
+};
+</script></code></pre>
+</body>
+</html>

@@ -7,29 +7,37 @@
 <body>
 <h1>IBM Watson Speech JavaScript SDK Examples</h1>
 <h2>Speech to Text</h2>
+<h3>Microphone Input</h3>
 <ul>
-  <li><a href="microphone-streaming.html">Transcribe from Microphone, Streaming</a></li>
-  <li><a href="microphone-streaming-auto-stop.html">Transcribe from Microphone, Streaming, automatically stop at first pause</a></li>
+  <li><a href="microphone-streaming.html">Transcribe from Microphone</a></li>
+  <li><a href="microphone-streaming-auto-stop.html">Transcribe from Microphone, automatically stop at first pause</a></li>
   <li><a href="microphone-alternatives.html">Transcribe from Microphone, with Alternatives</a></li>
   <li><a href="microphone-word-confidence.html">Transcribe from Microphone, with Word Confidence</a></li>
   <li><a href="microphone-streaming-text-to-console.html">Transcribe from Microphone, send text to console</a></li>
-  <li><a href="microphone-streaming-object-to-console.html">Transcribe from Microphone, send JSON to console (includes text and metadata; v0.22+ format)</a></li>
-  <li><a href="microphone-streaming-object-extracted-to-console.html">Transcribe from Microphone, send JSON to console with results extracted (pre-v0.22 format)</a></li>
   <li><a href="microphone-streaming-model.html">Transcribe from Microphone, Streaming with chosen model</a></li>
-  <li><a href="file-streaming.html">Transcribe from file, Streaming</a></li>
-  <li><a href="speaker-labels-file-console.html">Transcribe from file with <code>{speaker_labels: true}</code>, output to console</a></li>
-  <li><a href="speaker-stream-file-console.html">Transcribe from file with <code>{resultsBySpeaker: true}</code>, output to console</a></li>
-  <li><a href="speaker-stream-file-html.html">Transcribe from file with <code>{resultsBySpeaker: true}</code>, output HTML</a></li>
-  <li><a href="file-realtime-vs-no-realtime.html">Transcribe from file, comparing <code>realtime</code> and <code>TimingStream</code> options</a></li>
-  <li><a href="file-promise.html">Transcribe from file, Promise</a></li>
-  <li><a href="file-ajax.html">Transcribe from file loaded over AJAX</a></li>
-  <li><a href="browserify.html">Example bundled with browserify</a> <b>(Node.js server only)</b></li>
-  <li><strike><a href="audio-video-deprecated/">Deprecated: Transcribe from HTML5 &lt;audio&gt; or &lt;video&gt; element</a></strike>  <b>(Node.js server only)</b></li>
+  <li><a href="microphone-streaming-object-to-console.html">Transcribe from Microphone, send JSON to console (includes text and metadata; v0.22+ format)</a></li>
+  <li><a href="browserify.html">Example bundled with browserify</a>*</li>
+  <li><strike><a href="microphone-streaming-object-extracted-to-console.html">Deprecated: Transcribe from Microphone, send JSON to console with results extracted (pre-v0.22 format)</a></strike></li>
 </ul>
+<h3>File Input</h3>
+<p>(user-provided or downloaded)</p>
+<ul>
+  <li><a href="file-url.html">Transcribe and Play a file via URL, with pre-loaded token (compatible with Mobile Safari)</a></li>
+  <li><a href="file-upload.html">Transcribe and Play a user-provided file</a></li>
+  <li><a href="speaker-labels-file-console.html">Transcribe from URL with <code>{speaker_labels: true}</code>, output to console</a></li>
+  <li><a href="speaker-stream-file-console.html">Transcribe from URL with <code>{resultsBySpeaker: true}</code>, output to console</a></li>
+  <li><a href="speaker-stream-file-html.html">Transcribe from URL with <code>{resultsBySpeaker: true}</code>, output HTML</a></li>
+  <li><a href="realtime-vs-no-realtime.html">Compare <code>realtime</code> and <code>TimingStream</code> options</a></li>
+  <li><a href="url-promise.html">Transcribe from URL, return a Promise</a></li>
+  <li><a href="file-ajax.html">Transcribe from file, pre-loaded over AJAX</a></li>
+  <li><strike><a href="audio-video-deprecated/">Deprecated: Transcribe from HTML5 &lt;audio&gt; or &lt;video&gt; element</a></strike>*</li>
+</ul>
+
+<p>* Examples that depend on browserify work with the example Node.js server, but not the example Python server.</p>
 
 <h2>Text to Speech</h2>
 <ul>
-  <li><a href="text-to-speech.html">Synthesize text</a></li>
+  <li><a href="text-to-speech-preload-token.html">Synthesize text, with pre-loaded token (compatible with Mobile Safari)</a></li>
   <li><a href="text-to-speech-custom-voice.html">Synthesize text w/ custom voice</a></li>
 </ul>
 </body>

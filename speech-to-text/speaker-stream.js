@@ -264,7 +264,7 @@ SpeakerStream.prototype.handleResults = function(data) {
   }, this);
 };
 
-// sorts by start time and then end time and then finality
+// sorts by start time and then end time
 SpeakerStream.speakerLabelsSorter = function(a, b) {
   if (a.from === b.from) {
     if (a.to === b.to) {
@@ -352,7 +352,7 @@ SpeakerStream.prototype._flush = function(done) {
     var err = new Error(msg);
     err.name = SpeakerStream.ERROR_MISMATCH;
     err.speaker_labels = this.speaker_labels;
-    err.timestamps = this.results;
+    err.results = this.results;
     this.emit('error', err);
   }
   done();

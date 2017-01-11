@@ -24,6 +24,7 @@ var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 var ResultStream = require('./result-stream');
 var SpeakerStream = require('./speaker-stream');
+var fetch = require('nodeify-fetch'); // like regular fetch, but with an extra method on the response to get a node-style ReadableStream
 
 /**
  * @module watson-speech/speech-to-text/recognize-file
@@ -35,7 +36,7 @@ var SpeakerStream = require('./speaker-stream');
  *
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
  * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
- * @param {Blob|File} options.data - the raw audio data as a Blob or File instance
+ * @param {Blob|FileString} options.file - String url or the raw audio data as a Blob or File instance to be transcribed (and optionally played). Playback may not with with Blob or File on mobile Safari.
  * @param {Boolean} [options.play=false] - If a file is set, play it locally as it's being uploaded
  * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
  * @param {Boolena} [options.realtime=options.play] - pipe the text through a {TimingStream} which slows the output down to real-time to match the audio playback.
@@ -48,6 +49,15 @@ var SpeakerStream = require('./speaker-stream');
 module.exports = function recognizeFile(options) { // eslint-disable-line complexity
   if (!options || !options.token) {
     throw new Error('WatsonSpeechToText: missing required parameter: opts.token');
+  }
+
+  if (options.data && !options.file) {
+    options.file = options.data;
+    delete options.data;
+    if (!options.silent) {
+      // eslint-disable-next-line no-console
+      console.log(new Error('WatsonSpeechToText recognizeFile(): Warning data option was renamed to file. Set silent: true to hide this warning.'));
+    }
   }
 
   // the WritableElementStream works best in objectMode
@@ -83,10 +93,22 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
     interim_results: true,
   }, options);
 
-  var stream = new BlobStream(options.data);
   var recognizeStream = new RecognizeStream(rsOpts);
-  var streams = [stream, recognizeStream]; // collect all of the streams so that we can bundle up errors and send them to the last one
-  stream = stream.pipe(recognizeStream);
+  var streams = [recognizeStream]; // collect all of the streams so that we can bundle up errors and send them to the last one
+  var stream = recognizeStream;
+  if (typeof options.file === 'string') {
+    fetch(options.file).then(function(response) {
+      var source = response.body.getReadable();
+      source.pipe(recognizeStream);
+      streams.unshift(source);
+    }).catch(function(er) {
+      recognizeStream.emit('error', er);
+    });
+  } else {
+    var source = new BlobStream(options.file);
+    source.pipe(recognizeStream);
+    streams.unshift(source);
+  }
 
   // note: the TimingStream cannot currently handle results as regrouped by the SpeakerStream
   // so it must come first
@@ -112,7 +134,10 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
   }
 
   if (options.play) {
-    FilePlayer.playFile(options.data).then(function(player) {
+    // todo: if realtime is set, update the realtime stream's start time to match
+    // when file playback actually begins
+    // (mostly important for downloaded files)
+    FilePlayer.playFile(options.file).then(function(player) {
       recognizeStream.on('stop', player.stop.bind(player));
       recognizeStream.on('error', player.stop.bind(player));
     }).catch(function(err) {

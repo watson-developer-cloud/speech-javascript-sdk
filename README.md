@@ -77,8 +77,6 @@ Also note that Chrome requires https (with a few exceptions for localhost and su
 
 Pipes results through a [FormatStream] by default, set `options.format=false` to disable.
 
-Known issue: Firefox continues to display a microphone icon in the address bar after recording has ceased. This is a browser bug.
-
 
 ### [`.recognizeFile({data, token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-file.html) -> Stream
 
@@ -86,14 +84,15 @@ Can recognize and optionally attempt to play a [File](https://developer.mozilla.
 (such as from an `<input type="file"/>` or from an ajax request.)
 
 Options: 
-* `data`: a `Blob` or `File` instance. 
+* `file`: a String URL or a `Blob` or `File` instance.
 * `play`: (optional, default=`false`) Attempt to also play the file locally while uploading it for transcription 
 * Other options passed to [RecognizeStream]
 * Other options passed to [WritableElementStream] if `options.outputElement` is set
 
 `play`requires that the browser support the format; most browsers support wav and ogg/opus, but not flac.) 
-Will emit a `playback-error` on the RecognizeStream if playback fails. 
-Playback will automatically stop when `.stop()` is called on the RecognizeStream.
+Will emit an `UNSUPPORTED_FORMAT` error on the RecognizeStream if playback fails.
+Playback will automatically stop when `.stop()` is called on the returned stream.
+For Mobile Safari compatibility, a URL must be provided, and `recognizeFile()` must be called in direct response to a user interaction (so the token must be pre-loaded).
 
 Pipes results through a [TimingStream] by if `options.play=true`, set `options.realtime=false` to disable.
 
@@ -109,6 +108,7 @@ There have been a few breaking changes in recent releases:
 * Changed `playFile` option of `recognizeBlob()` to just `play`, corrected default
 * Changed format of objects emitted in objectMode to exactly match what service sends. Added `ResultStrean` class and `extract_results` option to enable older behavior.
 * Changed `playback-error` event to just `error` when recognizing and playing a file. Check for `error.name == 'UNSUPPORTED_FORMAT'` to identify playback errors
+* Renamed `recognizeFile()`'s `data` option to `file` because it now may be a URL. Using a URL enables faster playback and mobile Safari support
 
 See [CHANGELOG.md](CHANGELOG.md) for a complete list of changes.
 

@@ -46,6 +46,7 @@
     "get-user-media-promise": "^1.0.0",
     "lodash.pullallwith": "^4.7.0",
     "microphone-stream": "^3.0.5",
+    "nodeify-fetch": "^0.1.2",
     "object.assign": "^4.0.3",
     "object.pick": "^1.1.2",
     "readable-blob-stream": "^1.1.0",

@@ -3,6 +3,25 @@
 var getContentTypeFromHeader = require('./content-type');
 
 /**
+ * Plays audio from a URL
+ * Compatible with Mobile Safari if triggered in direct response to a user interaction (e.g. click)
+ * @param {String} url
+ * @constructor
+ */
+function UrlPlayer(url) {
+  var audio = this.audio = new Audio();
+  audio.src = url;
+  audio.play();
+  /**
+   * Stops the audio
+   */
+  this.stop = function stop() {
+    audio.pause();
+    audio.currentTime = 0;
+  };
+}
+
+/**
  * Plays audio from File/Blob instances
  * @param {File|Blob} file
  * @param {String} contentType
@@ -29,7 +48,6 @@ function FilePlayer(file, contentType) {
     audio.currentTime = 0;
   };
 }
-
 FilePlayer.ERROR_UNSUPPORTED_FORMAT = 'UNSUPPORTED_FORMAT';
 
 /**
@@ -57,10 +75,13 @@ function getContentTypeFromFile(file) {
 
 /**
  * Determines the file's content-type and then resolves to a FilePlayer instance
- * @param {File|Blob} file
+ * @param {File|Blob|String} file - binary data or URL of audio file (binary data playback may not work on mobile Safari)
  * @returns {Promise.<FilePlayer>}
  */
 function playFile(file) {
+  if (typeof file === 'string') {
+    return Promise.resolve(new UrlPlayer(file));
+  }
   return getContentTypeFromFile(file).then(function(contentType) {
     return new FilePlayer(file, contentType);
   });

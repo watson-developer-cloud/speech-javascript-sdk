@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>File Promise Example - Watson Speech to Text</title>
+  <title>File AJAX Example - Watson Speech to Text</title>
 </head>
 <body>
 
@@ -40,7 +40,7 @@
 
         return WatsonSpeech.SpeechToText.recognizeFile({
           token: token,
-          data: file,
+          file: file,
           outputElement: '#output',
           play: true
         })

@@ -18,11 +18,11 @@
 
 <section>
     <h2>Transcribe File, Comparing <code>{realtime: false}</code> to <code>{realtime: true, emitAt: TimingStream.END}</code> and <code>{realtime: true, emitAt: TimingStream.START}</code>  </h2>
-    <input type="file" id="audiofile"> <button id="button">Transcribe and Play</button> <button id="stop">Stop</button>
+    <button id="button">Transcribe and Play</button> <button id="stop">Stop</button>
     <p>When transcription results are available faster than real-time (such as when simultaneously uploading and playing a file on a high-bandwidth connection), the TimingStream slows them down results to real-time. Otherwise it emits them as fast as they arrive.</p>
     <p>Notes:</p>
     <ul>
-      <li>A longer, well-compressed file such as <a href="Isac_Newton_spoken_Wikipedia_opus.ogg">Isac_Newton_spoken_Wikipedia_opus.ogg</a> will help make the realtime difference between more apparent.</li>
+      <li>A longer, well-compressed file will help make the realtime difference between more apparent.</li>
       <li>The raw RecognizeStream continues displaying new data received from the server and thus does not immediately stop when the Stop button is clicked.</li>
       <li>Supported types are wav, ogg/opus (not ogg/vorbis), and flac. However, most browsers do not support flac.</li>
     </ul>
@@ -86,7 +86,7 @@ document.querySelector('#button').onclick = function () {
 
     stream = WatsonSpeech.SpeechToText.recognizeFile({
       token: token,
-      data: document.querySelector('#audiofile').files[0],
+      file: 'Isac_Newton_spoken_Wikipedia_opus.ogg',
       play: true,
       objectMode: true,
       realtime: false, // defaults to true when play is true, but we're going to turn it off and then manually do it in a moment to show the difference
