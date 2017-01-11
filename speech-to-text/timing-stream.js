@@ -68,6 +68,8 @@ TimingStream.prototype._transform = function(msg, encoding, next) {
   }
 };
 
+
+
 /**
  * Grabs the appropriate timestamp from the given message, depending on options.emitAt and the type of message
  *
@@ -105,6 +107,17 @@ TimingStream.prototype.getDelayMs = function(msg) {
   var nextTickTime = this.startTime + (messageTime * 1000); // ms since epoch
   var delayMs = nextTickTime - Date.now(); // ms from right now
   return Math.max(0, delayMs); // never return a negative number
+};
+
+/**
+ * Overrides the start time, adjusting the delay applied to all pending results.
+ *
+ * Stream may emit up to 1 more result based on the older time after this is called.
+ *
+ * @param {Number} [time=Date.now()] Start time in Miliseconds since epoch
+ */
+TimingStream.prototype.setStartTime = function(time) {
+  this.startTime = time || Date.now();
 };
 
 TimingStream.prototype.promise = require('./to-promise');

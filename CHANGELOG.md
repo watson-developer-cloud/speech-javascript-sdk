@@ -1,5 +1,9 @@
 # Changelog
 
+### v0.29.1
+* Added setStartTime() method to TimingStream to facilitate syncing wit when files loaded via URL actually begin playing
+* Updated recognizeFile() to automatically sync timing stream to playback
+
 ### v0.29.0
 * BREAKING: recognizeFile()'s data option renamed to file
 * File option may be a string URL. This enables streaming transcription/playback and mobile Safari support.

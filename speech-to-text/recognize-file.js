@@ -134,12 +134,21 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
   }
 
   if (options.play) {
-    // todo: if realtime is set, update the realtime stream's start time to match
     // when file playback actually begins
     // (mostly important for downloaded files)
     FilePlayer.playFile(options.file).then(function(player) {
       recognizeStream.on('stop', player.stop.bind(player));
       recognizeStream.on('error', player.stop.bind(player));
+
+      // for files loaded via URL, restet the start time of the timing stream to when it begins playing
+      if (timingStream && typeof options.file === 'string') {
+        // eslint-disable-next-line func-style
+        var fn = function() {
+          timingStream.setStartTime(); // defaults to Date.now()
+          player.audio.removeEventListener('playing', fn);
+        };
+        player.audio.addEventListener('playing', fn);
+      }
     }).catch(function(err) {
 
       // Node.js automatically unpipes any source stream(s) when an error is emitted (on the assumption that the previous stream's output caused the error.)
