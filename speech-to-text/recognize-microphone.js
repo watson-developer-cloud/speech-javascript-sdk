@@ -192,4 +192,4 @@ module.exports = function recognizeMicrophone(options) {
   return stream;
 };
 
-
+module.exports.isSupported = getUserMedia.isSupported;
