@@ -341,7 +341,7 @@ RecognizeStream.prototype._write = function(chunk, encoding, callback) {
  * The default highWaterMark is 16kb, so the default max upload speed is ~1.6mb/s.
  *
  * Microphone input provides audio at a (downsampled) rate of:
- *   16000 samples/s * 16-bits * 1 channel = 31.25kb/s
+ *   16000 samples/s * 16-bits * 1 channel = 32kb/s
  * (note the bits to bytes conversion there)
  *
  * @private
