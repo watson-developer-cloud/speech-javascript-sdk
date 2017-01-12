@@ -1,6 +1,6 @@
 # Changelog
 
-### v0.30.0
+### v0.30.1
 * added recognizeMicrophone.isSupported flag (checks for getUserMedia, assumes other features will be there if that one is)
 
 ### v0.29.1

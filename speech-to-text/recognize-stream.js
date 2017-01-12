@@ -345,7 +345,7 @@ RecognizeStream.prototype._write = function(chunk, encoding, callback) {
  * (note the bits to Bytes conversion there)
  *
  * @private
- * @param next
+ * @param {Function} next
  */
 RecognizeStream.prototype.afterSend = function afterSend(next) {
   if (this.socket.bufferedAmount <= (this._writableState.highWaterMark || 0)) {
