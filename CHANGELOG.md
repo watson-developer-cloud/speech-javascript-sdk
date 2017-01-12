@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.30.0
+* added recognizeMicrophone.isSupported flag (checks for getUserMedia, assumes other features will be there if that one is)
+
 ### v0.29.1
 * Added setStartTime() method to TimingStream to facilitate syncing wit when files loaded via URL actually begin playing
 * Updated recognizeFile() to automatically sync timing stream to playback
