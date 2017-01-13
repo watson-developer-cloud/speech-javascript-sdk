@@ -379,7 +379,7 @@ RecognizeStream.prototype.finish = function finish() {
   if (self.socket && self.socket.readyState === self.socket.OPEN) {
     self.sendJSON(closingMessage);
   } else {
-    this.once('connect', function() {
+    this.once('open', function() {
       self.sendJSON(closingMessage);
     });
   }
