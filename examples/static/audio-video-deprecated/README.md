@@ -17,3 +17,8 @@ then visit http://localhost:3000/audio-video-deprecated/
 
 The example uses the Node.js server to host the content, bundle the JavaScript files, and generate access tokens.
 
+## Recommended alternative
+
+The recommended alternative to using the code in this example is to extract and/or convert the audio server-side using a took such as [FFmpeg](http://ffmpeg.org/). 
+
+For `<video>` elements in particular, the [WebVVT](https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API) subtitles format is recommended. The service/SDK does not currently support outputting in this format, but it is fairly easy to generate.
