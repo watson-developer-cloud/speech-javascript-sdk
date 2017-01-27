@@ -111,7 +111,7 @@ For Mobile Safari compatibility, a URL must be provided, and `recognizeFile()` m
 
 There have been a few breaking changes in recent releases:
 
-* Removed `SpeechToText.recognizeElement()` due to quality issues. The code is [avaliable in an (unsupported) example](examples/static/audio-video-derecated) if you wish to use it with current releases of the SDK.
+* Removed `SpeechToText.recognizeElement()` due to quality issues. The code is [avaliable in an (unsupported) example](https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/static/audio-video-deprecated) if you wish to use it with current releases of the SDK.
 * renamed `recognizeBlob` to `recognizeFile` to make the primary usage more apparent
 * Changed `playFile` option of `recognizeBlob()` to just `play`, corrected default
 * Changed format of objects emitted in objectMode to exactly match what service sends. Added `ResultStrean` class and `extract_results` option to enable older behavior.
