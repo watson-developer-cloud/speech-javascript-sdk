@@ -50,5 +50,6 @@ Notes
 More Examples
 -------------
 
+* Speech to Text: [Demo](https://speech-to-text-demo.mybluemix.net/), [Code](https://github.com/watson-developer-cloud/speech-to-text-nodejs)
 * Speech & Dialog services together: [Demo](https://speech-dialog.mybluemix.net/), [Code](https://github.com/nfriedly/speech-dialog)
 * Text to Speech w/ word timings: [Demo](http://watson-tts-timing.mybluemix.net/), [Code](https://github.com/nfriedly/tts-timing)
