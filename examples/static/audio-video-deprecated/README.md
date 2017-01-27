@@ -12,7 +12,7 @@ You are welcome to use this code, but it is not officially supported, and you ar
 
 ## Setup
 
-To try out the example, run `npm start` in the [../../examples](../../examples) directory, 
+To try out the example, run `npm start` in the [examples](../../) directory, 
 then visit http://localhost:3000/audio-video-deprecated/
 
 The example uses the Node.js server to host the content, bundle the JavaScript files, and generate access tokens.
