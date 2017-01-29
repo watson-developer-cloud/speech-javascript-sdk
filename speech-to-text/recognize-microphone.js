@@ -94,9 +94,7 @@ module.exports = function recognizeMicrophone(options) {
     preservedMicStream.unpipe(bitBucket);
     getMicStream = Promise.resolve(preservedMicStream);
   } else {
-    var pm = options.userMediaStream ?
-      Promise.resolve(options.userMediaStream) : 
-      getUserMedia({video: false, audio: true})
+    var pm = options.userMediaStream ? Promise.resolve(options.userMediaStream) : getUserMedia({video: false, audio: true});
 
     getMicStream = pm.then(function(mic) {
       var micStream = new MicrophoneStream(mic, {
