@@ -74,6 +74,7 @@ The core of the library is the [RecognizeStream] that performs the actual transc
 
 Options: 
 * `keepMic`: if true, preserves the MicrophoneStream for subsequent calls, preventing additional permissions requests in Firefox
+* `mediaStream`: Optionally pass in an existing media stream rather than prompting the user for microphone access.
 * Other options passed to [RecognizeStream]
 * Other options passed to [SpeakerStream] if `options.resultsbySpeaker` is set to true
 * Other options passed to [FormatStream] if `options.format` is not set to false

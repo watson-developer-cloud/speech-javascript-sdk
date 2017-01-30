@@ -50,6 +50,7 @@ var bitBucket = new Writable({
  * @param {String|DOMElement} [options.outputElement] pipe the text to a [WriteableElementStream](WritableElementStream.html) targeting the specified element. Also defaults objectMode to true to enable interim results.
  * @param {Boolean} [options.extractResults=false] pipe results through a ResultStream stream to simplify the objects. (Default behavior before v0.22) Requires objectMode.
  * @param {Boolean} [options.resultsBySpeaker=false] Pipe results through a SpeakerStream. Forces speaker_labels and objectMode to be true.
+ * @param {MediaStream} [options.mediaStream] Optionally pass in an existing MediaStream
  *
  * @returns {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
  */
