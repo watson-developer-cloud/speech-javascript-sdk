@@ -84,6 +84,7 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
   // edges in game graphics. need to interpolate between samples rather than just retaining and discarding samples
   // (which introduces horrible jitter noise during non-integer downsampling). Then, need to low-pass filter before or
   // in conjunction with the interpolation to the lower sample rate, to avoid aliasing.
+  // see http://dsp.stackexchange.com/questions/20303/trying-to-downsample-audio for more details.
   var filter = [
       -0.037935, -0.00089024, 0.040173, 0.019989, 0.0047792, -0.058675, -0.056487,
       -0.0040653, 0.14527, 0.26927, 0.33913, 0.26927, 0.14527, -0.0040653, -0.056487,
