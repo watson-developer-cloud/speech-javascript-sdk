@@ -3,6 +3,7 @@
 module.exports = {
   entry: './static/webpack-app.js',
   output: {
-    filename: './static/webpack-bundle.js'
+    path: __dirname + '/static',
+    filename: 'webpack-bundle.js'
   }
 };

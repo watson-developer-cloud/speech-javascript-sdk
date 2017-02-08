@@ -25,7 +25,7 @@ require('dotenv').load({silent: true});
 
 app.use(express.static(__dirname + '/static'));
 
-// set up express-browserify to serve bundles for examples
+// set up express-browserify to serve browserify bundles for examples
 var isDev = app.get('env') === 'development';
 app.get('/browserify-bundle.js', expressBrowserify('static/browserify-app.js', {
   watch: isDev,
@@ -36,7 +36,19 @@ app.get('/audio-video-deprecated/bundle.js', expressBrowserify('static/audio-vid
   debug: isDev
 }));
 
-// webpack bundle is built by running `npm run build-webpack` or `npm start`
+
+// set up webpack-dev-middleware to serve Webpack bundles for examples
+var webpackDevMiddleware = require('webpack-dev-middleware');
+var webpack = require('webpack');
+var webpackConfig = require('./webpack.config');
+
+var compiler = webpack(webpackConfig);
+
+app.use(webpackDevMiddleware(compiler, {
+  publicPath: '/' // Same as `output.publicPath` in most cases.
+}));
+
+
 
 // token endpoints
 // **Warning**: these endpoints should be guarded with additional authentication & authorization for production use
