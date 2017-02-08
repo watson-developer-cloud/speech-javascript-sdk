@@ -19,7 +19,18 @@ describe('Webpack', function() {
       }
     });
     compiler.outputFileSystem = fs;
-    compiler.run(done);
+    compiler.run(function(err, stats) {
+      if (err) {
+        // fatal error
+        return done(err);
+      }
+      if (stats.compilation.errors && stats.compilation.errors.length) {
+        // non-fatal errors that nonetheless still probably bork things
+        return done(stats.compilation.errors);
+      }
+      // console.log(stats.compilation);
+      done();
+    });
   });
 
 });
