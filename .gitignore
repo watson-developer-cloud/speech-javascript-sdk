@@ -9,3 +9,4 @@ doc/
 *-auth.json
 .env
 dist/*.min.js
+examples/static/webpack-bundle.js

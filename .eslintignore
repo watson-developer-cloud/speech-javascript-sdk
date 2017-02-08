@@ -4,3 +4,4 @@ doc/
 examples/static/watson-speech.js
 examples/static/bower_components/
 examples/node_modules/
+examples/static/webpack-bundle.js

@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Examples showing the IBM Watson Speech Javascript SDK in action.",
   "scripts": {
-    "start": "node server.js"
+    "start": "npm run build-webpack && npm run server",
+    "server": "node server.js",
+    "build-webpack": "webpack"
   },
   "dependencies": {
     "defaults": "^1.0.3",
@@ -16,5 +18,8 @@
     "watson-speech": "*",
     "whatwg-fetch": "^1.0.0"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "webpack": "^2.2.1"
+  }
 }

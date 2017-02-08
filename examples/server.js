@@ -27,7 +27,7 @@ app.use(express.static(__dirname + '/static'));
 
 // set up express-browserify to serve bundles for examples
 var isDev = app.get('env') === 'development';
-app.get('/bundle.js', expressBrowserify('static/browserify-app.js', {
+app.get('/browserify-bundle.js', expressBrowserify('static/browserify-app.js', {
   watch: isDev,
   debug: isDev
 }));
@@ -36,6 +36,7 @@ app.get('/audio-video-deprecated/bundle.js', expressBrowserify('static/audio-vid
   debug: isDev
 }));
 
+// webpack bundle is built by running `npm run build-webpack` or `npm start`
 
 // token endpoints
 // **Warning**: these endpoints should be guarded with additional authentication & authorization for production use
