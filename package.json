@@ -19,7 +19,7 @@
   },
   "author": "Nathan Friedly <http://nfriedly.com>",
   "devDependencies": {
-    "browserify": "^13.3.0",
+    "browserify": "^14.0.0",
     "concat-stream": "^1.6.0",
     "envify": "^4.0.0",
     "eslint": "^3.13.1",
@@ -55,7 +55,7 @@
     "websocket": "^1.0.24",
     "whatwg-fetch": "^2.0.1"
   },
-  "homepage": "https://github.com/watson-developer-cloud/speech-javascript-sdk",
+  "homepage": "http://watson-speech.mybluemix.net/",
   "repository": {
     "type": "git",
     "url": "https://github.com/watson-developer-cloud/speech-javascript-sdk.git"

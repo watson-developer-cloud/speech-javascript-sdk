@@ -43,9 +43,9 @@ API & Examples
 
 The basic API is outlined below, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/
 
-See code for several basic examples at https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/static/
+See several basic examples at http://watson-speech.mybluemix.net/ ([source](https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/))
 
-See a live example at https://speech-to-text-demo.mybluemix.net/
+See a more advanced example at https://speech-to-text-demo.mybluemix.net/
 
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
 (See https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/ for a couple of basic examples in Node.js and Python.)
