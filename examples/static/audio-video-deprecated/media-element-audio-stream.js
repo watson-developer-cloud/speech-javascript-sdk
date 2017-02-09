@@ -20,14 +20,15 @@ var defaults = require('defaults');
  * @constructor
  */
 function MediaElementAudioStream(element, options) {
-
   options = defaults(options, {
     // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
     // buffer size to balance between latency and audio quality."
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
     // Possible values: null, 256, 512, 1024, 2048, 4096, 8192, 16384
     // however, webkitAudioContext (safari) requires it to be set
-    bufferSize: (window.AudioContext ? 4096 : null),
+    bufferSize: (
+      window.AudioContext ? 4096 : null
+    ),
     muteSource: false,
     autoPlay: true,
     crossOrigin: 'anonymous', // required for cross-domain audio playback
@@ -147,11 +148,10 @@ function MediaElementAudioStream(element, options) {
       float: true
     });
   });
-
 }
 util.inherits(MediaElementAudioStream, Readable);
 
-MediaElementAudioStream.prototype._read = function(/* bytes */) {
+MediaElementAudioStream.prototype._read = function() /* bytes */ {
   // no-op, (back-pressure flow-control doesn't really work on sound)
 };
 

@@ -35,10 +35,10 @@
  ```
  Requires fetch, pollyfill available at https://github.com/github/fetch
 
- * @todo define format in @returns statement
+ * @todo define format in @return statement
  * @param {Object} options
  * @param {String} options.token auth token
- * @returns {Promise.<T>}
+ * @return {Promise.<T>}
  */
 module.exports = function getModels(options) {
   if (!options || !options.token) {
@@ -51,9 +51,10 @@ module.exports = function getModels(options) {
     }
   };
   return fetch('https://stream.watsonplatform.net/speech-to-text/api/v1/models?watson-token=' + options.token, reqOpts)
-    .then(function(response){
+    .then(function(response) {
       return response.json();
-    }).then(function(obj) {
+    })
+    .then(function(obj) {
       return obj.models;
     });
 };

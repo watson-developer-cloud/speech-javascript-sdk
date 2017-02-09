@@ -9,12 +9,11 @@ require('whatwg-fetch');
 var recognizeMicrophone = require('watson-speech/speech-to-text/recognize-microphone');
 
 document.querySelector('#button').onclick = function() {
-
   fetch('/api/speech-to-text/token')
     .then(function(response) {
       return response.text();
-    }).then(function(token) {
-
+    })
+    .then(function(token) {
       var stream = recognizeMicrophone({
         token: token,
         continuous: false, // false = automatically stop transcription the first time a pause is detected
@@ -24,8 +23,8 @@ document.querySelector('#button').onclick = function() {
       stream.on('error', function(err) {
         console.log(err);
       });
-
-    }).catch(function(error) {
+    })
+    .catch(function(error) {
       console.log(error);
     });
 };

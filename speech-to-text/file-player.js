@@ -30,7 +30,7 @@ function UrlPlayer(url) {
 function FilePlayer(file, contentType) {
   var audio = this.audio = new Audio();
   if (audio.canPlayType(contentType)) {
-    audio.src = URL.createObjectURL(new Blob([file], {type: contentType}));
+    audio.src = URL.createObjectURL(new Blob([file], { type: contentType }));
     audio.play();
   } else {
     // if we emit an error, it prevents the promise from returning the actual result
@@ -53,7 +53,7 @@ FilePlayer.ERROR_UNSUPPORTED_FORMAT = 'UNSUPPORTED_FORMAT';
 /**
  * Reads the first few bytes of a binary file and resolves to the content-type if recognized & supported
  * @param {File|Blob} file
- * @returns {Promise}
+ * @return {Promise}
  */
 function getContentTypeFromFile(file) {
   return new Promise(function(resolve, reject) {
@@ -76,7 +76,7 @@ function getContentTypeFromFile(file) {
 /**
  * Determines the file's content-type and then resolves to a FilePlayer instance
  * @param {File|Blob|String} file - binary data or URL of audio file (binary data playback may not work on mobile Safari)
- * @returns {Promise.<FilePlayer>}
+ * @return {Promise.<FilePlayer>}
  */
 function playFile(file) {
   if (typeof file === 'string') {

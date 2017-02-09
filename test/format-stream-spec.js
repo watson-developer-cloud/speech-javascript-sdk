@@ -5,7 +5,6 @@ var clone = require('clone');
 var FormatStream = require('../speech-to-text/format-stream.js');
 
 describe('FormatStream', function() {
-
   it('should format strings', function(done) {
     var stream = new FormatStream();
     stream.setEncoding('utf8');
@@ -20,22 +19,36 @@ describe('FormatStream', function() {
   });
 
   it('should format objects', function(done) {
-    var stream = new FormatStream({objectMode: true});
+    var stream = new FormatStream({ objectMode: true });
     stream.setEncoding('utf8');
-    var source = {results: [
-      {alternatives:
-      [{
-        confidence: 0.881,
-        transcript: 'foo bar ',
-        final: true}],
-        result_index: 0}]};
-    var expected = {results: [
-      {alternatives:
-      [{
-        confidence: 0.881,
-        transcript: 'Foo bar. ',
-        final: true}],
-        result_index: 0}]};
+    var source = {
+      results: [
+        {
+          alternatives: [
+            {
+              confidence: 0.881,
+              transcript: 'foo bar ',
+              final: true
+            }
+          ],
+          result_index: 0
+        }
+      ]
+    };
+    var expected = {
+      results: [
+        {
+          alternatives: [
+            {
+              confidence: 0.881,
+              transcript: 'Foo bar. ',
+              final: true
+            }
+          ],
+          result_index: 0
+        }
+      ]
+    };
     stream.on('data', function(actual) {
       assert.equal(actual, expected);
       done();
@@ -98,7 +111,7 @@ describe('FormatStream', function() {
 
   // https://github.com/watson-developer-cloud/speech-javascript-sdk/issues/13
   it('should handle %HESITATIONs at the end of a sentence (and not add a period) when set to ellipsis', function(done) {
-    var stream = new FormatStream({hesitation: '\u2026'});
+    var stream = new FormatStream({ hesitation: '\u2026' });
     stream.setEncoding('utf8');
     var source = '%HESITATION asdf %HESITATION ';
     var expected = '… asdf … ';
@@ -111,14 +124,18 @@ describe('FormatStream', function() {
   });
 
   it('should pass through speaker_labels messages', function(done) {
-    var stream = new FormatStream({objectMode: true});
-    var source = {speaker_labels: [{
-      from: 28.92,
-      to: 29.17,
-      speaker: 1,
-      confidence: 0.641,
-      final: false
-    }]};
+    var stream = new FormatStream({ objectMode: true });
+    var source = {
+      speaker_labels: [
+        {
+          from: 28.92,
+          to: 29.17,
+          speaker: 1,
+          confidence: 0.641,
+          final: false
+        }
+      ]
+    };
     var expected = clone(source);
     stream.on('data', function(actual) {
       assert.deepEqual(actual, expected);
@@ -127,7 +144,6 @@ describe('FormatStream', function() {
     stream.on('error', done);
     stream.write(source);
   });
-
   /*
   { results:
     [ { alternatives:

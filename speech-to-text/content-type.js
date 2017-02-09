@@ -11,7 +11,7 @@ var contentTypes = {
  * Takes the beginning of an audio file and returns the associated content-type / mime type
  *
  * @param {String} header first 4 characters of the file as a UTF-8 string
- * @returns {String|undefined} - the contentType of undefined
+ * @return {String|undefined} - the contentType of undefined
  */
 module.exports = function contentType(header) {
   return contentTypes[header];

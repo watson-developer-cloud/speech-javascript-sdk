@@ -33,7 +33,7 @@ var WritableElementStream = require('watson-speech/speech-to-text/writable-eleme
  * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting
  * @param {String|DOMElement} [options.outputElement] pipe the text to a WriteableElementStream targeting the specified element. Also defaults objectMode to true to enable interim results.
  *
- * @returns {RecognizeStream|FormatStream}
+ * @return {RecognizeStream|FormatStream}
  */
 module.exports = function recognizeElement(options) {
   if (!options || !options.token) {
@@ -45,7 +45,6 @@ module.exports = function recognizeElement(options) {
     options.objectMode = true;
   }
 
-
   // we don't want the readable stream to have objectMode on the input even if we're setting it for the output
   var rsOpts = assign({}, options);
   rsOpts.readableObjectMode = options.objectMode;
@@ -54,16 +53,16 @@ module.exports = function recognizeElement(options) {
 
   var recognizeStream = new RecognizeStream(rsOpts);
 
-  var sourceStream = new MediaElementAudioStream(options.element , {
+  var sourceStream = new MediaElementAudioStream(options.element, {
     objectMode: true,
     bufferSize: options.bufferSize,
     muteSource: options.muteSource,
-    autoPlay: options.autoPlay !== false // default to true if it's undefined
+    autoPlay: (
+      options.autoPlay !== false
+    ) // default to true if it's undefined
   });
 
-  var stream = sourceStream
-    .pipe(new L16({writableObjectMode: true}))
-    .pipe(recognizeStream);
+  var stream = sourceStream.pipe(new L16({ writableObjectMode: true })).pipe(recognizeStream);
 
   if (options.format !== false) {
     stream = stream.pipe(new FormatStream(options));

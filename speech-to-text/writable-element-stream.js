@@ -17,7 +17,7 @@ var defaults = require('defaults');
  */
 function WritableElementStream(options) {
   this.options = options = defaults(options, {
-    decodeStrings: false,  // false = don't convert strings to buffers before passing to _write (only applies in string mode)
+    decodeStrings: false, // false = don't convert strings to buffers before passing to _write (only applies in string mode)
     property: null,
     clear: true
   });
@@ -50,7 +50,6 @@ function WritableElementStream(options) {
 }
 util.inherits(WritableElementStream, Writable);
 
-
 WritableElementStream.prototype.writeString = function writeString(text, encoding, next) {
   this.el[this.prop] += text;
   next();
@@ -58,14 +57,17 @@ WritableElementStream.prototype.writeString = function writeString(text, encodin
 
 WritableElementStream.prototype.writeObject = function writeObject(data, encoding, next) {
   if (Array.isArray(data.results)) {
-    data.results.forEach(function(result) {
-      if (result.final) {
-        this.finalizedText += result.alternatives[0].transcript;
-        this.el[this.prop] = this.finalizedText;
-      } else {
-        this.el[this.prop] = this.finalizedText + result.alternatives[0].transcript;
-      }
-    }, this);
+    data.results.forEach(
+      function(result) {
+        if (result.final) {
+          this.finalizedText += result.alternatives[0].transcript;
+          this.el[this.prop] = this.finalizedText;
+        } else {
+          this.el[this.prop] = this.finalizedText + result.alternatives[0].transcript;
+        }
+      },
+      this
+    );
   }
   next();
 };

@@ -33,10 +33,8 @@ function WebAudioL16Stream(options) {
     this._transform = this.transformBuffer;
     process.nextTick(this.emitFormat.bind(this));
   }
-
 }
 util.inherits(WebAudioL16Stream, Transform);
-
 
 WebAudioL16Stream.prototype.emitFormat = function emitFormat() {
   this.emit('format', {
@@ -62,11 +60,11 @@ WebAudioL16Stream.prototype.emitFormat = function emitFormat() {
  * @return {Float32Array} 'audio/l16' chunk
  */
 WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
-  var buffer = null,
-    newSamples = bufferNewSamples.length,
-    unusedSamples = this.bufferUnusedSamples.length,
-    i,
-    offset;
+  var buffer = null;
+  var newSamples = bufferNewSamples.length;
+  var unusedSamples = this.bufferUnusedSamples.length;
+  var i;
+  var offset;
 
   if (unusedSamples > 0) {
     buffer = new Float32Array(unusedSamples + newSamples);
@@ -82,13 +80,31 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
 
   // downsampling variables
   var filter = [
-      -0.037935, -0.00089024, 0.040173, 0.019989, 0.0047792, -0.058675, -0.056487,
-      -0.0040653, 0.14527, 0.26927, 0.33913, 0.26927, 0.14527, -0.0040653, -0.056487,
-      -0.058675, 0.0047792, 0.019989, 0.040173, -0.00089024, -0.037935
-    ],
-    samplingRateRatio = this.options.sourceSampleRate / TARGET_SAMPLE_RATE,
-    nOutputSamples = Math.floor((buffer.length - filter.length) / (samplingRateRatio)) + 1,
-    outputBuffer = new Float32Array(nOutputSamples);
+    -0.037935,
+    -0.00089024,
+    0.040173,
+    0.019989,
+    0.0047792,
+    -0.058675,
+    -0.056487,
+    -0.0040653,
+    0.14527,
+    0.26927,
+    0.33913,
+    0.26927,
+    0.14527,
+    -0.0040653,
+    -0.056487,
+    -0.058675,
+    0.0047792,
+    0.019989,
+    0.040173,
+    -0.00089024,
+    -0.037935
+  ];
+  var samplingRateRatio = this.options.sourceSampleRate / TARGET_SAMPLE_RATE;
+  var nOutputSamples = Math.floor((buffer.length - filter.length) / samplingRateRatio) + 1;
+  var outputBuffer = new Float32Array(nOutputSamples);
 
   for (i = 0; i + filter.length - 1 < buffer.length; i++) {
     offset = Math.round(samplingRateRatio * i);
@@ -123,13 +139,13 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
  * Store in little endian.
  *
  * @param {Float32Array} input
- * @returns {Buffer}
+ * @return {Buffer}
  */
-WebAudioL16Stream.prototype.floatTo16BitPCM = function(input){
+WebAudioL16Stream.prototype.floatTo16BitPCM = function(input) {
   var output = new DataView(new ArrayBuffer(input.length * 2)); // length is in bytes (8-bit), so *2 to get 16-bit length
-  for (var i = 0; i < input.length; i++){
-    var multiplier = input[i] < 0 ? 0x8000 : 0x7FFF; // 16-bit signed range is -32768 to 32767
-    output.setInt16(i * 2, (input[i] * multiplier) | 0, true); // index, value, little edian
+  for (var i = 0; i < input.length; i++) {
+    var multiplier = input[i] < 0 ? 0x8000 : 0x7fff; // 16-bit signed range is -32768 to 32767
+    output.setInt16(i * 2, input[i] * multiplier | 0, true); // index, value, little edian
   }
   return new Buffer(output.buffer);
 };
@@ -180,7 +196,4 @@ WebAudioL16Stream.prototype.transformBuffer = function(nodebuffer, encoding, nex
 };
 // new Float32Array(nodebuffer.buffer)
 
-
 module.exports = WebAudioL16Stream;
-
-

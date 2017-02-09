@@ -52,7 +52,7 @@ var bitBucket = new Writable({
  * @param {Boolean} [options.resultsBySpeaker=false] Pipe results through a SpeakerStream. Forces speaker_labels and objectMode to be true.
  * @param {MediaStream} [options.mediaStream] Optionally pass in an existing MediaStream
  *
- * @returns {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
+ * @return {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
  */
 module.exports = function recognizeMicrophone(options) {
   if (!options || !options.token) {
@@ -75,16 +75,19 @@ module.exports = function recognizeMicrophone(options) {
 
   // default format to true (capitals and periods)
   // default smart_formatting to options.format value (dates, currency, etc.)
-  options.format = (options.format !== false);
+  options.format = options.format !== false;
   if (typeof options.smart_formatting === 'undefined') {
     options.smart_formatting = options.format;
   }
 
-  var rsOpts = assign({
-    continuous: true,
-    'content-type': 'audio/l16;rate=16000',
-    interim_results: true,
-  }, options);
+  var rsOpts = assign(
+    {
+      continuous: true,
+      'content-type': 'audio/l16;rate=16000',
+      interim_results: true
+    },
+    options
+  );
 
   var recognizeStream = new RecognizeStream(rsOpts);
   var streams = [recognizeStream]; // collect all of the streams so that we can bundle up errors and send them to the last one
@@ -95,7 +98,7 @@ module.exports = function recognizeMicrophone(options) {
     preservedMicStream.unpipe(bitBucket);
     getMicStream = Promise.resolve(preservedMicStream);
   } else {
-    var pm = options.mediaStream ? Promise.resolve(options.mediaStream) : getUserMedia({video: false, audio: true});
+    var pm = options.mediaStream ? Promise.resolve(options.mediaStream) : getUserMedia({ video: false, audio: true });
 
     getMicStream = pm.then(function(mic) {
       var micStream = new MicrophoneStream(mic, {
@@ -140,42 +143,41 @@ module.exports = function recognizeMicrophone(options) {
     }
   });
 
-  getMicStream.then(function(micStream) {
-    streams.push(micStream);
+  getMicStream
+    .then(function(micStream) {
+      streams.push(micStream);
 
-    var l16Stream = new L16({writableObjectMode: true});
+      var l16Stream = new L16({ writableObjectMode: true });
 
-    micStream
-      .pipe(l16Stream)
-      .pipe(recognizeStream);
+      micStream.pipe(l16Stream).pipe(recognizeStream);
 
-    streams.push(l16Stream);
+      streams.push(l16Stream);
 
-    /**
+      /**
      * unpipes the mic stream to prevent any more audio from being sent over the wire
      * temporarily re-pipes it to the bitBucket (basically /dev/null)  becuse
      * otherwise it will buffer the audio from in between calls and prepend it to the next one
      *
      * @private
      */
-    function end() {
-      micStream.unpipe(l16Stream);
-      micStream.pipe(bitBucket);
-      l16Stream.end();
-    }
-    // trigger on both stop and end events:
-    // stop will not fire when a stream ends due to a timeout or having continuous: false
-    // but when stop does fire, we want to honor it immediately
-    // end will always fire, but it may take a few moments after stop
-    if (keepMic) {
-      recognizeStream.on('end', end);
-      recognizeStream.on('stop', end);
-    } else {
-      recognizeStream.on('end', micStream.stop.bind(micStream));
-      recognizeStream.on('stop', micStream.stop.bind(micStream));
-    }
-
-  }).catch(recognizeStream.emit.bind(recognizeStream, 'error'));
+      function end() {
+        micStream.unpipe(l16Stream);
+        micStream.pipe(bitBucket);
+        l16Stream.end();
+      }
+      // trigger on both stop and end events:
+      // stop will not fire when a stream ends due to a timeout or having continuous: false
+      // but when stop does fire, we want to honor it immediately
+      // end will always fire, but it may take a few moments after stop
+      if (keepMic) {
+        recognizeStream.on('end', end);
+        recognizeStream.on('stop', end);
+      } else {
+        recognizeStream.on('end', micStream.stop.bind(micStream));
+        recognizeStream.on('stop', micStream.stop.bind(micStream));
+      }
+    })
+    .catch(recognizeStream.emit.bind(recognizeStream, 'error'));
 
   // Capture errors from any stream except the last one and emit them on the last one
   streams.forEach(function(prevStream) {

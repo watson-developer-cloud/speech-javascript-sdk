@@ -60,22 +60,23 @@ TimingStream.prototype._transform = function(msg, encoding, next) {
   }
 
   if (objectMode || hasTranscript) {
-    this.timeout = setTimeout(function() {
-      next(null, msg);
-    }, delayMs);
+    this.timeout = setTimeout(
+      function() {
+        next(null, msg);
+      },
+      delayMs
+    );
   } else {
     return next();
   }
 };
-
-
 
 /**
  * Grabs the appropriate timestamp from the given message, depending on options.emitAt and the type of message
  *
  * @private
  * @param {Object} msg
- * @returns {Number} timestamp
+ * @return {Number} timestamp
  */
 TimingStream.prototype.getMessageTime = function(msg) {
   if (this.options.emitAt === TimingStream.START) {
@@ -100,11 +101,11 @@ TimingStream.prototype.getMessageTime = function(msg) {
  *
  * @private
  * @param {Object} msg
- * @returns {Number} ms to delay
+ * @return {Number} ms to delay
  */
 TimingStream.prototype.getDelayMs = function(msg) {
   var messageTime = this.getMessageTime(msg);
-  var nextTickTime = this.startTime + (messageTime * 1000); // ms since epoch
+  var nextTickTime = this.startTime + messageTime * 1000; // ms since epoch
   var delayMs = nextTickTime - Date.now(); // ms from right now
   return Math.max(0, delayMs); // never return a negative number
 };

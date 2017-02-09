@@ -6,7 +6,6 @@ var SpeakerStream = require('../speech-to-text/speaker-stream.js');
 var sinon = require('sinon');
 
 describe('SpeakerStream', function() {
-
   it('should split up results by speaker', function(done) {
     var stream = new SpeakerStream();
     stream.on('error', done);
@@ -15,29 +14,33 @@ describe('SpeakerStream', function() {
       actual.push(data);
     });
 
-    var expected = [{
-      results: [{
-        speaker: 0,
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-          ],
-          transcript: 'hi '
-        }],
-        final: true
-      },
+    var expected = [
       {
-        speaker: 1,
-        alternatives: [{
-          timestamps: [
-              ['hello', 0.28, 0.37],
-          ],
-          transcript: 'hello '
-        }],
-        final: true
-      }],
-      result_index: 0
-    }];
+        results: [
+          {
+            speaker: 0,
+            alternatives: [
+              {
+                timestamps: [['hi', 0.06, 0.28]],
+                transcript: 'hi '
+              }
+            ],
+            final: true
+          },
+          {
+            speaker: 1,
+            alternatives: [
+              {
+                timestamps: [['hello', 0.28, 0.37]],
+                transcript: 'hello '
+              }
+            ],
+            final: true
+          }
+        ],
+        result_index: 0
+      }
+    ];
 
     stream.on('end', function() {
       assert.deepEqual(actual, expected);
@@ -45,32 +48,36 @@ describe('SpeakerStream', function() {
     });
 
     stream.write({
-      results: [{
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-            ['hello', 0.28, 0.37],
+      results: [
+        {
+          alternatives: [
+            {
+              timestamps: [['hi', 0.06, 0.28], ['hello', 0.28, 0.37]],
+              transcript: 'hi hello '
+            }
           ],
-          transcript: 'hi hello '
-        }],
-        final: true
-      }],
+          final: true
+        }
+      ],
       result_index: 0
     });
     stream.end({
-      speaker_labels: [{
-        from: 0.06,
-        to: 0.28,
-        speaker: 0,
-        confidence: 0.512,
-        final: false
-      }, {
-        from: 0.28,
-        to: 0.37,
-        speaker: 1,
-        confidence: 0.512,
-        final: true
-      }]
+      speaker_labels: [
+        {
+          from: 0.06,
+          to: 0.28,
+          speaker: 0,
+          confidence: 0.512,
+          final: false
+        },
+        {
+          from: 0.28,
+          to: 0.37,
+          speaker: 1,
+          confidence: 0.512,
+          final: true
+        }
+      ]
     });
   });
 
@@ -82,42 +89,48 @@ describe('SpeakerStream', function() {
       actual.push(data);
     });
 
-    var expected = [{
-      results: [{
-        speaker: 0,
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-          ],
-          transcript: 'hi '
-        }],
-        final: false
-      }, {
-        speaker: 1,
-        alternatives: [{
-          timestamps: [
-            ['hello', 0.28, 0.37],
-          ],
-          transcript: 'hello '
-        }],
-        final: false
-      }],
-      result_index: 0
-    }, {
-      results: [{
-        speaker: 0,
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-            ['hello', 0.28, 0.37],
-          ],
-          transcript: 'hi hello '
-        }],
-        final: true
-      }],
-      result_index: 0
-    }];
-
+    var expected = [
+      {
+        results: [
+          {
+            speaker: 0,
+            alternatives: [
+              {
+                timestamps: [['hi', 0.06, 0.28]],
+                transcript: 'hi '
+              }
+            ],
+            final: false
+          },
+          {
+            speaker: 1,
+            alternatives: [
+              {
+                timestamps: [['hello', 0.28, 0.37]],
+                transcript: 'hello '
+              }
+            ],
+            final: false
+          }
+        ],
+        result_index: 0
+      },
+      {
+        results: [
+          {
+            speaker: 0,
+            alternatives: [
+              {
+                timestamps: [['hi', 0.06, 0.28], ['hello', 0.28, 0.37]],
+                transcript: 'hi hello '
+              }
+            ],
+            final: true
+          }
+        ],
+        result_index: 0
+      }
+    ];
 
     stream.on('end', function() {
       assert.deepEqual(actual, expected);
@@ -125,47 +138,54 @@ describe('SpeakerStream', function() {
     });
 
     stream.write({
-      results: [{
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-            ['hello', 0.28, 0.37],
+      results: [
+        {
+          alternatives: [
+            {
+              timestamps: [['hi', 0.06, 0.28], ['hello', 0.28, 0.37]],
+              transcript: 'hi hello '
+            }
           ],
-          transcript: 'hi hello '
-        }],
-        final: true
-      }],
+          final: true
+        }
+      ],
       result_index: 0
     });
     stream.write({
-      speaker_labels: [{
-        from: 0.06,
-        to: 0.28,
-        speaker: 0,
-        confidence: 0.512,
-        final: false
-      }, {
-        from: 0.28,
-        to: 0.37,
-        speaker: 1,
-        confidence: 0.512,
-        final: false
-      }]
+      speaker_labels: [
+        {
+          from: 0.06,
+          to: 0.28,
+          speaker: 0,
+          confidence: 0.512,
+          final: false
+        },
+        {
+          from: 0.28,
+          to: 0.37,
+          speaker: 1,
+          confidence: 0.512,
+          final: false
+        }
+      ]
     });
     stream.end({
-      speaker_labels: [{
-        from: 0.06,
-        to: 0.28,
-        speaker: 0,
-        confidence: 0.512,
-        final: false
-      }, {
-        from: 0.28,
-        to: 0.37,
-        speaker: 0,
-        confidence: 0.512,
-        final: true
-      }]
+      speaker_labels: [
+        {
+          from: 0.06,
+          to: 0.28,
+          speaker: 0,
+          confidence: 0.512,
+          final: false
+        },
+        {
+          from: 0.28,
+          to: 0.37,
+          speaker: 0,
+          confidence: 0.512,
+          final: true
+        }
+      ]
     });
   });
 
@@ -225,41 +245,48 @@ describe('SpeakerStream', function() {
       actual.push(data);
     });
 
-    var expected = [{
-      results: [{
-        speaker: 0,
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-          ],
-          transcript: 'hi '
-        }],
-        final: false
-      }],
-      result_index: 0
-    }, {
-      results: [{
-        speaker: 0,
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-          ],
-          transcript: 'hi '
-        }],
-        final: true
+    var expected = [
+      {
+        results: [
+          {
+            speaker: 0,
+            alternatives: [
+              {
+                timestamps: [['hi', 0.06, 0.28]],
+                transcript: 'hi '
+              }
+            ],
+            final: false
+          }
+        ],
+        result_index: 0
       },
       {
-        speaker: 1,
-        alternatives: [{
-          timestamps: [
-              ['hello', 0.28, 0.37],
-          ],
-          transcript: 'hello '
-        }],
-        final: true
-      }],
-      result_index: 0
-    }];
+        results: [
+          {
+            speaker: 0,
+            alternatives: [
+              {
+                timestamps: [['hi', 0.06, 0.28]],
+                transcript: 'hi '
+              }
+            ],
+            final: true
+          },
+          {
+            speaker: 1,
+            alternatives: [
+              {
+                timestamps: [['hello', 0.28, 0.37]],
+                transcript: 'hello '
+              }
+            ],
+            final: true
+          }
+        ],
+        result_index: 0
+      }
+    ];
 
     stream.on('end', function() {
       assert.deepEqual(actual, expected);
@@ -267,47 +294,55 @@ describe('SpeakerStream', function() {
     });
 
     stream.write({
-      results: [{
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
+      results: [
+        {
+          alternatives: [
+            {
+              timestamps: [['hi', 0.06, 0.28]],
+              transcript: 'hi '
+            }
           ],
-          transcript: 'hi '
-        }],
-        final: true,
-      }],
+          final: true
+        }
+      ],
       result_index: 0
     });
     stream.write({
-      speaker_labels: [{
-        from: 0.06,
-        to: 0.28,
-        speaker: 0,
-        confidence: 0.512,
-        final: false
-      }]
+      speaker_labels: [
+        {
+          from: 0.06,
+          to: 0.28,
+          speaker: 0,
+          confidence: 0.512,
+          final: false
+        }
+      ]
     });
     // this one is early
     stream.write({
-      speaker_labels: [{
-        from: 0.28,
-        to: 0.37,
-        speaker: 1,
-        confidence: 0.512,
-        final: true
-      }]
+      speaker_labels: [
+        {
+          from: 0.28,
+          to: 0.37,
+          speaker: 1,
+          confidence: 0.512,
+          final: true
+        }
+      ]
     });
     // or, this is late
     stream.write({
-      results: [{
-        alternatives: [{
-          timestamps: [
-            ['hello', 0.28, 0.37],
+      results: [
+        {
+          alternatives: [
+            {
+              timestamps: [['hello', 0.28, 0.37]],
+              transcript: 'hello '
+            }
           ],
-          transcript: 'hello '
-        }],
-        final: true
-      }],
+          final: true
+        }
+      ],
       result_index: 0
     });
     stream.end();
@@ -340,35 +375,40 @@ describe('SpeakerStream', function() {
     var source = require('./resources/car_loan_stream.json').filter(function(msg) {
       return msg.speaker_labels || msg.results && msg.results[0].final;
     });
-    var expectedNumAlts = source.reduce(function(count, msg) {
-      if (msg.speaker_labels) {
-        return count;
-      }
-      return count + msg.results[0].word_alternatives.length;
-    }, 0);
+    var expectedNumAlts = source.reduce(
+      function(count, msg) {
+        if (msg.speaker_labels) {
+          return count;
+        }
+        return count + msg.results[0].word_alternatives.length;
+      },
+      0
+    );
     assert(expectedNumAlts);
 
     stream.on('end', function() {
       assert(msgs.length);
       var numAlts = 0;
-      msgs.filter(function(msg) {
-        // speaker stream creates new interim results where the text is final but the speaker label is not.
-        // We only want the final one
-        return msg.results[0].final;
-      }).forEach(function(msg) {
-        msg.results.forEach(function(res) {
-          if (res.word_alternatives) {
-            numAlts += res.word_alternatives.length;
-            var timestamps = res.alternatives[0].timestamps;
-            var start = timestamps[0][1];
-            var end = timestamps[timestamps.length - 1][2];
-            res.word_alternatives.forEach(function(alt) {
-              assert(alt.start_time >= start);
-              assert(alt.end_time <= end);
-            });
-          }
+      msgs
+        .filter(function(msg) {
+          // speaker stream creates new interim results where the text is final but the speaker label is not.
+          // We only want the final one
+          return msg.results[0].final;
+        })
+        .forEach(function(msg) {
+          msg.results.forEach(function(res) {
+            if (res.word_alternatives) {
+              numAlts += res.word_alternatives.length;
+              var timestamps = res.alternatives[0].timestamps;
+              var start = timestamps[0][1];
+              var end = timestamps[timestamps.length - 1][2];
+              res.word_alternatives.forEach(function(alt) {
+                assert(alt.start_time >= start);
+                assert(alt.end_time <= end);
+              });
+            }
+          });
         });
-      });
       assert.equal(numAlts, expectedNumAlts, 'should have the same number of word alternatives before and after speaker-izing');
       done();
     });
@@ -415,41 +455,50 @@ describe('SpeakerStream', function() {
     var source = require('./resources/car_loan_stream.json').filter(function(msg) {
       return msg.speaker_labels || msg.results && msg.results[0].final;
     });
-    var expectedNumKeywords = source.reduce(function(count, msg) {
-      if (msg.speaker_labels || !msg.results[0].keywords_result) {
-        return count;
-      }
-      var kws = msg.results[0].keywords_result;
-      return count + Object.keys(kws).reduce(function(subCount, keyword) {
-        return subCount + kws[keyword].length;
-      },0);
-    }, 0);
+    var expectedNumKeywords = source.reduce(
+      function(count, msg) {
+        if (msg.speaker_labels || !msg.results[0].keywords_result) {
+          return count;
+        }
+        var kws = msg.results[0].keywords_result;
+        return count +
+          Object.keys(kws).reduce(
+            function(subCount, keyword) {
+              return subCount + kws[keyword].length;
+            },
+            0
+          );
+      },
+      0
+    );
     assert(expectedNumKeywords);
 
     stream.on('end', function() {
       assert(msgs.length);
       var numAlts = 0;
-      msgs.filter(function(msg) {
-        // speaker stream creates new interim results where the text is final but the speaker label is not.
-        // We only want the final one
-        return msg.results[0].final;
-      }).forEach(function(msg) {
-        msg.results.forEach(function(res) {
-          if (res.keywords_result) {
-            var timestamps = res.alternatives[0].timestamps;
-            var start = timestamps[0][1];
-            var end = timestamps[timestamps.length - 1][2];
-            Object.keys(res.keywords_result).forEach(function(keyword) {
-              var spottings = res.keywords_result[keyword];
-              numAlts += spottings.length;
-              spottings.forEach(function(spotting) {
-                assert(spotting.start_time >= start);
-                assert(spotting.end_time <= end);
+      msgs
+        .filter(function(msg) {
+          // speaker stream creates new interim results where the text is final but the speaker label is not.
+          // We only want the final one
+          return msg.results[0].final;
+        })
+        .forEach(function(msg) {
+          msg.results.forEach(function(res) {
+            if (res.keywords_result) {
+              var timestamps = res.alternatives[0].timestamps;
+              var start = timestamps[0][1];
+              var end = timestamps[timestamps.length - 1][2];
+              Object.keys(res.keywords_result).forEach(function(keyword) {
+                var spottings = res.keywords_result[keyword];
+                numAlts += spottings.length;
+                spottings.forEach(function(spotting) {
+                  assert(spotting.start_time >= start);
+                  assert(spotting.end_time <= end);
+                });
               });
-            });
-          }
+            }
+          });
         });
-      });
       assert.equal(numAlts, expectedNumKeywords, 'should have the same number of word alternatives before and after speaker-izing');
       done();
     });
@@ -474,7 +523,7 @@ describe('SpeakerStream', function() {
       var inputMessages = require('./resources/car_loan_stream.json');
       var actualSpeakerStream = new SpeakerStream();
       var expectedSpeakerStream = new SpeakerStream();
-      var timingStream = new TimingStream({objectMode: true});
+      var timingStream = new TimingStream({ objectMode: true });
       timingStream.pipe(actualSpeakerStream);
 
       timingStream.on('error', done);
@@ -507,47 +556,54 @@ describe('SpeakerStream', function() {
   });
 
   it('should provide early results when options.speakerlessInterim=true', function(done) {
-    var stream = new SpeakerStream({speakerlessInterim: true});
+    var stream = new SpeakerStream({ speakerlessInterim: true });
     stream.on('error', done);
     var actual = [];
     stream.on('data', function(data) {
       actual.push(data);
     });
 
-    var expected = [{
-      results: [{
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-          ],
-          transcript: 'hi '
-        }],
-        final: false
-      }],
-      result_index: 0
-    }, {
-      results: [{
-        speaker: 0,
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-          ],
-          transcript: 'hi '
-        }],
-        final: true
+    var expected = [
+      {
+        results: [
+          {
+            alternatives: [
+              {
+                timestamps: [['hi', 0.06, 0.28]],
+                transcript: 'hi '
+              }
+            ],
+            final: false
+          }
+        ],
+        result_index: 0
       },
       {
-        speaker: 1,
-        alternatives: [{
-          timestamps: [
-              ['hello', 0.28, 0.37],
-          ],
-          transcript: 'hello '
-        }],
-        final: true
-      }],
-      result_index: 0
-    }];
+        results: [
+          {
+            speaker: 0,
+            alternatives: [
+              {
+                timestamps: [['hi', 0.06, 0.28]],
+                transcript: 'hi '
+              }
+            ],
+            final: true
+          },
+          {
+            speaker: 1,
+            alternatives: [
+              {
+                timestamps: [['hello', 0.28, 0.37]],
+                transcript: 'hello '
+              }
+            ],
+            final: true
+          }
+        ],
+        result_index: 0
+      }
+    ];
 
     stream.on('end', function() {
       assert.deepEqual(actual, expected);
@@ -555,44 +611,50 @@ describe('SpeakerStream', function() {
     });
 
     stream.write({
-      results: [{
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
+      results: [
+        {
+          alternatives: [
+            {
+              timestamps: [['hi', 0.06, 0.28]],
+              transcript: 'hi '
+            }
           ],
-          transcript: 'hi '
-        }],
-        final: false
-      }],
+          final: false
+        }
+      ],
       result_index: 0
     });
     stream.write({
-      results: [{
-        alternatives: [{
-          timestamps: [
-            ['hi', 0.06, 0.28],
-            ['hello', 0.28, 0.37],
+      results: [
+        {
+          alternatives: [
+            {
+              timestamps: [['hi', 0.06, 0.28], ['hello', 0.28, 0.37]],
+              transcript: 'hi hello '
+            }
           ],
-          transcript: 'hi hello '
-        }],
-        final: true
-      }],
+          final: true
+        }
+      ],
       result_index: 0
     });
     stream.end({
-      speaker_labels: [{
-        from: 0.06,
-        to: 0.28,
-        speaker: 0,
-        confidence: 0.512,
-        final: false
-      }, {
-        from: 0.28,
-        to: 0.37,
-        speaker: 1,
-        confidence: 0.512,
-        final: true
-      }]
+      speaker_labels: [
+        {
+          from: 0.06,
+          to: 0.28,
+          speaker: 0,
+          confidence: 0.512,
+          final: false
+        },
+        {
+          from: 0.28,
+          to: 0.37,
+          speaker: 1,
+          confidence: 0.512,
+          final: true
+        }
+      ]
     });
   });
 
@@ -605,31 +667,35 @@ describe('SpeakerStream', function() {
           speaker: 0,
           confidence: 0.631,
           final: false
-        }, {
+        },
+        {
           from: 29.17,
           to: 29.37,
           speaker: 1,
           confidence: 0.641,
           final: false
-        }, {
+        },
+        {
           from: 28.92,
           to: 29.18,
           speaker: 1,
           confidence: 0.641,
           final: false
-        }, {
+        },
+        {
           from: 28.92,
           to: 29.17,
           speaker: 1,
           confidence: 0.641,
           final: false
-        }, {
+        },
+        {
           from: 29.37,
           to: 29.64,
           speaker: 1,
           confidence: 0.641,
           final: false
-        },
+        }
       ];
 
       var expected = [
@@ -639,25 +705,29 @@ describe('SpeakerStream', function() {
           speaker: 1,
           confidence: 0.641,
           final: false
-        }, {
+        },
+        {
           from: 28.92,
           to: 29.18,
           speaker: 1,
           confidence: 0.641,
           final: false
-        }, {
+        },
+        {
           from: 29.17,
           to: 29.37,
           speaker: 1,
           confidence: 0.641,
           final: false
-        }, {
+        },
+        {
           from: 29.37,
           to: 29.64,
           speaker: 1,
           confidence: 0.641,
           final: false
-        }, {
+        },
+        {
           from: 30.04,
           to: 30.34,
           speaker: 0,

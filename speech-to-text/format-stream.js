@@ -28,7 +28,7 @@ function FormatStream(opts) {
   });
   Transform.call(this, this.options);
 
-  this.isJaCn = ((this.options.model.substring(0,5) === 'ja-JP') || (this.options.model.substring(0,5) === 'zh-CN'));
+  this.isJaCn = this.options.model.substring(0, 5) === 'ja-JP' || this.options.model.substring(0, 5) === 'zh-CN';
   this._transform = this.options.objectMode ? this.transformObject : this.transformString;
 }
 util.inherits(FormatStream, Transform);
@@ -41,17 +41,18 @@ var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
  * Formats one or more words, removing special symbols, junk, and spacing for some languages
  * @param {String} text
  * @param {Boolean} isFinal
- * @returns {String}
+ * @return {String}
  */
 FormatStream.prototype.clean = function clean(text) {
   // clean out "junk"
-  text = text.replace(reHesitation, this.options.hesitation ? this.options.hesitation.trim() + ' ' : this.options.hesitation)
+  text = text
+    .replace(reHesitation, this.options.hesitation ? this.options.hesitation.trim() + ' ' : this.options.hesitation)
     .replace(reRepeatedCharacter, '')
-    .replace(reDUnderscoreWords,'');
+    .replace(reDUnderscoreWords, '');
 
   // remove spaces for Japanese and Chinese
   if (this.isJaCn) {
-    text = text.replace(/ /g,'');
+    text = text.replace(/ /g, '');
   }
 
   return text.trim() + ' '; // we want exactly 1 space at the end
@@ -60,7 +61,7 @@ FormatStream.prototype.clean = function clean(text) {
 /**
  * Capitalizes the first word of a sentence
  * @param {String} text
- * @returns {string}
+ * @return {string}
  */
 FormatStream.prototype.capitalize = function capitalize(text) {
   // capitalize first word, returns '' in the case of an empty word
@@ -70,7 +71,7 @@ FormatStream.prototype.capitalize = function capitalize(text) {
 /**
  * Puts a period on the end of a sentence
  * @param {String} text
- * @returns {string}
+ * @return {string}
  */
 FormatStream.prototype.period = function period(text) {
   text = text.trim();
@@ -102,7 +103,7 @@ FormatStream.prototype.transformObject = function formatResult(result, encoding,
  *
  * @param {String} str - text to format
  * @param {bool} [isInterim=false] - set to true to prevent adding a period to the end of the sentence
- * @returns {String}
+ * @return {String}
  */
 FormatStream.prototype.formatString = function(str, isInterim) {
   str = this.capitalize(this.clean(str));
@@ -115,39 +116,48 @@ FormatStream.prototype.formatString = function(str, isInterim) {
  * May be used outside of Node.js streams
  *
  * @param {Object} data
- * @returns {Object}
+ * @return {Object}
  */
 FormatStream.prototype.formatResult = function formatResult(data) {
   data = clone(data);
   if (Array.isArray(data.results)) {
-    data.results.forEach(function(result, i) {
+    data.results.forEach(
+      function(result, i) {
+        // if there are multiple interim results (as produced by the speaker stream),
+        // treat the text as final in all but the last result
+        var textFinal = result.final || i !== data.results.length - 1;
 
-      // if there are multiple interim results (as produced by the speaker stream),
-      // treat the text as final in all but the last result
-      var textFinal = result.final || (i !== (data.results.length - 1));
+        result.alternatives = result.alternatives.map(
+          function(alt) {
+            alt.transcript = this.formatString(alt.transcript, !textFinal);
+            if (alt.timestamps) {
+              alt.timestamps = alt.timestamps
+                .map(
+                  function(ts, j, arr) {
+                    // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
+                    ts[0] = this.clean(ts[0]);
+                    if (j === 0) {
+                      ts[0] = this.capitalize(ts[0]);
+                    }
 
-      result.alternatives = result.alternatives.map(function(alt) {
-        alt.transcript = this.formatString(alt.transcript, !textFinal);
-        if (alt.timestamps) {
-          alt.timestamps = alt.timestamps.map(function(ts, j, arr) {
-            // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
-            ts[0] = this.clean(ts[0]);
-            if (j === 0) {
-              ts[0] = this.capitalize(ts[0]);
+                    if (j === arr.length - 1 && textFinal) {
+                      ts[0] = this.period(ts[0]);
+                    }
+                    return ts;
+                  },
+                  this
+                )
+                .filter(function(ts) {
+                  return ts[0]; // remove any timestamps without a word (due to cleaning out junk words)
+                });
             }
-
-            if (j === arr.length - 1 && textFinal) {
-              ts[0] = this.period(ts[0]);
-            }
-            return ts;
-          }, this).filter(function(ts) {
-            return ts[0]; // remove any timestamps without a word (due to cleaning out junk words)
-
-          });
-        }
-        return alt;
-      }, this);
-    }, this);
+            return alt;
+          },
+          this
+        );
+      },
+      this
+    );
   }
   return data;
 };

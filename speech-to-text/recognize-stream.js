@@ -16,7 +16,6 @@
 
 'use strict';
 
-
 var Duplex = require('stream').Duplex;
 var util = require('util');
 var pick = require('object.pick');
@@ -40,13 +39,7 @@ var OPENING_MESSAGE_PARAMS_ALLOWED = [
   'speaker_labels'
 ];
 
-var QUERY_PARAMS_ALLOWED = [
-  'customization_id',
-  'model',
-  'watson-token',
-  'X-Watson-Learning-Opt-Out'
-];
-
+var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'X-Watson-Learning-Opt-Out'];
 
 /**
  * pipe()-able Node.js Duplex stream - accepts binary audio and emits text/objects in it's `data` events.
@@ -99,25 +92,36 @@ function RecognizeStream(options) {
     if (!options.silent) {
       if (event === 'results' || event === 'result' || event === 'speaker_labels') {
         // eslint-disable-next-line no-console
-        console.log(new Error('Watson Speech to Text RecognizeStream: the ' + event + ' event was deprecated. ' +
-          'Please set {objectMode: true} and listen for the \'data\' event instead. ' +
-          'Pass {silent: true} to disable this message.'));
+        console.log(new Error(
+          'Watson Speech to Text RecognizeStream: the ' +
+            event +
+            ' event was deprecated. ' +
+            "Please set {objectMode: true} and listen for the 'data' event instead. " +
+            'Pass {silent: true} to disable this message.'
+        ));
       } else if (event === 'connection-close') {
         // eslint-disable-next-line no-console
-        console.log(new Error('Watson Speech to Text RecognizeStream: the ' + event + ' event was deprecated. ' +
-          'Please listen for the \'close\' event instead. ' +
-          'Pass {silent: true} to disable this message.'));
+        console.log(new Error(
+          'Watson Speech to Text RecognizeStream: the ' +
+            event +
+            ' event was deprecated. ' +
+            "Please listen for the 'close' event instead. " +
+            'Pass {silent: true} to disable this message.'
+        ));
       } else if (event === 'connect') {
         // eslint-disable-next-line no-console
-        console.log(new Error('Watson Speech to Text RecognizeStream: the ' + event + ' event was deprecated. ' +
-          'Please listen for the \'open\' event instead. ' +
-          'Pass {silent: true} to disable this message.'));
+        console.log(new Error(
+          'Watson Speech to Text RecognizeStream: the ' +
+            event +
+            ' event was deprecated. ' +
+            "Please listen for the 'open' event instead. " +
+            'Pass {silent: true} to disable this message.'
+        ));
       }
     }
   });
 }
 util.inherits(RecognizeStream, Duplex);
-
 
 RecognizeStream.WEBSOCKET_CONNECTION_ERROR = 'WebSocket connection error';
 
@@ -135,13 +139,12 @@ RecognizeStream.prototype.initialize = function() {
   }
 
   var queryParams = util._extend(
-    'customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED) : {model: 'en-US_BroadbandModel'},
+    'customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED) : { model: 'en-US_BroadbandModel' },
     pick(options, QUERY_PARAMS_ALLOWED)
   );
 
   var queryString = qs.stringify(queryParams);
   var url = (options.url || 'wss://stream.watsonplatform.net/speech-to-text/api').replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
-
 
   var openingMessage = pick(options, OPENING_MESSAGE_PARAMS_ALLOWED);
   openingMessage.action = 'start';
@@ -169,7 +172,6 @@ RecognizeStream.prototype.initialize = function() {
     self.emit('error', err);
     self.push(null);
   };
-
 
   this.socket.onopen = function() {
     self.sendJSON(openingMessage);
@@ -210,7 +212,6 @@ RecognizeStream.prototype.initialize = function() {
   }
 
   socket.onmessage = function(frame) {
-
     if (typeof frame.data !== 'string') {
       return emitError('Unexpected binary data received from server', frame);
     }
@@ -292,7 +293,7 @@ RecognizeStream.prototype.sendData = function sendData(data) {
   return this.socket.send(data);
 };
 
-RecognizeStream.prototype._read = function(/* size*/) {
+RecognizeStream.prototype._read = function() /* size*/ {
   // there's no easy way to control reads from the underlying library
   // so, the best we can do here is a no-op
 };
@@ -375,7 +376,7 @@ RecognizeStream.prototype.finish = function finish() {
   }
   this.finished = true;
   var self = this;
-  var closingMessage = {action: 'stop'};
+  var closingMessage = { action: 'stop' };
   if (self.socket && self.socket.readyState === self.socket.OPEN) {
     self.sendJSON(closingMessage);
   } else {
@@ -387,12 +388,10 @@ RecognizeStream.prototype.finish = function finish() {
 
 RecognizeStream.prototype.promise = require('./to-promise');
 
-
 RecognizeStream.getContentType = function(buffer) {
   // the substr really shouldn't be necessary, but there's a bug somewhere that can cause buffer.slice(0,4) to return
   // the entire contents of the buffer, so it's a failsafe to catch that
-  return contentType(buffer.slice(0, 4).toString().substr(0,4));
+  return contentType(buffer.slice(0, 4).toString().substr(0, 4));
 };
-
 
 module.exports = RecognizeStream;

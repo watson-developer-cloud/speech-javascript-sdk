@@ -7,7 +7,6 @@ var token = 'abc123';
 var API_PORT = 9878;
 
 module.exports = function(app, log) {
-
   log.info('setting up token & api servers for offline test');
 
   app.use(function(req, res, next) {
@@ -18,7 +17,7 @@ module.exports = function(app, log) {
   app.use(serveStatic(__dirname));
 
   app.get('/token', function(req, res) {
-    res.json({token: token, url: 'http://localhost:' + API_PORT + '/speech-to-text/api'});
+    res.json({ token: token, url: 'http://localhost:' + API_PORT + '/speech-to-text/api' });
   });
 
   // we don't have access to the actual http server in the karma-express plugin, so just creating a new one on a different port
@@ -35,7 +34,9 @@ module.exports = function(app, log) {
   var wsServer = new WebSocketServer({
     httpServer: server,
     autoAcceptConnections: false, // true = emit 'request' events
-    maxReceivedFrameSize: 1024 * 1024 // filestream produces 1mb chunks
+    maxReceivedFrameSize: (
+      1024 * 1024
+    ) // filestream produces 1mb chunks
   });
 
   wsServer.on('request', function(request) {
@@ -45,7 +46,6 @@ module.exports = function(app, log) {
 
   var TEXT = 'thunderstorms could produce large hail isolated tornadoes and heavy rain ';
   wsServer.on('connect', function(connection) {
-
     // log.debug('Connection accepted.');
 
     var interimInterval;
@@ -54,24 +54,29 @@ module.exports = function(app, log) {
       // send fake interim results
       var words = TEXT.split(' ');
       var i = 0;
-      return setInterval(function() {
-        i++;
-        if (i < words.length) {
-          // log.debug('sending interim result');
-          connection.sendUTF(JSON.stringify({
-            results: [
-              {
-                final: false,
-                alternatives: [
+      return setInterval(
+        function() {
+          i++;
+          if (i < words.length) {
+            // log.debug('sending interim result');
+            connection.sendUTF(
+              JSON.stringify({
+                results: [
                   {
-                    transcript: words.slice(0, i).join(' ')
+                    final: false,
+                    alternatives: [
+                      {
+                        transcript: words.slice(0, i).join(' ')
+                      }
+                    ]
                   }
                 ]
-              }
-            ]
-          }));
-        }
-      }, 700);
+              })
+            );
+          }
+        },
+        700
+      );
     }
 
     connection.on('message', function(message) {
@@ -88,19 +93,21 @@ module.exports = function(app, log) {
           } else if (msg.action === 'stop') {
             clearInterval(interimInterval);
             // log.debug('sending final result')
-            connection.sendUTF(JSON.stringify({
-              results: [
-                // msg.results[0] && msg.results[0].final && msg.results[0].alternatives
-                {
-                  final: true,
-                  alternatives: [
-                    {
-                      transcript: TEXT
-                    }
-                  ]
-                }
-              ]
-            }));
+            connection.sendUTF(
+              JSON.stringify({
+                results: [
+                  // msg.results[0] && msg.results[0].final && msg.results[0].alternatives
+                  {
+                    final: true,
+                    alternatives: [
+                      {
+                        transcript: TEXT
+                      }
+                    ]
+                  }
+                ]
+              })
+            );
 
             // connection.close();
             connection.sendUTF('{"state":"listening"}'); // The server sends this message out at the end, and then we have to kill the connection from the client

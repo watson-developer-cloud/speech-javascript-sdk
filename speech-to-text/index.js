@@ -13,77 +13,62 @@
  */
 
 module.exports = {
-
   // "easy-mode" API
   /**
    * @see module:watson-speech/speech-to-text/recognize-microphone
    */
   recognizeMicrophone: require('./recognize-microphone'),
-
   /**
    * @see module:watson-speech/speech-to-text/recognize-blob
    */
   recognizeFile: require('./recognize-file'),
-
   /**
    * @see module:watson-speech/speech-to-text/get-models
    */
   getModels: require('./get-models'),
-
-
   // individual components to build more customized solutions
   /**
    * @see WebAudioL16Stream
    */
   WebAudioL16Stream: require('./webaudio-l16-stream'),
-
   /**
    * @see RecognizeStream
    */
   RecognizeStream: require('./recognize-stream'),
-
   /**
    * @see FilePlayer
    */
   FilePlayer: require('./file-player'),
-
   /**
    * @see FormatStream
    */
   FormatStream: require('./format-stream'),
-
   /**
    * @see TimingStream
    */
   TimingStream: require('./timing-stream'),
-
   /**
    * @see ResultStream
    */
   ResultStream: require('./result-stream'),
-
   /**
    * @see SpeakerStream
    */
   SpeakerStream: require('./speaker-stream'),
-
   /**
    * @see WritableElementStream
    */
   WritableElementStream: require('./writable-element-stream'),
-
   // external components exposed for convenience
 
   /**
    * @see https://www.npmjs.com/package/get-user-media-promise
    */
   getUserMedia: require('get-user-media-promise'),
-
   /**
    * @see https://www.npmjs.com/package/microphone-stream
    */
   MicrophoneStream: require('microphone-stream'),
-
   /**
    * @see https://nodejs.org/api/buffer.html
    */

@@ -9,7 +9,6 @@ var message = require('./resources/results.json');
 var messages = require('./resources/car_loan_stream.json');
 
 describe('TimingStream', function() {
-
   var clock;
   beforeEach(function() {
     clock = sinon.useFakeTimers();
@@ -20,7 +19,7 @@ describe('TimingStream', function() {
   });
 
   it('should delay results w/ emitAt: START', function(done) {
-    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.START});
+    var stream = new TimingStream({ objectMode: true, emitAt: TimingStream.START });
     var actual = [];
     stream.on('data', function(timedResult) {
       actual.push(timedResult);
@@ -40,7 +39,7 @@ describe('TimingStream', function() {
   });
 
   it('should delay results w/ emitAt: END', function(done) {
-    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.END});
+    var stream = new TimingStream({ objectMode: true, emitAt: TimingStream.END });
     var actual = [];
     stream.on('data', function(timedResult) {
       actual.push(timedResult);
@@ -62,7 +61,7 @@ describe('TimingStream', function() {
   });
 
   it('should delay results longer when options.emitAt == TimingStream.END', function(done) {
-    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.END});
+    var stream = new TimingStream({ objectMode: true, emitAt: TimingStream.END });
     var actual = [];
     stream.on('data', function(timedResult) {
       actual.push(timedResult);
@@ -72,7 +71,6 @@ describe('TimingStream', function() {
     stream.write(message);
 
     assert.equal(actual.length, 0);
-
 
     clock.tick(2320); // 2.32 seconds - just before the end of the first word
 
@@ -89,7 +87,7 @@ describe('TimingStream', function() {
   });
 
   it('should fire end event when end comes quickly', function(done) {
-    var stream = new TimingStream({objectMode: true});
+    var stream = new TimingStream({ objectMode: true });
     stream.on('data', function() {}); // put it into flowing mode so that 'end' fires
     stream.on('error', done);
     stream.on('end', done);
@@ -98,7 +96,7 @@ describe('TimingStream', function() {
   });
 
   it('should fire end event when end comes slowly', function(done) {
-    var stream = new TimingStream({objectMode: true});
+    var stream = new TimingStream({ objectMode: true });
     stream.on('data', function() {}); // put it into flowing mode so that 'end' fires
     stream.on('error', done);
     stream.on('end', done);
@@ -108,7 +106,7 @@ describe('TimingStream', function() {
   });
 
   it('should .stop() when told to w/ emitAt: START', function(done) {
-    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.START});
+    var stream = new TimingStream({ objectMode: true, emitAt: TimingStream.START });
 
     var actual = [];
     stream.on('data', function(timedResult) {
@@ -128,7 +126,6 @@ describe('TimingStream', function() {
     stream.write(finalMessages[1]);
 
     assert.equal(actual.length, 0);
-
 
     clock.tick(1000); // into the first result
 
@@ -150,7 +147,6 @@ describe('TimingStream', function() {
     stream.end();
     assert.equal(actual.length, 1, 'no more results should be emitted after stop, even if source ends');
 
-
     clock.tick(35 * 1000); // past the end of the final result
 
     // should there be a check here?
@@ -159,7 +155,7 @@ describe('TimingStream', function() {
   });
 
   it('should .stop() when told to w/ emitAtt: EMD', function(done) {
-    var stream = new TimingStream({objectMode: true, emitAt: TimingStream.END});
+    var stream = new TimingStream({ objectMode: true, emitAt: TimingStream.END });
 
     var actual = [];
     stream.on('data', function(timedResult) {
@@ -178,9 +174,7 @@ describe('TimingStream', function() {
     stream.write(finalMessages[0]);
     stream.write(finalMessages[1]);
 
-
     assert.equal(actual.length, 0);
-
 
     clock.tick(5 * 1000); // first result ends at 4.16
 
@@ -204,12 +198,11 @@ describe('TimingStream', function() {
 
     clock.tick(35 * 1000); // past the end of the final result
 
-
     done();
   });
 
   it('should not emit interim results after the final result for a given index', function(done) {
-    var stream = new TimingStream({objectMode: true});
+    var stream = new TimingStream({ objectMode: true });
     var actual = [];
     stream.on('data', function(timedResult) {
       actual.push(timedResult);
@@ -226,17 +219,20 @@ describe('TimingStream', function() {
     clock.tick(37.26 * 1000);
 
     assert(actual.length);
-    actual.reduce(function(lastIndex, msg) {
-      assert.equal(msg.result_index, lastIndex, 'wrong index on result, expecting ' + lastIndex + ' got ' + JSON.stringify(msg, null, 2));
-      // index should always increment after a final message
-      return (msg.results[0].final) ? lastIndex + 1 : lastIndex;
-    }, 0);
+    actual.reduce(
+      function(lastIndex, msg) {
+        assert.equal(msg.result_index, lastIndex, 'wrong index on result, expecting ' + lastIndex + ' got ' + JSON.stringify(msg, null, 2));
+        // index should always increment after a final message
+        return msg.results[0].final ? lastIndex + 1 : lastIndex;
+      },
+      0
+    );
 
     done();
   });
 
   it('should pass through speaker_labels after the matching final results', function(done) {
-    var stream = new TimingStream({objectMode: true});
+    var stream = new TimingStream({ objectMode: true });
     var actual = [];
     stream.on('data', function(timedResult) {
       actual.push(timedResult);
@@ -273,7 +269,7 @@ describe('TimingStream', function() {
   });
 
   it('should not emit the same transcript twice', function(done) {
-    var stream = new TimingStream({objectMode: true});
+    var stream = new TimingStream({ objectMode: true });
     var actual = [];
     stream.on('data', function(timedResult) {
       actual.push(timedResult);
@@ -287,7 +283,6 @@ describe('TimingStream', function() {
     });
 
     clock.tick(37.26 * 1000);
-
 
     var lastTranscript = '';
     actual.forEach(function(msg) {
@@ -307,7 +302,7 @@ describe('TimingStream', function() {
   it('should error if given results with no timestamps', function(done) {
     var noTimestamps = require('../speech-to-text/no-timestamps');
     assert(noTimestamps.ERROR_NO_TIMESTAMPS, 'noTimestamps.ERROR_NO_TIMESTAMPS should be defined');
-    var stream = new TimingStream({objectMode: true});
+    var stream = new TimingStream({ objectMode: true });
     var noTsMessage = clone(message);
     delete noTsMessage.results[0].alternatives[0].timestamps;
     stream.on('data', function(data) {
@@ -319,5 +314,4 @@ describe('TimingStream', function() {
     });
     stream.end(noTsMessage);
   });
-
 });

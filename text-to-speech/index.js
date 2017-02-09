@@ -24,7 +24,6 @@
  */
 exports.synthesize = require('./synthesize');
 
-
 /**
  * @see module:watson-speech/text-to-speech/get-voices
  */

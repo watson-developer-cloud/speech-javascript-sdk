@@ -48,5 +48,3 @@ exports.SpeechToText = require('./speech-to-text');
  * @see module:watson-speech/text-to-speech
  */
 exports.TextToSpeech = require('./text-to-speech');
-
-

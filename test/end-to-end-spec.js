@@ -37,66 +37,65 @@ describe('WatsonSpeech.SpeechToText end-to-end', function() {
   // ...except on travis ci, where it gets NO_DEVICES_FOUND
   // chrome can do both, so it gets tested on and offline
   (offline && !travis || chrome ? it : xit)('should transcribe mic input', function(done) {
-    getConfig().then(function(cfg) {
-      var stt = SpeechToText.recognizeMicrophone(cfg);
-      // stt.on('send-json', console.log.bind(console, 'sending'));
-      // stt.on('message', console.log.bind(console, 'received'));
-      // stt.on('send-data', function(d) {
-      //  console.log('sending ' + d.length + ' bytes');
-      // })
-      stt.on('error', done)
-        .setEncoding('utf8')
-        .pipe(concat(function(transcript) {
-          assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
-          done();
-        }));
-      setTimeout(stt.stop.bind(stt), 8 * 1000);
-
-      // ['end', 'close', 'data', /*'results',*/ 'result', 'error', 'stopping', 'finish', 'listening'].forEach(function (eventName) {
-      //  stt.on(eventName, console.log.bind(console, eventName + ' event: '));
-      // });
-    })
+    getConfig()
+      .then(function(cfg) {
+        var stt = SpeechToText.recognizeMicrophone(cfg);
+        // stt.on('send-json', console.log.bind(console, 'sending'));
+        // stt.on('message', console.log.bind(console, 'received'));
+        // stt.on('send-data', function(d) {
+        //  console.log('sending ' + d.length + ' bytes');
+        // })
+        stt.on('error', done).setEncoding('utf8').pipe(
+          concat(function(transcript) {
+            assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
+            done();
+          })
+        );
+        setTimeout(stt.stop.bind(stt), 8 * 1000);
+        // ['end', 'close', 'data', /*'results',*/ 'result', 'error', 'stopping', 'finish', 'listening'].forEach(function (eventName) {
+        //  stt.on(eventName, console.log.bind(console, eventName + ' event: '));
+        // });
+      })
       .catch(done);
   });
 
   it('should transcribe files', function(done) {
-    Promise.all([getConfig(), getAudio()]).then(function(results) {
-      var cfg = results[0];
-      cfg.file = results[1];
-      return SpeechToText.recognizeFile(cfg).promise()
-        .then(function(transcript) {
+    Promise.all([getConfig(), getAudio()])
+      .then(function(results) {
+        var cfg = results[0];
+        cfg.file = results[1];
+        return SpeechToText.recognizeFile(cfg).promise().then(function(transcript) {
           assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
           done();
         });
-    })
+      })
       .catch(done);
   });
 
   it('should transcribe files via URL', function(done) {
-    getConfig().then(function(cfg) {
-      cfg.file = 'http://localhost:9877/audio.wav';
-      return SpeechToText.recognizeFile(cfg).promise()
-        .then(function(transcript) {
+    getConfig()
+      .then(function(cfg) {
+        cfg.file = 'http://localhost:9877/audio.wav';
+        return SpeechToText.recognizeFile(cfg).promise().then(function(transcript) {
           assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
           done();
         });
-    })
+      })
       .catch(done);
   });
 
   it('should transcribe files with dom output', function(done) {
-    Promise.all([getConfig(), getAudio()]).then(function(results) {
-      var cfg = results[0];
-      cfg.file = results[1];
-      var el = document.createElement('div');
-      cfg.outputElement = el;
-      return SpeechToText.recognizeFile(cfg).promise()
-        .then(function() {
+    Promise.all([getConfig(), getAudio()])
+      .then(function(results) {
+        var cfg = results[0];
+        cfg.file = results[1];
+        var el = document.createElement('div');
+        cfg.outputElement = el;
+        return SpeechToText.recognizeFile(cfg).promise().then(function() {
           assert.equal(el.textContent, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
           done();
         });
-    }).catch(done);
-
+      })
+      .catch(done);
   });
-
 });

@@ -2936,7 +2936,7 @@ module.exports = Function.prototype.bind || implementation;
    * @param {Object} constraints - must include one or both of audio/video along with optional details for video
    * @param {Boolean} [constraints.audio] - include audio data in the stream
    * @param {Boolean|Object} [constraints.video] - include video data in the stream. May be a boolean or an object with additional constraints, see
-   * @returns {Promise<MediaStream>} a promise that resolves to a MediaStream object
+   * @return {Promise<MediaStream>} a promise that resolves to a MediaStream object
      */
   function getUserMedia(constraints) {
     // ensure that Promises are supported and we have a navigator object
@@ -3143,7 +3143,7 @@ module.exports = self.fetch.bind(self);
  * @private
  * @param {Array} [array] The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
- * @returns {Array} Returns the new mapped array.
+ * @return {Array} Returns the new mapped array.
  */
 function arrayMap(array, iteratee) {
   var index = -1,
@@ -3165,7 +3165,7 @@ function arrayMap(array, iteratee) {
  * @param {Function} predicate The function invoked per iteration.
  * @param {number} fromIndex The index to search from.
  * @param {boolean} [fromRight] Specify iterating from right to left.
- * @returns {number} Returns the index of the matched value, else `-1`.
+ * @return {number} Returns the index of the matched value, else `-1`.
  */
 function baseFindIndex(array, predicate, fromIndex, fromRight) {
   var length = array.length,
@@ -3186,7 +3186,7 @@ function baseFindIndex(array, predicate, fromIndex, fromRight) {
  * @param {Array} array The array to search.
  * @param {*} value The value to search for.
  * @param {number} fromIndex The index to search from.
- * @returns {number} Returns the index of the matched value, else `-1`.
+ * @return {number} Returns the index of the matched value, else `-1`.
  */
 function baseIndexOf(array, value, fromIndex) {
   if (value !== value) {
@@ -3211,7 +3211,7 @@ function baseIndexOf(array, value, fromIndex) {
  * @param {*} value The value to search for.
  * @param {number} fromIndex The index to search from.
  * @param {Function} comparator The comparator invoked per element.
- * @returns {number} Returns the index of the matched value, else `-1`.
+ * @return {number} Returns the index of the matched value, else `-1`.
  */
 function baseIndexOfWith(array, value, fromIndex, comparator) {
   var index = fromIndex - 1,
@@ -3230,7 +3230,7 @@ function baseIndexOfWith(array, value, fromIndex, comparator) {
  *
  * @private
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
+ * @return {boolean} Returns `true` if `value` is `NaN`, else `false`.
  */
 function baseIsNaN(value) {
   return value !== value;
@@ -3241,7 +3241,7 @@ function baseIsNaN(value) {
  *
  * @private
  * @param {Function} func The function to cap arguments for.
- * @returns {Function} Returns the new capped function.
+ * @return {Function} Returns the new capped function.
  */
 function baseUnary(func) {
   return function(value) {
@@ -3264,7 +3264,7 @@ var splice = arrayProto.splice;
  * @param {Array} values The values to remove.
  * @param {Function} [iteratee] The iteratee invoked per element.
  * @param {Function} [comparator] The comparator invoked per element.
- * @returns {Array} Returns `array`.
+ * @return {Array} Returns `array`.
  */
 function basePullAll(array, values, iteratee, comparator) {
   var indexOf = comparator ? baseIndexOfWith : baseIndexOf,
@@ -3299,7 +3299,7 @@ function basePullAll(array, values, iteratee, comparator) {
  * @private
  * @param {Array} source The array to copy values from.
  * @param {Array} [array=[]] The array to copy values to.
- * @returns {Array} Returns `array`.
+ * @return {Array} Returns `array`.
  */
 function copyArray(source, array) {
   var index = -1,
@@ -3326,7 +3326,7 @@ function copyArray(source, array) {
  * @param {Array} array The array to modify.
  * @param {Array} values The values to remove.
  * @param {Function} [comparator] The comparator invoked per element.
- * @returns {Array} Returns `array`.
+ * @return {Array} Returns `array`.
  * @example
  *
  * var array = [{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }];
@@ -6503,7 +6503,7 @@ module.exports = deprecate;
  *
  * @param {Function} fn - the function to deprecate
  * @param {String} msg - the string to print to the console when `fn` is invoked
- * @returns {Function} a new "deprecated" version of `fn`
+ * @return {Function} a new "deprecated" version of `fn`
  * @api public
  */
 
@@ -6534,7 +6534,7 @@ function deprecate (fn, msg) {
  * Checks `localStorage` for boolean values for the given `name`.
  *
  * @param {String} name
- * @returns {Boolean}
+ * @return {Boolean}
  * @api private
  */
 
@@ -7797,7 +7797,7 @@ var contentTypes = {
  * Takes the beginning of an audio file and returns the associated content-type / mime type
  *
  * @param {String} header first 4 characters of the file as a UTF-8 string
- * @returns {String|undefined} - the contentType of undefined
+ * @return {String|undefined} - the contentType of undefined
  */
 module.exports = function contentType(header) {
   return contentTypes[header];
@@ -7859,7 +7859,7 @@ FilePlayer.ERROR_UNSUPPORTED_FORMAT = 'UNSUPPORTED_FORMAT';
 /**
  * Reads the first few bytes of a binary file and resolves to the content-type if recognized & supported
  * @param {File|Blob} file
- * @returns {Promise}
+ * @return {Promise}
  */
 function getContentTypeFromFile(file) {
   return new Promise(function(resolve, reject) {
@@ -7882,7 +7882,7 @@ function getContentTypeFromFile(file) {
 /**
  * Determines the file's content-type and then resolves to a FilePlayer instance
  * @param {File|Blob|String} file - binary data or URL of audio file (binary data playback may not work on mobile Safari)
- * @returns {Promise.<FilePlayer>}
+ * @return {Promise.<FilePlayer>}
  */
 function playFile(file) {
   if (typeof file === 'string') {
@@ -7941,7 +7941,7 @@ var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
  * Formats one or more words, removing special symbols, junk, and spacing for some languages
  * @param {String} text
  * @param {Boolean} isFinal
- * @returns {String}
+ * @return {String}
  */
 FormatStream.prototype.clean = function clean(text) {
   // clean out "junk"
@@ -7960,7 +7960,7 @@ FormatStream.prototype.clean = function clean(text) {
 /**
  * Capitalizes the first word of a sentence
  * @param {String} text
- * @returns {string}
+ * @return {string}
  */
 FormatStream.prototype.capitalize = function capitalize(text) {
   // capitalize first word, returns '' in the case of an empty word
@@ -7970,7 +7970,7 @@ FormatStream.prototype.capitalize = function capitalize(text) {
 /**
  * Puts a period on the end of a sentence
  * @param {String} text
- * @returns {string}
+ * @return {string}
  */
 FormatStream.prototype.period = function period(text) {
   text = text.trim();
@@ -8002,7 +8002,7 @@ FormatStream.prototype.transformObject = function formatResult(result, encoding,
  *
  * @param {String} str - text to format
  * @param {bool} [isInterim=false] - set to true to prevent adding a period to the end of the sentence
- * @returns {String}
+ * @return {String}
  */
 FormatStream.prototype.formatString = function(str, isInterim) {
   str = this.capitalize(this.clean(str));
@@ -8015,7 +8015,7 @@ FormatStream.prototype.formatString = function(str, isInterim) {
  * May be used outside of Node.js streams
  *
  * @param {Object} data
- * @returns {Object}
+ * @return {Object}
  */
 FormatStream.prototype.formatResult = function formatResult(data) {
   data = clone(data);
@@ -8094,10 +8094,10 @@ module.exports = FormatStream;
  ```
  Requires fetch, pollyfill available at https://github.com/github/fetch
 
- * @todo define format in @returns statement
+ * @todo define format in @return statement
  * @param {Object} options
  * @param {String} options.token auth token
- * @returns {Promise.<T>}
+ * @return {Promise.<T>}
  */
 module.exports = function getModels(options) {
   if (!options || !options.token) {
@@ -8219,7 +8219,7 @@ module.exports = {
 /**
  * Returns true if the result is missing it's timestamps
  * @param {Object} data
- * @returns {Boolean}
+ * @return {Boolean}
  */
 module.exports = function noTimestamps(data) {
   return data.results.some(function(result) {
@@ -8277,7 +8277,7 @@ var fetch = require('nodeify-fetch'); // like regular fetch, but with an extra m
  * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Automatically enables objectMode.
  * @param {Boolean} [options.resultsBySpeaker=false] pipe results through a SpeakerStream. Causes each data event to include multiple results, each with a speaker field. Automatically enables objectMode and speaker_labels.  Adds some delay to processing.
  *
- * @returns {RecognizeStream|SpeakerStream|FormatStream|ResultStream|TimingStream}
+ * @return {RecognizeStream|SpeakerStream|FormatStream|ResultStream|TimingStream}
  */
 module.exports = function recognizeFile(options) { // eslint-disable-line complexity
   if (!options || !options.token) {
@@ -8496,7 +8496,7 @@ var bitBucket = new Writable({
  * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Requires objectMode.
  * @param {Boolean} [options.resultsBySpeaker=false] Not currently functional because microphone input provides broadband audio, but during the current beta release, speaker recognition only works on narrowband models.
  *
- * @returns {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
+ * @return {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
  */
 module.exports = function recognizeMicrophone(options) {
   if (!options || !options.token) {
@@ -9211,7 +9211,7 @@ SpeakerStream.ERROR_MISMATCH = 'MISMATCH';
 
 /**
  * Builds a results object with everything we've got so far
- * @returns {*}
+ * @return {*}
  */
 SpeakerStream.prototype.buildMessage = function() {
   var final = this.isFinal();
@@ -9546,7 +9546,7 @@ TimingStream.prototype._transform = function(msg, encoding, next) {
  *
  * @private
  * @param {Object} msg
- * @returns {Number} timestamp
+ * @return {Number} timestamp
  */
 TimingStream.prototype.getMessageTime = function(msg) {
   if (this.options.emitAt === TimingStream.START) {
@@ -9571,7 +9571,7 @@ TimingStream.prototype.getMessageTime = function(msg) {
  *
  * @private
  * @param {Object} msg
- * @returns {Number} ms to delay
+ * @return {Number} ms to delay
  */
 TimingStream.prototype.getDelayMs = function(msg) {
   var messageTime = this.getMessageTime(msg);
@@ -9756,7 +9756,7 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
  * Store in little endian.
  *
  * @param {Float32Array} input
- * @returns {Buffer}
+ * @return {Buffer}
  */
 WebAudioL16Stream.prototype.floatTo16BitPCM = function(input){
   var output = new DataView(new ArrayBuffer(input.length * 2)); // length is in bytes (8-bit), so *2 to get 16-bit length
@@ -9934,10 +9934,10 @@ module.exports = WritableElementStream;
  ```
  Requires fetch, pollyfill available at https://github.com/github/fetch
 
- * @todo define format in @returns statement
+ * @todo define format in @return statement
  * @param {Object} options
  * @param {String} options.token auth token
- * @returns {Promise.<T>}
+ * @return {Promise.<T>}
  */
 module.exports = function getVoices(options) {
   if (!options || !options.token) {
@@ -10029,7 +10029,7 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  * @param {Number} [options.X-Watson-Learning-Opt-Out=0] set to 1 to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.autoPlay=true] automatically play the audio
  * @param {DOMAudioElement} [options.element] <audio> element - will be used instead of creating a new one if provided
- * @returns {Audio}
+ * @return {Audio}
  * @see module:watson-speech/text-to-speech/get-voices
  */
 module.exports = function synthesize(options) {

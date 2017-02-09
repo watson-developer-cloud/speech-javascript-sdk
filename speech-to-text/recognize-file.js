@@ -44,9 +44,10 @@ var fetch = require('nodeify-fetch'); // like regular fetch, but with an extra m
  * @param {Boolean} [options.extractResults=false] pipe results through a ResultExtractor stream to simplify the objects. (Default behavior before v0.22) Automatically enables objectMode.
  * @param {Boolean} [options.resultsBySpeaker=false] pipe results through a SpeakerStream. Causes each data event to include multiple results, each with a speaker field. Automatically enables objectMode and speaker_labels.  Adds some delay to processing.
  *
- * @returns {RecognizeStream|SpeakerStream|FormatStream|ResultStream|TimingStream}
+ * @return {RecognizeStream|SpeakerStream|FormatStream|ResultStream|TimingStream}
  */
-module.exports = function recognizeFile(options) { // eslint-disable-line complexity
+module.exports = function recognizeFile(options) {
+  // eslint-disable-line complexity
   if (!options || !options.token) {
     throw new Error('WatsonSpeechToText: missing required parameter: opts.token');
   }
@@ -76,7 +77,7 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
 
   // default format to true (capitals and periods)
   // default smart_formatting to options.format value (dates, currency, etc.)
-  options.format = (options.format !== false);
+  options.format = options.format !== false;
   if (typeof options.smart_formatting === 'undefined') {
     options.smart_formatting = options.format;
   }
@@ -88,22 +89,27 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
     options.timestamps = true;
   }
 
-  var rsOpts = assign({
-    continuous: true,
-    interim_results: true,
-  }, options);
+  var rsOpts = assign(
+    {
+      continuous: true,
+      interim_results: true
+    },
+    options
+  );
 
   var recognizeStream = new RecognizeStream(rsOpts);
   var streams = [recognizeStream]; // collect all of the streams so that we can bundle up errors and send them to the last one
   var stream = recognizeStream;
   if (typeof options.file === 'string') {
-    fetch(options.file).then(function(response) {
-      var source = response.body.getReadable();
-      source.pipe(recognizeStream);
-      streams.unshift(source);
-    }).catch(function(er) {
-      recognizeStream.emit('error', er);
-    });
+    fetch(options.file)
+      .then(function(response) {
+        var source = response.body.getReadable();
+        source.pipe(recognizeStream);
+        streams.unshift(source);
+      })
+      .catch(function(er) {
+        recognizeStream.emit('error', er);
+      });
   } else {
     var source = new BlobStream(options.file);
     source.pipe(recognizeStream);
@@ -136,42 +142,41 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
   if (options.play) {
     // when file playback actually begins
     // (mostly important for downloaded files)
-    FilePlayer.playFile(options.file).then(function(player) {
-      recognizeStream.on('stop', player.stop.bind(player));
-      recognizeStream.on('error', player.stop.bind(player));
+    FilePlayer.playFile(options.file)
+      .then(function(player) {
+        recognizeStream.on('stop', player.stop.bind(player));
+        recognizeStream.on('error', player.stop.bind(player));
 
-      // for files loaded via URL, restet the start time of the timing stream to when it begins playing
-      if (timingStream && typeof options.file === 'string') {
-        // eslint-disable-next-line func-style
-        var fn = function() {
-          timingStream.setStartTime(); // defaults to Date.now()
-          player.audio.removeEventListener('playing', fn);
-        };
-        player.audio.addEventListener('playing', fn);
-      }
-    }).catch(function(err) {
+        // for files loaded via URL, restet the start time of the timing stream to when it begins playing
+        if (timingStream && typeof options.file === 'string') {
+          // eslint-disable-next-line func-style
+          var fn = function() {
+            timingStream.setStartTime(); // defaults to Date.now()
+            player.audio.removeEventListener('playing', fn);
+          };
+          player.audio.addEventListener('playing', fn);
+        }
+      })
+      .catch(function(err) {
+        // Node.js automatically unpipes any source stream(s) when an error is emitted (on the assumption that the previous stream's output caused the error.)
+        // In this case, we don't want that behavior - a playback error should not stop the transcription
+        // So, we have to:
+        //   1. find the source streams
+        //   2. emit the error (causing the automatic unpipe)
+        //   3. re-pipe the source streams
 
-      // Node.js automatically unpipes any source stream(s) when an error is emitted (on the assumption that the previous stream's output caused the error.)
-      // In this case, we don't want that behavior - a playback error should not stop the transcription
-      // So, we have to:
-      //   1. find the source streams
-      //   2. emit the error (causing the automatic unpipe)
-      //   3. re-pipe the source streams
+        var sources = streams.filter(function(s) {
+          return s._readableState &&
+            s._readableState.pipes &&
+            (s._readableState.pipes === stream || Array.isArray(s._readableState.pipes) && s._readableState.pipes.indexOf(stream) !== -1);
+        });
 
-      var sources = streams.filter(function(s) {
-        return s._readableState &&
-          s._readableState.pipes &&
-          (s._readableState.pipes === stream ||
-            (Array.isArray(s._readableState.pipes) && s._readableState.pipes.indexOf(stream) !== -1)
-          );
+        stream.emit('error', err);
+
+        sources.forEach(function(s) {
+          s.pipe(stream);
+        });
       });
-
-      stream.emit('error', err);
-
-      sources.forEach(function(s) {
-        s.pipe(stream);
-      });
-    });
   }
 
   if (options.outputElement) {
@@ -206,5 +211,3 @@ module.exports = function recognizeFile(options) { // eslint-disable-line comple
 
   return stream;
 };
-
-

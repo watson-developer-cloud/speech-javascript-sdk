@@ -3,7 +3,7 @@
 /**
  * Returns true if the result is missing it's timestamps
  * @param {Object} data
- * @returns {Boolean}
+ * @return {Boolean}
  */
 module.exports = function noTimestamps(data) {
   return data.results.some(function(result) {

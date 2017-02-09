@@ -5,9 +5,7 @@ var webpack = require('webpack');
 var path = require('path');
 
 describe('Webpack', function() {
-
   it('should generate a webpack bundle without errors', function(done) {
-
     // based on https://webpack.github.io/docs/node.js-api.html#compile-to-memory
 
     var fs = new MemoryFS();
@@ -32,5 +30,4 @@ describe('Webpack', function() {
       done();
     });
   });
-
 });

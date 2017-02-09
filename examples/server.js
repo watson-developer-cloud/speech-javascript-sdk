@@ -16,26 +16,33 @@
 
 'use strict';
 
+/* eslint-env node, es6 */
+
 const express = require('express');
 const app = express();
 const expressBrowserify = require('express-browserify');
 
 // allows environment properties to be set in a file named .env
-require('dotenv').load({silent: true});
+require('dotenv').load({ silent: true });
 
 app.use(express.static(__dirname + '/static'));
 
 // set up express-browserify to serve browserify bundles for examples
 const isDev = app.get('env') === 'development';
-app.get('/browserify-bundle.js', expressBrowserify('static/browserify-app.js', {
-  watch: isDev,
-  debug: isDev
-}));
-app.get('/audio-video-deprecated/bundle.js', expressBrowserify('static/audio-video-deprecated/audio-video-app.js', {
-  watch: isDev,
-  debug: isDev
-}));
-
+app.get(
+  '/browserify-bundle.js',
+  expressBrowserify('static/browserify-app.js', {
+    watch: isDev,
+    debug: isDev
+  })
+);
+app.get(
+  '/audio-video-deprecated/bundle.js',
+  expressBrowserify('static/audio-video-deprecated/audio-video-app.js', {
+    watch: isDev,
+    debug: isDev
+  })
+);
 
 // set up webpack-dev-middleware to serve Webpack bundles for examples
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -44,20 +51,22 @@ const webpackConfig = require('./webpack.config');
 
 const compiler = webpack(webpackConfig);
 
-app.use(webpackDevMiddleware(compiler, {
-  publicPath: '/' // Same as `output.publicPath` in most cases.
-}));
-
-
+app.use(
+  webpackDevMiddleware(compiler, {
+    publicPath: '/' // Same as `output.publicPath` in most cases.
+  })
+);
 
 // on bluemix, enable rate-limiting and force https
-if(process.env.VCAP_SERVICES) {
+if (process.env.VCAP_SERVICES) {
   // enable rate-limiting
   const RateLimit = require('express-rate-limit');
   app.enable('trust proxy'); // required to work properly behind Bluemix's reverse proxy
 
   const limiter = new RateLimit({
-    windowMs: 15*60*1000, // 15 minutes
+    windowMs: (
+      15 * 60 * 1000
+    ), // 15 minutes
     max: 100, // limit each IP to 100 requests per windowMs
     delayMs: 0 // disable delaying - full speed until the max limit is reached
   });
@@ -70,7 +79,6 @@ if(process.env.VCAP_SERVICES) {
   const secure = require('express-secure-only');
   app.use(secure());
 }
-
 
 // token endpoints
 // **Warning**: these endpoints should probably be guarded with additional authentication & authorization for production use
@@ -87,9 +95,9 @@ app.listen(port, function() {
 // note: this is not suitable for production use
 // however bluemix automatically adds https support at http://<myapp>.mybluemix.net
 if (!process.env.VCAP_SERVICES) {
-  const fs = require('fs'),
-    https = require('https'),
-    HTTPS_PORT = 3001;
+  const fs = require('fs');
+  const https = require('https');
+  const HTTPS_PORT = 3001;
 
   const options = {
     key: fs.readFileSync(__dirname + '/keys/localhost.pem'),

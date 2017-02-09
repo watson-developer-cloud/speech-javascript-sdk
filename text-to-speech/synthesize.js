@@ -36,7 +36,7 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  * @param {Number} [options.X-Watson-Learning-Opt-Out=0] set to 1 to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.autoPlay=true] automatically play the audio
  * @param {DOMAudioElement} [options.element] <audio> element - will be used instead of creating a new one if provided
- * @returns {Audio}
+ * @return {Audio}
  * @see module:watson-speech/text-to-speech/get-voices
  */
 module.exports = function synthesize(options) {
@@ -53,4 +53,3 @@ module.exports = function synthesize(options) {
   }
   return audio;
 };
-
