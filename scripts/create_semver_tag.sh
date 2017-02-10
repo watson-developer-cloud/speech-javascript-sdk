@@ -36,8 +36,8 @@ if [ "$TRAVIS_REPO_SLUG" == "$REPO" ] \
 
   # Commit the build for bower
   npm run build
-  git add dist/
-  git commit dist/ -m "building dist/ for release"
+  git add -f dist/
+  git commit -m "building dist/ scripts for release"
 
   # create the tag
   npm version $SEMVER
