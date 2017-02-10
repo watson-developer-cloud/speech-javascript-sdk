@@ -12,12 +12,13 @@ Prerequisite
 
 * IBM Watson Speech to Text service credentials - see http://www.ibm.com/watson/developercloud/doc/getting_started/gs-credentials.shtml
 * Node.js OR Python
+* [Bower](https://bower.io/) for installing client-side dependencies
 
 
 Setup - Node.js
 ---------------
 
-1. `cd` into the `examples/` directory and run `npm install` to grab dependencies
+1. `cd` into the `examples/` directory and run `npm install` to grab dependencies (this automatically runs `bower install`)
 2. edit `tts-token.js` and `stt-token.js` to include your service credentials (or create a `.env` file)
 3. run `npm start`
 4. Open your browser to http://localhost:3000/ to see the examples.
@@ -26,10 +27,11 @@ Setup - Node.js
 Setup - Python
 --------------
 
-1. `cd` into the `examples/` directory and run `pip install watson_developer_cloud flask` (or `easy_install...`) to grab dependencies
-2. edit `server.py` to include your service credentials (or create a `.env` file)
-3. run `python server.py`
-4. Open your browser to http://localhost:5000/ to see the examples.
+1. `cd` into the `examples/` directory and run `pip install watson_developer_cloud flask` (or `easy_install...`) to install python dependencies
+2. run `bower install` to install client-side dependencies
+3. edit `server.py` to include your service credentials (or create a `.env` file)
+4. run `python server.py`
+5. Open your browser to http://localhost:5000/ to see the examples.
 
 
 Notes

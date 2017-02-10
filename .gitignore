@@ -11,5 +11,4 @@ doc/
 examples/static/webpack-bundle.js
 examples/node_modules/
 dist/*.js
-examples/static/bower_components/jquery/external/
-examples/static/bower_components/jquery/src/
+examples/static/bower_components/
