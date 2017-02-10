@@ -58,29 +58,33 @@
         var $curSentence = $('<span class="interim">&nbsp;</span>').appendTo($output);
 
         // a result is approximately equivalent to a sentence, and is the granularity that alternatives are selected on
-        stream.on('data', function(result) {
+        stream.on('data', function(msg) {
 
-          // only final results include word confidence
-          if (result.final) {
+          if (msg.results) {
+              msg.results.forEach(function(result) {
+                // only final results include word confidence
+                if (result.final) {
+                  var html = result.alternatives[0].word_confidence.map(function(pair) {
+                      // the word_confidence array includes a sub-array for wach word like so: ['word', 0.9]
+                      // the score is a range from 1 (100% confident) to 0 (not at all confident)
+                      // RGB color values go on a scale of 0-255 with 0,0,0 being black and 255,255,255 being white.
+                      // In this case, we want confident words to be 0 (black), and the least confident words to be 200 (light grey)
+                      var shade = 200 - Math.round(pair[1] * 200);
+                      return '<span style="color: rgb(' + shade + ',' + shade + ',' + shade + ')">' + pair[0] + '</span>';
+                    }).join(' ') + ' ';
 
-            var html = result.alternatives[0].word_confidence.map(function(pair) {
-                // the word_confidence array includes a sub-array for wach word like so: ['word', 0.9]
-                // the score is a range from 1 (100% confident) to 0 (not at all confident)
-                // RGB color values go on a scale of 0-255 with 0,0,0 being black and 255,255,255 being white.
-                // In this case, we want confident words to be 0 (black), and the least confident words to be 200 (light grey)
-              var shade = 200 - Math.round(pair[1] * 200);
-              return '<span style="color: rgb(' + shade + ',' + shade + ',' + shade + ')">' + pair[0] + '</span>';
-            }).join(' ') + ' ';
+                  $curSentence.html(html);
 
-            $curSentence.html(html);
-
-            $curSentence.removeClass('interim').addClass('final');
-            // if we have the final text for that sentence, start a new one
-            $curSentence = $('<span class="interim"/>').appendTo($output);
-          } else {
-            // for interim results
-            $curSentence.html(result.alternatives[0].transcript);
+                  $curSentence.removeClass('interim').addClass('final');
+                  // if we have the final text for that sentence, start a new one
+                  $curSentence = $('<span class="interim"/>').appendTo($output);
+                } else {
+                  // for interim results
+                  $curSentence.html(result.alternatives[0].transcript);
+                }
+              });
           }
+
         });
 
         document.querySelector('#stop').onclick = stream.stop.bind(stream);
