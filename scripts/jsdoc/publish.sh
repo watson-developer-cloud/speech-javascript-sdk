@@ -28,7 +28,7 @@ if [ "$TRAVIS_REPO_SLUG" == "watson-developer-cloud/speech-javascript-sdk" ] && 
       ln -s ./$TRAVIS_TAG latest
     fi
 
-    ../jsdoc/generate_index_html.sh > index.html
+    generate_index_html.sh > index.html
 
     git add -f -A .
     git commit -m "JSDdoc for $TRAVIS_BRANCH ($TRAVIS_COMMIT)"

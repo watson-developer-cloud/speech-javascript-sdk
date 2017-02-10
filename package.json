@@ -15,7 +15,7 @@
     "minify": "uglifyjs --compress --mangle --screw-ie8 dist/watson-speech.js --output dist/watson-speech.min.js --preamble \"// IBM Watson Speech JavaScript SDK\n// $npm_package_version\n// Generated at `date`\n// Copyright IBM ($npm_package_license)\n// $npm_package_homepage\"",
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
     "build": "npm run webpack && npm run minify",
-    "doc": "jsdoc -c jsdoc/config.json --debug",
+    "doc": "jsdoc -c scripts/jsdoc/config.json --debug",
     "watch-doc": "nodemon --watch ./ --ignore ./doc --ext js,tmpl,json --exec npm run doc"
   },
   "author": "Nathan Friedly <http://nfriedly.com>",

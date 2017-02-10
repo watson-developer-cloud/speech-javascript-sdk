@@ -8,6 +8,6 @@ test/resources/tts-auth.json
 doc/
 *-auth.json
 .env
-dist/*.min.js
 examples/static/webpack-bundle.js
 examples/node_modules/
+dist/*.js
