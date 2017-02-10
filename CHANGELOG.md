@@ -1,5 +1,8 @@
 # Changelog
 
+### v0.32.1
+* Fixed bower main file to be unminified instead of minified
+
 ### v0.32.0
 * Added bower support
 * Switched dist/ bundler from browserify to webpack (saves sevral hundred bytes)
