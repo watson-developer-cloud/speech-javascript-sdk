@@ -12,7 +12,7 @@
 
     <section>
         <h1>Transcribe URL, return a promise with content</h1>
-        <button id="button">Play and Transcribe</button>
+        <button id="button">git stTranscribe</button>
 
         <h2>Output:</h2>
         <div id="output">--</div>
@@ -35,13 +35,13 @@ document.querySelector('#button').onclick = function () {
 
     return WatsonSpeech.SpeechToText.recognizeFile({
         token: token,
-        file: '/Us_English_Broadband_Sample_1.wav',
-        outputElement: output
+        file: '/Us_English_Broadband_Sample_1.wav'
       })
-      .promise()
-      .then(function(text) {
-          output.textContent = text;
-      });
+      .promise();
+  })
+  .then(function(text) {
+    console.log('done', text);
+    output.textContent = text;
   })
   .catch(function(err) {
     console.log(err);
