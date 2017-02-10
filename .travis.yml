@@ -23,6 +23,10 @@ env:
   - secure: NDOdoAt1bjGspsU9CZl494GW9OEC9J56OCJloyfd0KGkDmKLNpYGw5eHXmJfLVqKAvldhOpjp0aNSrrwVcT2qvE2dhtYkL+a5hVMZFr7DdfOtZze/MIdCpoQhZQz8+wQa82crGgf+cTL2Y+BndkQoDk5mMo/3sAf512euHTHJXb+9DZ36ZJYIK/hVTfzZMdUUH7059rYeUADhXXcbu1Va+cJHXr2xRFI8ZEdZfZ0V1jDEqPyi/hwDYODgsTpk/4jRFlkZu2Agxq2kOETeuJYiTJ7O9Q1qhY3rSAgu/rvQK8+Y7ngTxWS8rStOOr8CNXJtmZdM0zpz6RbmQEhR5Xk4s8aX1rxPDj06/Cx7BVWKZWb7wGJETjKq/+NLv/tK9tXDVZ5oBj/H9VkUm2gWqWCKaAge9xW+wuh/LluGMZIx+pTDI94AbgIZnxP2HoALmGIvyim7AquvQqaqIqVR3XTXZUccYM5yRCkxHknZbbL/hX4GOM/I1Ue24d5wt4okkGV2R/DNWYfnajB7GZOTvK5/kn7x6bJpU0Ls9ZYW+4V0zUO/3g5KalU3Cire/dSOC7WzrL823koEgpF9KCVjtCCsj1wMZI099FTGFljqfzlVKMy4Sw4tafRjpkQQT3GLoX1CV/B4n4BDOySoGBPlM0JYiEua+J5GNpeq34n38bwn4g=
 before_deploy:
 - npm run build
+# cf push ignores symlinks, so copy the file manually
+# https://github.com/cloudfoundry/cli/issues/108
+- rm examples/static/watson-speech.js
+- cp dist/watson-speech.js examples/static/watson-speech.js
 - npm install -g cf-blue-green
 deploy:
 - provider: releases
@@ -45,6 +49,7 @@ deploy:
     repo: watson-developer-cloud/speech-javascript-sdk
 - provider: script
   script: cd examples/ && cf-blue-green-travis
+  skip_cleanup: true
   on:
     branch: master
     repo: watson-developer-cloud/speech-javascript-sdk
