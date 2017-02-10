@@ -44,7 +44,8 @@ Notes
   [Python](https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py), 
   and there is a [REST API](http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-tokens.shtml) 
   for use with other languages (or `curl`).
-* The Speech SDK may be used in browserify or as a standalone library; all of the current examples use it as a standalone library for simplicity.
+* The Speech SDK may be used in browserify, Webpack, or as a standalone library.
+  Most of the examples use the standalone version either installed via bower or symlinked to the root directory when developing locally.
 
 
 More Examples

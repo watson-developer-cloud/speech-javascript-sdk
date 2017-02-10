@@ -1,0 +1,18 @@
+{
+  "name": "watson-speech-examples",
+  "main": "dist/watson-speech.js",
+  "authors": [
+    "Nathan Friedly <http://nfriedly.com>"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://watson-speech.mybluemix.net/",
+  "ignore": [
+    "**/*"
+  ],
+  "private": true,
+  "dependencies": {
+    "watson-speech": "*",
+    "fetch": "^2.0.2",
+    "jquery": "^3.1.1"
+  }
+}
