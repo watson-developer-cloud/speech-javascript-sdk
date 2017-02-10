@@ -50,16 +50,24 @@ document.querySelector('#button').onclick = function () {
     var $curSentence = $('<span>&nbsp;</span>').appendTo($output);
 
     // a result is approximately equivalent to a sentence, and is the granularity that alternatives are selected on
-    stream.on('data', function(result) {
+    stream.on('data', function(message) {
 
-      // build up a quick HTML dropdown the wrong way...
-      var dropdown = ['<select>'].concat(result.alternatives.map(function(alt) {
-        return '<option>' + alt.transcript + '</option>';
-      })).concat(['</select>']).join('\n');
+      if (!message.results) {
+          // won't happen in this example, but would if speaker_labels is enabled
+          return;
+      }
+
+      // build up a HTML dropdown menu with the alternatives
+      var dropdown = message.results.map(function(result) {
+          var options = result.alternatives.map(function(alt) {
+            return '<option>' + alt.transcript + '</option>';
+          }).join('\n');
+          return '<select>' + options + '</select>';
+      }).join('\n');
 
       $curSentence.html(dropdown);
 
-      if (result.final) {
+      if (message.results[0].final) {
         // if we have the final text for that sentence, start a new one
         $curSentence = $('<span/>').appendTo($output);
       }
