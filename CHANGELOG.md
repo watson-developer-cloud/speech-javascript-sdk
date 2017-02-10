@@ -1,5 +1,11 @@
 # Changelog
 
+### v0.32.0
+* Added bower support
+* Switched dist/ bundler from browserify to webpack (saves sevral hundred bytes)
+* Added UMD support to dist scripts
+* No internal changes
+
 ### v0.31.0
 * Added support for a mediaStream argument to recognizeMicrophone() for advanced usages
 * Fixed error message when source ends before WebSocket connection is opened.
