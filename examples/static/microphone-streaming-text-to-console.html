@@ -34,8 +34,8 @@ document.querySelector('#button').onclick = function () {
   }).then(function (token) {
 
     var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-        token: token,
-        speaker_labels: true
+      token: token,
+      object_mode: false // default
     });
 
     stream.setEncoding('utf8'); // get text instead of Buffers for on data events
