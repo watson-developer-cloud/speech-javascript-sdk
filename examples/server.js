@@ -25,6 +25,29 @@ const expressBrowserify = require('express-browserify');
 // allows environment properties to be set in a file named .env
 require('dotenv').load({ silent: true });
 
+// on bluemix, enable rate-limiting and force https
+if (process.env.VCAP_SERVICES) {
+  // enable rate-limiting
+  const RateLimit = require('express-rate-limit');
+  app.enable('trust proxy'); // required to work properly behind Bluemix's reverse proxy
+
+  const limiter = new RateLimit({
+    windowMs: (
+      15 * 60 * 1000
+    ), // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    delayMs: 0 // disable delaying - full speed until the max limit is reached
+  });
+
+  //  apply to /api/*
+  app.use('/api/', limiter);
+
+  // force https - microphone access requires https in Chrome and possibly other browsers
+  // (*.mybluemix.net domains all have built-in https support)
+  const secure = require('express-secure-only');
+  app.use(secure());
+}
+
 app.use(express.static(__dirname + '/static'));
 
 // set up express-browserify to serve browserify bundles for examples
@@ -57,35 +80,12 @@ app.use(
   })
 );
 
-// on bluemix, enable rate-limiting and force https
-if (process.env.VCAP_SERVICES) {
-  // enable rate-limiting
-  const RateLimit = require('express-rate-limit');
-  app.enable('trust proxy'); // required to work properly behind Bluemix's reverse proxy
-
-  const limiter = new RateLimit({
-    windowMs: (
-      15 * 60 * 1000
-    ), // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    delayMs: 0 // disable delaying - full speed until the max limit is reached
-  });
-
-  //  apply to /api/*
-  app.use('/api/', limiter);
-
-  // force https - microphone access requires https in Chrome and possibly other browsers
-  // (*.mybluemix.net domains all have built-in https support)
-  const secure = require('express-secure-only');
-  app.use(secure());
-}
-
 // token endpoints
 // **Warning**: these endpoints should probably be guarded with additional authentication & authorization for production use
 app.use('/api/speech-to-text/', require('./stt-token.js'));
 app.use('/api/text-to-speech/', require('./tts-token.js'));
 
-const port = process.env.VCAP_APP_PORT || 3000;
+const port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
 app.listen(port, function() {
   console.log('Example IBM Watson Speech JS SDK client app & token server live at http://localhost:%s/', port);
 });
