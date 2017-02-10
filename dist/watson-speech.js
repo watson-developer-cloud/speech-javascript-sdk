@@ -7829,7 +7829,7 @@ WebAudioL16Stream.prototype.floatTo16BitPCM = function(input) {
     var multiplier = input[i] < 0 ? 0x8000 : 0x7fff; // 16-bit signed range is -32768 to 32767
     output.setInt16(i * 2, input[i] * multiplier | 0, true); // index, value, little edian
   }
-  return new Buffer(output.buffer);
+  return Buffer.from(output.buffer);
 };
 
 /**
