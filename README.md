@@ -21,12 +21,25 @@ and there is also a [REST API](http://www.ibm.com/smarterplanet/us/en/ibmwatson/
 
 Pre-compiled bundles are available from on GitHub Releases - just download the file and drop it into your website: https://github.com/watson-developer-cloud/speech-javascript-sdk/releases
 
+### Installation - bower
 
-### Installation - npm with browserify
+```sh
+bower install --save watson-speech
+```
 
-This library is built with [browserify](http://browserify.org/) and easy to use in browserify-based projects :
+### Installation - npm with Browserify or Webpack
+
+This library can be bundled with [browserify](http://browserify.org/) or [Webpack](http://webpack.github.io/)
+and easy included in larger projects:
 
     npm install --save watson-speech
+
+This method enables a smaller bundle by only including the desired components, for example:
+
+```js
+var recognizeMic = require('watson-speech/speech-to-text/recognize-microphone');
+```
+
 
 Breaking change for v0.22.0
 ----------------------------

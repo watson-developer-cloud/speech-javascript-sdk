@@ -11,7 +11,7 @@
 # get a token from https://github.com/settings/tokens with the `public_repo` scope and encrypt it like so:
 # travis encrypt --add -r user-org-name/repo-name 'GH_TOKEN=xxxxxxxxxxxxxxxxxxx'
 # then set the below vars and make sure travis runs this script in the "after_success" section
-export REPO="watson-developer-cloud/node-sdk"
+export REPO="watson-developer-cloud/speech-javascript-sdk"
 export BRANCH="master"
 
 
