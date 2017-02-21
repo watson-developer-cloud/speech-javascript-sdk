@@ -7760,7 +7760,13 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
     buffer = bufferNewSamples;
   }
 
-  // downsampling variables
+  // Downsampling and low-pass filter:
+  // Input audio is typically 48kHz, this downsamples it to 16kHz.
+  // It uses a FIR (finite impulse response) Filter to remove (or, at least attinuate) 
+  // audio frequencies > ~8kHz because sampled audio cannot accurately represent  
+  // frequiencies greater than half of the sample rate. 
+  // (Human voice tops out at < 4kHz, so nothing important is lost for transcription.)
+  // See http://dsp.stackexchange.com/a/37475/26392 for a good explination of this code.
   var filter = [
     -0.037935,
     -0.00089024,
