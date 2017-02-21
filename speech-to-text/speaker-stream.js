@@ -211,8 +211,7 @@ SpeakerStream.prototype.buildMessage = function() {
       .map(function(ts) {
         return ts[WORD];
       })
-      .join(' ') +
-      ' ';
+      .join(' ') + ' ';
     alt.timestamps = utterance.timestamps;
     // overwrite the final value
     result.final = final;

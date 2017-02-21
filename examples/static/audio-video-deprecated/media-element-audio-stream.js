@@ -26,9 +26,7 @@ function MediaElementAudioStream(element, options) {
     // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
     // Possible values: null, 256, 512, 1024, 2048, 4096, 8192, 16384
     // however, webkitAudioContext (safari) requires it to be set
-    bufferSize: (
-      window.AudioContext ? 4096 : null
-    ),
+    bufferSize: window.AudioContext ? 4096 : null,
     muteSource: false,
     autoPlay: true,
     crossOrigin: 'anonymous', // required for cross-domain audio playback

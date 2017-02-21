@@ -57,9 +57,7 @@ module.exports = function recognizeElement(options) {
     objectMode: true,
     bufferSize: options.bufferSize,
     muteSource: options.muteSource,
-    autoPlay: (
-      options.autoPlay !== false
-    ) // default to true if it's undefined
+    autoPlay: options.autoPlay !== false // default to true if it's undefined
   });
 
   var stream = sourceStream.pipe(new L16({ writableObjectMode: true })).pipe(recognizeStream);

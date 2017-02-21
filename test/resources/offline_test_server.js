@@ -34,9 +34,7 @@ module.exports = function(app, log) {
   var wsServer = new WebSocketServer({
     httpServer: server,
     autoAcceptConnections: false, // true = emit 'request' events
-    maxReceivedFrameSize: (
-      1024 * 1024
-    ) // filestream produces 1mb chunks
+    maxReceivedFrameSize: 1024 * 1024 // filestream produces 1mb chunks
   });
 
   wsServer.on('request', function(request) {

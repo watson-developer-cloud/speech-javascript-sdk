@@ -461,8 +461,7 @@ describe('SpeakerStream', function() {
           return count;
         }
         var kws = msg.results[0].keywords_result;
-        return count +
-          Object.keys(kws).reduce(
+        return count + Object.keys(kws).reduce(
             function(subCount, keyword) {
               return subCount + kws[keyword].length;
             },

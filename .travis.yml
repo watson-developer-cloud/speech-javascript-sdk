@@ -10,8 +10,6 @@ script:
 - npm test
 - sed -i "s/\/master\//\/$TRAVIS_BRANCH\//g" README.md
 - npm run doc
-- scripts/jsdoc/publish.sh
-- scripts/create_semver_tag.sh
 env:
   global:
   - secure: Bx6pW0ihp3Y2dW5a8fkPhbMKsVg7MRfCzN3laN/OL7vTy2etIDXFleddE5No74HVQ1gPhkOIoRko/pHPdzWGNq69VtoCxp3AdISsuillYcaDCfRXDBSZXbHVuXsUHFQIABIdKJZZVjjwXM4oulL4OWboZ8FWV7vgOBvN4ZrXjM8LfuahSG51cPbPktqa+v/rA03iuWwC8IUDhf5w2uNPrsvtzWmj+CHcpLIgjmJWan+SiJXK/i3Wz/B74Cb0RtP9Y7zJzIGSWg8Z1VruN/f8xoNeSbMz5HM+PMhGyQJ9QXUNEqUEiXG+gwIzhAYRwBbCGyQZME5zk/y7QM0lr3/4NBzq8e6RYWlyOVLRGxlL6SvPmQ/6FrMCe9QDcMnvDvfeYhTHa6SnkqymN1hp1JnPC65zXENbEOLJH/67mQs/WoHLuuZycUK0KPC+GK6Bc45ViXotyNTttzrxHfpOV4IXQDVqB6p6tlh940ksYpetSs+8s7piUOGIcu4XtYxdnSRGX7TwKiCuuK65XWYpk+oMWhKHsOS2FTDt85+PXKFnM1fiuFD+Oppa7xyXmSUZp4C1befd7nP7F5RGSkZWdfXuCY6xAS6E7dho4clIua2yhOWtgnoMlcjjht6sFYf8OEk3eoVvnP+OO3VSHwk0VkTbI3E3fp3H8CUXVMk9woegydQ=
@@ -49,3 +47,16 @@ deploy:
   on:
     branch: master
     repo: watson-developer-cloud/speech-javascript-sdk
+- provider: script
+  script: scripts/jsdoc/publish.sh
+  skip_cleanup: true
+  on:
+    branch: master
+    repo: watson-developer-cloud/speech-javascript-sdk
+- provider: script
+  script: scripts/create_semver_tag.sh
+  skip_cleanup: true
+  on:
+    branch: master
+    repo: watson-developer-cloud/speech-javascript-sdk
+

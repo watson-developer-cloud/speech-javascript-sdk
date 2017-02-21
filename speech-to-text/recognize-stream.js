@@ -92,31 +92,37 @@ function RecognizeStream(options) {
     if (!options.silent) {
       if (event === 'results' || event === 'result' || event === 'speaker_labels') {
         // eslint-disable-next-line no-console
-        console.log(new Error(
-          'Watson Speech to Text RecognizeStream: the ' +
-            event +
-            ' event was deprecated. ' +
-            "Please set {objectMode: true} and listen for the 'data' event instead. " +
-            'Pass {silent: true} to disable this message.'
-        ));
+        console.log(
+          new Error(
+            'Watson Speech to Text RecognizeStream: the ' +
+              event +
+              ' event was deprecated. ' +
+              "Please set {objectMode: true} and listen for the 'data' event instead. " +
+              'Pass {silent: true} to disable this message.'
+          )
+        );
       } else if (event === 'connection-close') {
         // eslint-disable-next-line no-console
-        console.log(new Error(
-          'Watson Speech to Text RecognizeStream: the ' +
-            event +
-            ' event was deprecated. ' +
-            "Please listen for the 'close' event instead. " +
-            'Pass {silent: true} to disable this message.'
-        ));
+        console.log(
+          new Error(
+            'Watson Speech to Text RecognizeStream: the ' +
+              event +
+              ' event was deprecated. ' +
+              "Please listen for the 'close' event instead. " +
+              'Pass {silent: true} to disable this message.'
+          )
+        );
       } else if (event === 'connect') {
         // eslint-disable-next-line no-console
-        console.log(new Error(
-          'Watson Speech to Text RecognizeStream: the ' +
-            event +
-            ' event was deprecated. ' +
-            "Please listen for the 'open' event instead. " +
-            'Pass {silent: true} to disable this message.'
-        ));
+        console.log(
+          new Error(
+            'Watson Speech to Text RecognizeStream: the ' +
+              event +
+              ' event was deprecated. ' +
+              "Please listen for the 'open' event instead. " +
+              'Pass {silent: true} to disable this message.'
+          )
+        );
       }
     }
   });
