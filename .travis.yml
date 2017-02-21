@@ -10,8 +10,7 @@ script:
 - npm test
 - sed -i "s/\/master\//\/$TRAVIS_BRANCH\//g" README.md
 - npm run doc
-after_success:
-- jsdoc/publish.sh
+- scripts/jsdoc/publish.sh
 - scripts/create_semver_tag.sh
 env:
   global:
