@@ -7,8 +7,8 @@ var TARGET_SAMPLE_RATE = 16000;
 /**
  * Transforms Buffers or AudioBuffers into a binary stream of l16 (raw wav) audio, downsampling in the process.
  *
- * The watson speech-to-text service works on 1600khz and internally downsamples audio received at higher samplerates.
- * WebAudio is usually 48000khz, so downsampling here reduces bandwidth usage by 2/3.
+ * The watson speech-to-text service works on 16kHz and internally downsamples audio received at higher samplerates.
+ * WebAudio is usually 44.1kHz or 48kHz, so downsampling here reduces bandwidth usage by ~2/3.
  *
  * Format event + stream can be combined with https://www.npmjs.com/package/wav to generate a wav file with a proper header
  *
@@ -79,7 +79,7 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
   }
 
   // Downsampling and low-pass filter:
-  // Input audio is typically 48kHz, this downsamples it to 16kHz.
+  // Input audio is typically 44.1kHz or 48kHz, this downsamples it to 16kHz.
   // It uses a FIR (finite impulse response) Filter to remove (or, at least attinuate) 
   // audio frequencies > ~8kHz because sampled audio cannot accurately represent  
   // frequiencies greater than half of the sample rate. 
