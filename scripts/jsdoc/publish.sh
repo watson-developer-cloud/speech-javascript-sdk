@@ -13,7 +13,7 @@ if [ "$TRAVIS_REPO_SLUG" == "watson-developer-cloud/speech-javascript-sdk" ] && 
 
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
-  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/watson-developer-cloud/speech-javascript-sdk gh-pages
+  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/watson-developer-cloud/speech-javascript-sdk gh-pages || echo "git clone failed" && exit 1
 
   pushd gh-pages
     # on tagged builds, $TRAVIS_BRANCH is the tag (e.g. v1.2.3), otherwise it's the branch name (e.g. master)
@@ -28,7 +28,7 @@ if [ "$TRAVIS_REPO_SLUG" == "watson-developer-cloud/speech-javascript-sdk" ] && 
       ln -s ./$TRAVIS_TAG latest
     fi
 
-    generate_index_html.sh > index.html
+    ../scripts/jsdoc/generate_index_html.sh > index.html
 
     git add -f -A .
     git commit -m "JSDdoc for $TRAVIS_BRANCH ($TRAVIS_COMMIT)"
