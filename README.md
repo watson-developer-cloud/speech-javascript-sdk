@@ -76,6 +76,7 @@ Options:
 * voice - the desired playback voice's name - see .getVoices(). Note that the voices are language-specific.
 * autoPlay - set to false to prevent the audio from automatically playing
 
+Relies on browser audio support: should work reliably in Chrome and Firefox on desktop and Android. Edge works with a little help. Safari and all iOS browsers do not seem to work yet.
 
 ## [`WatsonSpeech.SpeechToText`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text.html)
 

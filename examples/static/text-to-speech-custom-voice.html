@@ -57,6 +57,8 @@ document.querySelector('#button').onclick = function () {
       text: document.querySelector('#text').value,
       voice: document.querySelector('#voice').value,
       token: token
+    }).on('error', function(err) {
+      console.log('audio error: ', err);
     });
 
   });

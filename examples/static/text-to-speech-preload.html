@@ -12,8 +12,7 @@
 
 <section>
     <h2>Basic Text to Speech Example</h2>
-    <textarea id="text" rows="6" cols="80">Hello from IBM Watson</textarea>
-    <p><button id="button">Synthesize Text</button></p>
+    <p><button id="button">Play Synthesized Text</button></p>
 </section>
 
 <script src="bower_components/watson-speech/dist/watson-speech.js"></script>
@@ -22,20 +21,25 @@
 
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
-document.querySelector('#button').onclick = function () {
-
-  fetch('/api/text-to-speech/token')
-    .then(function(response) {
-      return response.text();
-    }).then(function (token) {
-
-      WatsonSpeech.TextToSpeech.synthesize({
-        text: document.querySelector('#text').value,
-        token: token
-      }).on('error', function(err) {
-        console.log('audio error: ', err);
-      });
+// fetch the toke and create the audio element ahead of time
+var audio;
+fetch('/api/text-to-speech/token')
+  .then(function(response) {
+    return response.text();
+  }).then(function (token) {
+    audio = WatsonSpeech.TextToSpeech.synthesize({
+      text: 'Hello from IBM Watson',
+      token: token,
+      autoPlay: false,
+      accept: 'audio/wav'
     });
+
+    audio.on('error', function(err) {
+      console.log('audio error: ', err);
+    });
+  });
+document.querySelector('#button').onclick = function () {
+  audio.play();
 };
 </script></code></pre>
 </div>
