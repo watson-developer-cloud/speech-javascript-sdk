@@ -1,5 +1,4 @@
-// note: this isn't used at the moment
-// browserify output is slightly smaller, but they're within 1kb of eachother after minifying and gzipping
+// browserify output is slightly smaller, but webpack wins after minification & gzipping
 module.exports = {
   entry: './index.js',
   output: {
