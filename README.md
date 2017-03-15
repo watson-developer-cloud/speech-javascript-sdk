@@ -129,7 +129,7 @@ There have been a few breaking changes in recent releases:
 * Removed `SpeechToText.recognizeElement()` due to quality issues. The code is [avaliable in an (unsupported) example](https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/static/audio-video-deprecated) if you wish to use it with current releases of the SDK.
 * renamed `recognizeBlob` to `recognizeFile` to make the primary usage more apparent
 * Changed `playFile` option of `recognizeBlob()` to just `play`, corrected default
-* Changed format of objects emitted in objectMode to exactly match what service sends. Added `ResultStrean` class and `extract_results` option to enable older behavior.
+* Changed format of objects emitted in objectMode to exactly match what service sends. Added `ResultStream` class and `extract_results` option to enable older behavior.
 * Changed `playback-error` event to just `error` when recognizing and playing a file. Check for `error.name == 'UNSUPPORTED_FORMAT'` to identify playback errors. This error is special in that it does not stop the streaming of results.
 * Renamed `recognizeFile()`'s `data` option to `file` because it now may be a URL. Using a URL enables faster playback and mobile Safari support
 
