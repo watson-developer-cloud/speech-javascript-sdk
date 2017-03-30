@@ -7,14 +7,9 @@ IBM Watson Speech Services for Web Browsers
 Allows you to easily add voice recognition and synthesis to any web app with minimal code.
 
 ### Built for Browsers
-This library is primarily intended for use in web browsers.
-Check out [watson-developer-cloud](https://www.npmjs.com/package/watson-developer-cloud) to use Watson services (speech and others) from Node.js.
+This library is primarily intended for use in web browsers. Check out [watson-developer-cloud](https://www.npmjs.com/package/watson-developer-cloud) to use Watson services (speech and others) from Node.js.
 
-However, a **server-side component is required to generate auth tokens**. 
-The examples/ folder includes example Node.js and Python servers, and SDKs are available for [Node.js](https://github.com/watson-developer-cloud/node-sdk#authorization), 
-[Java](https://github.com/watson-developer-cloud/java-sdk), 
-[Python](https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py), 
-and there is also a [REST API](http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/getting_started/gs-tokens.shtml).
+However, a **server-side component is required to generate auth tokens**. The examples/ folder includes example Node.js and Python servers, and SDKs are available for [Node.js](https://github.com/watson-developer-cloud/node-sdk#authorization), [Java](https://github.com/watson-developer-cloud/java-sdk), [Python](https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py), and there is also a [REST API](https://www.ibm.com/watson/developercloud/doc/common/getting-started-tokens.html).
 
 
 ### Installation - standalone
