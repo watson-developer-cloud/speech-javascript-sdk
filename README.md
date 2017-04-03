@@ -69,6 +69,7 @@ where the max length is around 1000 characters after the token is accounted for.
 Options: 
 * text - the text to speak
 * voice - the desired playback voice's name - see .getVoices(). Note that the voices are language-specific.
+* customization_id - GUID of a custom voice model - omit to use the voice with no customization.
 * autoPlay - set to false to prevent the audio from automatically playing
 
 Relies on browser audio support: should work reliably in Chrome and Firefox on desktop and Android. Edge works with a little help. Safari and all iOS browsers do not seem to work yet.
