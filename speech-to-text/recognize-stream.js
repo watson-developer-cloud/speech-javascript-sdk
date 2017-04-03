@@ -248,7 +248,7 @@ RecognizeStream.prototype.initialize = function() {
       } else {
         self.listening = true;
         /**
-         * Emitted when the Watson Service indicates readieness to transcribe audio. Any audio sent before this point will be buffered until now.
+         * Emitted when the Watson Service indicates readiness to transcribe audio. Any audio sent before this point will be buffered until now.
          * @event RecognizeStream#listening
          */
         self.emit('listening');
@@ -312,29 +312,28 @@ RecognizeStream.prototype._write = function(chunk, encoding, callback) {
     // can't send any more data after the stop message (although this shouldn't happen normally...)
     return;
   }
-  if (self.listening) {
-    self.sendData(chunk);
-    this.afterSend(callback);
-  } else {
-    if (!this.initialized) {
-      if (!this.options['content-type']) {
-        var ct = RecognizeStream.getContentType(chunk);
-        if (ct) {
-          this.options['content-type'] = ct;
-        } else {
-          var err = new Error('Unable to determine content-type from file header, please specify manually.');
-          err.name = RecognizeStream.ERROR_UNRECOGNIZED_FORMAT;
-          this.emit('error', err);
-          this.push(null);
-          return;
-        }
+  if (!this.initialized) {
+    if (!this.options['content-type']) {
+      var ct = RecognizeStream.getContentType(chunk);
+      if (ct) {
+        this.options['content-type'] = ct;
+      } else {
+        var err = new Error('Unable to determine content-type from file header, please specify manually.');
+        err.name = RecognizeStream.ERROR_UNRECOGNIZED_FORMAT;
+        this.emit('error', err);
+        this.push(null);
+        return;
       }
-      this.initialize();
     }
-    this.once('listening', function() {
+    this.initialize();
+
+    this.once('open', function() {
       self.sendData(chunk);
       self.afterSend(callback);
     });
+  } else {
+    self.sendData(chunk);
+    this.afterSend(callback);
   }
 };
 
