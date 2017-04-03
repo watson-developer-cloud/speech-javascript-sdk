@@ -17,7 +17,7 @@
 var pick = require('object.pick');
 var qs = require('../util/querystring.js');
 
-var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'accept'];
+var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'accept', 'customization_id'];
 
 /**
  * @module watson-speech/text-to-speech/synthesize
@@ -32,6 +32,7 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  * @param {String} options.token auth token
  * @param {String} options.text text to speak
  * @param {String} [options.voice=en-US_MichaelVoice] what voice to use - call getVoices() for a complete list.
+ * @param {String} [options.customization_id] GUID of a custom voice model. Omit to use the voice with no customization.
  * @param {String} [options.accept] - specify desired audio format. Leave unset to allow (most) browsers to automatically negotiate an ideal format.
  * @param {Number} [options.X-Watson-Learning-Opt-Out=0] set to 1 to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.autoPlay=true] automatically play the audio
