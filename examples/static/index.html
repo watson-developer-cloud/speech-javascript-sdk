@@ -1,1 +1,149 @@
-microphone-streaming-model.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Watson Speech to Text client example - custom model</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script type="text/javascript">
+  </script>
+
+</head>
+<body>
+<div class="container">
+<section>
+	<h2>Transcribe from Microphone</h2>
+	<p>Model: <select id="model"></select> <small><i>Choose the model</i></small></p>
+	<button id="button">Start Microphone Transcription</button>
+	<button id="stop">Stop</button>
+</section>
+
+<h2>Output</h2>
+<div data-name="chat"></div>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="bower_components/watson-speech/dist/watson-speech.js"></script>
+<!-- window.fetch pollyfill for IE/Edge & Older Chrome/FireFox -->
+<script src="bower_components/fetch/fetch.js"></script>
+
+<script type="text/javascript">
+// 接続先URI
+//var uri = "ws://" + location.host + "/sample/chat";
+//var uri = "ws://stt-ws-mak01.eu-de.mybluemix.net/sttRecog";
+var uri = "ws://localhost:1880/stt/recog";
+
+// WebSocketオブジェクト
+var webSocket = null;
+
+// 初期処理
+function init() {
+    // 接続
+    open();
+}
+
+// 接続
+function open() {
+    if (webSocket == null) {
+        // WebSocket の初期化
+        webSocket = new WebSocket(uri);
+        // イベントハンドラの設定
+        webSocket.onopen = onOpen;
+        webSocket.onclose = onClose;
+        webSocket.onerror = onError;
+    }
+}
+
+// 接続イベント
+function onOpen(event) {
+    chat("SYS:"+"接続しました。");
+}
+
+// エラーイベント
+function onError(event) {
+    chat("SYS:"+"エラーが発生しました。");
+}
+
+// 切断イベント
+function onClose(event) {
+    chat("SYS:"+"切断しました。3秒後に再接続します。(" + event.code + ")");
+    webSocket = null;
+    setTimeout("open()", 3000);
+}
+
+// message log
+function chat(message) {
+    // 10件まで残す
+    var chats = $("[data-name='chat']").find("div");
+    while (chats.length >= 10) {
+        chats = chats.last().remove();
+    }
+    // メッセージ表示
+    var msgtag = $("<div>").text(message);
+    $("[data-name='chat']").prepend(msgtag);
+}
+
+// 初期処理登録
+$(init);
+
+
+function getTtsToken() {
+  return fetch('/api/speech-to-text/token')
+    .then(function(response) {
+      return response.text();
+    });
+}
+
+// fetch the models and populate the dropdown
+getTtsToken()
+  .then(function (token) {
+    return WatsonSpeech.SpeechToText.getModels({token: token});
+  }).then(function (models) {
+
+    var dropdown = document.querySelector('#model');
+    models.forEach(function (m) {
+      var o = document.createElement('option');
+      o.value = m.name;
+      o.textContent = m.name;
+      if (m.name == 'ja-JP_NarrowbandModel') {
+        o.selected = true;
+      }
+      dropdown.appendChild(o);
+    });
+
+  }).catch(console.error.bind(console));
+
+// recognize the text using the chosen model
+document.querySelector('#button').onclick = function () {
+  getTtsToken().then(function (token) {
+
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+		token: token,
+      model: document.querySelector('#model').value,
+	   object_mode: false
+	
+    });
+
+    stream.on('error', function(err) {
+        console.log(err);
+    });
+
+    stream.setEncoding('utf8');
+
+    stream.on('data', function(data) {
+      webSocket.send(data);
+		chat(data);
+		console.log(data);
+	 });
+
+    document.querySelector('#stop').onclick = stream.stop.bind(stream);
+
+  }).catch(function(error) {
+      console.log(error);
+  });
+};
+
+</script>
+
+</div>
+</body>
+</html>
