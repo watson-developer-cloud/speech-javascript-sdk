@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IBM Watson Speech JavaScript SDK Example</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+<div class="container">
+  <h1>IBM Watson Speech JavaScript SDK Examples</h1>
+  <p>The <a href="https://www.npmjs.com/package/watson-speech">watson-speech</a> library allows you to easily add voice
+    recognition and synthesis to any web app with minimal code.</p>
+  <p>Complete source code for these examples is
+    <a href="https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/">available on GitHub</a>.</p>
+  <h2>Speech to Text</h2>
+  <h3>Microphone Input</h3>
+  <ul>
+    <li><a href="microphone-streaming.html">Transcribe from Microphone</a></li>
+    <li><a href="microphone-streaming-auto-stop.html">Transcribe from Microphone, automatically stop at first pause</a></li>
+    <li><a href="microphone-streaming-model.html">Transcribe from Microphone, with chosen model</a></li>
+    <li><a href="microphone-alternatives.html">Transcribe from Microphone, with Alternatives</a></li>
+    <li><a href="microphone-word-confidence.html">Transcribe from Microphone, with Word Confidence</a></li>
+    <li><a href="microphone-streaming-text-to-console.html">Transcribe from Microphone, send text to console</a></li>
+    <li><a href="microphone-streaming-object-to-console.html">Transcribe from Microphone, send JSON to console (includes text and metadata; v0.22+ format)</a></li>
+    <li><a href="browserify.html">Browserify example</a></li>
+    <li><a href="webpack.html">Webpack example</a></li>
+    <li><strike><a href="microphone-streaming-object-extracted-to-console.html">Deprecated: Transcribe from Microphone, send JSON to console with results extracted (pre-v0.22 format)</a></strike></li>
+  </ul>
+  <h3>File Input</h3>
+  <p>(user-provided or downloaded - several sample files available in static/ folder)</p>
+  <ul>
+    <li><a href="file-url.html">Transcribe and Play a file via URL, with pre-loaded token (compatible with Mobile Safari)</a></li>
+    <li><a href="file-upload.html">Transcribe and Play a user-provided file</a></li>
+    <li><a href="speaker-labels-file-console.html">Transcribe from URL with <code>{speaker_labels: true}</code>, output to console</a></li>
+    <li><a href="speaker-stream-file-console.html">Transcribe from URL with <code>{resultsBySpeaker: true}</code>, output to console</a></li>
+    <li><a href="speaker-stream-file-html.html">Transcribe from URL with <code>{resultsBySpeaker: true}</code>, output HTML</a></li>
+    <li><a href="realtime-vs-no-realtime.html">Compare <code>realtime</code> and <code>TimingStream</code> options</a></li>
+    <li><a href="url-promise.html">Transcribe from URL, return a Promise</a></li>
+    <li><a href="file-ajax.html">Transcribe from file, pre-loaded over AJAX</a></li>
+    <li><strike><a href="audio-video-deprecated/">Deprecated: Transcribe from HTML5 &lt;audio&gt; or &lt;video&gt; element</a></strike></li>
+  </ul>
+
+  <h2>Text to Speech</h2>
+  <ul>
+    <li><a href="text-to-speech.html">Synthesize text</a></li>
+    <li><a href="text-to-speech-preload.html">Synthesize text, with pre-loaded wav audio (works in Edge)</a></li>
+    <li><a href="text-to-speech-custom-voice.html">Synthesize text w/ custom voice</a></li>
+  </ul>
+
+  <h2>See Also</h2>
+
+  <ul>
+    <li><a href="http://watson-developer-cloud.github.io/speech-javascript-sdk/">JSDoc</a></li>
+    <li><a href="https://www.npmjs.com/package/watson-speech">npm</a></li>
+    <li><a href="https://github.com/watson-developer-cloud/speech-javascript-sdk">GitHub</a></li>
+    <li><a href="https://speech-to-text-demo.mybluemix.net/">Official Speech to Text demo</a></li>
+    <li><a href="https://text-to-speech-demo.mybluemix.net/">Official Text to Speech demo</a></li>
+    <li><a href="https://www.ibm.com/watson/developercloud/">Watson</a></li>
+  </ul>
+</div>
+</body>
+</html>
