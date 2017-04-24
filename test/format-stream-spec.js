@@ -20,18 +20,18 @@ describe('FormatStream', function() {
 
   it('should format objects', function(done) {
     var stream = new FormatStream({ objectMode: true });
-    stream.setEncoding('utf8');
+    //stream.setEncoding('utf8');
     var source = {
       results: [
         {
           alternatives: [
             {
               confidence: 0.881,
-              transcript: 'foo bar ',
-              final: true
+              transcript: 'foo bar '
             }
           ],
-          result_index: 0
+          result_index: 0,
+          final: true
         }
       ]
     };
@@ -41,16 +41,18 @@ describe('FormatStream', function() {
           alternatives: [
             {
               confidence: 0.881,
-              transcript: 'Foo bar. ',
-              final: true
+              transcript: 'Foo bar. '
             }
           ],
-          result_index: 0
+          result_index: 0,
+          final: true
         }
       ]
     };
     stream.on('data', function(actual) {
-      assert.equal(actual, expected);
+      console.log(JSON.stringify(actual, null, 2))
+      console.log(JSON.stringify(expected, null, 2))
+      assert.deepEqual(actual, expected);
       done();
     });
     stream.on('error', done);
