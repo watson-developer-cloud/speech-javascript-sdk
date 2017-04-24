@@ -20,7 +20,7 @@ describe('FormatStream', function() {
 
   it('should format objects', function(done) {
     var stream = new FormatStream({ objectMode: true });
-    //stream.setEncoding('utf8');
+    // stream.setEncoding('utf8');
     var source = {
       results: [
         {
@@ -50,8 +50,6 @@ describe('FormatStream', function() {
       ]
     };
     stream.on('data', function(actual) {
-      console.log(JSON.stringify(actual, null, 2))
-      console.log(JSON.stringify(expected, null, 2))
       assert.deepEqual(actual, expected);
       done();
     });
