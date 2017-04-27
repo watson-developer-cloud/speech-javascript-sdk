@@ -1,4 +1,5 @@
 module.exports = {
+  "parser": "esprima",
   "env": {
     "node": true,
     "browser": true,

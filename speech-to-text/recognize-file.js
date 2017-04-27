@@ -103,7 +103,9 @@ module.exports = function recognizeFile(options) {
   if (typeof options.file === 'string') {
     fetch(options.file)
       .then(function(response) {
-        var source = response.body.getReadable();
+        return response.readable();
+      })
+      .then(function(source) {
         source.pipe(recognizeStream);
         streams.unshift(source);
       })
