@@ -60,12 +60,9 @@ TimingStream.prototype._transform = function(msg, encoding, next) {
   }
 
   if (objectMode || hasTranscript) {
-    this.timeout = setTimeout(
-      function() {
-        next(null, msg);
-      },
-      delayMs
-    );
+    this.timeout = setTimeout(function() {
+      next(null, msg);
+    }, delayMs);
   } else {
     return next();
   }

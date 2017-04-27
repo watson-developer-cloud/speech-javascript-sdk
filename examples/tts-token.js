@@ -4,7 +4,7 @@ var express = require('express');
 var router = express.Router(); // eslint-disable-line new-cap
 var watson = require('watson-developer-cloud');
 var vcapServices = require('vcap_services');
-var extend = extend = require('util')._extend;
+var extend = (extend = require('util')._extend);
 
 // another endpoint for the text to speech service
 

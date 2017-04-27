@@ -52,29 +52,26 @@ module.exports = function(app, log) {
       // send fake interim results
       var words = TEXT.split(' ');
       var i = 0;
-      return setInterval(
-        function() {
-          i++;
-          if (i < words.length) {
-            // log.debug('sending interim result');
-            connection.sendUTF(
-              JSON.stringify({
-                results: [
-                  {
-                    final: false,
-                    alternatives: [
-                      {
-                        transcript: words.slice(0, i).join(' ')
-                      }
-                    ]
-                  }
-                ]
-              })
-            );
-          }
-        },
-        700
-      );
+      return setInterval(function() {
+        i++;
+        if (i < words.length) {
+          // log.debug('sending interim result');
+          connection.sendUTF(
+            JSON.stringify({
+              results: [
+                {
+                  final: false,
+                  alternatives: [
+                    {
+                      transcript: words.slice(0, i).join(' ')
+                    }
+                  ]
+                }
+              ]
+            })
+          );
+        }
+      }, 700);
     }
 
     connection.on('message', function(message) {

@@ -169,26 +169,23 @@ SpeakerStream.prototype.buildMessage = function() {
   });
 
   // group the words together into utterances by speaker
-  var utterances = words.reduce(
-    function(arr, word) {
-      var utterance = arr[arr.length - 1];
-      // any time the speaker changes or the (original) result changes, create a new utterance
-      if (!utterance || utterance.speaker !== word.speaker || utterance.result !== word.result) {
-        utterance = {
-          speaker: word.speaker,
-          timestamps: [word.timestamp],
-          result: word.result
-        };
-        // and add it to the list
-        arr.push(utterance);
-      } else {
-        // otherwise just append the current word to the current result
-        utterance.timestamps.push(word.timestamp);
-      }
-      return arr;
-    },
-    []
-  );
+  var utterances = words.reduce(function(arr, word) {
+    var utterance = arr[arr.length - 1];
+    // any time the speaker changes or the (original) result changes, create a new utterance
+    if (!utterance || utterance.speaker !== word.speaker || utterance.result !== word.result) {
+      utterance = {
+        speaker: word.speaker,
+        timestamps: [word.timestamp],
+        result: word.result
+      };
+      // and add it to the list
+      arr.push(utterance);
+    } else {
+      // otherwise just append the current word to the current result
+      utterance.timestamps.push(word.timestamp);
+    }
+    return arr;
+  }, []);
 
   // create new results
   var results = utterances.map(function(utterance, i) {
@@ -207,11 +204,12 @@ SpeakerStream.prototype.buildMessage = function() {
     result.speaker = utterance.speaker;
     // overwrite the transcript and timestamps on the first alternative
     var alt = result.alternatives[0];
-    alt.transcript = utterance.timestamps
-      .map(function(ts) {
-        return ts[WORD];
-      })
-      .join(' ') + ' ';
+    alt.transcript =
+      utterance.timestamps
+        .map(function(ts) {
+          return ts[WORD];
+        })
+        .join(' ') + ' ';
     alt.timestamps = utterance.timestamps;
     // overwrite the final value
     result.final = final;
@@ -266,12 +264,9 @@ SpeakerStream.prototype.handleResults = function(data) {
     .filter(function(result) {
       return result.final;
     })
-    .forEach(
-      function(result) {
-        this.results.push(result);
-      },
-      this
-    );
+    .forEach(function(result) {
+      this.results.push(result);
+    }, this);
 };
 
 // sorts by start time and then end time
@@ -350,18 +345,16 @@ SpeakerStream.prototype._flush = function(done) {
     .map(function(r) {
       return r.alternatives[0].timestamps;
     })
-    .reduce(
-      function(a, b) {
-        return a.concat(b);
-      },
-      []
-    );
+    .reduce(function(a, b) {
+      return a.concat(b);
+    }, []);
   if (timestamps.length !== this.speaker_labels.length) {
     var msg;
     if (timestamps.length && !this.speaker_labels.length) {
       msg = 'No speaker_labels found. SpeakerStream requires speaker_labels to be enabled.';
     } else {
-      msg = 'Mismatch between number of word timestamps (' +
+      msg =
+        'Mismatch between number of word timestamps (' +
         timestamps.length +
         ') and number of speaker_labels (' +
         this.speaker_labels.length +

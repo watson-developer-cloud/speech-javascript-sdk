@@ -39,14 +39,11 @@ ResultStream.prototype._transform = function(data, encoding, next) {
   // when speaker_labels is enabled, some messages won't have a results array
   if (Array.isArray(data.results)) {
     // usually there is exactly 1 result, but there can be 0 in some circumstances, and potentially more in future iterations
-    data.results.forEach(
-      function(result) {
-        var cloned = clone(result);
-        cloned.index = data.result_index;
-        this.push(cloned);
-      },
-      this
-    );
+    data.results.forEach(function(result) {
+      var cloned = clone(result);
+      cloned.index = data.result_index;
+      this.push(cloned);
+    }, this);
   } else {
     this.push(data);
   }

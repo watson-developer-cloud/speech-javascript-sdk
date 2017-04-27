@@ -34,7 +34,7 @@ function FormatStream(opts) {
 util.inherits(FormatStream, Transform);
 
 var reHesitation = /%HESITATION ?/g; // http://www.ibm.com/watson/developercloud/doc/speech-to-text/output.shtml#hesitation - D_ is handled below
-var reRepeatedCharacter = /([a-z])\1{2,}/ig; // detect the same character repeated three or more times and remove it
+var reRepeatedCharacter = /([a-z])\1{2,}/gi; // detect the same character repeated three or more times and remove it
 var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
 
 /**
@@ -121,43 +121,34 @@ FormatStream.prototype.formatString = function(str, isInterim) {
 FormatStream.prototype.formatResult = function formatResult(data) {
   data = clone(data);
   if (Array.isArray(data.results)) {
-    data.results.forEach(
-      function(result, i) {
-        // if there are multiple interim results (as produced by the speaker stream),
-        // treat the text as final in all but the last result
-        var textFinal = result.final || i !== data.results.length - 1;
+    data.results.forEach(function(result, i) {
+      // if there are multiple interim results (as produced by the speaker stream),
+      // treat the text as final in all but the last result
+      var textFinal = result.final || i !== data.results.length - 1;
 
-        result.alternatives = result.alternatives.map(
-          function(alt) {
-            alt.transcript = this.formatString(alt.transcript, !textFinal);
-            if (alt.timestamps) {
-              alt.timestamps = alt.timestamps
-                .map(
-                  function(ts, j, arr) {
-                    // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
-                    ts[0] = this.clean(ts[0]);
-                    if (j === 0) {
-                      ts[0] = this.capitalize(ts[0]);
-                    }
+      result.alternatives = result.alternatives.map(function(alt) {
+        alt.transcript = this.formatString(alt.transcript, !textFinal);
+        if (alt.timestamps) {
+          alt.timestamps = alt.timestamps
+            .map(function(ts, j, arr) {
+              // timestamps is an array of arrays, each sub-array is in the form ["word", startTime, endTime]'
+              ts[0] = this.clean(ts[0]);
+              if (j === 0) {
+                ts[0] = this.capitalize(ts[0]);
+              }
 
-                    if (j === arr.length - 1 && textFinal) {
-                      ts[0] = this.period(ts[0]);
-                    }
-                    return ts;
-                  },
-                  this
-                )
-                .filter(function(ts) {
-                  return ts[0]; // remove any timestamps without a word (due to cleaning out junk words)
-                });
-            }
-            return alt;
-          },
-          this
-        );
-      },
-      this
-    );
+              if (j === arr.length - 1 && textFinal) {
+                ts[0] = this.period(ts[0]);
+              }
+              return ts;
+            }, this)
+            .filter(function(ts) {
+              return ts[0]; // remove any timestamps without a word (due to cleaning out junk words)
+            });
+        }
+        return alt;
+      }, this);
+    }, this);
   }
   return data;
 };

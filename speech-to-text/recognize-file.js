@@ -82,7 +82,7 @@ module.exports = function recognizeFile(options) {
     options.smart_formatting = options.format;
   }
 
-  var realtime = options.realtime || typeof options.realtime === 'undefined' && options.play;
+  var realtime = options.realtime || (typeof options.realtime === 'undefined' && options.play);
 
   // the timing stream requires timestamps to work, so enable them automatically
   if (realtime) {
@@ -168,9 +168,11 @@ module.exports = function recognizeFile(options) {
         //   3. re-pipe the source streams
 
         var sources = streams.filter(function(s) {
-          return s._readableState &&
+          return (
+            s._readableState &&
             s._readableState.pipes &&
-            (s._readableState.pipes === stream || Array.isArray(s._readableState.pipes) && s._readableState.pipes.indexOf(stream) !== -1);
+            (s._readableState.pipes === stream || (Array.isArray(s._readableState.pipes) && s._readableState.pipes.indexOf(stream) !== -1))
+          );
         });
 
         stream.emit('error', err);

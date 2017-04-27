@@ -9,7 +9,7 @@ var getContentTypeFromHeader = require('./content-type');
  * @constructor
  */
 function UrlPlayer(url) {
-  var audio = this.audio = new Audio();
+  var audio = (this.audio = new Audio());
   audio.src = url;
   audio.play();
   /**
@@ -28,7 +28,7 @@ function UrlPlayer(url) {
  * @constructor
  */
 function FilePlayer(file, contentType) {
-  var audio = this.audio = new Audio();
+  var audio = (this.audio = new Audio());
   if (audio.canPlayType(contentType)) {
     audio.src = URL.createObjectURL(new Blob([file], { type: contentType }));
     audio.play();

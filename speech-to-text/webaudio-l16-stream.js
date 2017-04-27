@@ -151,7 +151,7 @@ WebAudioL16Stream.prototype.floatTo16BitPCM = function(input) {
   var output = new DataView(new ArrayBuffer(input.length * 2)); // length is in bytes (8-bit), so *2 to get 16-bit length
   for (var i = 0; i < input.length; i++) {
     var multiplier = input[i] < 0 ? 0x8000 : 0x7fff; // 16-bit signed range is -32768 to 32767
-    output.setInt16(i * 2, input[i] * multiplier | 0, true); // index, value, little edian
+    output.setInt16(i * 2, (input[i] * multiplier) | 0, true); // index, value, little edian
   }
   return Buffer.from(output.buffer);
 };

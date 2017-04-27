@@ -36,7 +36,7 @@ describe('WatsonSpeech.SpeechToText end-to-end', function() {
   // firefox can automatically approve getUserMedia, but not playback audio, so offline only
   // ...except on travis ci, where it gets NO_DEVICES_FOUND
   // chrome can do both, so it gets tested on and offline
-  (offline && !travis || chrome ? it : xit)('should transcribe mic input', function(done) {
+  ((offline && !travis) || chrome ? it : xit)('should transcribe mic input', function(done) {
     getConfig()
       .then(function(cfg) {
         var stt = SpeechToText.recognizeMicrophone(cfg);

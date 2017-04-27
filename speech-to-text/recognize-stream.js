@@ -159,7 +159,7 @@ RecognizeStream.prototype.initialize = function() {
 
   // node params: requestUrl, protocols, origin, headers, extraRequestOptions
   // browser params: requestUrl, protocols (all others ignored)
-  var socket = this.socket = new W3CWebSocket(url, null, null, options.headers, null);
+  var socket = (this.socket = new W3CWebSocket(url, null, null, options.headers, null));
 
   // when the input stops, let the service know that we're done
   self.on('finish', self.finish.bind(self));

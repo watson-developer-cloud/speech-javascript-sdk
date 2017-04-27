@@ -373,17 +373,14 @@ describe('SpeakerStream', function() {
     });
 
     var source = require('./resources/car_loan_stream.json').filter(function(msg) {
-      return msg.speaker_labels || msg.results && msg.results[0].final;
+      return msg.speaker_labels || (msg.results && msg.results[0].final);
     });
-    var expectedNumAlts = source.reduce(
-      function(count, msg) {
-        if (msg.speaker_labels) {
-          return count;
-        }
-        return count + msg.results[0].word_alternatives.length;
-      },
-      0
-    );
+    var expectedNumAlts = source.reduce(function(count, msg) {
+      if (msg.speaker_labels) {
+        return count;
+      }
+      return count + msg.results[0].word_alternatives.length;
+    }, 0);
     assert(expectedNumAlts);
 
     stream.on('end', function() {
@@ -453,23 +450,20 @@ describe('SpeakerStream', function() {
     });
 
     var source = require('./resources/car_loan_stream.json').filter(function(msg) {
-      return msg.speaker_labels || msg.results && msg.results[0].final;
+      return msg.speaker_labels || (msg.results && msg.results[0].final);
     });
-    var expectedNumKeywords = source.reduce(
-      function(count, msg) {
-        if (msg.speaker_labels || !msg.results[0].keywords_result) {
-          return count;
-        }
-        var kws = msg.results[0].keywords_result;
-        return count + Object.keys(kws).reduce(
-            function(subCount, keyword) {
-              return subCount + kws[keyword].length;
-            },
-            0
-          );
-      },
-      0
-    );
+    var expectedNumKeywords = source.reduce(function(count, msg) {
+      if (msg.speaker_labels || !msg.results[0].keywords_result) {
+        return count;
+      }
+      var kws = msg.results[0].keywords_result;
+      return (
+        count +
+        Object.keys(kws).reduce(function(subCount, keyword) {
+          return subCount + kws[keyword].length;
+        }, 0)
+      );
+    }, 0);
     assert(expectedNumKeywords);
 
     stream.on('end', function() {

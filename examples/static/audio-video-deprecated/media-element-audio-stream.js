@@ -70,8 +70,8 @@ function MediaElementAudioStream(element, options) {
 
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   // cache the source node & context since it's not possible to recreate it later
-  var context = element.context = element.context || new AudioContext();
-  var audioInput = element.node = element.node || context.createMediaElementSource(element);
+  var context = (element.context = element.context || new AudioContext());
+  var audioInput = (element.node = element.node || context.createMediaElementSource(element));
   var scriptProcessor = context.createScriptProcessor(options.bufferSize, inputChannels, outputChannels);
 
   scriptProcessor.onaudioprocess = processAudio;
