@@ -128,6 +128,7 @@ There have been a few breaking changes in recent releases:
 * Changed format of objects emitted in objectMode to exactly match what service sends. Added `ResultStream` class and `extract_results` option to enable older behavior.
 * Changed `playback-error` event to just `error` when recognizing and playing a file. Check for `error.name == 'UNSUPPORTED_FORMAT'` to identify playback errors. This error is special in that it does not stop the streaming of results.
 * Renamed `recognizeFile()`'s `data` option to `file` because it now may be a URL. Using a URL enables faster playback and mobile Safari support
+* Continous flag for OPENING_MESSAGE_PARAMS_ALLOWED has been removed
 
 See [CHANGELOG.md](CHANGELOG.md) for a complete list of changes.
 

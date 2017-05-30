@@ -24,7 +24,6 @@ var contentType = require('./content-type');
 var qs = require('../util/querystring.js');
 
 var OPENING_MESSAGE_PARAMS_ALLOWED = [
-  'continuous',
   'inactivity_timeout',
   'timestamps',
   'word_confidence',
@@ -58,7 +57,6 @@ var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'X-Wats
  * @param {Object} [options.headers] - Only works in Node.js, not in browsers. Allows for custom headers to be set, including an Authorization header (preventing the need for auth tokens)
  * @param {String} [options.content-type='audio/wav'] - content type of audio; can be automatically determined from file header in most cases. only wav, flac, and ogg/opus are supported
  * @param {Boolean} [options.interim_results=true] - Send back non-final previews of each "sentence" as it is being processed. These results are ignored in text mode.
- * @param {Boolean} [options.continuous=true] - set to false to automatically stop the transcription after the first "sentence"
  * @param {Boolean} [options.word_confidence=false] - include confidence scores with results. Defaults to true when in objectMode.
  * @param {Boolean} [options.timestamps=false] - include timestamps with results. Defaults to true when in objectMode.
  * @param {Number} [options.max_alternatives=1] - maximum number of alternative transcriptions to include. Defaults to 3 when in objectMode.
@@ -66,7 +64,7 @@ var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'X-Wats
  * @param {Number} [options.keywords_threshold] - Number between 0 and 1 representing the minimum confidence before including a keyword in the results. Required when options.keywords is set
  * @param {Number} [options.word_alternatives_threshold] - Number between 0 and 1 representing the minimum confidence before including an alternative word in the results. Must be set to enable word alternatives,
  * @param {Boolean} [options.profanity_filter=false] - set to true to filter out profanity and replace the words with *'s
- * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream (even if continuous is true). use -1 for infinity
+ * @param {Number} [options.inactivity_timeout=30] - how many seconds of silence before automatically closing the stream. use -1 for infinity
  * @param {Boolean} [options.readableObjectMode=false] - emit `result` objects instead of string Buffers for the `data` events. Does not affect input (which must be binary)
  * @param {Boolean} [options.objectMode=false] - alias for options.readableObjectMode
  * @param {Number} [options.X-Watson-Learning-Opt-Out=false] - set to true to opt-out of allowing Watson to use this request to improve it's services
