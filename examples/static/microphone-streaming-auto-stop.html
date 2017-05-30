@@ -34,8 +34,15 @@ document.querySelector('#button').onclick = function () {
 
       var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
         token: token,
-        continuous: false, // false = automatically stop transcription the first time a pause is detected
+//        continuous: false, // no longer supported
         outputElement: '#output' // CSS selector or DOM Element
+      });
+
+      stream.on('data', function(data) {
+        if(data.results[0] && data.results[0].final) {
+          stream.stop();
+          console.log('stop listening.');
+        }
       });
 
       stream.on('error', function(err) {
