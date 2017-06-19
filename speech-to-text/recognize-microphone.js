@@ -82,7 +82,6 @@ module.exports = function recognizeMicrophone(options) {
 
   var rsOpts = assign(
     {
-      continuous: true,
       'content-type': 'audio/l16;rate=16000',
       interim_results: true
     },
@@ -166,7 +165,7 @@ module.exports = function recognizeMicrophone(options) {
         l16Stream.end();
       }
       // trigger on both stop and end events:
-      // stop will not fire when a stream ends due to a timeout or having continuous: false
+      // stop will not fire when a stream ends due to a timeout
       // but when stop does fire, we want to honor it immediately
       // end will always fire, but it may take a few moments after stop
       if (keepMic) {

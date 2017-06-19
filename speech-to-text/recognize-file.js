@@ -91,7 +91,6 @@ module.exports = function recognizeFile(options) {
 
   var rsOpts = assign(
     {
-      continuous: true,
       interim_results: true
     },
     options
