@@ -16,7 +16,6 @@ document.querySelector('#button').onclick = function() {
     .then(function(token) {
       var stream = recognizeMicrophone({
         token: token,
-        continuous: false, // false = automatically stop transcription the first time a pause is detected
         outputElement: '#output' // CSS selector or DOM Element
       });
 

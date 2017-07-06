@@ -34,7 +34,6 @@ document.querySelector('#button').onclick = function () {
 
       var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
         token: token,
-//        continuous: false, // no longer supported
         outputElement: '#output' // CSS selector or DOM Element
       });
 
