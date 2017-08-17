@@ -69,7 +69,7 @@ var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'X-Wats
  * @param {Boolean} [options.objectMode=false] - alias for options.readableObjectMode
  * @param {Number} [options.X-Watson-Learning-Opt-Out=false] - set to true to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.smart_formatting=false] - formats numeric values such as dates, times, currency, etc.
- * @param {String} [options.customization_id] - not yet supported on the public STT service
+ * @param {String} [options.customization_id] - Customization ID
  *
  * @constructor
  */
