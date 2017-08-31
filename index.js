@@ -35,7 +35,7 @@
  *
  * envify automatically rewrites this during the release process
  */
-exports.version = process.env.TRAVIS_BRANCH;
+exports.version = process.env.npm_package_version;
 
 /**
  *
