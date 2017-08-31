@@ -85,7 +85,6 @@ app.use(
 var sttAuthService = new watson.AuthorizationV1(
   Object.assign(
     {
-      url: watson.SpeechToTextV1.URL,
       username: process.env.SPEECH_TO_TEXT_USERNAME, // or hard-code credentials here
       password: process.env.SPEECH_TO_TEXT_PASSWORD
     },
@@ -93,21 +92,25 @@ var sttAuthService = new watson.AuthorizationV1(
   )
 );
 app.use('/api/speech-to-text/token', function(req, res) {
-  sttAuthService.getToken({}, function(err, token) {
-    if (err) {
-      console.log('Error retrieving token: ', err);
-      res.status(500).send('Error retrieving token');
-      return;
+  sttAuthService.getToken(
+    {
+      url: watson.SpeechToTextV1.URL
+    },
+    function(err, token) {
+      if (err) {
+        console.log('Error retrieving token: ', err);
+        res.status(500).send('Error retrieving token');
+        return;
+      }
+      res.send(token);
     }
-    res.send(token);
-  });
+  );
 });
 
 // text to speech token endpoint
 var ttsAuthService = new watson.AuthorizationV1(
   Object.assign(
     {
-      url: watson.TextToSpeechV1.URL,
       username: process.env.TEXT_TO_SPEECH_USERNAME, // or hard-code credentials here
       password: process.env.TEXT_TO_SPEECH_PASSWORD
     },
@@ -115,14 +118,19 @@ var ttsAuthService = new watson.AuthorizationV1(
   )
 );
 app.use('/api/text-to-speech/token', function(req, res) {
-  ttsAuthService.getToken({}, function(err, token) {
-    if (err) {
-      console.log('Error retrieving token: ', err);
-      res.status(500).send('Error retrieving token');
-      return;
+  ttsAuthService.getToken(
+    {
+      url: watson.TextToSpeechV1.URL
+    },
+    function(err, token) {
+      if (err) {
+        console.log('Error retrieving token: ', err);
+        res.status(500).send('Error retrieving token');
+        return;
+      }
+      res.send(token);
     }
-    res.send(token);
-  });
+  );
 });
 
 const port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
