@@ -24,6 +24,7 @@ var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 var ResultStream = require('./result-stream');
 var SpeakerStream = require('./speaker-stream');
+var contentType = require('./content-type');
 var fetch = require('nodeify-fetch'); // like regular fetch, but with an extra method on the response to get a node-style ReadableStream
 
 /**
@@ -89,6 +90,12 @@ module.exports = function recognizeFile(options) {
     options.timestamps = true;
   }
 
+  // Attempt to guess content-type based on filename
+  // If this fails, recognizeStream will make a second attempt based on the file header
+  if (!options['content-type']) {
+    options['content-type'] = contentType.fromFilename(options.file);
+  }
+
   var rsOpts = assign(
     {
       interim_results: true
@@ -143,7 +150,7 @@ module.exports = function recognizeFile(options) {
   if (options.play) {
     // when file playback actually begins
     // (mostly important for downloaded files)
-    FilePlayer.playFile(options.file)
+    FilePlayer.playFile(options.file, options['content-type'])
       .then(function(player) {
         recognizeStream.on('stop', player.stop.bind(player));
         recognizeStream.on('error', player.stop.bind(player));

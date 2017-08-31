@@ -1,6 +1,7 @@
 'use strict';
 
-var getContentTypeFromHeader = require('./content-type');
+var contentType = require('./content-type');
+var bufferFrom = require('buffer-from');
 
 /**
  * Plays audio from a URL
@@ -61,7 +62,7 @@ function getContentTypeFromFile(file) {
     var r = new FileReader();
     r.readAsText(blobToText);
     r.onload = function() {
-      var ct = getContentTypeFromHeader(r.result);
+      var ct = contentType.fromHeader(bufferFrom(r.result));
       if (ct) {
         resolve(ct);
       } else {
@@ -76,14 +77,18 @@ function getContentTypeFromFile(file) {
 /**
  * Determines the file's content-type and then resolves to a FilePlayer instance
  * @param {File|Blob|String} file - binary data or URL of audio file (binary data playback may not work on mobile Safari)
+ * @param {String} [contentType] - optional content-type, will be sniffed from file header if unspecified
  * @return {Promise.<FilePlayer>}
  */
-function playFile(file) {
+function playFile(file, contentType) {
   if (typeof file === 'string') {
     return Promise.resolve(new UrlPlayer(file));
   }
-  return getContentTypeFromFile(file).then(function(contentType) {
-    return new FilePlayer(file, contentType);
+  if (contentType) {
+    return Promise.resolve(new FilePlayer(file, contentType));
+  }
+  return getContentTypeFromFile(file).then(function(sniffedContentType) {
+    return new FilePlayer(file, sniffedContentType);
   });
 }
 
