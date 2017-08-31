@@ -1,5 +1,18 @@
 # Changelog
 
+### v0.34.0
+* Add support for guessing .mp3 (via file name & header) & .webm (via filename) content-types
+* Re-factored content-type guessing to check filename first, and file header second
+* Restore support for environments that pre-date Buffer.from()
+
+### v0.33.1
+* Remove continuous param
+* Add support for vorbis, webm
+
+### v0.33.0
+* Send audio earlier - #26
+* Add customization support to STT synthesize()
+
 ### v0.32.1
 * Fixed bower main file to be unminified instead of minified
 
