@@ -49,11 +49,12 @@
     "webpack": "^2.2.1"
   },
   "dependencies": {
+    "buffer-from": "^0.1.1",
     "clone": "^2.1.0",
     "defaults": "^1.0.3",
     "get-user-media-promise": "^1.1.0",
     "lodash.pullallwith": "^4.7.0",
-    "microphone-stream": "^3.0.5",
+    "microphone-stream": "^3.0.8",
     "nodeify-fetch": "^1.0.1",
     "object.assign": "^4.0.4",
     "object.pick": "^1.2.0",

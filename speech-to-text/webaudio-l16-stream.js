@@ -2,6 +2,8 @@
 var Transform = require('stream').Transform;
 var util = require('util');
 var defaults = require('defaults');
+// some versions of the buffer browser lib don't support Buffer.from (such as the one included by the current version of express-browserify)
+var bufferFrom = require('buffer-from');
 
 var TARGET_SAMPLE_RATE = 16000;
 /**
@@ -151,9 +153,9 @@ WebAudioL16Stream.prototype.floatTo16BitPCM = function(input) {
   var output = new DataView(new ArrayBuffer(input.length * 2)); // length is in bytes (8-bit), so *2 to get 16-bit length
   for (var i = 0; i < input.length; i++) {
     var multiplier = input[i] < 0 ? 0x8000 : 0x7fff; // 16-bit signed range is -32768 to 32767
-    output.setInt16(i * 2, (input[i] * multiplier) | 0, true); // index, value, little edian
+    output.setInt16(i * 2, (input[i] * multiplier) | 0, true); // index, value ("| 0" = convert to 32-bit int, round towards 0), littleEndian.
   }
-  return Buffer.from(output.buffer);
+  return bufferFrom(output.buffer);
 };
 
 /**
