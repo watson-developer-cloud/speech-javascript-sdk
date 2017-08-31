@@ -20,7 +20,12 @@
 
 const express = require('express');
 const app = express();
+const watson = require('watson-developer-cloud');
+const vcapServices = require('vcap_services');
 const expressBrowserify = require('express-browserify');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpack = require('webpack');
+const webpackConfig = require('./webpack.config');
 
 // allows environment properties to be set in a file named .env
 require('dotenv').load({ silent: true });
@@ -66,12 +71,7 @@ app.get(
 );
 
 // set up webpack-dev-middleware to serve Webpack bundles for examples
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpack = require('webpack');
-const webpackConfig = require('./webpack.config');
-
 const compiler = webpack(webpackConfig);
-
 app.use(
   webpackDevMiddleware(compiler, {
     publicPath: '/' // Same as `output.publicPath` in most cases.
@@ -80,18 +80,60 @@ app.use(
 
 // token endpoints
 // **Warning**: these endpoints should probably be guarded with additional authentication & authorization for production use
-app.use('/api/speech-to-text/', require('./stt-token.js'));
-app.use('/api/text-to-speech/', require('./tts-token.js'));
+
+// speech to text token endpoint
+var sttAuthService = new watson.AuthorizationV1(
+  Object.assign(
+    {
+      url: watson.SpeechToTextV1.URL,
+      username: process.env.SPEECH_TO_TEXT_USERNAME, // or hard-code credentials here
+      password: process.env.SPEECH_TO_TEXT_PASSWORD
+    },
+    vcapServices.getCredentials('speech_to_text') // pulls credentials from environment in bluemix, otherwise returns {}
+  )
+);
+app.use('/api/speech-to-text/token', function(req, res) {
+  sttAuthService.getToken({}, function(err, token) {
+    if (err) {
+      console.log('Error retrieving token: ', err);
+      res.status(500).send('Error retrieving token');
+      return;
+    }
+    res.send(token);
+  });
+});
+
+// text to speech token endpoint
+var ttsAuthService = new watson.AuthorizationV1(
+  Object.assign(
+    {
+      url: watson.TextToSpeechV1.URL,
+      username: process.env.TEXT_TO_SPEECH_USERNAME, // or hard-code credentials here
+      password: process.env.TEXT_TO_SPEECH_PASSWORD
+    },
+    vcapServices.getCredentials('text_to_speech') // pulls credentials from environment in bluemix, otherwise returns {}
+  )
+);
+app.use('/api/text-to-speech/token', function(req, res) {
+  ttsAuthService.getToken({}, function(err, token) {
+    if (err) {
+      console.log('Error retrieving token: ', err);
+      res.status(500).send('Error retrieving token');
+      return;
+    }
+    res.send(token);
+  });
+});
 
 const port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
 app.listen(port, function() {
   console.log('Example IBM Watson Speech JS SDK client app & token server live at http://localhost:%s/', port);
 });
 
-// chrome requires https to access the user's microphone unless it's a localhost url so
-// this sets up a basic server at https://localhost3001/ using an included self-signed certificate
+// Chrome requires https to access the user's microphone unless it's a localhost url so
+// this sets up a basic server on port 3001 using an included self-signed certificate
 // note: this is not suitable for production use
-// however bluemix automatically adds https support at http://<myapp>.mybluemix.net
+// however bluemix automatically adds https support at https://<myapp>.mybluemix.net
 if (!process.env.VCAP_SERVICES) {
   const fs = require('fs');
   const https = require('https');
