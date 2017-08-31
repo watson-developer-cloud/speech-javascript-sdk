@@ -12,7 +12,7 @@
     "test-integration": "TEST_MODE=integration karma start --single-run",
     "webpack": "webpack",
     "browserify": "browserify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --transform envify",
-    "minify": "uglifyjs --compress --mangle --screw-ie8 dist/watson-speech.js --output dist/watson-speech.min.js --preamble \"// IBM Watson Speech JavaScript SDK\n// $npm_package_version\n// Generated at `date`\n// Copyright IBM ($npm_package_license)\n// $npm_package_homepage\"",
+    "minify": "uglifyjs --source-map --compress --mangle --output dist/watson-speech.min.js --beautify \"beautify=false,preamble='// IBM Watson Speech JavaScript SDK\\n// $TRAVIS_BRANCH\\n// Generated at `date`\\n// Copyright IBM ($npm_package_license)\\n// $npm_package_homepage'\" dist/watson-speech.js",
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
     "build": "npm run webpack && npm run minify",
     "doc": "jsdoc -c scripts/jsdoc/config.json --debug",
