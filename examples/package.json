@@ -16,10 +16,10 @@
     "express-rate-limit": "^2.6.0",
     "express-secure-only": "^0.2.1",
     "object.assign": "^4.0.4",
-    "vcap_services": "^0.2.0",
+    "vcap_services": "^0.3.4",
     "watson-developer-cloud": "^2.18.0",
     "watson-speech": "*",
-    "webpack": "^2.2.1",
+    "webpack": "^3.5.5",
     "webpack-dev-middleware": "^1.10.0",
     "whatwg-fetch": "^2.0.2"
   },
