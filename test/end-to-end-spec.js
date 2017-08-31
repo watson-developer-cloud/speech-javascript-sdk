@@ -45,12 +45,15 @@ describe('WatsonSpeech.SpeechToText end-to-end', function() {
         // stt.on('send-data', function(d) {
         //  console.log('sending ' + d.length + ' bytes');
         // })
-        stt.on('error', done).setEncoding('utf8').pipe(
-          concat(function(transcript) {
-            assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
-            done();
-          })
-        );
+        stt
+          .on('error', done)
+          .setEncoding('utf8')
+          .pipe(
+            concat(function(transcript) {
+              assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
+              done();
+            })
+          );
         setTimeout(stt.stop.bind(stt), 8 * 1000);
         // ['end', 'close', 'data', /*'results',*/ 'result', 'error', 'stopping', 'finish', 'listening'].forEach(function (eventName) {
         //  stt.on(eventName, console.log.bind(console, eventName + ' event: '));
@@ -64,10 +67,12 @@ describe('WatsonSpeech.SpeechToText end-to-end', function() {
       .then(function(results) {
         var cfg = results[0];
         cfg.file = results[1];
-        return SpeechToText.recognizeFile(cfg).promise().then(function(transcript) {
-          assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
-          done();
-        });
+        return SpeechToText.recognizeFile(cfg)
+          .promise()
+          .then(function(transcript) {
+            assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
+            done();
+          });
       })
       .catch(done);
   });
@@ -76,10 +81,12 @@ describe('WatsonSpeech.SpeechToText end-to-end', function() {
     getConfig()
       .then(function(cfg) {
         cfg.file = 'http://localhost:9877/audio.wav';
-        return SpeechToText.recognizeFile(cfg).promise().then(function(transcript) {
-          assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
-          done();
-        });
+        return SpeechToText.recognizeFile(cfg)
+          .promise()
+          .then(function(transcript) {
+            assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
+            done();
+          });
       })
       .catch(done);
   });
@@ -91,10 +98,12 @@ describe('WatsonSpeech.SpeechToText end-to-end', function() {
         cfg.file = results[1];
         var el = document.createElement('div');
         cfg.outputElement = el;
-        return SpeechToText.recognizeFile(cfg).promise().then(function() {
-          assert.equal(el.textContent, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
-          done();
-        });
+        return SpeechToText.recognizeFile(cfg)
+          .promise()
+          .then(function() {
+            assert.equal(el.textContent, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
+            done();
+          });
       })
       .catch(done);
   });
