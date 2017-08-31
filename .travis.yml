@@ -31,6 +31,7 @@ deploy:
   file:
   - dist/watson-speech.js
   - dist/watson-speech.min.js
+  - dist/watson-speech.min.js.map
   skip_cleanup: true
   on:
     tags: true
