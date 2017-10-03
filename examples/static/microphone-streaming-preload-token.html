@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Watson Speech to Text client example</title>
+    <title>Pre-loaded Token - Watson Speech to Text client example</title>
   <link rel="stylesheet" href="style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
@@ -11,12 +11,12 @@
 <a href="/">&laquo; Examples</a>
 
 <section>
-    <h2>Transcribe from Microphone</h2>
+    <h2>Transcribe from Microphone - With Pre-loaded Token</h2>
     <button id="button">Start Microphone Transcription</button>
     <button id="stop">Stop</button>
 
     <h2>Output:</h2>
-    <div id="output">Open your browser's console to view the output.</div>
+    <div id="output">--</div>
 </section>
 
 <script src="bower_components/watson-speech/dist/watson-speech.js"></script>
@@ -26,33 +26,30 @@
 <h2>Code for this demo:</h2>
 
 <pre><code><script style="display: block;">
+var token;
+fetch('/api/speech-to-text/token')
+.then(function(response) {
+    return response.text();
+}).then(function(_token) {
+    token = _token;
+}).catch(function(error) {
+    console.log(error);
+});
+
+
 document.querySelector('#button').onclick = function () {
-
-  fetch('/api/speech-to-text/token')
-  .then(function(response) {
-      return response.text();
-  }).then(function (token) {
-
     var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-      token: token,
-      object_mode: false
-    });
-
-    stream.setEncoding('utf8'); // get text instead of Buffers for on data events
-
-    stream.on('data', function(data) {
-      console.log(data);
+        token: token,
+        outputElement: '#output' // CSS selector or DOM Element
     });
 
     stream.on('error', function(err) {
         console.log(err);
     });
 
-    document.querySelector('#stop').onclick = stream.stop.bind(stream);
-
-  }).catch(function(error) {
-      console.log(error);
-  });
+    document.querySelector('#stop').onclick = function() {
+      stream.stop();
+    };
 };
 
 </script></code></pre>

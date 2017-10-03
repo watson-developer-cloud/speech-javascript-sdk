@@ -5977,13 +5977,19 @@ var bufferFrom = __webpack_require__(15);
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getUserMedia
  *
- * @param {MediaStream} stream https://developer.mozilla.org/en-US/docs/Web/API/MediaStream
  * @param {Object} [opts] options
+ * @param {MediaStream} [opts.stream] https://developer.mozilla.org/en-US/docs/Web/API/MediaStream - for iOS compatibility, it is recommended that you create the MicrophoneStream instance in response to the tap - before you have a MediaStream, and then later call setStream() with the MediaStream.
  * @param {Boolean} [opts.objectMode=false] Puts the stream into ObjectMode where it emits AudioBuffers instead of Buffers - see https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer
  * @param {Number|null} [opts.bufferSize=null] https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
  * @constructor
  */
-function MicrophoneStream(stream, opts) {
+function MicrophoneStream(opts) {
+  // backwards compatibility - passing in the Stream here will generally not work on iOS 11 Safari
+  if (typeof MediaStream && opts instanceof MediaStream) {
+    var stream = opts;
+    opts = arguments[1] || {};
+    opts.stream = stream;
+  }
   // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
   // buffer size to balance between latency and audio quality."
   // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
@@ -6019,12 +6025,32 @@ function MicrophoneStream(stream, opts) {
 
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   var context = new AudioContext();
-  var audioInput = context.createMediaStreamSource(stream);
   var recorder = context.createScriptProcessor(bufferSize, inputChannels, outputChannels);
 
-  recorder.onaudioprocess = recorderProcess;
+  // Workaround for Safari on iOS 11 - context starts out suspended, and the resume() call must be in response to a tap.
+  // This allows you to create the MicrophoneStream instance synchronously in response to the first tap,
+  // and then connect the MediaStream asynchronously, after the user has granted microphone access.
+  var audioInput;
+  if (context.state === 'suspended') {
+    context.resume();
+  }
 
-  audioInput.connect(recorder);
+  /**
+   * Set the MediaStream
+   *
+   * This was removed from the constructor to enable better compatibility with Safari on iOS 11.
+   *
+   * @param {MediaStream} stream https://developer.mozilla.org/en-US/docs/Web/API/MediaStream
+   */
+  this.setStream = function(stream) {
+    audioInput = context.createMediaStreamSource(stream);
+    audioInput.connect(recorder);
+    recorder.onaudioprocess = recorderProcess;
+  };
+
+  if (opts.stream) {
+    this.setStream(stream);
+  }
 
   // other half of workaround for chrome bugs
   recorder.connect(context.destination);
@@ -6039,7 +6065,9 @@ function MicrophoneStream(stream, opts) {
       // This fails in some older versions of chrome. Nothing we can do about it.
     }
     recorder.disconnect();
-    audioInput.disconnect();
+    if (audioInput) {
+      audioInput.disconnect();
+    }
     try {
       context.close(); // returns a promise;
     } catch (ex) {
@@ -8785,29 +8813,66 @@ module.exports = function recognizeMicrophone(options) {
   var recognizeStream = new RecognizeStream(rsOpts);
   var streams = [recognizeStream]; // collect all of the streams so that we can bundle up errors and send them to the last one
 
-  var keepMic = options.keepMicrophone;
-  var getMicStream;
-  if (keepMic && preservedMicStream) {
-    preservedMicStream.unpipe(bitBucket);
-    getMicStream = Promise.resolve(preservedMicStream);
-  } else {
-    var pm = options.mediaStream ? Promise.resolve(options.mediaStream) : getUserMedia({ video: false, audio: true });
-
-    getMicStream = pm.then(function(mic) {
-      var micStream = new MicrophoneStream(mic, {
-        objectMode: true,
-        bufferSize: options.bufferSize
-      });
-      if (keepMic) {
-        preservedMicStream = micStream;
-      }
-      return Promise.resolve(micStream);
-    });
-  }
-
   // set up the output first so that we have a place to emit errors
   // if there's trouble with the input stream
   var stream = recognizeStream;
+
+  var keepMic = options.keepMicrophone;
+  var micStream;
+  if (keepMic && preservedMicStream) {
+    preservedMicStream.unpipe(bitBucket);
+    micStream = preservedMicStream;
+  } else {
+    // create the MicrophoneStream synchronously to allow it to resume the context in Safari on iOS 11
+    micStream = new MicrophoneStream({
+      objectMode: true,
+      bufferSize: options.bufferSize
+    });
+    var pm = options.mediaStream ? Promise.resolve(options.mediaStream) : getUserMedia({ video: false, audio: true });
+    pm
+      .then(function(mediaStream) {
+        micStream.setStream(mediaStream);
+        if (keepMic) {
+          preservedMicStream = micStream;
+        }
+      })
+      .catch(function(err) {
+        stream.emit('error', err);
+        if (err.name === 'NotSupportedError') {
+          stream.end(); // end the stream
+        }
+      });
+  }
+
+  var l16Stream = new L16({ writableObjectMode: true });
+
+  micStream.pipe(l16Stream).pipe(recognizeStream);
+
+  streams.push(micStream, l16Stream);
+
+  /**
+   * unpipes the mic stream to prevent any more audio from being sent over the wire
+   * temporarily re-pipes it to the bitBucket (basically /dev/null)  becuse
+   * otherwise it will buffer the audio from in between calls and prepend it to the next one
+   *
+   * @private
+   */
+  function end() {
+    micStream.unpipe(l16Stream);
+    micStream.pipe(bitBucket);
+    l16Stream.end();
+  }
+  // trigger on both stop and end events:
+  // stop will not fire when a stream ends due to a timeout
+  // but when stop does fire, we want to honor it immediately
+  // end will always fire, but it may take a few moments after stop
+  if (keepMic) {
+    recognizeStream.on('end', end);
+    recognizeStream.on('stop', end);
+  } else {
+    recognizeStream.on('end', micStream.stop.bind(micStream));
+    recognizeStream.on('stop', micStream.stop.bind(micStream));
+  }
 
   if (options.resultsBySpeaker) {
     stream = stream.pipe(new SpeakerStream(options));
@@ -8828,49 +8893,6 @@ module.exports = function recognizeMicrophone(options) {
     stream = stream.pipe(new ResultStream());
     streams.push(stream);
   }
-
-  getMicStream.catch(function(err) {
-    stream.emit('error', err);
-    if (err.name === 'NotSupportedError') {
-      stream.end(); // end the stream
-    }
-  });
-
-  getMicStream
-    .then(function(micStream) {
-      streams.push(micStream);
-
-      var l16Stream = new L16({ writableObjectMode: true });
-
-      micStream.pipe(l16Stream).pipe(recognizeStream);
-
-      streams.push(l16Stream);
-
-      /**
-     * unpipes the mic stream to prevent any more audio from being sent over the wire
-     * temporarily re-pipes it to the bitBucket (basically /dev/null)  becuse
-     * otherwise it will buffer the audio from in between calls and prepend it to the next one
-     *
-     * @private
-     */
-      function end() {
-        micStream.unpipe(l16Stream);
-        micStream.pipe(bitBucket);
-        l16Stream.end();
-      }
-      // trigger on both stop and end events:
-      // stop will not fire when a stream ends due to a timeout
-      // but when stop does fire, we want to honor it immediately
-      // end will always fire, but it may take a few moments after stop
-      if (keepMic) {
-        recognizeStream.on('end', end);
-        recognizeStream.on('stop', end);
-      } else {
-        recognizeStream.on('end', micStream.stop.bind(micStream));
-        recognizeStream.on('stop', micStream.stop.bind(micStream));
-      }
-    })
-    .catch(recognizeStream.emit.bind(recognizeStream, 'error'));
 
   // Capture errors from any stream except the last one and emit them on the last one
   streams.forEach(function(prevStream) {
