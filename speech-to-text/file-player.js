@@ -66,7 +66,7 @@ function getContentTypeFromFile(file) {
       if (ct) {
         resolve(ct);
       } else {
-        var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
+        var err = new Error('Unable to determine content type from file header; only wav, flac, ogg/opus, and webm are supported.');
         err.name = FilePlayer.ERROR_UNSUPPORTED_FORMAT;
         reject(err);
       }
