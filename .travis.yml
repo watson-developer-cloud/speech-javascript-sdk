@@ -51,7 +51,6 @@ deploy:
     repo: watson-developer-cloud/speech-javascript-sdk
 - provider: script
   script: scripts/create_semver_tag.sh
-  skip_cleanup: true
   on:
     branch: master
     repo: watson-developer-cloud/speech-javascript-sdk
