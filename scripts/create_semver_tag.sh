@@ -36,9 +36,10 @@ if [ "$TRAVIS_REPO_SLUG" == "$REPO" ] \
   git config remote.origin.url https://${GH_TOKEN}@github.com/${REPO}
 
   # Commit the build for bower
-  npm run build
-  git add -f dist/
-  git commit -m "building dist/ scripts for release"
+  # disabled: this is now handled by scripts.version in package.json, which in turn calls npm_version.sh
+#   npm run build
+#   git add -f dist/
+#   git commit -m "building dist/ scripts for release"
 
   # create the tag
   npm version $SEMVER
