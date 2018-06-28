@@ -13,7 +13,7 @@
 exports.stringify = function stringify(queryParams) {
   return Object.keys(queryParams)
     .map(function(key) {
-      return key + '=' + (key === 'watson-token' ? queryParams[key] : encodeURIComponent(queryParams[key])); // the server chokes if the token is correctly url-encoded
+      return key + '=' + (key === 'watson-token' || key === 'access_token' ? queryParams[key] : encodeURIComponent(queryParams[key])); // the server chokes if the token is correctly url-encoded
     })
     .join('&');
 };

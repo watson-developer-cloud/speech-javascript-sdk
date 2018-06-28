@@ -29,7 +29,8 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  * Creates and returns a HTML5 `<audio>` element
  *
  * @param {Object} options
- * @param {String} options.token auth token
+ * @param {String} [options.token] - Auth token for CF services
+ * @param {String} options.access_token - IAM Access Token for RC services
  * @param {String} options.text text to speak
  * @param {String} [options.voice=en-US_MichaelVoice] what voice to use - call getVoices() for a complete list.
  * @param {String} [options.customization_id] GUID of a custom voice model. Omit to use the voice with no customization.
@@ -42,7 +43,7 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  */
 module.exports = function synthesize(options) {
   if (!options || !options.token) {
-    throw new Error('Watson TextToSpeech: missing required parameter: options.token');
+    throw new Error('Watson TextToSpeech: missing required parameter: options.token (CF) or options.access_token (RC)');
   }
   options['watson-token'] = options.token;
   delete options.token;

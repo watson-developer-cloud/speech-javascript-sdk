@@ -58,9 +58,11 @@ See a more advanced example at https://speech-to-text-demo.mybluemix.net/
 All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
 (See https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/ for a couple of basic examples in Node.js and Python.)
 
+_NOTE_: The `token` parameter only works for CF instances of services. For RC services using IAM for authentication, the `access_token` parameter must be used.
+
 ## [`WatsonSpeech.TextToSpeech`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_text-to-speech.html)
 
-### [`.synthesize({text, token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_text-to-speech_synthesize.html) -> `<audio>`
+### [`.synthesize({text, token||access_token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_text-to-speech_synthesize.html) -> `<audio>`
 
 Speaks the supplied text through an automatically-created `<audio>` element. 
 Currently limited to text that can fit within a GET URL (this is particularly an issue on [Internet Explorer before Windows 10](http://stackoverflow.com/questions/32267442/url-length-limitation-of-microsoft-edge)
@@ -80,7 +82,7 @@ The `recognizeMicrophone()` and `recognizeFile()` helper methods are recommended
 
 The core of the library is the [RecognizeStream] that performs the actual transcription, and a collection of other Node.js-style streams that manipulate the data in various ways. For less common use-cases, the core components may be used directly with the helper methods serving as optional templates to follow. The full library is documented at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text.html
 
-### [`.recognizeMicrophone({token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-microphone.html) -> Stream
+### [`.recognizeMicrophone({token||access_token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-microphone.html) -> Stream
 
 Options: 
 * `keepMicrophone`: if true, preserves the MicrophoneStream for subsequent calls, preventing additional permissions requests in Firefox
@@ -96,7 +98,7 @@ Also note that Chrome requires https (with a few exceptions for localhost and su
 No more data will be set after `.stop()` is called on the returned stream, but additional results may be recieved for already-sent data.
 
 
-### [`.recognizeFile({data, token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-file.html) -> Stream
+### [`.recognizeFile({data, token||access_token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-file.html) -> Stream
 
 Can recognize and optionally attempt to play a URL, [File](https://developer.mozilla.org/en-US/docs/Web/API/File) or [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
 (such as from an `<input type="file"/>` or from an ajax request.)
