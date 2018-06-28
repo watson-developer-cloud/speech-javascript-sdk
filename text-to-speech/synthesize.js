@@ -42,7 +42,7 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  * @see module:watson-speech/text-to-speech/get-voices
  */
 module.exports = function synthesize(options) {
-  if (!options || !options.token) {
+  if (!options || (!options.token && !options.access_token)) {
     throw new Error('Watson TextToSpeech: missing required parameter: options.token (CF) or options.access_token (RC)');
   }
   options['watson-token'] = options.token;

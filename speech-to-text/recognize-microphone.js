@@ -56,7 +56,7 @@ var bitBucket = new Writable({
  * @return {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
  */
 module.exports = function recognizeMicrophone(options) {
-  if (!options || !options.token || !options.access_token) {
+  if (!options || (!options.token && !options.access_token)) {
     throw new Error('WatsonSpeechToText: missing required parameter: opts.token (CF) or opts.access_token (RC)');
   }
 

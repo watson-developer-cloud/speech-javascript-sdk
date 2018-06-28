@@ -42,7 +42,7 @@
  * @return {Promise.<T>}
  */
 module.exports = function getModels(options) {
-  if (!options || !options.token || !options.access_token) {
+  if (!options || (!options.token && !options.access_token)) {
     throw new Error('Watson SpeechToText: missing required auth parameter: options.token (CF) or options.access_token (RC)');
   }
   var reqOpts = {

@@ -50,7 +50,7 @@ var fetch = require('nodeify-fetch'); // like regular fetch, but with an extra m
  */
 module.exports = function recognizeFile(options) {
   // eslint-disable-line complexity
-  if (!options || !options.token || !options.access_token) {
+  if (!options || (!options.token && !options.access_token)) {
     throw new Error('WatsonSpeechToText: missing required parameter: opts.token (CF) or opts.access_token (RC)');
   }
 
