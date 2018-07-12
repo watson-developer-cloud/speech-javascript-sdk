@@ -38,7 +38,7 @@ var OPENING_MESSAGE_PARAMS_ALLOWED = [
   'speaker_labels'
 ];
 
-var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'X-Watson-Learning-Opt-Out'];
+var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'access_token', 'X-Watson-Learning-Opt-Out'];
 
 /**
  * pipe()-able Node.js Duplex stream - accepts binary audio and emits text/objects in it's `data` events.
@@ -53,7 +53,8 @@ var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'X-Wats
  * @param {Object} options
  * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
  * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] base URL for service
- * @param {String} [options.token] - Auth token
+ * @param {String} [options.token] - Auth token for CF services
+ * @param {String} options.access_token - IAM Access Token for RC services
  * @param {Object} [options.headers] - Only works in Node.js, not in browsers. Allows for custom headers to be set, including an Authorization header (preventing the need for auth tokens)
  * @param {String} [options.content-type='audio/wav'] - content type of audio; can be automatically determined from file header in most cases. only wav, flac, ogg/opus, and webm are supported
  * @param {Boolean} [options.interim_results=true] - Send back non-final previews of each "sentence" as it is being processed. These results are ignored in text mode.
