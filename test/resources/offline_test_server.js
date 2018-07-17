@@ -20,6 +20,10 @@ module.exports = function(app, log) {
     res.json({ token: token, url: 'http://localhost:' + API_PORT + '/speech-to-text/api' });
   });
 
+  app.get('/iam-token', function(req, res) {
+    res.json({ access_token: token, url: 'http://localhost:' + API_PORT + '/speech-to-text/api' });
+  });
+
   // we don't have access to the actual http server in the karma-express plugin, so just creating a new one on a different port
   // url is /speech-to-text/api/v1/recognize
   var server = http.createServer(function(request, response) {

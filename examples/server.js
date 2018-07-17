@@ -20,7 +20,9 @@
 
 const express = require('express');
 const app = express();
-const watson = require('watson-developer-cloud');
+const AuthorizationV1 = require('watson-developer-cloud/authorization/v1');
+const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
+const TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 const vcapServices = require('vcap_services');
 const expressBrowserify = require('express-browserify');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -82,7 +84,7 @@ app.use(
 // **Warning**: these endpoints should probably be guarded with additional authentication & authorization for production use
 
 // speech to text token endpoint
-var sttAuthService = new watson.AuthorizationV1(
+var sttAuthService = new AuthorizationV1(
   Object.assign(
     {
       username: process.env.SPEECH_TO_TEXT_USERNAME, // or hard-code credentials here
@@ -94,7 +96,7 @@ var sttAuthService = new watson.AuthorizationV1(
 app.use('/api/speech-to-text/token', function(req, res) {
   sttAuthService.getToken(
     {
-      url: watson.SpeechToTextV1.URL
+      url: SpeechToTextV1.URL
     },
     function(err, token) {
       if (err) {
@@ -108,7 +110,7 @@ app.use('/api/speech-to-text/token', function(req, res) {
 });
 
 // text to speech token endpoint
-var ttsAuthService = new watson.AuthorizationV1(
+var ttsAuthService = new AuthorizationV1(
   Object.assign(
     {
       username: process.env.TEXT_TO_SPEECH_USERNAME, // or hard-code credentials here
@@ -120,7 +122,7 @@ var ttsAuthService = new watson.AuthorizationV1(
 app.use('/api/text-to-speech/token', function(req, res) {
   ttsAuthService.getToken(
     {
-      url: watson.TextToSpeechV1.URL
+      url: TextToSpeechV1.URL
     },
     function(err, token) {
       if (err) {
