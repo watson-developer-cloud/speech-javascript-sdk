@@ -38,7 +38,7 @@ var OPENING_MESSAGE_PARAMS_ALLOWED = [
   'speaker_labels'
 ];
 
-var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'access_token', 'X-Watson-Learning-Opt-Out'];
+var QUERY_PARAMS_ALLOWED = ['customization_id', 'acoustic_customization_id', 'model', 'watson-token', 'access_token', 'X-Watson-Learning-Opt-Out'];
 
 /**
  * pipe()-able Node.js Duplex stream - accepts binary audio and emits text/objects in it's `data` events.
@@ -71,6 +71,7 @@ var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'access
  * @param {Number} [options.X-Watson-Learning-Opt-Out=false] - set to true to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.smart_formatting=false] - formats numeric values such as dates, times, currency, etc.
  * @param {String} [options.customization_id] - Customization ID
+ * @param {String} [options.acoustic_customization_id] - Acoustic customization ID
  *
  * @constructor
  */
