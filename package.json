@@ -1,6 +1,6 @@
 {
   "name": "watson-speech",
-  "version": "0.34.1",
+  "version": "0.35.0",
   "description": "IBM Watson Speech to Text and Text to Speech SDK for web browsers.",
   "main": "index.js",
   "scripts": {
@@ -15,14 +15,18 @@
     "minify": "uglifyjs --source-map --compress --mangle --output dist/watson-speech.min.js --beautify \"beautify=false,preamble='// IBM Watson Speech JavaScript SDK\\n// $npm_package_version\\n// Generated at `date`\\n// Copyright IBM ($npm_package_license)\\n// $npm_package_homepage'\" dist/watson-speech.js",
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
     "build": "npm run webpack && npm run minify",
-    "version": "scripts/npm_version.sh",
     "doc": "jsdoc -c scripts/jsdoc/config.json --debug",
     "watch-doc": "nodemon --watch ./ --ignore ./doc --ext js,tmpl,json --exec npm run doc"
   },
-  "author": "Nathan Friedly <http://nfriedly.com>",
+  "contributors": [
+    {
+      "name": "Nathan Friedly",
+      "url": "http://nfriedly.com"
+    }
+  ],
   "devDependencies": {
-    "browserify": "^14.4.0",
-    "concat-stream": "^1.6.0",
+    "browserify": "^14.5.0",
+    "concat-stream": "^1.6.2",
     "envify": "^4.1.0",
     "envify-loader": "^0.1.0",
     "eslint": "^4.8.0",
@@ -30,38 +34,38 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.2",
     "expect.js": "^0.3.1",
-    "jquery": "^3.1.1",
+    "jquery": "^3.3.1",
     "jsdoc": "^3.5.5",
     "karma": "^1.7.1",
     "karma-browserify": "^5.3.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-eslint": "^2.2.0",
     "karma-express-http-server": "0.0.1",
-    "karma-firefox-launcher": "^1.0.0",
+    "karma-firefox-launcher": "^1.1.0",
     "karma-mocha": "^1.3.0",
     "memory-fs": "^0.4.1",
-    "mocha": "^4.0.0",
+    "mocha": "^4.1.0",
     "prettier": "^1.13.7",
     "serve-static": "^1.13.2",
-    "sinon": "^4.0.0",
-    "uglify-js": "^3.4.4",
+    "sinon": "^4.5.0",
+    "uglify-js": "^3.4.5",
     "watchify": "^3.11.0",
-    "watson-developer-cloud": "^3.7.0",
-    "webpack": "^3.6.0"
+    "watson-developer-cloud": "^3.7.1",
+    "webpack": "^3.12.0"
   },
   "dependencies": {
-    "buffer-from": "^0.1.1",
+    "buffer-from": "^0.1.2",
     "clone": "^2.1.0",
     "defaults": "^1.0.3",
-    "get-user-media-promise": "^1.1.0",
+    "get-user-media-promise": "^1.1.4",
     "lodash.pullallwith": "^4.7.0",
     "microphone-stream": "^4.1.3",
     "nodeify-fetch": "^1.0.1",
-    "object.assign": "^4.0.4",
+    "object.assign": "^4.1.0",
     "object.pick": "^1.3.0",
     "readable-blob-stream": "^1.1.0",
-    "websocket": "^1.0.24",
-    "whatwg-fetch": "^2.0.1"
+    "websocket": "^1.0.26",
+    "whatwg-fetch": "^2.0.4"
   },
   "homepage": "http://watson-speech.mybluemix.net/",
   "repository": {
