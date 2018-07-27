@@ -22,7 +22,7 @@ deploy:
 - provider: script
   skip_cleanup: true
   script:
-  - cd examples/ bx-blue-green-travis
+  - cd examples/ && bx-blue-green-travis
   on:
     branch: master
     repo: watson-developer-cloud/speech-javascript-sdk
