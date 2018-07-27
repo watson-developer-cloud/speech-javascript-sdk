@@ -1,6 +1,6 @@
 {
   "name": "watson-speech",
-  "version": "0.35.0",
+  "version": "0.36.0",
   "description": "IBM Watson Speech to Text and Text to Speech SDK for web browsers.",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,7 @@
     "watchify": "watchify index.js --standalone WatsonSpeech --outfile dist/watson-speech.js --debug --verbose",
     "build": "npm run webpack && npm run minify",
     "doc": "jsdoc -c scripts/jsdoc/config.json --debug",
+    "version": "npm run build && git add -A dist",
     "watch-doc": "nodemon --watch ./ --ignore ./doc --ext js,tmpl,json --exec npm run doc"
   },
   "contributors": [

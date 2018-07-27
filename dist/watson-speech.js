@@ -7983,7 +7983,7 @@ module.exports = TimingStream;
  *
  * envify automatically rewrites this during the release process
  */
-exports.version = "0.35.0";
+exports.version = "0.36.0";
 
 /**
  *
