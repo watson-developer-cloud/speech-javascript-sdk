@@ -1,0 +1,14 @@
+{
+  "branch": "master",
+  "publish": [
+    "@semantic-release/npm",
+    {
+      "path": "@semantic-release/github",
+      "assets": [
+        {"path": "dist/watson-speech.js", "label": "watson-speech.js"},
+        {"path": "dist/watson-speech.min.js", "label": "watson-speech.min.js"},
+        {"path": "dist/watson-speech.min.js.map", "label": "watson-speech.min.js.map"},
+      ]
+    }
+  ]
+}

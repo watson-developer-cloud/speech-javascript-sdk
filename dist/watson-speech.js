@@ -7,7 +7,7 @@
 		exports["WatsonSpeech"] = factory();
 	else
 		root["WatsonSpeech"] = factory();
-})(this, function() {
+})(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 43);
+/******/ 	return __webpack_require__(__webpack_require__.s = 37);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -88,9 +88,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 
-var base64 = __webpack_require__(45)
-var ieee754 = __webpack_require__(46)
-var isArray = __webpack_require__(24)
+var base64 = __webpack_require__(39)
+var ieee754 = __webpack_require__(40)
+var isArray = __webpack_require__(23)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -1868,7 +1868,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
 /* 1 */
@@ -1902,10 +1902,10 @@ var inherits = __webpack_require__(2);
 
 inherits(Stream, EE);
 Stream.Readable = __webpack_require__(7);
-Stream.Writable = __webpack_require__(54);
-Stream.Duplex = __webpack_require__(55);
-Stream.Transform = __webpack_require__(56);
-Stream.PassThrough = __webpack_require__(57);
+Stream.Writable = __webpack_require__(49);
+Stream.Duplex = __webpack_require__(50);
+Stream.Transform = __webpack_require__(51);
+Stream.PassThrough = __webpack_require__(52);
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -2206,6 +2206,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -2747,7 +2751,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(58);
+exports.isBuffer = __webpack_require__(53);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -2791,7 +2795,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(59);
+exports.inherits = __webpack_require__(54);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -2809,10 +2813,37 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(3)))
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2844,7 +2875,7 @@ var util = __webpack_require__(8);
 util.inherits = __webpack_require__(2);
 /*</replacement>*/
 
-var Readable = __webpack_require__(27);
+var Readable = __webpack_require__(26);
 var Writable = __webpack_require__(14);
 
 util.inherits(Duplex, Readable);
@@ -2893,43 +2924,16 @@ function forEach(xs, f) {
 }
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(27);
+exports = module.exports = __webpack_require__(26);
 exports.Stream = exports;
 exports.Readable = exports;
 exports.Writable = __webpack_require__(14);
-exports.Duplex = __webpack_require__(5);
-exports.Transform = __webpack_require__(30);
-exports.PassThrough = __webpack_require__(53);
+exports.Duplex = __webpack_require__(6);
+exports.Transform = __webpack_require__(29);
+exports.PassThrough = __webpack_require__(48);
 
 
 /***/ }),
@@ -3081,7 +3085,7 @@ module.exports = function promise(stream) {
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var clone = __webpack_require__(78);
+var clone = __webpack_require__(60);
 
 module.exports = function(options, defaults) {
   options = options || {};
@@ -3568,7 +3572,7 @@ exports.allocUnsafeSlow = function allocUnsafeSlow(size) {
   return new SlowBuffer(size);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
 /* 14 */
@@ -3604,12 +3608,12 @@ util.inherits = __webpack_require__(2);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(52)
+  deprecate: __webpack_require__(46)
 };
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(28);
+var Stream = __webpack_require__(27);
 /*</replacement>*/
 
 var Buffer = __webpack_require__(0).Buffer;
@@ -3629,7 +3633,7 @@ function WriteReq(chunk, encoding, cb) {
 }
 
 function WritableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(5);
+  Duplex = Duplex || __webpack_require__(6);
 
   options = options || {};
 
@@ -3763,7 +3767,7 @@ if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.protot
 }
 
 function Writable(options) {
-  Duplex = Duplex || __webpack_require__(5);
+  Duplex = Duplex || __webpack_require__(6);
 
   // Writable ctor is applied to Duplexes, too.
   // `realHasInstance` is necessary because using plain `instanceof`
@@ -4119,19 +4123,23 @@ function CorkedRequest(state) {
     }
   };
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(50).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(44).setImmediate))
 
 /***/ }),
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {var isArrayBuffer = __webpack_require__(60)
+/* WEBPACK VAR INJECTION */(function(Buffer) {var toString = Object.prototype.toString
 
 var isModern = (
   typeof Buffer.alloc === 'function' &&
   typeof Buffer.allocUnsafe === 'function' &&
   typeof Buffer.from === 'function'
 )
+
+function isArrayBuffer (input) {
+  return toString.call(input).slice(8, -1) === 'ArrayBuffer'
+}
 
 function fromArrayBuffer (obj, byteOffset, length) {
   byteOffset >>>= 0
@@ -4198,231 +4206,6 @@ module.exports = bufferFrom
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * @file List of ECMAScript5 white space characters.
- * @version 2.0.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module white-space-x
- */
-
-
-
-/**
- * An array of the ES5 whitespace char codes, string, and their descriptions.
- *
- * @name list
- * @type Array.<Object>
- * @example
- * var whiteSpace = require('white-space-x');
- * whiteSpaces.list.foreach(function (item) {
- *   console.log(lib.description, item.code, item.string);
- * });
- */
-var list = [
-  {
-    code: 0x0009,
-    description: 'Tab',
-    string: '\u0009'
-  },
-  {
-    code: 0x000a,
-    description: 'Line Feed',
-    string: '\u000a'
-  },
-  {
-    code: 0x000b,
-    description: 'Vertical Tab',
-    string: '\u000b'
-  },
-  {
-    code: 0x000c,
-    description: 'Form Feed',
-    string: '\u000c'
-  },
-  {
-    code: 0x000d,
-    description: 'Carriage Return',
-    string: '\u000d'
-  },
-  {
-    code: 0x0020,
-    description: 'Space',
-    string: '\u0020'
-  },
-  /*
-  {
-    code: 0x0085,
-    description: 'Next line - Not ES5 whitespace',
-    string: '\u0085'
-  }
-  */
-  {
-    code: 0x00a0,
-    description: 'No-break space',
-    string: '\u00a0'
-  },
-  {
-    code: 0x1680,
-    description: 'Ogham space mark',
-    string: '\u1680'
-  },
-  {
-    code: 0x180e,
-    description: 'Mongolian vowel separator',
-    string: '\u180e'
-  },
-  {
-    code: 0x2000,
-    description: 'En quad',
-    string: '\u2000'
-  },
-  {
-    code: 0x2001,
-    description: 'Em quad',
-    string: '\u2001'
-  },
-  {
-    code: 0x2002,
-    description: 'En space',
-    string: '\u2002'
-  },
-  {
-    code: 0x2003,
-    description: 'Em space',
-    string: '\u2003'
-  },
-  {
-    code: 0x2004,
-    description: 'Three-per-em space',
-    string: '\u2004'
-  },
-  {
-    code: 0x2005,
-    description: 'Four-per-em space',
-    string: '\u2005'
-  },
-  {
-    code: 0x2006,
-    description: 'Six-per-em space',
-    string: '\u2006'
-  },
-  {
-    code: 0x2007,
-    description: 'Figure space',
-    string: '\u2007'
-  },
-  {
-    code: 0x2008,
-    description: 'Punctuation space',
-    string: '\u2008'
-  },
-  {
-    code: 0x2009,
-    description: 'Thin space',
-    string: '\u2009'
-  },
-  {
-    code: 0x200a,
-    description: 'Hair space',
-    string: '\u200a'
-  },
-  /*
-  {
-    code: 0x200b,
-    description: 'Zero width space - Not ES5 whitespace',
-    string: '\u200b'
-  },
-  */
-  {
-    code: 0x2028,
-    description: 'Line separator',
-    string: '\u2028'
-  },
-  {
-    code: 0x2029,
-    description: 'Paragraph separator',
-    string: '\u2029'
-  },
-  {
-    code: 0x202f,
-    description: 'Narrow no-break space',
-    string: '\u202f'
-  },
-  {
-    code: 0x205f,
-    description: 'Medium mathematical space',
-    string: '\u205f'
-  },
-  {
-    code: 0x3000,
-    description: 'Ideographic space',
-    string: '\u3000'
-  },
-  {
-    code: 0xfeff,
-    description: 'Byte Order Mark',
-    string: '\ufeff'
-  }
-];
-
-var string = '';
-var length = list.length;
-for (var i = 0; i < length; i += 1) {
-  string += list[i].string;
-}
-
-/**
- * A string of the ES5 whitespace characters.
- *
- * @name string
- * @type string
- * @example
- * var whiteSpace = require('white-space-x');
- * var characters = [
- *   '\u0009',
- *   '\u000a',
- *   '\u000b',
- *   '\u000c',
- *   '\u000d',
- *   '\u0020',
- *   '\u00a0',
- *   '\u1680',
- *   '\u180e',
- *   '\u2000',
- *   '\u2001',
- *   '\u2002',
- *   '\u2003',
- *   '\u2004',
- *   '\u2005',
- *   '\u2006',
- *   '\u2007',
- *   '\u2008',
- *   '\u2009',
- *   '\u200a',
- *   '\u2028',
- *   '\u2029',
- *   '\u202f',
- *   '\u205f',
- *   '\u3000',
- *   '\ufeff'
- * ];
- * var ws = characters.join('');
- * var re1 = new RegExp('^[' + whiteSpace.string + ']+$)');
- * re1.test(ws); // true
- */
-module.exports = {
-  list: list,
-  string: string
-};
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
  * Copyright 2014 IBM Corp. All Rights Reserved.
  *
@@ -4443,10 +4226,10 @@ module.exports = {
 
 var Duplex = __webpack_require__(1).Duplex;
 var util = __webpack_require__(4);
-var pick = __webpack_require__(35);
-var W3CWebSocket = __webpack_require__(74).w3cwebsocket;
-var contentType = __webpack_require__(18);
-var qs = __webpack_require__(36);
+var pick = __webpack_require__(30);
+var W3CWebSocket = __webpack_require__(56).w3cwebsocket;
+var contentType = __webpack_require__(17);
+var qs = __webpack_require__(31);
 
 var OPENING_MESSAGE_PARAMS_ALLOWED = [
   'inactivity_timeout',
@@ -4463,7 +4246,7 @@ var OPENING_MESSAGE_PARAMS_ALLOWED = [
   'speaker_labels'
 ];
 
-var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'X-Watson-Learning-Opt-Out'];
+var QUERY_PARAMS_ALLOWED = ['customization_id', 'acoustic_customization_id', 'model', 'watson-token', 'access_token', 'X-Watson-Learning-Opt-Out'];
 
 /**
  * pipe()-able Node.js Duplex stream - accepts binary audio and emits text/objects in it's `data` events.
@@ -4478,13 +4261,14 @@ var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'X-Wats
  * @param {Object} options
  * @param {String} [options.model='en-US_BroadbandModel'] - voice model to use. Microphone streaming only supports broadband models.
  * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] base URL for service
- * @param {String} [options.token] - Auth token
+ * @param {String} [options.token] - Auth token for CF services
+ * @param {String} options.access_token - IAM Access Token for RC services
  * @param {Object} [options.headers] - Only works in Node.js, not in browsers. Allows for custom headers to be set, including an Authorization header (preventing the need for auth tokens)
  * @param {String} [options.content-type='audio/wav'] - content type of audio; can be automatically determined from file header in most cases. only wav, flac, ogg/opus, and webm are supported
  * @param {Boolean} [options.interim_results=true] - Send back non-final previews of each "sentence" as it is being processed. These results are ignored in text mode.
- * @param {Boolean} [options.word_confidence=false] - include confidence scores with results. Defaults to true when in objectMode.
- * @param {Boolean} [options.timestamps=false] - include timestamps with results. Defaults to true when in objectMode.
- * @param {Number} [options.max_alternatives=1] - maximum number of alternative transcriptions to include. Defaults to 3 when in objectMode.
+ * @param {Boolean} [options.word_confidence=false] - include confidence scores with results.
+ * @param {Boolean} [options.timestamps=false] - include timestamps with results.
+ * @param {Number} [options.max_alternatives=1] - maximum number of alternative transcriptions to include.
  * @param {Array<String>} [options.keywords] - a list of keywords to search for in the audio
  * @param {Number} [options.keywords_threshold] - Number between 0 and 1 representing the minimum confidence before including a keyword in the results. Required when options.keywords is set
  * @param {Number} [options.word_alternatives_threshold] - Number between 0 and 1 representing the minimum confidence before including an alternative word in the results. Must be set to enable word alternatives,
@@ -4495,6 +4279,7 @@ var QUERY_PARAMS_ALLOWED = ['customization_id', 'model', 'watson-token', 'X-Wats
  * @param {Number} [options.X-Watson-Learning-Opt-Out=false] - set to true to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.smart_formatting=false] - formats numeric values such as dates, times, currency, etc.
  * @param {String} [options.customization_id] - Customization ID
+ * @param {String} [options.acoustic_customization_id] - Acoustic customization ID
  *
  * @constructor
  */
@@ -4827,13 +4612,13 @@ module.exports = RecognizeStream;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var extname = __webpack_require__(77).extname;
+var extname = __webpack_require__(59).extname;
 
 // This module attempts to identify common content-types based on the filename or header.
 // It is not exhaustive, and for best results, you should always manually specify the content-type option.
@@ -4845,7 +4630,8 @@ var headerContentTypes = {
   fLaC: 'audio/flac',
   RIFF: 'audio/wav',
   OggS: 'audio/ogg',
-  ID3: 'audio/mp3'
+  ID3: 'audio/mp3',
+  '\u001aEߣ': 'audio/webm' // String for first four hex's of webm: [1A][45][DF][A3] (https://www.matroska.org/technical/specs/index.html#EBML)
 };
 
 /**
@@ -4890,7 +4676,7 @@ exports.fromFilename = function contentTypeFromFilename(file) {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4898,7 +4684,7 @@ exports.fromFilename = function contentTypeFromFilename(file) {
 
 var Transform = __webpack_require__(1).Transform;
 var util = __webpack_require__(4);
-var clone = __webpack_require__(20);
+var clone = __webpack_require__(19);
 var defaults = __webpack_require__(10);
 
 /**
@@ -5055,7 +4841,7 @@ module.exports = FormatStream;
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {var clone = (function() {
@@ -5313,7 +5099,7 @@ if (typeof module === 'object' && module.exports) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5392,7 +5178,7 @@ module.exports = WritableElementStream;
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5416,7 +5202,7 @@ module.exports = WritableElementStream;
 
 var Transform = __webpack_require__(1).Transform;
 var util = __webpack_require__(4);
-var clone = __webpack_require__(20);
+var clone = __webpack_require__(19);
 
 /**
  * Object-Mode stream that pulls result objects from the results array
@@ -5454,7 +5240,7 @@ module.exports = ResultStream;
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5478,9 +5264,9 @@ module.exports = ResultStream;
 
 var Transform = __webpack_require__(1).Transform;
 var util = __webpack_require__(4);
-var pullAllWith = __webpack_require__(84);
-var noTimestamps = __webpack_require__(40);
-var clone = __webpack_require__(20);
+var pullAllWith = __webpack_require__(67);
+var noTimestamps = __webpack_require__(34);
+var clone = __webpack_require__(19);
 
 /**
  * Object-Mode stream that splits up results by speaker.
@@ -5835,7 +5621,7 @@ module.exports = SpeakerStream;
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -5846,7 +5632,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// loosely based on example code at https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
@@ -5928,7 +5714,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// loosely based
       // assuming it does, try getUserMedia and then all of the prefixed versions
 
       if (!gum) {
-        return reject(new NotSupportedError())
+        return reject(new NotSupportedError());
       }
       gum.call(navigator, constraints, resolve, reject);
     });
@@ -5942,9 +5728,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// loosely based
   // UMD, loosely based on https://github.com/umdjs/umd/blob/master/templates/returnExportsGlobal.js
   if (true) {
     // AMD. Register as an anonymous module.
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
       return getUserMedia;
-    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+    }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else if (typeof module === 'object' && module.exports) {
     // Node. Does not work with strict CommonJS, but
@@ -5954,15 +5740,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// loosely based
   } else {
     // Browser globals
     // polyfill the MediaDevices API if it does not exist.
-    root.navigator = root.navigator || {};
-    root.nagivator.mediaDevices = root.navigator.mediaDevices || {};
-    root.nagivator.mediaDevices.getUserMedia = root.nagivator.mediaDevices.getUserMedia || getUserMedia;
+    root.navigator || (root.navigator = {});
+    root.navigator.mediaDevices || (root.navigator.mediaDevices = {});
+    root.navigator.mediaDevices.getUserMedia || (root.navigator.mediaDevices.getUserMedia = getUserMedia);
   }
 }(this));
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5981,23 +5767,25 @@ var bufferFrom = __webpack_require__(15);
  * @param {MediaStream} [opts.stream] https://developer.mozilla.org/en-US/docs/Web/API/MediaStream - for iOS compatibility, it is recommended that you create the MicrophoneStream instance in response to the tap - before you have a MediaStream, and then later call setStream() with the MediaStream.
  * @param {Boolean} [opts.objectMode=false] Puts the stream into ObjectMode where it emits AudioBuffers instead of Buffers - see https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer
  * @param {Number|null} [opts.bufferSize=null] https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
+ * @param {AudioContext} [opts.context] - AudioContext - will be automatically created if not passed in
  * @constructor
  */
 function MicrophoneStream(opts) {
   // backwards compatibility - passing in the Stream here will generally not work on iOS 11 Safari
-  if (typeof MediaStream && opts instanceof MediaStream) {
+  if (typeof MediaStream !== 'undefined' && opts instanceof MediaStream) {
     var stream = opts;
     opts = arguments[1] || {};
     opts.stream = stream;
   }
+
+  opts = opts || {};
+
   // "It is recommended for authors to not specify this buffer size and allow the implementation to pick a good
   // buffer size to balance between latency and audio quality."
   // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
   // however, webkitAudioContext (safari) requires it to be set'
   // Possible values: null, 256, 512, 1024, 2048, 4096, 8192, 16384
   var bufferSize = (typeof window.AudioContext === 'undefined' ? 4096 : null);
-  opts = opts || {};
-
   bufferSize = opts.bufferSize || bufferSize;
 
   // We can only emit one channel's worth of audio, so only one input. (Who has multiple microphones anyways?)
@@ -6024,25 +5812,26 @@ function MicrophoneStream(opts) {
   }
 
   var AudioContext = window.AudioContext || window.webkitAudioContext;
-  var context = new AudioContext();
+  var context = this.context = opts.context || new AudioContext();
   var recorder = context.createScriptProcessor(bufferSize, inputChannels, outputChannels);
 
-  // Workaround for Safari on iOS 11 - context starts out suspended, and the resume() call must be in response to a tap.
-  // This allows you to create the MicrophoneStream instance synchronously in response to the first tap,
-  // and then connect the MediaStream asynchronously, after the user has granted microphone access.
+  // other half of workaround for chrome bugs
+  recorder.connect(context.destination);
+
   var audioInput;
-  if (context.state === 'suspended') {
-    context.resume();
-  }
 
   /**
    * Set the MediaStream
    *
-   * This was removed from the constructor to enable better compatibility with Safari on iOS 11.
+   * This was separated from the constructor to enable better compatibility with Safari on iOS 11.
+   *
+   * Typically the stream is only available asynchronously, but the context must be created or resumed directly in
+   * response to a user's tap on iOS.
    *
    * @param {MediaStream} stream https://developer.mozilla.org/en-US/docs/Web/API/MediaStream
    */
   this.setStream = function(stream) {
+    this.stream = stream;
     audioInput = context.createMediaStreamSource(stream);
     audioInput.connect(recorder);
     recorder.onaudioprocess = recorderProcess;
@@ -6052,15 +5841,13 @@ function MicrophoneStream(opts) {
     this.setStream(stream);
   }
 
-  // other half of workaround for chrome bugs
-  recorder.connect(context.destination);
 
   this.stop = function() {
     if (context.state === 'closed') {
       return;
     }
     try {
-      stream.getTracks()[0].stop();
+      this.stream.getTracks()[0].stop();
     } catch (ex) {
       // This fails in some older versions of chrome. Nothing we can do about it.
     }
@@ -6091,7 +5878,7 @@ function MicrophoneStream(opts) {
 util.inherits(MicrophoneStream, Readable);
 
 MicrophoneStream.prototype._read = function(/* bytes */) {
-  // no-op, (flow-control doesn't really work on sound)
+  // no-op, (flow-control doesn't really work on live audio)
 };
 
 /**
@@ -6111,7 +5898,7 @@ module.exports = MicrophoneStream;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6124,7 +5911,7 @@ var processNextTick = __webpack_require__(12);
 /*</replacement>*/
 
 /*<replacement>*/
-var isArray = __webpack_require__(24);
+var isArray = __webpack_require__(23);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -6142,7 +5929,7 @@ var EElistenerCount = function (emitter, type) {
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(28);
+var Stream = __webpack_require__(27);
 /*</replacement>*/
 
 var Buffer = __webpack_require__(0).Buffer;
@@ -6156,7 +5943,7 @@ util.inherits = __webpack_require__(2);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(48);
+var debugUtil = __webpack_require__(42);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -6165,7 +5952,7 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(49);
+var BufferList = __webpack_require__(43);
 var StringDecoder;
 
 util.inherits(Readable, Stream);
@@ -6187,7 +5974,7 @@ function prependListener(emitter, event, fn) {
 }
 
 function ReadableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(5);
+  Duplex = Duplex || __webpack_require__(6);
 
   options = options || {};
 
@@ -6249,14 +6036,14 @@ function ReadableState(options, stream) {
   this.decoder = null;
   this.encoding = null;
   if (options.encoding) {
-    if (!StringDecoder) StringDecoder = __webpack_require__(29).StringDecoder;
+    if (!StringDecoder) StringDecoder = __webpack_require__(28).StringDecoder;
     this.decoder = new StringDecoder(options.encoding);
     this.encoding = options.encoding;
   }
 }
 
 function Readable(options) {
-  Duplex = Duplex || __webpack_require__(5);
+  Duplex = Duplex || __webpack_require__(6);
 
   if (!(this instanceof Readable)) return new Readable(options);
 
@@ -6359,7 +6146,7 @@ function needMoreData(state) {
 
 // backwards compatibility.
 Readable.prototype.setEncoding = function (enc) {
-  if (!StringDecoder) StringDecoder = __webpack_require__(29).StringDecoder;
+  if (!StringDecoder) StringDecoder = __webpack_require__(28).StringDecoder;
   this._readableState.decoder = new StringDecoder(enc);
   this._readableState.encoding = enc;
   return this;
@@ -7053,16 +6840,17 @@ function indexOf(xs, x) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(11).EventEmitter;
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7084,210 +6872,284 @@ module.exports = __webpack_require__(11).EventEmitter;
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var Buffer = __webpack_require__(0).Buffer;
-
-var isBufferEncoding = Buffer.isEncoding
-  || function(encoding) {
-       switch (encoding && encoding.toLowerCase()) {
-         case 'hex': case 'utf8': case 'utf-8': case 'ascii': case 'binary': case 'base64': case 'ucs2': case 'ucs-2': case 'utf16le': case 'utf-16le': case 'raw': return true;
-         default: return false;
-       }
-     }
 
 
-function assertEncoding(encoding) {
-  if (encoding && !isBufferEncoding(encoding)) {
-    throw new Error('Unknown encoding: ' + encoding);
+/*<replacement>*/
+
+var Buffer = __webpack_require__(47).Buffer;
+/*</replacement>*/
+
+var isEncoding = Buffer.isEncoding || function (encoding) {
+  encoding = '' + encoding;
+  switch (encoding && encoding.toLowerCase()) {
+    case 'hex':case 'utf8':case 'utf-8':case 'ascii':case 'binary':case 'base64':case 'ucs2':case 'ucs-2':case 'utf16le':case 'utf-16le':case 'raw':
+      return true;
+    default:
+      return false;
   }
+};
+
+function _normalizeEncoding(enc) {
+  if (!enc) return 'utf8';
+  var retried;
+  while (true) {
+    switch (enc) {
+      case 'utf8':
+      case 'utf-8':
+        return 'utf8';
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return 'utf16le';
+      case 'latin1':
+      case 'binary':
+        return 'latin1';
+      case 'base64':
+      case 'ascii':
+      case 'hex':
+        return enc;
+      default:
+        if (retried) return; // undefined
+        enc = ('' + enc).toLowerCase();
+        retried = true;
+    }
+  }
+};
+
+// Do not cache `Buffer.isEncoding` when checking encoding names as some
+// modules monkey-patch it to support additional encodings
+function normalizeEncoding(enc) {
+  var nenc = _normalizeEncoding(enc);
+  if (typeof nenc !== 'string' && (Buffer.isEncoding === isEncoding || !isEncoding(enc))) throw new Error('Unknown encoding: ' + enc);
+  return nenc || enc;
 }
 
 // StringDecoder provides an interface for efficiently splitting a series of
 // buffers into a series of JS strings without breaking apart multi-byte
-// characters. CESU-8 is handled as part of the UTF-8 encoding.
-//
-// @TODO Handling all encodings inside a single object makes it very difficult
-// to reason about this code, so it should be split up in the future.
-// @TODO There should be a utf8-strict encoding that rejects invalid UTF-8 code
-// points as used by CESU-8.
-var StringDecoder = exports.StringDecoder = function(encoding) {
-  this.encoding = (encoding || 'utf8').toLowerCase().replace(/[-_]/, '');
-  assertEncoding(encoding);
+// characters.
+exports.StringDecoder = StringDecoder;
+function StringDecoder(encoding) {
+  this.encoding = normalizeEncoding(encoding);
+  var nb;
   switch (this.encoding) {
-    case 'utf8':
-      // CESU-8 represents each of Surrogate Pair by 3-bytes
-      this.surrogateSize = 3;
-      break;
-    case 'ucs2':
     case 'utf16le':
-      // UTF-16 represents each of Surrogate Pair by 2-bytes
-      this.surrogateSize = 2;
-      this.detectIncompleteChar = utf16DetectIncompleteChar;
+      this.text = utf16Text;
+      this.end = utf16End;
+      nb = 4;
+      break;
+    case 'utf8':
+      this.fillLast = utf8FillLast;
+      nb = 4;
       break;
     case 'base64':
-      // Base-64 stores 3 bytes in 4 chars, and pads the remainder.
-      this.surrogateSize = 3;
-      this.detectIncompleteChar = base64DetectIncompleteChar;
+      this.text = base64Text;
+      this.end = base64End;
+      nb = 3;
       break;
     default:
-      this.write = passThroughWrite;
+      this.write = simpleWrite;
+      this.end = simpleEnd;
       return;
   }
-
-  // Enough space to store all bytes of a single character. UTF-8 needs 4
-  // bytes, but CESU-8 may require up to 6 (3 bytes per surrogate).
-  this.charBuffer = new Buffer(6);
-  // Number of bytes received for the current incomplete multi-byte character.
-  this.charReceived = 0;
-  // Number of bytes expected for the current incomplete multi-byte character.
-  this.charLength = 0;
-};
-
-
-// write decodes the given buffer and returns it as JS string that is
-// guaranteed to not contain any partial multi-byte characters. Any partial
-// character found at the end of the buffer is buffered up, and will be
-// returned when calling write again with the remaining bytes.
-//
-// Note: Converting a Buffer containing an orphan surrogate to a String
-// currently works, but converting a String to a Buffer (via `new Buffer`, or
-// Buffer#write) will replace incomplete surrogates with the unicode
-// replacement character. See https://codereview.chromium.org/121173009/ .
-StringDecoder.prototype.write = function(buffer) {
-  var charStr = '';
-  // if our last write ended with an incomplete multibyte character
-  while (this.charLength) {
-    // determine how many remaining bytes this buffer has to offer for this char
-    var available = (buffer.length >= this.charLength - this.charReceived) ?
-        this.charLength - this.charReceived :
-        buffer.length;
-
-    // add the new bytes to the char buffer
-    buffer.copy(this.charBuffer, this.charReceived, 0, available);
-    this.charReceived += available;
-
-    if (this.charReceived < this.charLength) {
-      // still not enough chars in this buffer? wait for more ...
-      return '';
-    }
-
-    // remove bytes belonging to the current character from the buffer
-    buffer = buffer.slice(available, buffer.length);
-
-    // get the character that was split
-    charStr = this.charBuffer.slice(0, this.charLength).toString(this.encoding);
-
-    // CESU-8: lead surrogate (D800-DBFF) is also the incomplete character
-    var charCode = charStr.charCodeAt(charStr.length - 1);
-    if (charCode >= 0xD800 && charCode <= 0xDBFF) {
-      this.charLength += this.surrogateSize;
-      charStr = '';
-      continue;
-    }
-    this.charReceived = this.charLength = 0;
-
-    // if there are no more bytes in this buffer, just emit our char
-    if (buffer.length === 0) {
-      return charStr;
-    }
-    break;
-  }
-
-  // determine and set charLength / charReceived
-  this.detectIncompleteChar(buffer);
-
-  var end = buffer.length;
-  if (this.charLength) {
-    // buffer the incomplete character bytes we got
-    buffer.copy(this.charBuffer, 0, buffer.length - this.charReceived, end);
-    end -= this.charReceived;
-  }
-
-  charStr += buffer.toString(this.encoding, 0, end);
-
-  var end = charStr.length - 1;
-  var charCode = charStr.charCodeAt(end);
-  // CESU-8: lead surrogate (D800-DBFF) is also the incomplete character
-  if (charCode >= 0xD800 && charCode <= 0xDBFF) {
-    var size = this.surrogateSize;
-    this.charLength += size;
-    this.charReceived += size;
-    this.charBuffer.copy(this.charBuffer, size, 0, size);
-    buffer.copy(this.charBuffer, 0, 0, size);
-    return charStr.substring(0, end);
-  }
-
-  // or just emit the charStr
-  return charStr;
-};
-
-// detectIncompleteChar determines if there is an incomplete UTF-8 character at
-// the end of the given buffer. If so, it sets this.charLength to the byte
-// length that character, and sets this.charReceived to the number of bytes
-// that are available for this character.
-StringDecoder.prototype.detectIncompleteChar = function(buffer) {
-  // determine how many bytes we have to check at the end of this buffer
-  var i = (buffer.length >= 3) ? 3 : buffer.length;
-
-  // Figure out if one of the last i bytes of our buffer announces an
-  // incomplete char.
-  for (; i > 0; i--) {
-    var c = buffer[buffer.length - i];
-
-    // See http://en.wikipedia.org/wiki/UTF-8#Description
-
-    // 110XXXXX
-    if (i == 1 && c >> 5 == 0x06) {
-      this.charLength = 2;
-      break;
-    }
-
-    // 1110XXXX
-    if (i <= 2 && c >> 4 == 0x0E) {
-      this.charLength = 3;
-      break;
-    }
-
-    // 11110XXX
-    if (i <= 3 && c >> 3 == 0x1E) {
-      this.charLength = 4;
-      break;
-    }
-  }
-  this.charReceived = i;
-};
-
-StringDecoder.prototype.end = function(buffer) {
-  var res = '';
-  if (buffer && buffer.length)
-    res = this.write(buffer);
-
-  if (this.charReceived) {
-    var cr = this.charReceived;
-    var buf = this.charBuffer;
-    var enc = this.encoding;
-    res += buf.slice(0, cr).toString(enc);
-  }
-
-  return res;
-};
-
-function passThroughWrite(buffer) {
-  return buffer.toString(this.encoding);
+  this.lastNeed = 0;
+  this.lastTotal = 0;
+  this.lastChar = Buffer.allocUnsafe(nb);
 }
 
-function utf16DetectIncompleteChar(buffer) {
-  this.charReceived = buffer.length % 2;
-  this.charLength = this.charReceived ? 2 : 0;
+StringDecoder.prototype.write = function (buf) {
+  if (buf.length === 0) return '';
+  var r;
+  var i;
+  if (this.lastNeed) {
+    r = this.fillLast(buf);
+    if (r === undefined) return '';
+    i = this.lastNeed;
+    this.lastNeed = 0;
+  } else {
+    i = 0;
+  }
+  if (i < buf.length) return r ? r + this.text(buf, i) : this.text(buf, i);
+  return r || '';
+};
+
+StringDecoder.prototype.end = utf8End;
+
+// Returns only complete characters in a Buffer
+StringDecoder.prototype.text = utf8Text;
+
+// Attempts to complete a partial non-UTF-8 character using bytes from a Buffer
+StringDecoder.prototype.fillLast = function (buf) {
+  if (this.lastNeed <= buf.length) {
+    buf.copy(this.lastChar, this.lastTotal - this.lastNeed, 0, this.lastNeed);
+    return this.lastChar.toString(this.encoding, 0, this.lastTotal);
+  }
+  buf.copy(this.lastChar, this.lastTotal - this.lastNeed, 0, buf.length);
+  this.lastNeed -= buf.length;
+};
+
+// Checks the type of a UTF-8 byte, whether it's ASCII, a leading byte, or a
+// continuation byte. If an invalid byte is detected, -2 is returned.
+function utf8CheckByte(byte) {
+  if (byte <= 0x7F) return 0;else if (byte >> 5 === 0x06) return 2;else if (byte >> 4 === 0x0E) return 3;else if (byte >> 3 === 0x1E) return 4;
+  return byte >> 6 === 0x02 ? -1 : -2;
 }
 
-function base64DetectIncompleteChar(buffer) {
-  this.charReceived = buffer.length % 3;
-  this.charLength = this.charReceived ? 3 : 0;
+// Checks at most 3 bytes at the end of a Buffer in order to detect an
+// incomplete multi-byte UTF-8 character. The total number of bytes (2, 3, or 4)
+// needed to complete the UTF-8 character (if applicable) are returned.
+function utf8CheckIncomplete(self, buf, i) {
+  var j = buf.length - 1;
+  if (j < i) return 0;
+  var nb = utf8CheckByte(buf[j]);
+  if (nb >= 0) {
+    if (nb > 0) self.lastNeed = nb - 1;
+    return nb;
+  }
+  if (--j < i || nb === -2) return 0;
+  nb = utf8CheckByte(buf[j]);
+  if (nb >= 0) {
+    if (nb > 0) self.lastNeed = nb - 2;
+    return nb;
+  }
+  if (--j < i || nb === -2) return 0;
+  nb = utf8CheckByte(buf[j]);
+  if (nb >= 0) {
+    if (nb > 0) {
+      if (nb === 2) nb = 0;else self.lastNeed = nb - 3;
+    }
+    return nb;
+  }
+  return 0;
 }
 
+// Validates as many continuation bytes for a multi-byte UTF-8 character as
+// needed or are available. If we see a non-continuation byte where we expect
+// one, we "replace" the validated continuation bytes we've seen so far with
+// a single UTF-8 replacement character ('\ufffd'), to match v8's UTF-8 decoding
+// behavior. The continuation byte check is included three times in the case
+// where all of the continuation bytes for a character exist in the same buffer.
+// It is also done this way as a slight performance increase instead of using a
+// loop.
+function utf8CheckExtraBytes(self, buf, p) {
+  if ((buf[0] & 0xC0) !== 0x80) {
+    self.lastNeed = 0;
+    return '\ufffd';
+  }
+  if (self.lastNeed > 1 && buf.length > 1) {
+    if ((buf[1] & 0xC0) !== 0x80) {
+      self.lastNeed = 1;
+      return '\ufffd';
+    }
+    if (self.lastNeed > 2 && buf.length > 2) {
+      if ((buf[2] & 0xC0) !== 0x80) {
+        self.lastNeed = 2;
+        return '\ufffd';
+      }
+    }
+  }
+}
+
+// Attempts to complete a multi-byte UTF-8 character using bytes from a Buffer.
+function utf8FillLast(buf) {
+  var p = this.lastTotal - this.lastNeed;
+  var r = utf8CheckExtraBytes(this, buf, p);
+  if (r !== undefined) return r;
+  if (this.lastNeed <= buf.length) {
+    buf.copy(this.lastChar, p, 0, this.lastNeed);
+    return this.lastChar.toString(this.encoding, 0, this.lastTotal);
+  }
+  buf.copy(this.lastChar, p, 0, buf.length);
+  this.lastNeed -= buf.length;
+}
+
+// Returns all complete UTF-8 characters in a Buffer. If the Buffer ended on a
+// partial character, the character's bytes are buffered until the required
+// number of bytes are available.
+function utf8Text(buf, i) {
+  var total = utf8CheckIncomplete(this, buf, i);
+  if (!this.lastNeed) return buf.toString('utf8', i);
+  this.lastTotal = total;
+  var end = buf.length - (total - this.lastNeed);
+  buf.copy(this.lastChar, 0, end);
+  return buf.toString('utf8', i, end);
+}
+
+// For UTF-8, a replacement character is added when ending on a partial
+// character.
+function utf8End(buf) {
+  var r = buf && buf.length ? this.write(buf) : '';
+  if (this.lastNeed) return r + '\ufffd';
+  return r;
+}
+
+// UTF-16LE typically needs two bytes per character, but even if we have an even
+// number of bytes available, we need to check if we end on a leading/high
+// surrogate. In that case, we need to wait for the next two bytes in order to
+// decode the last character properly.
+function utf16Text(buf, i) {
+  if ((buf.length - i) % 2 === 0) {
+    var r = buf.toString('utf16le', i);
+    if (r) {
+      var c = r.charCodeAt(r.length - 1);
+      if (c >= 0xD800 && c <= 0xDBFF) {
+        this.lastNeed = 2;
+        this.lastTotal = 4;
+        this.lastChar[0] = buf[buf.length - 2];
+        this.lastChar[1] = buf[buf.length - 1];
+        return r.slice(0, -1);
+      }
+    }
+    return r;
+  }
+  this.lastNeed = 1;
+  this.lastTotal = 2;
+  this.lastChar[0] = buf[buf.length - 1];
+  return buf.toString('utf16le', i, buf.length - 1);
+}
+
+// For UTF-16LE we do not explicitly append special replacement characters if we
+// end on a partial character, we simply let v8 handle that.
+function utf16End(buf) {
+  var r = buf && buf.length ? this.write(buf) : '';
+  if (this.lastNeed) {
+    var end = this.lastTotal - this.lastNeed;
+    return r + this.lastChar.toString('utf16le', 0, end);
+  }
+  return r;
+}
+
+function base64Text(buf, i) {
+  var n = (buf.length - i) % 3;
+  if (n === 0) return buf.toString('base64', i);
+  this.lastNeed = 3 - n;
+  this.lastTotal = 3;
+  if (n === 1) {
+    this.lastChar[0] = buf[buf.length - 1];
+  } else {
+    this.lastChar[0] = buf[buf.length - 2];
+    this.lastChar[1] = buf[buf.length - 1];
+  }
+  return buf.toString('base64', i, buf.length - n);
+}
+
+function base64End(buf) {
+  var r = buf && buf.length ? this.write(buf) : '';
+  if (this.lastNeed) return r + this.lastChar.toString('base64', 0, 3 - this.lastNeed);
+  return r;
+}
+
+// Pass bytes on through for single-byte encodings (e.g. ascii, latin1, hex)
+function simpleWrite(buf) {
+  return buf.toString(this.encoding);
+}
+
+function simpleEnd(buf) {
+  return buf && buf.length ? this.write(buf) : '';
+}
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7337,7 +7199,7 @@ function base64DetectIncompleteChar(buffer) {
 
 module.exports = Transform;
 
-var Duplex = __webpack_require__(5);
+var Duplex = __webpack_require__(6);
 
 /*<replacement>*/
 var util = __webpack_require__(8);
@@ -7475,144 +7337,7 @@ function done(stream, er, data) {
 }
 
 /***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file Get an object's ES6 @@toStringTag.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring|19.1.3.6 Object.prototype.toString ( )}
- * @version 1.4.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-string-tag-x
- */
-
-
-
-var isNull = __webpack_require__(63);
-var isUndefined = __webpack_require__(64);
-var toStr = Object.prototype.toString;
-
-/**
- * The `toStringTag` method returns "[object type]", where type is the
- * object type.
- *
- * @param {*} value - The object of which to get the object type string.
- * @returns {string} The object type string.
- * @example
- * var toStringTag = require('to-string-tag-x');
- *
- * var o = new Object();
- * toStringTag(o); // returns '[object Object]'
- */
-module.exports = function toStringTag(value) {
-  if (isNull(value)) {
-    return '[object Null]';
-  }
-
-  if (isUndefined(value)) {
-    return '[object Undefined]';
-  }
-
-  return toStr.call(value);
-};
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file Tests if ES6 @@toStringTag is supported.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-@@tostringtag|26.3.1 @@toStringTag}
- * @version 1.4.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module has-to-string-tag-x
- */
-
-
-
-/**
- * Indicates if `Symbol.toStringTag`exists and is the correct type.
- * `true`, if it exists and is the correct type, otherwise `false`.
- *
- * @type boolean
- */
-module.exports = __webpack_require__(65) && typeof Symbol.toStringTag === 'symbol';
-
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * is-primitive <https://github.com/jonschlinkert/is-primitive>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-
-
-// see http://jsperf.com/testing-value-is-primitive/7
-module.exports = function isPrimitive(value) {
-  return value == null || (typeof value !== 'function' && typeof value !== 'object');
-};
-
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file ES6-compliant shim for ToString.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-tostring|7.1.12 ToString ( argument )}
- * @version 1.4.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-string-x
- */
-
-
-
-var isSymbol = __webpack_require__(69);
-
-/**
- * The abstract operation ToString converts argument to a value of type String.
- *
- * @param {*} value - The value to convert to a string.
- * @throws {TypeError} If `value` is a Symbol.
- * @returns {string} The converted value.
- * @example
- * var $toString = require('to-string-x');
- *
- * $toString(); // 'undefined'
- * $toString(null); // 'null'
- * $toString('abc'); // 'abc'
- * $toString(true); // 'true'
- * $toString(Symbol('foo')); // TypeError
- * $toString(Symbol.iterator); // TypeError
- * $toString(Object(Symbol.iterator)); // TypeError
- */
-module.exports = function ToString(value) {
-  if (isSymbol(value)) {
-    throw new TypeError('Cannot convert a Symbol value to a string');
-  }
-
-  return String(value);
-};
-
-
-/***/ }),
-/* 35 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7625,7 +7350,7 @@ module.exports = function ToString(value) {
 
 
 
-var isObject = __webpack_require__(73);
+var isObject = __webpack_require__(55);
 
 module.exports = function pick(obj, keys) {
   if (!isObject(obj) && typeof obj !== 'function') {
@@ -7654,7 +7379,7 @@ module.exports = function pick(obj, keys) {
 
 
 /***/ }),
-/* 36 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7680,7 +7405,7 @@ exports.stringify = function stringify(queryParams) {
 
 
 /***/ }),
-/* 37 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7895,13 +7620,13 @@ module.exports = WebAudioL16Stream;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 38 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var implementation = __webpack_require__(79);
+var implementation = __webpack_require__(61);
 
 var lacksProperEnumerationOrder = function () {
 	if (!Object.assign) {
@@ -7953,154 +7678,7 @@ module.exports = function getPolyfill() {
 
 
 /***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// modified from https://github.com/es-shims/es5-shim
-var has = Object.prototype.hasOwnProperty;
-var toStr = Object.prototype.toString;
-var slice = Array.prototype.slice;
-var isArgs = __webpack_require__(80);
-var isEnumerable = Object.prototype.propertyIsEnumerable;
-var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
-var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
-var dontEnums = [
-	'toString',
-	'toLocaleString',
-	'valueOf',
-	'hasOwnProperty',
-	'isPrototypeOf',
-	'propertyIsEnumerable',
-	'constructor'
-];
-var equalsConstructorPrototype = function (o) {
-	var ctor = o.constructor;
-	return ctor && ctor.prototype === o;
-};
-var excludedKeys = {
-	$console: true,
-	$external: true,
-	$frame: true,
-	$frameElement: true,
-	$frames: true,
-	$innerHeight: true,
-	$innerWidth: true,
-	$outerHeight: true,
-	$outerWidth: true,
-	$pageXOffset: true,
-	$pageYOffset: true,
-	$parent: true,
-	$scrollLeft: true,
-	$scrollTop: true,
-	$scrollX: true,
-	$scrollY: true,
-	$self: true,
-	$webkitIndexedDB: true,
-	$webkitStorageInfo: true,
-	$window: true
-};
-var hasAutomationEqualityBug = (function () {
-	/* global window */
-	if (typeof window === 'undefined') { return false; }
-	for (var k in window) {
-		try {
-			if (!excludedKeys['$' + k] && has.call(window, k) && window[k] !== null && typeof window[k] === 'object') {
-				try {
-					equalsConstructorPrototype(window[k]);
-				} catch (e) {
-					return true;
-				}
-			}
-		} catch (e) {
-			return true;
-		}
-	}
-	return false;
-}());
-var equalsConstructorPrototypeIfNotBuggy = function (o) {
-	/* global window */
-	if (typeof window === 'undefined' || !hasAutomationEqualityBug) {
-		return equalsConstructorPrototype(o);
-	}
-	try {
-		return equalsConstructorPrototype(o);
-	} catch (e) {
-		return false;
-	}
-};
-
-var keysShim = function keys(object) {
-	var isObject = object !== null && typeof object === 'object';
-	var isFunction = toStr.call(object) === '[object Function]';
-	var isArguments = isArgs(object);
-	var isString = isObject && toStr.call(object) === '[object String]';
-	var theKeys = [];
-
-	if (!isObject && !isFunction && !isArguments) {
-		throw new TypeError('Object.keys called on a non-object');
-	}
-
-	var skipProto = hasProtoEnumBug && isFunction;
-	if (isString && object.length > 0 && !has.call(object, 0)) {
-		for (var i = 0; i < object.length; ++i) {
-			theKeys.push(String(i));
-		}
-	}
-
-	if (isArguments && object.length > 0) {
-		for (var j = 0; j < object.length; ++j) {
-			theKeys.push(String(j));
-		}
-	} else {
-		for (var name in object) {
-			if (!(skipProto && name === 'prototype') && has.call(object, name)) {
-				theKeys.push(String(name));
-			}
-		}
-	}
-
-	if (hasDontEnumBug) {
-		var skipConstructor = equalsConstructorPrototypeIfNotBuggy(object);
-
-		for (var k = 0; k < dontEnums.length; ++k) {
-			if (!(skipConstructor && dontEnums[k] === 'constructor') && has.call(object, dontEnums[k])) {
-				theKeys.push(dontEnums[k]);
-			}
-		}
-	}
-	return theKeys;
-};
-
-keysShim.shim = function shimObjectKeys() {
-	if (Object.keys) {
-		var keysWorksWithArguments = (function () {
-			// Safari 5.0 bug
-			return (Object.keys(arguments) || '').length === 2;
-		}(1, 2));
-		if (!keysWorksWithArguments) {
-			var originalKeys = Object.keys;
-			Object.keys = function keys(object) {
-				if (isArgs(object)) {
-					return originalKeys(slice.call(object));
-				} else {
-					return originalKeys(object);
-				}
-			};
-		}
-	} else {
-		Object.keys = keysShim;
-	}
-	return Object.keys || keysShim;
-};
-
-module.exports = keysShim;
-
-
-/***/ }),
-/* 40 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8122,13 +7700,13 @@ module.exports.ERROR_NO_TIMESTAMPS = 'NO_TIMESTAMPS';
 
 
 /***/ }),
-/* 41 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var contentType = __webpack_require__(18);
+var contentType = __webpack_require__(17);
 var bufferFrom = __webpack_require__(15);
 
 /**
@@ -8194,7 +7772,7 @@ function getContentTypeFromFile(file) {
       if (ct) {
         resolve(ct);
       } else {
-        var err = new Error('Unable to determine content type from file header; only wav, flac, and ogg/opus are supported.');
+        var err = new Error('Unable to determine content type from file header. Supported file types: wav, mp3, flac, ogg, and webm.');
         err.name = FilePlayer.ERROR_UNSUPPORTED_FORMAT;
         reject(err);
       }
@@ -8226,7 +7804,7 @@ module.exports.playFile = playFile;
 
 
 /***/ }),
-/* 42 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8235,7 +7813,7 @@ module.exports.playFile = playFile;
 var Transform = __webpack_require__(1).Transform;
 var util = __webpack_require__(4);
 var defaults = __webpack_require__(10);
-var noTimestamps = __webpack_require__(40);
+var noTimestamps = __webpack_require__(34);
 
 /**
  * Slows results down to no faster than real time.
@@ -8364,7 +7942,7 @@ module.exports = TimingStream;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 43 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8405,23 +7983,23 @@ module.exports = TimingStream;
  *
  * envify automatically rewrites this during the release process
  */
-exports.version = "0.34.1";
+exports.version = "0.36.0";
 
 /**
  *
  * @see module:watson-speech/speech-to-text
  */
-exports.SpeechToText = __webpack_require__(44);
+exports.SpeechToText = __webpack_require__(38);
 
 /**
  *
  * @see module:watson-speech/text-to-speech
  */
-exports.TextToSpeech = __webpack_require__(98);
+exports.TextToSpeech = __webpack_require__(82);
 
 
 /***/ }),
-/* 44 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8444,58 +8022,58 @@ module.exports = {
   /**
    * @see module:watson-speech/speech-to-text/recognize-microphone
    */
-  recognizeMicrophone: __webpack_require__(47),
+  recognizeMicrophone: __webpack_require__(41),
   /**
    * @see module:watson-speech/speech-to-text/recognize-blob
    */
-  recognizeFile: __webpack_require__(85),
+  recognizeFile: __webpack_require__(68),
   /**
    * @see module:watson-speech/speech-to-text/get-models
    */
-  getModels: __webpack_require__(97),
+  getModels: __webpack_require__(81),
   // individual components to build more customized solutions
   /**
    * @see WebAudioL16Stream
    */
-  WebAudioL16Stream: __webpack_require__(37),
+  WebAudioL16Stream: __webpack_require__(32),
   /**
    * @see RecognizeStream
    */
-  RecognizeStream: __webpack_require__(17),
+  RecognizeStream: __webpack_require__(16),
   /**
    * @see FilePlayer
    */
-  FilePlayer: __webpack_require__(41),
+  FilePlayer: __webpack_require__(35),
   /**
    * @see FormatStream
    */
-  FormatStream: __webpack_require__(19),
+  FormatStream: __webpack_require__(18),
   /**
    * @see TimingStream
    */
-  TimingStream: __webpack_require__(42),
+  TimingStream: __webpack_require__(36),
   /**
    * @see ResultStream
    */
-  ResultStream: __webpack_require__(22),
+  ResultStream: __webpack_require__(21),
   /**
    * @see SpeakerStream
    */
-  SpeakerStream: __webpack_require__(23),
+  SpeakerStream: __webpack_require__(22),
   /**
    * @see WritableElementStream
    */
-  WritableElementStream: __webpack_require__(21),
+  WritableElementStream: __webpack_require__(20),
   // external components exposed for convenience
 
   /**
    * @see https://www.npmjs.com/package/get-user-media-promise
    */
-  getUserMedia: __webpack_require__(25),
+  getUserMedia: __webpack_require__(24),
   /**
    * @see https://www.npmjs.com/package/microphone-stream
    */
-  MicrophoneStream: __webpack_require__(26),
+  MicrophoneStream: __webpack_require__(25),
   /**
    * @see https://nodejs.org/api/buffer.html
    */
@@ -8505,7 +8083,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 45 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8626,7 +8204,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 46 */
+/* 40 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -8716,7 +8294,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 47 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8737,16 +8315,16 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
  */
 
 
-var getUserMedia = __webpack_require__(25);
-var MicrophoneStream = __webpack_require__(26);
-var RecognizeStream = __webpack_require__(17);
-var L16 = __webpack_require__(37);
-var FormatStream = __webpack_require__(19);
-var assign = __webpack_require__(38)();
-var WritableElementStream = __webpack_require__(21);
+var getUserMedia = __webpack_require__(24);
+var MicrophoneStream = __webpack_require__(25);
+var RecognizeStream = __webpack_require__(16);
+var L16 = __webpack_require__(32);
+var FormatStream = __webpack_require__(18);
+var assign = __webpack_require__(33)();
+var WritableElementStream = __webpack_require__(20);
 var Writable = __webpack_require__(1).Writable;
-var ResultStream = __webpack_require__(22);
-var SpeakerStream = __webpack_require__(23);
+var ResultStream = __webpack_require__(21);
+var SpeakerStream = __webpack_require__(22);
 
 var preservedMicStream;
 var bitBucket = new Writable({
@@ -8766,7 +8344,8 @@ var bitBucket = new Writable({
  * Create and return a RecognizeStream sourcing audio from the user's microphone
  *
  * @param {Object} options - Also passed to {RecognizeStream}, and {FormatStream} when applicable
- * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
+ * @param {String} options.token - Auth Token for CF services - see https://github.com/watson-developer-cloud/node-sdk#authorization
+ * @param {String} options.access_token - IAM Access Token for RC services - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {Boolean} [options.format=true] - pipe the text through a FormatStream which performs light formatting. Also controls smart_formatting option unless explicitly set.
  * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
  * @param {String|DOMElement} [options.outputElement] pipe the text to a [WriteableElementStream](WritableElementStream.html) targeting the specified element. Also defaults objectMode to true to enable interim results.
@@ -8777,8 +8356,8 @@ var bitBucket = new Writable({
  * @return {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
  */
 module.exports = function recognizeMicrophone(options) {
-  if (!options || !options.token) {
-    throw new Error('WatsonSpeechToText: missing required parameter: opts.token');
+  if (!options || (!options.token && !options.access_token)) {
+    throw new Error('WatsonSpeechToText: missing required parameter: opts.token (CF) or opts.access_token (RC)');
   }
 
   // the WritableElementStream works best in objectMode
@@ -8829,19 +8408,17 @@ module.exports = function recognizeMicrophone(options) {
       bufferSize: options.bufferSize
     });
     var pm = options.mediaStream ? Promise.resolve(options.mediaStream) : getUserMedia({ video: false, audio: true });
-    pm
-      .then(function(mediaStream) {
-        micStream.setStream(mediaStream);
-        if (keepMic) {
-          preservedMicStream = micStream;
-        }
-      })
-      .catch(function(err) {
-        stream.emit('error', err);
-        if (err.name === 'NotSupportedError') {
-          stream.end(); // end the stream
-        }
-      });
+    pm.then(function(mediaStream) {
+      micStream.setStream(mediaStream);
+      if (keepMic) {
+        preservedMicStream = micStream;
+      }
+    }).catch(function(err) {
+      stream.emit('error', err);
+      if (err.name === 'NotSupportedError') {
+        stream.end(); // end the stream
+      }
+    });
   }
 
   var l16Stream = new L16({ writableObjectMode: true });
@@ -8916,13 +8493,13 @@ module.exports.isSupported = getUserMedia.isSupported;
 
 
 /***/ }),
-/* 48 */
+/* 42 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 49 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8992,18 +8569,21 @@ BufferList.prototype.concat = function (n) {
 };
 
 /***/ }),
-/* 50 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
+/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
+            (typeof self !== "undefined" && self) ||
+            window;
 var apply = Function.prototype.apply;
 
 // DOM APIs, for completeness
 
 exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
 };
 exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
 };
 exports.clearTimeout =
 exports.clearInterval = function(timeout) {
@@ -9018,7 +8598,7 @@ function Timeout(id, clearFn) {
 }
 Timeout.prototype.unref = Timeout.prototype.ref = function() {};
 Timeout.prototype.close = function() {
-  this._clearFn.call(window, this._id);
+  this._clearFn.call(scope, this._id);
 };
 
 // Does not start the time, just sets up the members needed.
@@ -9045,13 +8625,21 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(51);
-exports.setImmediate = setImmediate;
-exports.clearImmediate = clearImmediate;
+__webpack_require__(45);
+// On some exotic environments, it's not clear which object `setimmediate` was
+// able to install onto.  Search each possibility in the same order as the
+// `setimmediate` library.
+exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
+                       (typeof global !== "undefined" && global.setImmediate) ||
+                       (this && this.setImmediate);
+exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
+                         (typeof global !== "undefined" && global.clearImmediate) ||
+                         (this && this.clearImmediate);
 
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 51 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -9241,10 +8829,10 @@ exports.clearImmediate = clearImmediate;
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(3)))
 
 /***/ }),
-/* 52 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -9315,10 +8903,78 @@ function config (name) {
   return String(val).toLowerCase() === 'true';
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 53 */
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* eslint-disable node/no-deprecated-api */
+var buffer = __webpack_require__(0)
+var Buffer = buffer.Buffer
+
+// alternative to using Object.keys for old browsers
+function copyProps (src, dst) {
+  for (var key in src) {
+    dst[key] = src[key]
+  }
+}
+if (Buffer.from && Buffer.alloc && Buffer.allocUnsafe && Buffer.allocUnsafeSlow) {
+  module.exports = buffer
+} else {
+  // Copy properties from require('buffer')
+  copyProps(buffer, exports)
+  exports.Buffer = SafeBuffer
+}
+
+function SafeBuffer (arg, encodingOrOffset, length) {
+  return Buffer(arg, encodingOrOffset, length)
+}
+
+// Copy static methods from Buffer
+copyProps(Buffer, SafeBuffer)
+
+SafeBuffer.from = function (arg, encodingOrOffset, length) {
+  if (typeof arg === 'number') {
+    throw new TypeError('Argument must not be a number')
+  }
+  return Buffer(arg, encodingOrOffset, length)
+}
+
+SafeBuffer.alloc = function (size, fill, encoding) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  var buf = Buffer(size)
+  if (fill !== undefined) {
+    if (typeof encoding === 'string') {
+      buf.fill(fill, encoding)
+    } else {
+      buf.fill(fill)
+    }
+  } else {
+    buf.fill(0)
+  }
+  return buf
+}
+
+SafeBuffer.allocUnsafe = function (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  return Buffer(size)
+}
+
+SafeBuffer.allocUnsafeSlow = function (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('Argument must be a number')
+  }
+  return buffer.SlowBuffer(size)
+}
+
+
+/***/ }),
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9330,7 +8986,7 @@ function config (name) {
 
 module.exports = PassThrough;
 
-var Transform = __webpack_require__(30);
+var Transform = __webpack_require__(29);
 
 /*<replacement>*/
 var util = __webpack_require__(8);
@@ -9350,35 +9006,35 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 54 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(14);
 
 
 /***/ }),
-/* 55 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(5);
+module.exports = __webpack_require__(6);
 
 
 /***/ }),
-/* 56 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(7).Transform
 
 
 /***/ }),
-/* 57 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(7).PassThrough
 
 
 /***/ }),
-/* 58 */
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -9389,7 +9045,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 59 */
+/* 54 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -9418,584 +9074,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 60 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file Detect whether or not an object is an ArrayBuffer.
- * @version 1.4.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-array-buffer-x
- */
-
-/* global ArrayBuffer */
-
-
-
-var isObjectLike = __webpack_require__(61);
-var hasABuf = typeof ArrayBuffer === 'function';
-var toStringTag;
-var aBufTag;
-var bLength;
-
-if (hasABuf) {
-  if (__webpack_require__(32)) {
-    try {
-      bLength = Object.getOwnPropertyDescriptor(
-        ArrayBuffer.prototype,
-        'byteLength'
-      ).get;
-      bLength = typeof bLength.call(new ArrayBuffer(4)) === 'number' && bLength;
-    } catch (ignore) {}
-  }
-
-  if (Boolean(bLength) === false) {
-    toStringTag = __webpack_require__(31);
-    aBufTag = '[object ArrayBuffer]';
-  }
-}
-
-/**
- * Determine if an `object` is an `ArrayBuffer`.
- *
- * @param {*} object - The object to test.
- * @returns {boolean} `true` if the `object` is an `ArrayBuffer`,
- *  else false`.
- * @example
- * var isArrayBuffer = require('is-array-buffer-x');
- *
- * isArrayBuffer(new ArrayBuffer(4)); // true
- * isArrayBuffer(null); // false
- * isArrayBuffer([]); // false
- */
-module.exports = function isArrayBuffer(object) {
-  if (hasABuf === false || isObjectLike(object) === false) {
-    return false;
-  }
-
-  if (Boolean(bLength) === false) {
-    return toStringTag(object) === aBufTag;
-  }
-
-  try {
-    return typeof bLength.call(object) === 'number';
-  } catch (ignore) {}
-
-  return false;
-};
-
-
-/***/ }),
-/* 61 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file Determine if a value is object like.
- * @version 1.5.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-object-like-x
- */
-
-
-
-var isFunction = __webpack_require__(62);
-var isPrimitive = __webpack_require__(33);
-
-/**
- * Checks if `value` is object-like. A value is object-like if it's not a
- * primitive and not a function.
- *
- * @param {*} value - The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- * var isObjectLike = require('is-object-like-x');
- *
- * isObjectLike({});
- * // => true
- *
- * isObjectLike([1, 2, 3]);
- * // => true
- *
- * isObjectLike(_.noop);
- * // => false
- *
- * isObjectLike(null);
- * // => false
- */
-module.exports = function isObjectLike(value) {
-  return isPrimitive(value) === false && isFunction(value, true) === false;
-};
-
-
-/***/ }),
-/* 62 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file Determine whether a given value is a function object.
- * @version 3.1.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-function-x
- */
-
-
-
-var fToString = Function.prototype.toString;
-var toStringTag = __webpack_require__(31);
-var hasToStringTag = __webpack_require__(32);
-var isPrimitive = __webpack_require__(33);
-var normalise = __webpack_require__(66);
-var deComment = __webpack_require__(71);
-var funcTag = '[object Function]';
-var genTag = '[object GeneratorFunction]';
-var asyncTag = '[object AsyncFunction]';
-
-var hasNativeClass = true;
-try {
-  // eslint-disable-next-line no-new-func
-  Function('"use strict"; return class My {};')();
-} catch (ignore) {
-  hasNativeClass = false;
-}
-
-var ctrRx = /^class /;
-var isES6ClassFn = function isES6ClassFunc(value) {
-  try {
-    return ctrRx.test(normalise(deComment(fToString.call(value), ' ')));
-  } catch (ignore) {}
-
-  // not a function
-  return false;
-};
-
-/**
- * Checks if `value` is classified as a `Function` object.
- *
- * @private
- * @param {*} value - The value to check.
- * @param {boolean} allowClass - Whether to filter ES6 classes.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- * else `false`.
- */
-
-var tryFuncToString = function funcToString(value, allowClass) {
-  try {
-    if (hasNativeClass && allowClass === false && isES6ClassFn(value)) {
-      return false;
-    }
-
-    fToString.call(value);
-    return true;
-  } catch (ignore) {}
-
-  return false;
-};
-
-/**
- * Checks if `value` is classified as a `Function` object.
- *
- * @param {*} value - The value to check.
- * @param {boolean} [allowClass=false] - Whether to filter ES6 classes.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- * else `false`.
- * @example
- * var isFunction = require('is-function-x');
- *
- * isFunction(); // false
- * isFunction(Number.MIN_VALUE); // false
- * isFunction('abc'); // false
- * isFunction(true); // false
- * isFunction({ name: 'abc' }); // false
- * isFunction(function () {}); // true
- * isFunction(new Function ()); // true
- * isFunction(function* test1() {}); // true
- * isFunction(function test2(a, b) {}); // true
- * isFunction(async function test3() {}); // true
- * isFunction(class Test {}); // false
- * isFunction(class Test {}, true); // true
- * isFunction((x, y) => {return this;}); // true
- */
-module.exports = function isFunction(value) {
-  if (isPrimitive(value)) {
-    return false;
-  }
-
-  var allowClass = arguments.length > 0 ? Boolean(arguments[1]) : false;
-  if (hasToStringTag) {
-    return tryFuncToString(value, allowClass);
-  }
-
-  if (hasNativeClass && allowClass === false && isES6ClassFn(value)) {
-    return false;
-  }
-
-  var strTag = toStringTag(value);
-  return strTag === funcTag || strTag === genTag || strTag === asyncTag;
-};
-
-
-/***/ }),
-/* 63 */
-/***/ (function(module, exports) {
-
-/**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
- */
-
-/**
- * Checks if `value` is `null`.
- *
- * @static
- * @memberOf _
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is `null`, else `false`.
- * @example
- *
- * _.isNull(null);
- * // => true
- *
- * _.isNull(void 0);
- * // => false
- */
-function isNull(value) {
-  return value === null;
-}
-
-module.exports = isNull;
-
-
-/***/ }),
-/* 64 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
-*
-*	VALIDATE: undefined
-*
-*
-*	DESCRIPTION:
-*		- Validates if a value is undefined.
-*
-*
-*	NOTES:
-*		[1]
-*
-*
-*	TODO:
-*		[1]
-*
-*
-*	LICENSE:
-*		MIT
-*
-*	Copyright (c) 2014. Athan Reines.
-*
-*
-*	AUTHOR:
-*		Athan Reines. kgryte@gmail.com. 2014.
-*
-*/
-
-
-
-/**
-* FUNCTION: isUndefined( value )
-*	Validates if a value is undefined.
-*
-* @param {*} value - value to be validated
-* @returns {Boolean} boolean indicating whether value is undefined
-*/
-function isUndefined( value ) {
-	return value === void 0;
-} // end FUNCTION isUndefined()
-
-
-// EXPORTS //
-
-module.exports = isUndefined;
-
-
-/***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file Tests if ES6 Symbol is supported.
- * @version 1.4.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module has-symbol-support-x
- */
-
-
-
-/**
- * Indicates if `Symbol`exists and creates the correct type.
- * `true`, if it exists and creates the correct type, otherwise `false`.
- *
- * @type boolean
- */
-module.exports = typeof Symbol === 'function' && typeof Symbol('') === 'symbol';
-
-
-/***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file Trims and replaces sequences of whitespace characters by a single space.
- * @version 1.3.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module normalize-space-x
- */
-
-
-
-var trim = __webpack_require__(67);
-var reNormalize = new RegExp('[' + __webpack_require__(16).string + ']+', 'g');
-
-/**
- * This method strips leading and trailing white-space from a string,
- * replaces sequences of whitespace characters by a single space,
- * and returns the resulting string.
- *
- * @param {string} string - The string to be normalized.
- * @returns {string} The normalized string.
- * @example
- * var normalizeSpace = require('normalize-space-x');
- *
- * normalizeSpace(' \t\na \t\nb \t\n') === 'a b'; // true
- */
-module.exports = function normalizeSpace(string) {
-  return trim(string).replace(reNormalize, ' ');
-};
-
-
-/***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file This method removes whitespace from the left and right end of a string.
- * @version 1.0.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module trim-x
- */
-
-
-
-var trimLeft = __webpack_require__(68);
-var trimRight = __webpack_require__(70);
-
-/**
- * This method removes whitespace from the left and right end of a string.
- *
- * @param {string} string - The string to trim the whitespace from.
- * @returns {undefined|string} The trimmed string.
- * @example
- * var trim = require('trim-x');
- *
- * trim(' \t\na \t\n') === 'a'; // true
- */
-module.exports = function trim(string) {
-  return trimLeft(trimRight(string));
-};
-
-
-/***/ }),
-/* 68 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file This method removes whitespace from the left end of a string.
- * @version 1.3.3
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module trim-left-x
- */
-
-
-
-var $toString = __webpack_require__(34);
-var reLeft = new RegExp('^[' + __webpack_require__(16).string + ']+');
-
-/**
- * This method removes whitespace from the left end of a string.
- *
- * @param {string} string - The string to trim the left end whitespace from.
- * @returns {undefined|string} The left trimmed string.
- * @example
- * var trimLeft = require('trim-left-x');
- *
- * trimLeft(' \t\na \t\n') === 'a \t\n'; // true
- */
-module.exports = function trimLeft(string) {
-  return $toString(string).replace(reLeft, '');
-};
-
-
-/***/ }),
-/* 69 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var toStr = Object.prototype.toString;
-var hasSymbols = typeof Symbol === 'function' && typeof Symbol() === 'symbol';
-
-if (hasSymbols) {
-	var symToStr = Symbol.prototype.toString;
-	var symStringRegex = /^Symbol\(.*\)$/;
-	var isSymbolObject = function isSymbolObject(value) {
-		if (typeof value.valueOf() !== 'symbol') { return false; }
-		return symStringRegex.test(symToStr.call(value));
-	};
-	module.exports = function isSymbol(value) {
-		if (typeof value === 'symbol') { return true; }
-		if (toStr.call(value) !== '[object Symbol]') { return false; }
-		try {
-			return isSymbolObject(value);
-		} catch (e) {
-			return false;
-		}
-	};
-} else {
-	module.exports = function isSymbol(value) {
-		// this environment does not support Symbols.
-		return false;
-	};
-}
-
-
-/***/ }),
-/* 70 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file This method removes whitespace from the right end of a string.
- * @version 1.3.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module trim-right-x
- */
-
-
-
-var $toString = __webpack_require__(34);
-var reRight = new RegExp('[' + __webpack_require__(16).string + ']+$');
-
-/**
- * This method removes whitespace from the right end of a string.
- *
- * @param {string} string - The string to trim the right end whitespace from.
- * @returns {undefined|string} The right trimmed string.
- * @example
- * var trimRight = require('trim-right-x');
- *
- * trimRight(' \t\na \t\n') === ' \t\na'; // true
- */
-module.exports = function trimRight(string) {
-  return $toString(string).replace(reRight, '');
-};
-
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @file Replace the comments in a string.
- * @version 1.0.1
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module replace-comments-x
- */
-
-
-
-var isString = __webpack_require__(72);
-var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-
-var $replaceComments = function replaceComments(string) {
-  var replacement = arguments.length > 1 && isString(arguments[1]) ? arguments[1] : '';
-  return isString(string) ? string.replace(STRIP_COMMENTS, replacement) : '';
-};
-
-/**
- * This method replaces comments in a string.
- *
- * @param {string} string - The string to be stripped.
- * @param {string} [replacement] - The string to be used as a replacement.
- * @returns {string} The new string with the comments replaced.
- * @example
- * var replaceComments = require('replace-comments-x');
- *
- * replaceComments(test;/* test * /, ''), // 'test;'
- * replaceComments(test; // test, ''), // 'test;'
- */
-module.exports = $replaceComments;
-
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var strValue = String.prototype.valueOf;
-var tryStringObject = function tryStringObject(value) {
-	try {
-		strValue.call(value);
-		return true;
-	} catch (e) {
-		return false;
-	}
-};
-var toStr = Object.prototype.toString;
-var strClass = '[object String]';
-var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
-
-module.exports = function isString(value) {
-	if (typeof value === 'string') { return true; }
-	if (typeof value !== 'object') { return false; }
-	return hasToStringTag ? tryStringObject(value) : toStr.call(value) === strClass;
-};
-
-
-/***/ }),
-/* 73 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10014,12 +9093,12 @@ module.exports = function isObject(val) {
 
 
 /***/ }),
-/* 74 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _global = (function() { return this; })();
 var NativeWebSocket = _global.WebSocket || _global.MozWebSocket;
-var websocket_version = __webpack_require__(75);
+var websocket_version = __webpack_require__(57);
 
 
 /**
@@ -10044,7 +9123,13 @@ function W3CWebSocket(uri, protocols) {
 	 */
 	return native_instance;
 }
-
+if (NativeWebSocket) {
+	['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'].forEach(function(prop) {
+		Object.defineProperty(W3CWebSocket, prop, {
+			get: function() { return NativeWebSocket[prop]; }
+		});
+	});
+}
 
 /**
  * Module exports.
@@ -10056,20 +9141,20 @@ module.exports = {
 
 
 /***/ }),
-/* 75 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(76).version;
+module.exports = __webpack_require__(58).version;
 
 
 /***/ }),
-/* 76 */
+/* 58 */
 /***/ (function(module, exports) {
 
-module.exports = {"_args":[[{"raw":"websocket@^1.0.24","scope":null,"escapedName":"websocket","name":"websocket","rawSpec":"^1.0.24","spec":">=1.0.24 <2.0.0","type":"range"},"/Users/nfriedly/watson-speech"]],"_from":"websocket@>=1.0.24 <2.0.0","_id":"websocket@1.0.24","_inCache":true,"_location":"/websocket","_nodeVersion":"7.3.0","_npmOperationalInternal":{"host":"packages-12-west.internal.npmjs.com","tmp":"tmp/websocket-1.0.24.tgz_1482977757939_0.1858439394272864"},"_npmUser":{"name":"theturtle32","email":"brian@worlize.com"},"_npmVersion":"3.10.10","_phantomChildren":{},"_requested":{"raw":"websocket@^1.0.24","scope":null,"escapedName":"websocket","name":"websocket","rawSpec":"^1.0.24","spec":">=1.0.24 <2.0.0","type":"range"},"_requiredBy":["/","/watson-developer-cloud"],"_resolved":"https://registry.npmjs.org/websocket/-/websocket-1.0.24.tgz","_shasum":"74903e75f2545b6b2e1de1425bc1c905917a1890","_shrinkwrap":null,"_spec":"websocket@^1.0.24","_where":"/Users/nfriedly/watson-speech","author":{"name":"Brian McKelvey","email":"brian@worlize.com","url":"https://www.worlize.com/"},"browser":"lib/browser.js","bugs":{"url":"https://github.com/theturtle32/WebSocket-Node/issues"},"config":{"verbose":false},"contributors":[{"name":"Iñaki Baz Castillo","email":"ibc@aliax.net","url":"http://dev.sipdoc.net"}],"dependencies":{"debug":"^2.2.0","nan":"^2.3.3","typedarray-to-buffer":"^3.1.2","yaeti":"^0.0.6"},"description":"Websocket Client & Server Library implementing the WebSocket protocol as specified in RFC 6455.","devDependencies":{"buffer-equal":"^1.0.0","faucet":"^0.0.1","gulp":"git+https://github.com/gulpjs/gulp.git#4.0","gulp-jshint":"^2.0.4","jshint":"^2.0.0","jshint-stylish":"^2.2.1","tape":"^4.0.1"},"directories":{"lib":"./lib"},"dist":{"shasum":"74903e75f2545b6b2e1de1425bc1c905917a1890","tarball":"https://registry.npmjs.org/websocket/-/websocket-1.0.24.tgz"},"engines":{"node":">=0.8.0"},"gitHead":"0e15f9445953927c39ce84a232cb7dd6e3adf12e","homepage":"https://github.com/theturtle32/WebSocket-Node","keywords":["websocket","websockets","socket","networking","comet","push","RFC-6455","realtime","server","client"],"license":"Apache-2.0","main":"index","maintainers":[{"name":"theturtle32","email":"brian@worlize.com"}],"name":"websocket","optionalDependencies":{},"readme":"ERROR: No README data found!","repository":{"type":"git","url":"git+https://github.com/theturtle32/WebSocket-Node.git"},"scripts":{"gulp":"gulp","install":"(node-gyp rebuild 2> builderror.log) || (exit 0)","test":"faucet test/unit"},"version":"1.0.24"}
+module.exports = {"_from":"websocket@1.0.26","_id":"websocket@1.0.26","_inBundle":false,"_integrity":"sha512-fjcrYDPIQxpTnqFQ9JjxUQcdvR89MFAOjPBlF+vjOt49w/XW4fJknUoMz/mDIn2eK1AdslVojcaOxOqyZZV8rw==","_location":"/websocket","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"websocket@1.0.26","name":"websocket","escapedName":"websocket","rawSpec":"1.0.26","saveSpec":null,"fetchSpec":"1.0.26"},"_requiredBy":["#USER","/","/watson-developer-cloud"],"_resolved":"https://registry.npmjs.org/websocket/-/websocket-1.0.26.tgz","_shasum":"a03a01299849c35268c83044aa919c6374be8194","_spec":"websocket@1.0.26","_where":"/Users/germana/workspace/speech-javascript-sdk","author":{"name":"Brian McKelvey","email":"brian@worlize.com","url":"https://www.worlize.com/"},"browser":"lib/browser.js","bugs":{"url":"https://github.com/theturtle32/WebSocket-Node/issues"},"bundleDependencies":false,"config":{"verbose":false},"contributors":[{"name":"Iñaki Baz Castillo","email":"ibc@aliax.net","url":"http://dev.sipdoc.net"}],"dependencies":{"debug":"^2.2.0","nan":"^2.3.3","typedarray-to-buffer":"^3.1.2","yaeti":"^0.0.6"},"deprecated":false,"description":"Websocket Client & Server Library implementing the WebSocket protocol as specified in RFC 6455.","devDependencies":{"buffer-equal":"^1.0.0","faucet":"^0.0.1","gulp":"git+https://github.com/gulpjs/gulp.git#4.0","gulp-jshint":"^2.0.4","jshint":"^2.0.0","jshint-stylish":"^2.2.1","tape":"^4.0.1"},"directories":{"lib":"./lib"},"engines":{"node":">=0.10.0"},"homepage":"https://github.com/theturtle32/WebSocket-Node","keywords":["websocket","websockets","socket","networking","comet","push","RFC-6455","realtime","server","client"],"license":"Apache-2.0","main":"index","name":"websocket","repository":{"type":"git","url":"git+https://github.com/theturtle32/WebSocket-Node.git"},"scripts":{"gulp":"gulp","install":"(node-gyp rebuild 2> builderror.log) || (exit 0)","test":"faucet test/unit"},"version":"1.0.26"}
 
 /***/ }),
-/* 77 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -10300,7 +9385,7 @@ var substr = 'ab'.substr(-1) === 'b'
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 78 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {var clone = (function() {
@@ -10467,19 +9552,19 @@ if (typeof module === 'object' && module.exports) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 79 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 // modified from https://github.com/es-shims/es6-shim
-var keys = __webpack_require__(39);
-var bind = __webpack_require__(81);
+var keys = __webpack_require__(62);
+var bind = __webpack_require__(64);
 var canBeObject = function (obj) {
 	return typeof obj !== 'undefined' && obj !== null;
 };
-var hasSymbols = __webpack_require__(83)();
+var hasSymbols = __webpack_require__(66)();
 var toObject = Object;
 var push = bind.call(Function.call, Array.prototype.push);
 var propIsEnumerable = bind.call(Function.call, Object.prototype.propertyIsEnumerable);
@@ -10515,7 +9600,154 @@ module.exports = function assign(target, source1) {
 
 
 /***/ }),
-/* 80 */
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// modified from https://github.com/es-shims/es5-shim
+var has = Object.prototype.hasOwnProperty;
+var toStr = Object.prototype.toString;
+var slice = Array.prototype.slice;
+var isArgs = __webpack_require__(63);
+var isEnumerable = Object.prototype.propertyIsEnumerable;
+var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
+var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
+var dontEnums = [
+	'toString',
+	'toLocaleString',
+	'valueOf',
+	'hasOwnProperty',
+	'isPrototypeOf',
+	'propertyIsEnumerable',
+	'constructor'
+];
+var equalsConstructorPrototype = function (o) {
+	var ctor = o.constructor;
+	return ctor && ctor.prototype === o;
+};
+var excludedKeys = {
+	$console: true,
+	$external: true,
+	$frame: true,
+	$frameElement: true,
+	$frames: true,
+	$innerHeight: true,
+	$innerWidth: true,
+	$outerHeight: true,
+	$outerWidth: true,
+	$pageXOffset: true,
+	$pageYOffset: true,
+	$parent: true,
+	$scrollLeft: true,
+	$scrollTop: true,
+	$scrollX: true,
+	$scrollY: true,
+	$self: true,
+	$webkitIndexedDB: true,
+	$webkitStorageInfo: true,
+	$window: true
+};
+var hasAutomationEqualityBug = (function () {
+	/* global window */
+	if (typeof window === 'undefined') { return false; }
+	for (var k in window) {
+		try {
+			if (!excludedKeys['$' + k] && has.call(window, k) && window[k] !== null && typeof window[k] === 'object') {
+				try {
+					equalsConstructorPrototype(window[k]);
+				} catch (e) {
+					return true;
+				}
+			}
+		} catch (e) {
+			return true;
+		}
+	}
+	return false;
+}());
+var equalsConstructorPrototypeIfNotBuggy = function (o) {
+	/* global window */
+	if (typeof window === 'undefined' || !hasAutomationEqualityBug) {
+		return equalsConstructorPrototype(o);
+	}
+	try {
+		return equalsConstructorPrototype(o);
+	} catch (e) {
+		return false;
+	}
+};
+
+var keysShim = function keys(object) {
+	var isObject = object !== null && typeof object === 'object';
+	var isFunction = toStr.call(object) === '[object Function]';
+	var isArguments = isArgs(object);
+	var isString = isObject && toStr.call(object) === '[object String]';
+	var theKeys = [];
+
+	if (!isObject && !isFunction && !isArguments) {
+		throw new TypeError('Object.keys called on a non-object');
+	}
+
+	var skipProto = hasProtoEnumBug && isFunction;
+	if (isString && object.length > 0 && !has.call(object, 0)) {
+		for (var i = 0; i < object.length; ++i) {
+			theKeys.push(String(i));
+		}
+	}
+
+	if (isArguments && object.length > 0) {
+		for (var j = 0; j < object.length; ++j) {
+			theKeys.push(String(j));
+		}
+	} else {
+		for (var name in object) {
+			if (!(skipProto && name === 'prototype') && has.call(object, name)) {
+				theKeys.push(String(name));
+			}
+		}
+	}
+
+	if (hasDontEnumBug) {
+		var skipConstructor = equalsConstructorPrototypeIfNotBuggy(object);
+
+		for (var k = 0; k < dontEnums.length; ++k) {
+			if (!(skipConstructor && dontEnums[k] === 'constructor') && has.call(object, dontEnums[k])) {
+				theKeys.push(dontEnums[k]);
+			}
+		}
+	}
+	return theKeys;
+};
+
+keysShim.shim = function shimObjectKeys() {
+	if (Object.keys) {
+		var keysWorksWithArguments = (function () {
+			// Safari 5.0 bug
+			return (Object.keys(arguments) || '').length === 2;
+		}(1, 2));
+		if (!keysWorksWithArguments) {
+			var originalKeys = Object.keys;
+			Object.keys = function keys(object) {
+				if (isArgs(object)) {
+					return originalKeys(slice.call(object));
+				} else {
+					return originalKeys(object);
+				}
+			};
+		}
+	} else {
+		Object.keys = keysShim;
+	}
+	return Object.keys || keysShim;
+};
+
+module.exports = keysShim;
+
+
+/***/ }),
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10539,17 +9771,25 @@ module.exports = function isArguments(value) {
 
 
 /***/ }),
-/* 81 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var implementation = __webpack_require__(82);
+"use strict";
+
+
+var implementation = __webpack_require__(65);
 
 module.exports = Function.prototype.bind || implementation;
 
 
 /***/ }),
-/* 82 */
-/***/ (function(module, exports) {
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/* eslint no-invalid-this: 1 */
 
 var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
 var slice = Array.prototype.slice;
@@ -10602,14 +9842,13 @@ module.exports = function bind(that) {
 
 
 /***/ }),
-/* 83 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var keys = __webpack_require__(39);
-
+/* eslint complexity: [2, 17], max-statements: [2, 33] */
 module.exports = function hasSymbols() {
 	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
 	if (typeof Symbol.iterator === 'symbol') { return true; }
@@ -10627,10 +9866,12 @@ module.exports = function hasSymbols() {
 	// temp disabled per https://github.com/WebReflection/get-own-property-symbols/issues/4
 	// if (!(symObj instanceof Symbol)) { return false; }
 
+	// if (typeof Symbol.prototype.toString !== 'function') { return false; }
+	// if (String(sym) !== Symbol.prototype.toString.call(sym)) { return false; }
+
 	var symVal = 42;
 	obj[sym] = symVal;
-	for (sym in obj) { return false; }
-	if (keys(obj).length !== 0) { return false; }
+	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax
 	if (typeof Object.keys === 'function' && Object.keys(obj).length !== 0) { return false; }
 
 	if (typeof Object.getOwnPropertyNames === 'function' && Object.getOwnPropertyNames(obj).length !== 0) { return false; }
@@ -10650,7 +9891,7 @@ module.exports = function hasSymbols() {
 
 
 /***/ }),
-/* 84 */
+/* 67 */
 /***/ (function(module, exports) {
 
 /**
@@ -10871,7 +10112,7 @@ module.exports = pullAllWith;
 
 
 /***/ }),
-/* 85 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10892,17 +10133,17 @@ module.exports = pullAllWith;
  */
 
 
-var BlobStream = __webpack_require__(86);
-var RecognizeStream = __webpack_require__(17);
-var FilePlayer = __webpack_require__(41);
-var FormatStream = __webpack_require__(19);
-var TimingStream = __webpack_require__(42);
-var assign = __webpack_require__(38)();
-var WritableElementStream = __webpack_require__(21);
-var ResultStream = __webpack_require__(22);
-var SpeakerStream = __webpack_require__(23);
-var contentType = __webpack_require__(18);
-var fetch = __webpack_require__(87); // like regular fetch, but with an extra method on the response to get a node-style ReadableStream
+var BlobStream = __webpack_require__(69);
+var RecognizeStream = __webpack_require__(16);
+var FilePlayer = __webpack_require__(35);
+var FormatStream = __webpack_require__(18);
+var TimingStream = __webpack_require__(36);
+var assign = __webpack_require__(33)();
+var WritableElementStream = __webpack_require__(20);
+var ResultStream = __webpack_require__(21);
+var SpeakerStream = __webpack_require__(22);
+var contentType = __webpack_require__(17);
+var fetch = __webpack_require__(70); // like regular fetch, but with an extra method on the response to get a node-style ReadableStream
 
 /**
  * @module watson-speech/speech-to-text/recognize-file
@@ -10913,7 +10154,8 @@ var fetch = __webpack_require__(87); // like regular fetch, but with an extra me
  * (e.g. from a file <input>, a dragdrop target, or an ajax request)
  *
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
- * @param {String} options.token - Auth Token - see https://github.com/watson-developer-cloud/node-sdk#authorization
+ * @param {String} options.token - Auth Token for CF services - see https://github.com/watson-developer-cloud/node-sdk#authorization
+ * @param {String} options.access_token - IAM Access Token for RC services - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {Blob|FileString} options.file - String url or the raw audio data as a Blob or File instance to be transcribed (and optionally played). Playback may not with with Blob or File on mobile Safari.
  * @param {Boolean} [options.play=false] - If a file is set, play it locally as it's being uploaded
  * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
@@ -10926,8 +10168,8 @@ var fetch = __webpack_require__(87); // like regular fetch, but with an extra me
  */
 module.exports = function recognizeFile(options) {
   // eslint-disable-line complexity
-  if (!options || !options.token) {
-    throw new Error('WatsonSpeechToText: missing required parameter: opts.token');
+  if (!options || (!options.token && !options.access_token)) {
+    throw new Error('WatsonSpeechToText: missing required parameter: opts.token (CF) or opts.access_token (RC)');
   }
 
   if (options.data && !options.file) {
@@ -11101,7 +10343,7 @@ module.exports = function recognizeFile(options) {
 
 
 /***/ }),
-/* 86 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11240,15 +10482,15 @@ ReadableBlobStream.prototype._read = function(chunkSize)
         reader.readAsArrayBuffer(chunk);
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(0).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 87 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isoFetch = __webpack_require__(88)
-var patchRequest = __webpack_require__(90)
-var patchResponse = __webpack_require__(94)
+var isoFetch = __webpack_require__(71)
+var patchRequest = __webpack_require__(73)
+var patchResponse = __webpack_require__(78)
 
 function fetch (url, options) {
   return patchRequest(options).then(function (options) {
@@ -11262,19 +10504,19 @@ module.exports = fetch
 
 
 /***/ }),
-/* 88 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // the whatwg-fetch polyfill installs the fetch() function
 // on the global object (window or self)
 //
 // Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(89);
+__webpack_require__(72);
 module.exports = self.fetch.bind(self);
 
 
 /***/ }),
-/* 89 */
+/* 72 */
 /***/ (function(module, exports) {
 
 (function(self) {
@@ -11637,7 +10879,10 @@ module.exports = self.fetch.bind(self);
 
   function parseHeaders(rawHeaders) {
     var headers = new Headers()
-    rawHeaders.split(/\r?\n/).forEach(function(line) {
+    // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
+    // https://tools.ietf.org/html/rfc7230#section-3.2
+    var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ')
+    preProcessedHeaders.split(/\r?\n/).forEach(function(line) {
       var parts = line.split(':')
       var key = parts.shift().trim()
       if (key) {
@@ -11656,7 +10901,7 @@ module.exports = self.fetch.bind(self);
     }
 
     this.type = 'default'
-    this.status = 'status' in options ? options.status : 200
+    this.status = options.status === undefined ? 200 : options.status
     this.ok = this.status >= 200 && this.status < 300
     this.statusText = 'statusText' in options ? options.statusText : 'OK'
     this.headers = new Headers(options.headers)
@@ -11723,6 +10968,8 @@ module.exports = self.fetch.bind(self);
 
       if (request.credentials === 'include') {
         xhr.withCredentials = true
+      } else if (request.credentials === 'omit') {
+        xhr.withCredentials = false
       }
 
       if ('responseType' in xhr && support.blob) {
@@ -11741,10 +10988,10 @@ module.exports = self.fetch.bind(self);
 
 
 /***/ }),
-/* 90 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var bufferFromReadable = __webpack_require__(91)
+var bufferFromReadable = __webpack_require__(74)
 
 function patch (options) {
   options = options || {}
@@ -11764,10 +11011,10 @@ module.exports = patch
 
 
 /***/ }),
-/* 91 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var concat = __webpack_require__(92)
+var concat = __webpack_require__(75)
 
 function bufferFromReadable (readable) {
   return new Promise(function (resolve, reject) {
@@ -11786,14 +11033,15 @@ module.exports = bufferFromReadable
 
 
 /***/ }),
-/* 92 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {var Writable = __webpack_require__(7).Writable
 var inherits = __webpack_require__(2)
+var bufferFrom = __webpack_require__(76)
 
 if (typeof Uint8Array === 'undefined') {
-  var U8 = __webpack_require__(93).Uint8Array
+  var U8 = __webpack_require__(77).Uint8Array
 } else {
   var U8 = Uint8Array
 }
@@ -11878,9 +11126,9 @@ function stringConcat (parts) {
     } else if (Buffer.isBuffer(p)) {
       strings.push(p)
     } else if (isBufferish(p)) {
-      strings.push(new Buffer(p))
+      strings.push(bufferFrom(p))
     } else {
-      strings.push(new Buffer(String(p)))
+      strings.push(bufferFrom(String(p)))
     }
   }
   if (Buffer.isBuffer(parts[0])) {
@@ -11899,9 +11147,9 @@ function bufferConcat (parts) {
     if (Buffer.isBuffer(p)) {
       bufs.push(p)
     } else if (isBufferish(p)) {
-      bufs.push(new Buffer(p))
+      bufs.push(bufferFrom(p))
     } else {
-      bufs.push(new Buffer(String(p)))
+      bufs.push(bufferFrom(String(p)))
     }
   }
   return Buffer.concat(bufs)
@@ -11919,7 +11167,7 @@ function u8Concat (parts) {
   var len = 0
   for (var i = 0; i < parts.length; i++) {
     if (typeof parts[i] === 'string') {
-      parts[i] = new Buffer(parts[i])
+      parts[i] = bufferFrom(parts[i])
     }
     len += parts[i].length
   }
@@ -11936,7 +11184,83 @@ function u8Concat (parts) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 93 */
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {var toString = Object.prototype.toString
+
+var isModern = (
+  typeof Buffer.alloc === 'function' &&
+  typeof Buffer.allocUnsafe === 'function' &&
+  typeof Buffer.from === 'function'
+)
+
+function isArrayBuffer (input) {
+  return toString.call(input).slice(8, -1) === 'ArrayBuffer'
+}
+
+function fromArrayBuffer (obj, byteOffset, length) {
+  byteOffset >>>= 0
+
+  var maxLength = obj.byteLength - byteOffset
+
+  if (maxLength < 0) {
+    throw new RangeError("'offset' is out of bounds")
+  }
+
+  if (length === undefined) {
+    length = maxLength
+  } else {
+    length >>>= 0
+
+    if (length > maxLength) {
+      throw new RangeError("'length' is out of bounds")
+    }
+  }
+
+  return isModern
+    ? Buffer.from(obj.slice(byteOffset, byteOffset + length))
+    : new Buffer(new Uint8Array(obj.slice(byteOffset, byteOffset + length)))
+}
+
+function fromString (string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') {
+    encoding = 'utf8'
+  }
+
+  if (!Buffer.isEncoding(encoding)) {
+    throw new TypeError('"encoding" must be a valid string encoding')
+  }
+
+  return isModern
+    ? Buffer.from(string, encoding)
+    : new Buffer(string, encoding)
+}
+
+function bufferFrom (value, encodingOrOffset, length) {
+  if (typeof value === 'number') {
+    throw new TypeError('"value" argument must not be a number')
+  }
+
+  if (isArrayBuffer(value)) {
+    return fromArrayBuffer(value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'string') {
+    return fromString(value, encodingOrOffset)
+  }
+
+  return isModern
+    ? Buffer.from(value)
+    : new Buffer(value)
+}
+
+module.exports = bufferFrom
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
+
+/***/ }),
+/* 77 */
 /***/ (function(module, exports) {
 
 var undefined = (void 0); // Paranoia
@@ -12572,11 +11896,11 @@ function packF32(v) { return packIEEE754(v, 8, 23); }
 
 
 /***/ }),
-/* 94 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ReadableFromArrayBuffer = __webpack_require__(95)
-var ReadableFromWhatwg = __webpack_require__(96)
+var ReadableFromArrayBuffer = __webpack_require__(79)
+var ReadableFromWhatwg = __webpack_require__(80)
 
 function patch (res) {
   // not implemented in Firefix 51
@@ -12611,7 +11935,7 @@ module.exports = patch
 
 
 /***/ }),
-/* 95 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {var inherits = __webpack_require__(2)
@@ -12635,7 +11959,7 @@ module.exports = ReadableFromArrayBuffer
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 96 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {var inherits = __webpack_require__(2)
@@ -12666,7 +11990,7 @@ module.exports = ReadableFromWhatwg
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
 /***/ }),
-/* 97 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12709,12 +12033,13 @@ module.exports = ReadableFromWhatwg
 
  * @todo define format in @return statement
  * @param {Object} options
- * @param {String} options.token auth token
+ * @param {String} options.token auth token for CF services
+ * @param {String} options.access_token IAM access token for RC services
  * @return {Promise.<T>}
  */
 module.exports = function getModels(options) {
-  if (!options || !options.token) {
-    throw new Error('Watson SpeechToText: missing required parameter: options.token');
+  if (!options || (!options.token && !options.access_token)) {
+    throw new Error('Watson SpeechToText: missing required auth parameter: options.token (CF) or options.access_token (RC)');
   }
   var reqOpts = {
     credentials: 'omit',
@@ -12722,7 +12047,13 @@ module.exports = function getModels(options) {
       accept: 'application/json'
     }
   };
-  return fetch('https://stream.watsonplatform.net/speech-to-text/api/v1/models?watson-token=' + options.token, reqOpts)
+  var url;
+  if (options.access_token) {
+    url = 'https://stream.watsonplatform.net/speech-to-text/api/v1/models?access_token=' + options.access_token;
+  } else {
+    url = 'https://stream.watsonplatform.net/speech-to-text/api/v1/models?watson-token=' + options.token;
+  }
+  return fetch(url, reqOpts)
     .then(function(response) {
       return response.json();
     })
@@ -12733,7 +12064,7 @@ module.exports = function getModels(options) {
 
 
 /***/ }),
-/* 98 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12761,16 +12092,16 @@ module.exports = function getModels(options) {
 /**
  * @see module:watson-speech/text-to-speech/synthesize
  */
-exports.synthesize = __webpack_require__(99);
+exports.synthesize = __webpack_require__(83);
 
 /**
  * @see module:watson-speech/text-to-speech/get-voices
  */
-exports.getVoices = __webpack_require__(100);
+exports.getVoices = __webpack_require__(84);
 
 
 /***/ }),
-/* 99 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12790,8 +12121,8 @@ exports.getVoices = __webpack_require__(100);
  * limitations under the License.
  */
 
-var pick = __webpack_require__(35);
-var qs = __webpack_require__(36);
+var pick = __webpack_require__(30);
+var qs = __webpack_require__(31);
 
 var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'accept', 'customization_id'];
 
@@ -12805,7 +12136,8 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  * Creates and returns a HTML5 `<audio>` element
  *
  * @param {Object} options
- * @param {String} options.token auth token
+ * @param {String} [options.token] - Auth token for CF services
+ * @param {String} options.access_token - IAM Access Token for RC services
  * @param {String} options.text text to speak
  * @param {String} [options.voice=en-US_MichaelVoice] what voice to use - call getVoices() for a complete list.
  * @param {String} [options.customization_id] GUID of a custom voice model. Omit to use the voice with no customization.
@@ -12817,8 +12149,8 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  * @see module:watson-speech/text-to-speech/get-voices
  */
 module.exports = function synthesize(options) {
-  if (!options || !options.token) {
-    throw new Error('Watson TextToSpeech: missing required parameter: options.token');
+  if (!options || (!options.token && !options.access_token)) {
+    throw new Error('Watson TextToSpeech: missing required parameter: options.token (CF) or options.access_token (RC)');
   }
   options['watson-token'] = options.token;
   delete options.token;
@@ -12833,7 +12165,7 @@ module.exports = function synthesize(options) {
 
 
 /***/ }),
-/* 100 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12877,12 +12209,13 @@ module.exports = function synthesize(options) {
 
  * @todo define format in @return statement
  * @param {Object} options
- * @param {String} options.token auth token
+ * @param {String} options.token auth token for CF services
+ * @param {String} options.access_token IAM access token for RC services
  * @return {Promise.<T>}
  */
 module.exports = function getVoices(options) {
-  if (!options || !options.token) {
-    throw new Error('Watson TextToSpeech: missing required parameter: options.token');
+  if (!options || (!options.token && !options.access_token)) {
+    throw new Error('Watson TextToSpeech: missing required auth parameter: options.token (CF) or options.access_token (RC)');
   }
   var reqOpts = {
     credentials: 'omit',
@@ -12890,7 +12223,13 @@ module.exports = function getVoices(options) {
       accept: 'application/json'
     }
   };
-  return fetch('https://stream.watsonplatform.net/text-to-speech/api/v1/voices?watson-token=' + options.token, reqOpts)
+  var url;
+  if (options.access_token) {
+    url = 'https://stream.watsonplatform.net/text-to-speech/api/v1/voices?watson-token=' + options.access_token;
+  } else {
+    url = 'https://stream.watsonplatform.net/text-to-speech/api/v1/voices?watson-token=' + options.token;
+  }
+  return fetch(url, reqOpts)
     .then(function(response) {
       return response.json();
     })
