@@ -70,6 +70,7 @@ where the max length is around 1000 characters after the token is accounted for.
 
 Options: 
 * text - the text to speak
+* url - the Watson Text to Speech API URL (defaults to https://stream.watsonplatform.net/text-to-speech/api)
 * voice - the desired playback voice's name - see .getVoices(). Note that the voices are language-specific.
 * customization_id - GUID of a custom voice model - omit to use the voice with no customization.
 * autoPlay - set to false to prevent the audio from automatically playing
