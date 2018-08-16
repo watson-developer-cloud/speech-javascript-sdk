@@ -33,7 +33,7 @@ function FormatStream(opts) {
 }
 util.inherits(FormatStream, Transform);
 
-var reHesitation = /%HESITATION ?/g; // http://www.ibm.com/watson/developercloud/doc/speech-to-text/output.shtml#hesitation - D_ is handled below
+var reHesitation = /%HESITATION ?/g; // https://console.bluemix.net/docs/services/speech-to-text/output.html#output - D_ is handled below
 var reRepeatedCharacter = /([a-z])\1{2,}/gi; // detect the same character repeated three or more times and remove it
 var reDUnderscoreWords = /D_[^\s]+/g; // replace D_(anything)
 

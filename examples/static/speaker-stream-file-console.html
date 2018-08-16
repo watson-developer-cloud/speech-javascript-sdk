@@ -36,7 +36,7 @@
         token: token,
         file: '/en-us-multi-speaker-narrowband.wav',
         // only certain models support speaker labels currently,
-        // see http://www.ibm.com/watson/developercloud/doc/speech-to-text/output.shtml#speaker_labels
+        // see https://console.bluemix.net/docs/services/speech-to-text/output.html#output
         model: 'en-US_NarrowbandModel',
         resultsBySpeaker: true, // pipes results through a SpeakerStream, and also enables speaker_labels and objectMode
         realtime: false, // don't slow down the results if transcription occurs faster than playback
