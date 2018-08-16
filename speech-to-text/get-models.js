@@ -37,6 +37,7 @@
 
  * @todo define format in @return statement
  * @param {Object} options
+ * @param {String} options.url=https://stream.watsonplatform.net/speech-to-text/api URL for Watson Speech to Text API
  * @param {String} options.token auth token for CF services
  * @param {String} options.access_token IAM access token for RC services
  * @return {Promise.<T>}
@@ -51,11 +52,11 @@ module.exports = function getModels(options) {
       accept: 'application/json'
     }
   };
-  var url;
+  var url = options.url || 'https://stream.watsonplatform.net/speech-to-text/api';
   if (options.access_token) {
-    url = 'https://stream.watsonplatform.net/speech-to-text/api/v1/models?access_token=' + options.access_token;
+    url = `${url}/v1/models?access_token=${options.access_token}`;
   } else {
-    url = 'https://stream.watsonplatform.net/speech-to-text/api/v1/models?watson-token=' + options.token;
+    url = `${url}/v1/models?access_token=${options.token}`;
   }
   return fetch(url, reqOpts)
     .then(function(response) {

@@ -29,6 +29,7 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  * Creates and returns a HTML5 `<audio>` element
  *
  * @param {Object} options
+ * @param {String} options.url=https://stream.watsonplatform.net/text-to-speech/api URL for Watson Text to Speech API
  * @param {String} [options.token] - Auth token for CF services
  * @param {String} options.access_token - IAM Access Token for RC services
  * @param {String} options.text text to speak
@@ -47,9 +48,10 @@ module.exports = function synthesize(options) {
   }
   options['watson-token'] = options.token;
   delete options.token;
+  var url = options.url || 'https://stream.watsonplatform.net/text-to-speech/api';
   var audio = options.element || new Audio();
   audio.crossOrigin = 'anonymous';
-  audio.src = 'https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?' + qs.stringify(pick(options, QUERY_PARAMS_ALLOWED));
+  audio.src = `${url}/v1/synthesize?${qs.stringify(pick(options, QUERY_PARAMS_ALLOWED))}`;
   if (options.autoPlay !== false) {
     audio.play();
   }
