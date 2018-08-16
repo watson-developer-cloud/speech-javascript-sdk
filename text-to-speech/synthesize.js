@@ -51,7 +51,7 @@ module.exports = function synthesize(options) {
   var url = options.url || 'https://stream.watsonplatform.net/text-to-speech/api';
   var audio = options.element || new Audio();
   audio.crossOrigin = 'anonymous';
-  audio.src = url + '/v1/synthesize?' + qs.stringify(pick(options, QUERY_PARAMS_ALLOWED));
+  audio.src = `${url}/v1/synthesize?${qs.stringify(pick(options, QUERY_PARAMS_ALLOWED))}`;
   if (options.autoPlay !== false) {
     audio.play();
   }

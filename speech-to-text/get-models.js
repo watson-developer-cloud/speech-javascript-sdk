@@ -54,9 +54,9 @@ module.exports = function getModels(options) {
   };
   var url = options.url || 'https://stream.watsonplatform.net/speech-to-text/api';
   if (options.access_token) {
-    url = url + '/v1/models?access_token=' + options.access_token;
+    url = `${url}/v1/models?access_token=${options.access_token}`;
   } else {
-    url = url + '/v1/models?watson-token=' + options.token;
+    url = `${url}/v1/models?access_token=${options.token}`;
   }
   return fetch(url, reqOpts)
     .then(function(response) {
