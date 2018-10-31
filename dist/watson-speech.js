@@ -12124,7 +12124,7 @@ exports.getVoices = __webpack_require__(84);
 var pick = __webpack_require__(30);
 var qs = __webpack_require__(31);
 
-var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'accept', 'customization_id'];
+var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'accept', 'customization_id', 'access_token'];
 
 /**
  * @module watson-speech/text-to-speech/synthesize
@@ -12152,8 +12152,12 @@ module.exports = function synthesize(options) {
   if (!options || (!options.token && !options.access_token)) {
     throw new Error('Watson TextToSpeech: missing required parameter: options.token (CF) or options.access_token (RC)');
   }
-  options['watson-token'] = options.token;
-  delete options.token;
+  
+  if(options.token) {
+    options['watson-token'] = options.token;
+    delete options.token;
+  }
+  
   var audio = options.element || new Audio();
   audio.crossOrigin = 'anonymous';
   audio.src = 'https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?' + qs.stringify(pick(options, QUERY_PARAMS_ALLOWED));
