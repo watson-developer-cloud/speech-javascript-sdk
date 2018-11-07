@@ -20,7 +20,7 @@
     "express-secure-only": "^0.2.1",
     "object.assign": "^4.0.4",
     "vcap_services": "^0.4.0",
-    "watson-developer-cloud": "^3.7.0",
+    "watson-developer-cloud": "^3.13.0",
     "watson-speech": "*",
     "webpack": "^3.5.5",
     "webpack-dev-middleware": "^1.10.0",
