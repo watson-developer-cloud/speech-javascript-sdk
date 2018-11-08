@@ -46,8 +46,10 @@ module.exports = function synthesize(options) {
   if (!options || (!options.token && !options.access_token)) {
     throw new Error('Watson TextToSpeech: missing required parameter: options.token (CF) or options.access_token (RC)');
   }
-  options['watson-token'] = options.token;
-  delete options.token;
+  if (options.token && !options['watson-token']) {
+    options['watson-token'] = options.token;
+    delete options.token;
+  }
   var url = options.url || 'https://stream.watsonplatform.net/text-to-speech/api';
   var audio = options.element || new Audio();
   audio.crossOrigin = 'anonymous';
