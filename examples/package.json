@@ -4,7 +4,8 @@
   "description": "Examples showing the IBM Watson Speech Javascript SDK in action.",
   "scripts": {
     "start": "node server.js",
-    "postinstall": "bower install"
+    "postinstall": "bower install",
+    "dev": "../scripts/run-dev.sh && node server.js"
   },
   "cacheDirectories": [
     "node_modules",
