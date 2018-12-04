@@ -26,31 +26,29 @@
 <h2>Code for this demo:</h2>
 
 <pre><code><script style="display: block;">
-document.querySelector('#button').onclick = function () {
-
+document.querySelector('#button').onclick = function() {
   fetch('/api/speech-to-text/token')
-  .then(function(response) {
+    .then(function(response) {
       return response.text();
-  }).then(function (token) {
-
-    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+    })
+    .then(function(token) {
+      var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({ // eslint-disable-line
         token: token,
         outputElement: '#output' // CSS selector or DOM Element
-    });
+      });
 
-    stream.on('error', function(err) {
+      stream.on('error', function(err) {
         console.log(err);
-    });
+      });
 
-    document.querySelector('#stop').onclick = function() {
-      stream.stop();
-    };
-
-  }).catch(function(error) {
+      document.querySelector('#stop').onclick = function() {
+        stream.stop();
+      };
+    })
+    .catch(function(error) {
       console.log(error);
-  });
+    });
 };
-
 </script></code></pre>
 
 </div>

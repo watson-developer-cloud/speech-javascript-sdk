@@ -23,6 +23,14 @@
     {
       "name": "Nathan Friedly",
       "url": "http://nfriedly.com"
+    },
+    {
+      "name": "German Attanasio",
+      "url": "https://github.com/germanattanasio"
+    },
+    {
+      "name": "Dustin Popp",
+      "url": "https://github.com/dpopp07"
     }
   ],
   "devDependencies": {
