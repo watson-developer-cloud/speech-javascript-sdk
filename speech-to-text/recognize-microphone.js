@@ -46,6 +46,7 @@ var bitBucket = new Writable({
  * @param {Object} options - Also passed to {RecognizeStream}, and {FormatStream} when applicable
  * @param {String} options.token - Auth Token for CF services - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {String} options.access_token - IAM Access Token for RC services - see https://github.com/watson-developer-cloud/node-sdk#authorization
+ * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] - Base URL for a service instance
  * @param {Boolean} [options.format=true] - pipe the text through a FormatStream which performs light formatting. Also controls smart_formatting option unless explicitly set.
  * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
  * @param {String|DOMElement} [options.outputElement] pipe the text to a [WriteableElementStream](WritableElementStream.html) targeting the specified element. Also defaults objectMode to true to enable interim results.

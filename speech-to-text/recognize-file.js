@@ -36,6 +36,7 @@ var fetch = require('nodeify-fetch'); // like regular fetch, but with an extra m
  * (e.g. from a file <input>, a dragdrop target, or an ajax request)
  *
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
+ * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] - Base URL for a service instance
  * @param {String} options.token - Auth Token for CF services - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {String} options.access_token - IAM Access Token for RC services - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {Blob|FileString} options.file - String url or the raw audio data as a Blob or File instance to be transcribed (and optionally played). Playback may not with with Blob or File on mobile Safari.
