@@ -17,7 +17,7 @@
 'use strict';
 var getUserMedia = require('get-user-media-promise');
 var MicrophoneStream = require('microphone-stream');
-var RecognizeStream = require('./recognize-stream.js');
+var RecognizeStream = require('watson-developer-cloud/lib/recognize-stream');
 var L16 = require('./webaudio-l16-stream.js');
 var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();

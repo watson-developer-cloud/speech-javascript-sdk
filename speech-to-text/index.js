@@ -34,7 +34,7 @@ module.exports = {
   /**
    * @see RecognizeStream
    */
-  RecognizeStream: require('./recognize-stream'),
+  RecognizeStream: require('watson-developer-cloud/lib/recognize-stream'),
   /**
    * @see FilePlayer
    */
