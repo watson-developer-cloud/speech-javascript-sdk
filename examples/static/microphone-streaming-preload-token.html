@@ -39,7 +39,7 @@ fetch('/api/speech-to-text/token')
 
 document.querySelector('#button').onclick = function () {
     var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-        token: token,
+        token: token, // use `access_token` as the parameter name if using an RC service
         outputElement: '#output' // CSS selector or DOM Element
     });
 

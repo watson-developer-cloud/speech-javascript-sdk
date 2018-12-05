@@ -22,16 +22,15 @@
 
 <h2>Code for this demo:</h2>
 <pre><code><script style="display: block;">
-document.querySelector('#button').onclick = function () {
-
+document.querySelector('#button').onclick = function() {
   fetch('/api/text-to-speech/token')
     .then(function(response) {
       return response.text();
-    }).then(function (token) {
-
+    })
+    .then(function(token) {
       WatsonSpeech.TextToSpeech.synthesize({
         text: document.querySelector('#text').value,
-        token: token
+        token: token // use `access_token` as the parameter name if using an RC service
       }).on('error', function(err) {
         console.log('audio error: ', err);
       });

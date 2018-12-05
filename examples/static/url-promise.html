@@ -34,7 +34,7 @@ document.querySelector('#button').onclick = function () {
   }).then(function (token) {
 
     return WatsonSpeech.SpeechToText.recognizeFile({
-        token: token,
+        token: token, // use `access_token` as the parameter name if using an RC service
         file: '/Us_English_Broadband_Sample_1.wav'
       })
       .promise();
