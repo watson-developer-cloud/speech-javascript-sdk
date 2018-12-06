@@ -36,106 +36,20 @@ var recognizeMic = require('watson-speech/speech-to-text/recognize-microphone');
 ```
 
 
-Breaking change for v0.22.0
-----------------------------
-
-The format of objects emitted in objectMode has changed from `{alternatives: [...], index: 1}` to `{results: [{alternatives: [...]}], result_index: 1}`.
-
-There is a new `ResultExtractor` class that restores the old behavior; `recognizeMicrophone()` and `recognizeFile()` both accept a new `extract_results` option to enable it.
-
-This was done to enable the new `speaker_labels` feature. The format now exactly matches what the Watson Speech to Text service returns and shouldn't change again unless the Watson service changes.
-
-
-API & Examples
---------------
-
-The basic API is outlined below, see complete API docs at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/
-
-See several basic examples at http://watson-speech.mybluemix.net/ ([source](https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/))
-
-See a more advanced example at https://speech-to-text-demo.mybluemix.net/
-
-All API methods require an auth token that must be [generated server-side](https://github.com/watson-developer-cloud/node-sdk#authorization). 
-(See https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/ for a couple of basic examples in Node.js and Python.)
-
-_NOTE_: The `token` parameter only works for CF instances of services. For RC services using IAM for authentication, the `access_token` parameter must be used.
-
-## [`WatsonSpeech.TextToSpeech`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_text-to-speech.html)
-
-### [`.synthesize({text, token||access_token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_text-to-speech_synthesize.html) -> `<audio>`
-
-Speaks the supplied text through an automatically-created `<audio>` element. 
-Currently limited to text that can fit within a GET URL (this is particularly an issue on [Internet Explorer before Windows 10](http://stackoverflow.com/questions/32267442/url-length-limitation-of-microsoft-edge)
-where the max length is around 1000 characters after the token is accounted for.)
-
-Options: 
-* text - the text to speak
-* url - the Watson Text to Speech API URL (defaults to https://stream.watsonplatform.net/text-to-speech/api)
-* voice - the desired playback voice's name - see .getVoices(). Note that the voices are language-specific.
-* customization_id - GUID of a custom voice model - omit to use the voice with no customization.
-* autoPlay - set to false to prevent the audio from automatically playing
-
-Relies on browser audio support: should work reliably in Chrome and Firefox on desktop and Android. Edge works with a little help. Safari and all iOS browsers do not seem to work yet.
-
-## [`WatsonSpeech.SpeechToText`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text.html)
-
-The `recognizeMicrophone()` and `recognizeFile()` helper methods are recommended for most use-cases. They set up the streams in the appropriate order and enable common options. These two methods are documented below.
-
-The core of the library is the [RecognizeStream] that performs the actual transcription, and a collection of other Node.js-style streams that manipulate the data in various ways. For less common use-cases, the core components may be used directly with the helper methods serving as optional templates to follow. The full library is documented at http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text.html
-
-### [`.recognizeMicrophone({token||access_token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-microphone.html) -> Stream
-
-Options: 
-* `keepMicrophone`: if true, preserves the MicrophoneStream for subsequent calls, preventing additional permissions requests in Firefox
-* `mediaStream`: Optionally pass in an existing media stream rather than prompting the user for microphone access.
-* Other options passed to [RecognizeStream]
-* Other options passed to [SpeakerStream] if `options.resultsbySpeaker` is set to true
-* Other options passed to [FormatStream] if `options.format` is not set to false
-* Other options passed to [WritableElementStream] if `options.outputElement` is set
-
-Requires the `getUserMedia` API, so limited browser compatibility (see http://caniuse.com/#search=getusermedia) 
-Also note that Chrome requires https (with a few exceptions for localhost and such) - see https://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features
-
-No more data will be set after `.stop()` is called on the returned stream, but additional results may be recieved for already-sent data.
-
-
-### [`.recognizeFile({data, token||access_token})`](http://watson-developer-cloud.github.io/speech-javascript-sdk/master/module-watson-speech_speech-to-text_recognize-file.html) -> Stream
-
-Can recognize and optionally attempt to play a URL, [File](https://developer.mozilla.org/en-US/docs/Web/API/File) or [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
-(such as from an `<input type="file"/>` or from an ajax request.)
-
-Options: 
-* `file`: a String URL or a `Blob` or `File` instance. Note that [CORS] restrictions apply to URLs.
-* `play`: (optional, default=`false`) Attempt to also play the file locally while uploading it for transcription 
-* Other options passed to [RecognizeStream]
-* Other options passed to [TimingStream] if `options.realtime` is true, or unset and `options.play` is true
-* Other options passed to [SpeakerStream] if `options.resultsbySpeaker` is set to true
-* Other options passed to [FormatStream] if `options.format` is not set to false
-* Other options passed to [WritableElementStream] if `options.outputElement` is set
-
-`play`requires that the browser support the format; most browsers support wav and ogg/opus, but not flac.) 
-Will emit an `UNSUPPORTED_FORMAT` error on the RecognizeStream if playback fails. This error is special in that it does not stop the streaming of results.
-
-Playback will automatically stop when `.stop()` is called on the returned stream. 
-
-For Mobile Safari compatibility, a URL must be provided, and `recognizeFile()` must be called in direct response to a user interaction (so the token must be pre-loaded).
-
-
 ## Changes
-
-There have been a few breaking changes in recent releases:
-
-* Removed `SpeechToText.recognizeElement()` due to quality issues. The code is [avaliable in an (unsupported) example](https://github.com/watson-developer-cloud/speech-javascript-sdk/tree/master/examples/static/audio-video-deprecated) if you wish to use it with current releases of the SDK.
-* renamed `recognizeBlob` to `recognizeFile` to make the primary usage more apparent
-* Changed `playFile` option of `recognizeBlob()` to just `play`, corrected default
-* Changed format of objects emitted in objectMode to exactly match what service sends. Added `ResultStream` class and `extract_results` option to enable older behavior.
-* Changed `playback-error` event to just `error` when recognizing and playing a file. Check for `error.name == 'UNSUPPORTED_FORMAT'` to identify playback errors. This error is special in that it does not stop the streaming of results.
-* Renamed `recognizeFile()`'s `data` option to `file` because it now may be a URL. Using a URL enables faster playback and mobile Safari support
-* Continous flag for OPENING_MESSAGE_PARAMS_ALLOWED has been removed
 
 See [CHANGELOG.md](CHANGELOG.md) for a complete list of changes.
 
 ## Development
+
+### Use examples for development
+The provided examples can be used to test developmental code in action:
+* `cd examples/`
+* `npm run dev`
+
+This will build the local code, move the new bundle into the `examples/` directory, and start a new server at `localhost:3000` where the examples will be running.
+
+Note: This requires valid service credentials.
 
 ### Testing
 The test suite is broken up into offline unit tests and integration tests that test against actual service instances.
@@ -146,25 +60,3 @@ The test suite is broken up into offline unit tests and integration tests that t
 To run the integration tests, a file with service credentials is required. This file must be called `stt-auth.json` and must be located in `/test/resources/`. There are tests for usage of both CF and RC service instances. For testing CF, the required keys in this configuration file are `username` and `password`. For testing RC, a key of either `iam_acess_token` or `iam_apikey` is required. Optionally, a service URL for an RC instance can be provided under the key `rc_service_url` if the service is available under a URL other than `https://stream.watsonplatform.net/speech-to-text/api`.
 
 For an example, see `test/resources/stt-auth-example.json`.
-
-## todo
-
-* Further solidify API
-* break components into standalone npm modules where it makes sense
-* run integration tests on travis (fall back to offline server for pull requests)
-* add even more tests
-* better cross-browser testing (IE, Safari, mobile browsers - maybe saucelabs?)
-* update node-sdk to use current version of this lib's RecognizeStream (and also provide the FormatStream + anything else that might be handy)
-* move `result` and `results` events to node wrapper (along with the deprecation notice)
-* improve docs
-* consider a wrapper to match https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html
-* support a "hard" stop that prevents any further data events, even for already uploaded audio, ensure timing stream also implements this.
-* look for bug where single-word final results may omit word confidence (possibly due to FormatStream?)
-* fix bug where TimingStream shows words slightly before they're spoken
-
-[RecognizeStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/RecognizeStream.html
-[TimingStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/TimingStream.html
-[FormatStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/FormatStream.html
-[WritableElementStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/WritableElementStream.html
-[SpeakerStream]: http://watson-developer-cloud.github.io/speech-javascript-sdk/master/SpeakerStream.html
-[CORS]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS

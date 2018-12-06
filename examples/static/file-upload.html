@@ -38,7 +38,7 @@ document.querySelector('#button').onclick = function () {
   }).then(function (token) {
 
     stream = WatsonSpeech.SpeechToText.recognizeFile({
-      token: token,
+      token: token, // use `access_token` as the parameter name if using an RC service
       file: document.querySelector('#audiofile').files[0],
       play: true, // play the audio out loud
       outputElement: '#output' // CSS selector or DOM Element (optional)

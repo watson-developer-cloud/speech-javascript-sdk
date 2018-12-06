@@ -40,7 +40,7 @@
         var file = values[1];
 
         return WatsonSpeech.SpeechToText.recognizeFile({
-          token: token,
+          token: token, // use `access_token` as the parameter name if using an RC service
           file: file,
           outputElement: '#output',
           play: true

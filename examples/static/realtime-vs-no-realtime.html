@@ -89,7 +89,7 @@ document.querySelector('#button').onclick = function () {
   }).then(function (token) {
 
     stream = WatsonSpeech.SpeechToText.recognizeFile({
-      token: token,
+      token: token, // use `access_token` as the parameter name if using an RC service
       file: 'Isac_Newton_spoken_Wikipedia_opus.ogg',
       play: true,
       objectMode: true,

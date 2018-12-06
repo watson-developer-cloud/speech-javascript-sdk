@@ -44,7 +44,7 @@
       }).then(function (token) {
 
         var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-          token: token,
+          token: token, // use `access_token` as the parameter name if using an RC service
           objectMode: true,
           format: false,
           word_confidence: true

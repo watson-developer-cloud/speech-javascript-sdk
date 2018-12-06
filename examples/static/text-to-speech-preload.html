@@ -26,10 +26,11 @@ var audio;
 fetch('/api/text-to-speech/token')
   .then(function(response) {
     return response.text();
-  }).then(function (token) {
+  })
+  .then(function(token) {
     audio = WatsonSpeech.TextToSpeech.synthesize({
       text: 'Hello from IBM Watson',
-      token: token,
+      token: token, // use `access_token` as the parameter name if using an RC service
       autoPlay: false,
       accept: 'audio/wav'
     });
@@ -38,7 +39,8 @@ fetch('/api/text-to-speech/token')
       console.log('audio error: ', err);
     });
   });
-document.querySelector('#button').onclick = function () {
+
+document.querySelector('#button').onclick = function() {
   audio.play();
 };
 </script></code></pre>

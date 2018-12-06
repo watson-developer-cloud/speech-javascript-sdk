@@ -37,7 +37,7 @@ document.querySelector('#button').onclick = function () {
   }).then(function (token) {
 
     var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-      token: token,
+      token: token, // use `access_token` as the parameter name if using an RC service
       objectMode: true,
       max_alternatives: 4
     });

@@ -27,15 +27,16 @@
 
 <pre><code><script style="display: block;">
 
-  document.querySelector('#button').onclick = function () {
-    fetch('/api/speech-to-text/token').then(function(response) {
-      return response.text();
-    }).then(function (token) {
+  document.querySelector('#button').onclick = function() {
+    fetch('/api/speech-to-text/token')
+      .then(function(response) {
+        return response.text();
+      }).then(function (token) {
 
       document.querySelector('#output').innerHTML = 'Processing. Note: it will take some time for the first results to appear.';
 
       var stream = WatsonSpeech.SpeechToText.recognizeFile({
-        token: token,
+        token: token, // use `access_token` as the parameter name if using an RC service
         file: '/en-us-multi-speaker-narrowband.wav',
         speaker_labels: true,
         // only certain models support speaker labels currently,

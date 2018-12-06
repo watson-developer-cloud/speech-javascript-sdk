@@ -15,7 +15,7 @@
  */
 'use strict';
 var pick = require('object.pick');
-var qs = require('../util/querystring.js');
+var qs = require('watson-developer-cloud/lib/querystring');
 
 var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'access_token', 'accept', 'customization_id'];
 

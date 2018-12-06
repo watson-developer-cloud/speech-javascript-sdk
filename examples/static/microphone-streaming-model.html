@@ -58,7 +58,7 @@ document.querySelector('#button').onclick = function () {
   getTtsToken().then(function (token) {
 
     var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-        token: token,
+        token: token, // use `access_token` as the parameter name if using an RC service
         model: document.querySelector('#model').value,
         outputElement: '#output' // CSS selector or DOM Element
     });
