@@ -17,7 +17,7 @@
 'use strict';
 var MediaElementAudioStream = require('./media-element-audio-stream');
 var L16 = require('watson-speech/speech-to-text/webaudio-l16-stream');
-var RecognizeStream = require('watson-speech/speech-to-text/recognize-stream.js');
+var RecognizeStream = require('watson-developer-cloud/lib/recognize-stream');
 var FormatStream = require('watson-speech/speech-to-text/format-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('watson-speech/speech-to-text/writable-element-stream');
