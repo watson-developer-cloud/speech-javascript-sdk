@@ -22,7 +22,7 @@
     "object.assign": "^4.0.4",
     "vcap_services": "^0.4.0",
     "watson-developer-cloud": "3.18.1",
-    "watson-speech": "0.36.0",
+    "watson-speech": "*",
     "webpack": "^3.5.5",
     "webpack-dev-middleware": "^1.10.0",
     "whatwg-fetch": "^2.0.2"
