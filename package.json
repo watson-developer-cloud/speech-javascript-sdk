@@ -72,7 +72,7 @@
     "object.assign": "^4.1.0",
     "object.pick": "^1.3.0",
     "readable-blob-stream": "^1.1.0",
-    "watson-developer-cloud": "3.18.1",
+    "watson-developer-cloud": "^3.18.2",
     "websocket": "^1.0.26",
     "whatwg-fetch": "^2.0.4"
   },
