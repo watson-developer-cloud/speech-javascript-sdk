@@ -88,8 +88,8 @@ var sttAuthService = new AuthorizationV1(
   Object.assign(
     {
       username: process.env.SPEECH_TO_TEXT_USERNAME, // or hard-code credentials here
-      password: process.env.SPEECH_TO_TEXT_PASSWORD,
-      iam_apikey: process.env.SPEECH_TO_TEXT_IAM_APIKEY // if using an RC service
+      password: process.env.SPEECH_TO_TEXT_PASSWORD
+      // iam_apikey: process.env.SPEECH_TO_TEXT_IAM_APIKEY // if using an RC service
     },
     vcapServices.getCredentials('speech_to_text') // pulls credentials from environment in bluemix, otherwise returns {}
   )
