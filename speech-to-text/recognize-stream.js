@@ -38,7 +38,15 @@ var OPENING_MESSAGE_PARAMS_ALLOWED = [
   'speaker_labels'
 ];
 
-var QUERY_PARAMS_ALLOWED = ['customization_id', 'acoustic_customization_id', 'model', 'watson-token', 'access_token', 'X-Watson-Learning-Opt-Out'];
+var QUERY_PARAMS_ALLOWED = [
+  'language_customization_id',
+  'customization_id',
+  'acoustic_customization_id',
+  'model',
+  'watson-token',
+  'access_token',
+  'X-Watson-Learning-Opt-Out'
+];
 
 /**
  * pipe()-able Node.js Duplex stream - accepts binary audio and emits text/objects in it's `data` events.
@@ -144,8 +152,14 @@ RecognizeStream.prototype.initialize = function() {
     options['X-Watson-Learning-Opt-Out'] = options['X-WDC-PL-OPT-OUT'];
   }
 
+  // compatibility code for the deprecated param, customization_id
+  if (options.customization_id && !options.language_customization_id) {
+    options.language_customization_id = options.customization_id;
+    delete options.customization_id;
+  }
+
   var queryParams = util._extend(
-    'customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED) : { model: 'en-US_BroadbandModel' },
+    'language_customization_id' in options ? pick(options, QUERY_PARAMS_ALLOWED) : { model: 'en-US_BroadbandModel' },
     pick(options, QUERY_PARAMS_ALLOWED)
   );
 
