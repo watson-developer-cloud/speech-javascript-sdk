@@ -16,7 +16,7 @@
 
 'use strict';
 var BlobStream = require('readable-blob-stream');
-var RecognizeStream = require('watson-developer-cloud/lib/recognize-stream');
+var RecognizeStream = require('./recognize-stream.js');
 var FilePlayer = require('./file-player.js');
 var FormatStream = require('./format-stream.js');
 var TimingStream = require('./timing-stream.js');
