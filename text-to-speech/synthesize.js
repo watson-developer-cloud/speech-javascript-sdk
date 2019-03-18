@@ -15,7 +15,6 @@
  */
 'use strict';
 var pick = require('object.pick');
-var qs = require('watson-developer-cloud/lib/querystring');
 
 var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'access_token', 'accept', 'customization_id'];
 
@@ -53,9 +52,28 @@ module.exports = function synthesize(options) {
   var url = options.url || 'https://stream.watsonplatform.net/text-to-speech/api';
   var audio = options.element || new Audio();
   audio.crossOrigin = 'anonymous';
-  audio.src = url + '/v1/synthesize?' + qs.stringify(pick(options, QUERY_PARAMS_ALLOWED));
+  audio.src = url + '/v1/synthesize?' + stringify(pick(options, QUERY_PARAMS_ALLOWED));
   if (options.autoPlay !== false) {
     audio.play();
   }
   return audio;
 };
+
+/**
+ * Stringify query params, Watson-style
+ *
+ * Why? The server that processes auth tokens currently only accepts the *exact* string, even if it's invalid for a URL.
+ * Properly url-encoding percent characters causes it to reject the token
+ * So, this is a custom qs.stringify function that properly encodes everything except watson-token, passing it along verbatim
+ *
+ * @param {Object} queryParams
+ * @return {String}
+ */
+function stringify(queryParams) {
+  // the server chokes if the token is correctly url-encoded
+  return Object.keys(queryParams)
+    .map(function(key) {
+      return key + '=' + (key === 'watson-token' ? queryParams[key] : encodeURIComponent(queryParams[key]));
+    })
+    .join('&');
+}
