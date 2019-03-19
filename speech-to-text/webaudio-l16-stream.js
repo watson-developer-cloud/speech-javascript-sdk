@@ -114,7 +114,7 @@ WebAudioL16Stream.prototype.downsample = function downsample(bufferNewSamples) {
   var nOutputSamples = Math.floor((buffer.length - filter.length) / samplingRateRatio) + 1;
   var outputBuffer = new Float32Array(nOutputSamples);
 
-  for (i = 0; i + filter.length - 1 < buffer.length; i++) {
+  for (i = 0; i < outputBuffer.length; i++) {
     offset = Math.round(samplingRateRatio * i);
     var sample = 0;
     for (var j = 0; j < filter.length; ++j) {
