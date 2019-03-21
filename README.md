@@ -39,6 +39,8 @@ var recognizeMic = require('watson-speech/speech-to-text/recognize-microphone');
 
 This SDK _CAN_ be used in the browser with services that use IAM for authentication. This does require a server-side component - an endpoint used to retrieve the token. An example can be found [here](https://github.com/watson-developer-cloud/speech-javascript-sdk/blob/master/examples/server.js#L92).
 
+In a local environment you should set only the TEXT_TO_SPEECH_IAM_APIKEY and SPEECH_TO_TEXT_IAM_APIKEY in your .env file, see example file [here](https://github.com/watson-developer-cloud/speech-javascript-sdk/blob/master/examples/.env.example).
+
 Once that is set up, the token can be used in your SDK request with the parameter `access_token`. See [this example](https://github.com/watson-developer-cloud/speech-javascript-sdk/blob/master/examples/static/microphone-streaming.html#L36).
 
 ## Changes
