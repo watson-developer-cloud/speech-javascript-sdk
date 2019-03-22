@@ -89,25 +89,21 @@ var sttAuthService = new AuthorizationV1(
     {
       username: process.env.SPEECH_TO_TEXT_USERNAME, // or hard-code credentials here
       password: process.env.SPEECH_TO_TEXT_PASSWORD,
-      iam_apikey: process.env.SPEECH_TO_TEXT_IAM_APIKEY // if using an RC service
+      iam_apikey: process.env.SPEECH_TO_TEXT_IAM_APIKEY, // if using an RC service
+      url: process.env.SPEECH_TO_TEXT_URL ? process.env.SPEECH_TO_TEXT_URL : SpeechToTextV1.URL
     },
     vcapServices.getCredentials('speech_to_text') // pulls credentials from environment in bluemix, otherwise returns {}
   )
 );
 app.use('/api/speech-to-text/token', function(req, res) {
-  sttAuthService.getToken(
-    {
-      url: SpeechToTextV1.URL
-    },
-    function(err, token) {
-      if (err) {
-        console.log('Error retrieving token: ', err);
-        res.status(500).send('Error retrieving token');
-        return;
-      }
-      res.send(token);
+  sttAuthService.getToken({}, function(err, token) {
+    if (err) {
+      console.log('Error retrieving token: ', err);
+      res.status(500).send('Error retrieving token');
+      return;
     }
-  );
+    res.send(token);
+  });
 });
 
 // text to speech token endpoint
@@ -116,25 +112,21 @@ var ttsAuthService = new AuthorizationV1(
     {
       username: process.env.TEXT_TO_SPEECH_USERNAME, // or hard-code credentials here
       password: process.env.TEXT_TO_SPEECH_PASSWORD,
-      iam_apikey: process.env.TEXT_TO_SPEECH_IAM_APIKEY // if using an RC service
+      iam_apikey: process.env.TEXT_TO_SPEECH_IAM_APIKEY, // if using an RC service
+      url: process.env.TEXT_TO_SPEECH_URL ? process.env.TEXT_TO_SPEECH_URL : TextToSpeechV1.URL
     },
     vcapServices.getCredentials('text_to_speech') // pulls credentials from environment in bluemix, otherwise returns {}
   )
 );
 app.use('/api/text-to-speech/token', function(req, res) {
-  ttsAuthService.getToken(
-    {
-      url: TextToSpeechV1.URL
-    },
-    function(err, token) {
-      if (err) {
-        console.log('Error retrieving token: ', err);
-        res.status(500).send('Error retrieving token');
-        return;
-      }
-      res.send(token);
+  ttsAuthService.getToken({}, function(err, token) {
+    if (err) {
+      console.log('Error retrieving token: ', err);
+      res.status(500).send('Error retrieving token');
+      return;
     }
-  );
+    res.send(token);
+  });
 });
 
 const port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
