@@ -27,7 +27,7 @@ Setup - Node.js
 Setup - Python
 --------------
 
-1. `cd` into the `examples/` directory and run `pip install watson_developer_cloud flask` (or `easy_install...`) to install python dependencies
+1. `cd` into the `examples/` directory and run `pip install watson_developer_cloud flask python-dotenv pyopenssl` (or `easy_install...`) to install python dependencies.
 2. run `bower install` to install client-side dependencies
 3. edit `server.py` to include your service credentials (or create a `.env` file)
 4. run `python server.py`
