@@ -8,6 +8,20 @@ module.exports = {
     libraryTarget: 'umd'
   },
   module: {
-    loaders: [{ test: /index.js$/, loader: 'envify-loader' }]
-  }
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader'
+        }
+      },
+      {
+        test: /index.js$/,
+        loader: 'transform-loader?envify'
+        // options: {...}
+      }
+    ]
+  },
+  mode: 'development'
 };
