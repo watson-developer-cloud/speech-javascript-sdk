@@ -9,7 +9,7 @@ Allows you to easily add voice recognition and synthesis to any web app with min
 ### Built for Browsers
 This library is primarily intended for use in web browsers. Check out [watson-developer-cloud](https://www.npmjs.com/package/watson-developer-cloud) to use Watson services (speech and others) from Node.js.
 
-However, a **server-side component is required to generate auth tokens**. The examples/ folder includes example Node.js and Python servers, and SDKs are available for [Node.js](https://github.com/watson-developer-cloud/node-sdk#authorization), [Java](https://github.com/watson-developer-cloud/java-sdk), [Python](https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py), and there is also a [REST API](https://www.ibm.com/watson/developercloud/doc/common/getting-started-tokens.html).
+However, a **server-side component is required to generate auth tokens**. The `examples/` folder includes example Node.js and Python servers, and SDKs are available for [Node.js](https://github.com/watson-developer-cloud/node-sdk#authorization), [Java](https://github.com/watson-developer-cloud/java-sdk), [Python](https://github.com/watson-developer-cloud/python-sdk/blob/master/examples/authorization_v1.py), and there is also a [REST API](https://www.ibm.com/watson/developercloud/doc/common/getting-started-tokens.html).
 
 
 ### Installation - standalone
@@ -39,7 +39,7 @@ var recognizeMic = require('watson-speech/speech-to-text/recognize-microphone');
 
 This SDK _CAN_ be used in the browser with services that use IAM for authentication. This does require a server-side component - an endpoint used to retrieve the token. An example can be found [here](https://github.com/watson-developer-cloud/speech-javascript-sdk/blob/master/examples/server.js#L92).
 
-In a local environment you should set only the TEXT_TO_SPEECH_IAM_APIKEY and SPEECH_TO_TEXT_IAM_APIKEY in your .env file, see example file [here](https://github.com/watson-developer-cloud/speech-javascript-sdk/blob/master/examples/.env.example).
+In a local environment you should set only the `TEXT_TO_SPEECH_IAM_APIKEY` and `SPEECH_TO_TEXT_IAM_APIKEY` in your `.env` file, see example file [here](https://github.com/watson-developer-cloud/speech-javascript-sdk/blob/master/examples/.env.example).
 
 Once that is set up, the token can be used in your SDK request with the parameter `access_token`. See [this example](https://github.com/watson-developer-cloud/speech-javascript-sdk/blob/master/examples/static/microphone-streaming.html#L36).
 
