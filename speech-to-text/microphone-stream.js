@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-var Readable = require("readable-stream");
-var util = require("util");
+var Readable = require('readable-stream');
+var util = require('util');
 // some versions of the buffer browser lib don't support Buffer.from (such as the one included by the current version of express-browserify)
-var bufferFrom = require("buffer-from");
+var bufferFrom = require('buffer-from');
 
 /**
  * Turns a MediaStream object (from getUserMedia) into a Node.js Readable stream and optionally converts the audio to Buffers
@@ -19,7 +19,7 @@ var bufferFrom = require("buffer-from");
  */
 function MicrophoneStream(opts) {
   // backwards compatibility - passing in the Stream here will generally not work on iOS 11 Safari
-  if (typeof MediaStream !== "undefined" && opts instanceof MediaStream) {
+  if (typeof MediaStream !== 'undefined' && opts instanceof MediaStream) {
     var stream = opts;
     opts = arguments[1] || {};
     opts.stream = stream;
@@ -32,7 +32,7 @@ function MicrophoneStream(opts) {
   // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
   // however, webkitAudioContext (safari) requires it to be set'
   // Possible values: null, 256, 512, 1024, 2048, 4096, 8192, 16384
-  var bufferSize = typeof window.AudioContext === "undefined" ? 4096 : null;
+  var bufferSize = typeof window.AudioContext === 'undefined' ? 4096 : null;
   bufferSize = opts.bufferSize || bufferSize;
 
   // We can only emit one channel's worth of audio, so only one input. (Who has multiple microphones anyways?)
@@ -89,7 +89,7 @@ function MicrophoneStream(opts) {
   }
 
   this.stop = function() {
-    if (context.state === "closed") {
+    if (context.state === 'closed') {
       return;
     }
     try {
