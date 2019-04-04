@@ -16,20 +16,13 @@
 
 'use strict';
 var getUserMedia = require('get-user-media-promise');
-var MicrophoneStream = require('microphone-stream');
+var MicrophoneStream = require('./microphone-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var L16 = require('./webaudio-l16-stream.js');
 var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
-var {
-  Readable,
-  Writable,
-  Transform,
-  Duplex,
-  pipeline,
-  finished
-} = require('readable-stream');
+var { Writable } = require('readable-stream');
 var ResultStream = require('./result-stream');
 var SpeakerStream = require('./speaker-stream');
 

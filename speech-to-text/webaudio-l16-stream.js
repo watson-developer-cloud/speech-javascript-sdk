@@ -1,12 +1,6 @@
 'use strict';
-var {
-  Readable,
-  Writable,
-  Transform,
-  Duplex,
-  pipeline,
-  finished
-} = require('readable-stream');
+
+var { Transform } = require('readable-stream');
 var util = require('util');
 var defaults = require('defaults');
 // some versions of the buffer browser lib don't support Buffer.from (such as the one included by the current version of express-browserify)

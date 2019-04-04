@@ -16,14 +16,7 @@
 
 'use strict';
 
-var {
-  Readable,
-  Writable,
-  Transform,
-  Duplex,
-  pipeline,
-  finished
-} = require('readable-stream');
+var { Transform } = require('readable-stream');
 var util = require('util');
 var clone = require('clone');
 
