@@ -31,7 +31,7 @@ function MicrophoneStream(opts) {
   // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
   // however, webkitAudioContext (safari) requires it to be set'
   // Possible values: null, 256, 512, 1024, 2048, 4096, 8192, 16384
-  var bufferSize = (typeof window.AudioContext === 'undefined' ? 4096 : null);
+  var bufferSize = typeof window.AudioContext === 'undefined' ? 4096 : null;
   bufferSize = opts.bufferSize || bufferSize;
 
   // We can only emit one channel's worth of audio, so only one input. (Who has multiple microphones anyways?)
@@ -58,7 +58,7 @@ function MicrophoneStream(opts) {
   }
 
   var AudioContext = window.AudioContext || window.webkitAudioContext;
-  var context = this.context = opts.context || new AudioContext();
+  var context = (this.context = opts.context || new AudioContext());
   var recorder = context.createScriptProcessor(bufferSize, inputChannels, outputChannels);
 
   // other half of workaround for chrome bugs
@@ -86,7 +86,6 @@ function MicrophoneStream(opts) {
   if (opts.stream) {
     this.setStream(stream);
   }
-
 
   this.stop = function() {
     if (context.state === 'closed') {
