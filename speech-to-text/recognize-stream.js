@@ -16,7 +16,14 @@
 
 'use strict';
 
-var Duplex = require('stream').Duplex;
+var {
+  Readable,
+  Writable,
+  Transform,
+  Duplex,
+  pipeline,
+  finished
+} = require('readable-stream');
 var util = require('util');
 var pick = require('object.pick');
 var W3CWebSocket = require('websocket').w3cwebsocket;

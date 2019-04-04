@@ -1,6 +1,13 @@
 'use strict';
 
-var Transform = require('stream').Transform;
+var {
+  Readable,
+  Writable,
+  Transform,
+  Duplex,
+  pipeline,
+  finished
+} = require('readable-stream');
 var util = require('util');
 var clone = require('clone');
 var defaults = require('defaults');
