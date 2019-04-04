@@ -16,7 +16,7 @@
 
 'use strict';
 
-var Transform = require('stream').Transform;
+var { Transform } = require('readable-stream');
 var util = require('util');
 var pullAllWith = require('lodash.pullallwith');
 var noTimestamps = require('./no-timestamps');

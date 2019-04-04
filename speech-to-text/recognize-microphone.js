@@ -22,7 +22,7 @@ var L16 = require('./webaudio-l16-stream.js');
 var FormatStream = require('./format-stream.js');
 var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
-var Writable = require('stream').Writable;
+var { Writable } = require('readable-stream');
 var ResultStream = require('./result-stream');
 var SpeakerStream = require('./speaker-stream');
 

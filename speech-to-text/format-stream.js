@@ -1,6 +1,6 @@
 'use strict';
 
-var Transform = require('stream').Transform;
+var { Transform } = require('readable-stream');
 var util = require('util');
 var clone = require('clone');
 var defaults = require('defaults');
