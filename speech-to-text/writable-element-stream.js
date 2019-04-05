@@ -1,6 +1,6 @@
 'use strict';
 
-var Writable = require('stream').Writable;
+var { Writable } = require('readable-stream');
 var util = require('util');
 var defaults = require('defaults');
 

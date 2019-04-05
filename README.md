@@ -43,6 +43,17 @@ In a local environment you should set only the `TEXT_TO_SPEECH_IAM_APIKEY` and `
 
 Once that is set up, the token can be used in your SDK request with the parameter `access_token`. See [this example](https://github.com/watson-developer-cloud/speech-javascript-sdk/blob/master/examples/static/microphone-streaming.html#L36).
 
+## Using with Angular
+
+Make sure `polyfills.ts` has following entries:
+
+```js
+(window as any).global = window;
+(window as any).process = require('process/browser');
+import 'zone.js/dist/zone';  // Included with Angular CLI.
+global.Buffer = global.Buffer || require('buffer').Buffer;
+```
+
 ## Changes
 
 See [CHANGELOG.md](CHANGELOG.md) for a complete list of changes.

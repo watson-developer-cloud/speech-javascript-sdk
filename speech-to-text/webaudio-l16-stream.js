@@ -1,5 +1,6 @@
 'use strict';
-var Transform = require('stream').Transform;
+
+var { Transform } = require('readable-stream');
 var util = require('util');
 var defaults = require('defaults');
 // some versions of the buffer browser lib don't support Buffer.from (such as the one included by the current version of express-browserify)
