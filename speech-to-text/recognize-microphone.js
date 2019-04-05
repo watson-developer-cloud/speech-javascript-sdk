@@ -16,7 +16,7 @@
 
 'use strict';
 var getUserMedia = require('get-user-media-promise');
-var MicrophoneStream = require('./microphone-stream');
+var MicrophoneStream = require('microphone-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var L16 = require('./webaudio-l16-stream.js');
 var FormatStream = require('./format-stream.js');
