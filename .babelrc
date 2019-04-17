@@ -12,5 +12,6 @@
       "corejs": 3
     }
     ]
-  ]
+  ],
+  "sourceType": "unambiguous"
 }
