@@ -57,11 +57,13 @@ module.exports = function synthesize(options) {
   if (options.autoPlay !== false) {
     var playPromise = audio.play();
     if (playPromise !== undefined) {
-      playPromise.then(_ => {
-        // console.log("autoPlay promise resolved")
-      }).catch(error => {
-        throw new Error("Watson TextToSpeech: autoplay error:"+ error)
-      });
+      playPromise
+        .then(() => {
+          // console.log("autoPlay promise resolved")
+        })
+        .catch(error => {
+          throw new Error('Watson TextToSpeech: autoplay error:' + error);
+        });
     }
   }
   return audio;
