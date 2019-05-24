@@ -55,7 +55,16 @@ module.exports = function synthesize(options) {
   audio.crossOrigin = 'anonymous';
   audio.src = url + '/v1/synthesize?' + qs.stringify(pick(options, QUERY_PARAMS_ALLOWED));
   if (options.autoPlay !== false) {
-    audio.play();
+    var playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          // console.log("autoPlay promise resolved")
+        })
+        .catch(error => {
+          throw new Error('Watson TextToSpeech: autoplay error:' + error);
+        });
+    }
   }
   return audio;
 };
