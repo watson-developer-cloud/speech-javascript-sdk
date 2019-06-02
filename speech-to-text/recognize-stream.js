@@ -35,7 +35,8 @@ var OPENING_MESSAGE_PARAMS_ALLOWED = [
   'word_alternatives_threshold',
   'profanity_filter',
   'smart_formatting',
-  'speaker_labels'
+  'speaker_labels',
+  'grammar_name'
 ];
 
 var QUERY_PARAMS_ALLOWED = [
@@ -80,6 +81,7 @@ var QUERY_PARAMS_ALLOWED = [
  * @param {Boolean} [options.smart_formatting=false] - formats numeric values such as dates, times, currency, etc.
  * @param {String} [options.customization_id] - Customization ID
  * @param {String} [options.acoustic_customization_id] - Acoustic customization ID
+ * @param {String} [options.grammar_name] - Name of grammar
  *
  * @constructor
  */
