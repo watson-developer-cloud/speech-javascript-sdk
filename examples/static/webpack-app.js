@@ -4,6 +4,7 @@
 
 // global window.fetch pollyfill for IE/Edge & Older Chrome/FireFox
 require('whatwg-fetch');
+require('jquery');
 
 // keep the bundle slim by only requiring the necessary modules
 var recognizeMicrophone = require('watson-speech/speech-to-text/recognize-microphone');

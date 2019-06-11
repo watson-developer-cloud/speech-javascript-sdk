@@ -7,4 +7,4 @@ cd ../
 npm run build
 
 # move static code to bower components for examples
-cp ./dist/watson-speech* ./examples/static/bower_components/watson-speech/dist
+cp ./dist/watson-speech* ./examples/static/scripts/watson-speech/dist
