@@ -9,9 +9,9 @@ doc/
 *-auth.json
 .env
 examples/static/webpack-bundle.js
+examples/static/scripts/
 examples/node_modules/
 dist/*.js
 dist/*.map
-examples/static/bower_components/
 gh-pages/
 .idea
