@@ -24,6 +24,11 @@ var contentType = require('./content-type');
 var qs = require('../util/querystring.js');
 
 var OPENING_MESSAGE_PARAMS_ALLOWED = [
+  'action',
+  'customization_weight',
+  'processing_metrics',
+  'processing_metrics_interval',
+  'audio_metrics',
   'inactivity_timeout',
   'timestamps',
   'word_confidence',
@@ -36,17 +41,20 @@ var OPENING_MESSAGE_PARAMS_ALLOWED = [
   'profanity_filter',
   'smart_formatting',
   'speaker_labels',
-  'grammar_name'
+  'grammar_name',
+  'redaction'
 ];
 
 var QUERY_PARAMS_ALLOWED = [
+  'model',
+  'X-Watson-Learning-Opt-Out',
+  'watson-token',
   'language_customization_id',
   'customization_id',
   'acoustic_customization_id',
-  'model',
-  'watson-token',
   'access_token',
-  'X-Watson-Learning-Opt-Out'
+  'base_model_version',
+  'x-watson-metadata'
 ];
 
 /**
