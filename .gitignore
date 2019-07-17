@@ -8,6 +8,7 @@ test/resources/tts-auth.json
 doc/
 *-auth.json
 .env
+examples/static/bower_components/
 examples/static/webpack-bundle.js
 examples/static/scripts/
 examples/node_modules/

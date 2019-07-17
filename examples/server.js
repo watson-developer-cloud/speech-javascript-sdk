@@ -102,7 +102,7 @@ app.use('/api/speech-to-text/token', function(req, res) {
       res.status(500).send('Error retrieving token');
       return;
     }
-    res.send(token);
+    res.send(token.token);
   });
 });
 
@@ -125,7 +125,7 @@ app.use('/api/text-to-speech/token', function(req, res) {
       res.status(500).send('Error retrieving token');
       return;
     }
-    res.send(token);
+    res.send(token.token);
   });
 });
 
