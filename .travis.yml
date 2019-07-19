@@ -29,6 +29,6 @@ deploy:
     repo: watson-developer-cloud/speech-javascript-sdk
 - provider: script
   skip_cleanup: true
-  script: npx semantic-release
+  script: npx semantic-release@15
   on:
-    node: 8
+    node: 12

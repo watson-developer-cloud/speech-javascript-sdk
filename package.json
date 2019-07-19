@@ -3,6 +3,9 @@
   "version": "0.36.1",
   "description": "IBM Watson Speech to Text and Text to Speech SDK for web browsers.",
   "main": "index.js",
+  "engines": {
+    "node": ">=12"
+  },
   "scripts": {
     "watch-test": "karma start",
     "lint": "eslint .",
