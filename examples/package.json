@@ -27,7 +27,7 @@
     "whatwg-fetch": "^3.0.0"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=10"
   },
   "license": "Apache-2.0"
 }
