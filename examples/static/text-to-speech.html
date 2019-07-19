@@ -28,12 +28,13 @@ document.querySelector('#button').onclick = function() {
       return response.text();
     })
     .then(function(token) {
-      WatsonSpeech.TextToSpeech.synthesize({
+      const audio = WatsonSpeech.TextToSpeech.synthesize({
         text: document.querySelector('#text').value,
         token: token // use `access_token` as the parameter name if using an RC service
-      }).on('error', function(err) {
-        console.log('audio error: ', err);
       });
+      audio.onerror = function(err) {
+        console.log('audio error: ', err);
+      };
     });
 };
 </script></code></pre>

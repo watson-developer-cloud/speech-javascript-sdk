@@ -35,9 +35,9 @@ fetch('/api/text-to-speech/token')
       accept: 'audio/wav'
     });
 
-    audio.on('error', function(err) {
+    audio.onerror = function(err) {
       console.log('audio error: ', err);
-    });
+    };
   });
 
 document.querySelector('#button').onclick = function() {
