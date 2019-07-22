@@ -1,5 +1,5 @@
 language: node_js
-node_js: 8
+node_js: 10
 sudo: required
 before_install:
 - export CHROME_BIN=chromium-browser
@@ -31,4 +31,4 @@ deploy:
   skip_cleanup: true
   script: npx semantic-release@15
   on:
-    node: 12
+    node: 10

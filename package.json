@@ -4,7 +4,7 @@
   "description": "IBM Watson Speech to Text and Text to Speech SDK for web browsers.",
   "main": "index.js",
   "engines": {
-    "node": ">=12"
+    "node": ">=10"
   },
   "scripts": {
     "watch-test": "karma start",
