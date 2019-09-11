@@ -1,10 +1,11 @@
 language: node_js
-node_js: 10
+node_js:
+  - "10"
 sudo: required
 services:
   - xvfb
 addons:
-  firefox: "57.0"
+  firefox: "latest"
   chrome: "stable"
 script:
 - npm run build
@@ -23,8 +24,7 @@ before_deploy: npm install -g bx-blue-green
 deploy:
 - provider: script
   skip_cleanup: true
-  script:
-  - cd examples/ && bx-blue-green-travis
+  script: cd examples/ && bx-blue-green-travis
   on:
     branch: master
     repo: watson-developer-cloud/speech-javascript-sdk
