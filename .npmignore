@@ -4,3 +4,7 @@ jsdoc/
 test/
 .editorconfig
 .travis.yml
+gh-pages/
+scripts/
+docs/
+.env
