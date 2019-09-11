@@ -30,11 +30,10 @@
   document.querySelector('#button').onclick = function() {
     fetch('/api/speech-to-text/token')
     .then(function(response) {
-      return response.text();
+      return response.json();
     })
     .then(function(token) {
-      var stream = WatsonSpeech.SpeechToText.recognizeFile({
-        token: token, // use `access_token` as the parameter name if using an RC service
+      var stream = WatsonSpeech.SpeechToText.recognizeFile(Object.assign(token, {
         file: '/en-us-multi-speaker-narrowband.wav',
         speaker_labels: true,
         // only certain models support speaker labels currently,
@@ -44,7 +43,7 @@
         realtime: true, // don't slow down the results if transcription occurs faster than playback
         format: false, // enable resultsBySpeaker when formatting for multiple speakers
         play: true
-      });
+      }));
 
       stream.on('data', function(data) {
         console.log(data);

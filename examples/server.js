@@ -20,9 +20,10 @@
 
 const express = require('express');
 const app = express();
-const AuthorizationV1 = require('watson-developer-cloud/authorization/v1');
-const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
-const TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+const AuthorizationV1 = require('ibm-watson/authorization/v1');
+const SpeechToTextV1 = require('ibm-watson/speech-to-text/v1');
+const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1');
+
 const vcapServices = require('vcap_services');
 const expressBrowserify = require('express-browserify');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -40,8 +41,7 @@ if (process.env.VCAP_SERVICES) {
 
   const limiter = new RateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    delayMs: 0 // disable delaying - full speed until the max limit is reached
+    max: 100 // limit each IP to 100 requests per windowMs
   });
 
   //  apply to /api/*
@@ -64,13 +64,6 @@ app.get(
     debug: isDev
   })
 );
-app.get(
-  '/audio-video-deprecated/bundle.js',
-  expressBrowserify('static/audio-video-deprecated/audio-video-app.js', {
-    watch: isDev,
-    debug: isDev
-  })
-);
 
 // set up webpack-dev-middleware to serve Webpack bundles for examples
 const compiler = webpack(webpackConfig);
@@ -80,52 +73,58 @@ app.use(
   })
 );
 
-// token endpoints
-// **Warning**: these endpoints should probably be guarded with additional authentication & authorization for production use
+const sttCredentials = Object.assign(
+  {
+    username: process.env.SPEECH_TO_TEXT_USERNAME, // or hard-code credentials here
+    password: process.env.SPEECH_TO_TEXT_PASSWORD,
+    iam_apikey: process.env.SPEECH_TO_TEXT_IAM_APIKEY, // if using an RC service
+    url: process.env.SPEECH_TO_TEXT_URL ? process.env.SPEECH_TO_TEXT_URL : SpeechToTextV1.URL
+  },
+  vcapServices.getCredentials('speech_to_text') // pulls credentials from environment in bluemix, otherwise returns {}
+);
 
 // speech to text token endpoint
-var sttAuthService = new AuthorizationV1(
-  Object.assign(
-    {
-      username: process.env.SPEECH_TO_TEXT_USERNAME, // or hard-code credentials here
-      password: process.env.SPEECH_TO_TEXT_PASSWORD,
-      iam_apikey: process.env.SPEECH_TO_TEXT_IAM_APIKEY, // if using an RC service
-      url: process.env.SPEECH_TO_TEXT_URL ? process.env.SPEECH_TO_TEXT_URL : SpeechToTextV1.URL
-    },
-    vcapServices.getCredentials('speech_to_text') // pulls credentials from environment in bluemix, otherwise returns {}
-  )
-);
 app.use('/api/speech-to-text/token', function(req, res) {
-  sttAuthService.getToken(function(err, token) {
+  const sttAuthService = new AuthorizationV1(sttCredentials);
+  sttAuthService.getToken(function(err, response) {
     if (err) {
       console.log('Error retrieving token: ', err);
       res.status(500).send('Error retrieving token');
       return;
     }
-    res.send(token.token || token);
+    const token = response.token || response;
+    if (process.env.SPEECH_TO_TEXT_IAM_APIKEY) {
+      res.json({ access_token: token, url: sttCredentials.url });
+    } else {
+      res.json({ token: token, url: sttCredentials.url });
+    }
   });
 });
 
 // text to speech token endpoint
-var ttsAuthService = new AuthorizationV1(
-  Object.assign(
-    {
-      username: process.env.TEXT_TO_SPEECH_USERNAME, // or hard-code credentials here
-      password: process.env.TEXT_TO_SPEECH_PASSWORD,
-      iam_apikey: process.env.TEXT_TO_SPEECH_IAM_APIKEY, // if using an RC service
-      url: process.env.TEXT_TO_SPEECH_URL ? process.env.TEXT_TO_SPEECH_URL : TextToSpeechV1.URL
-    },
-    vcapServices.getCredentials('text_to_speech') // pulls credentials from environment in bluemix, otherwise returns {}
-  )
+const ttsCredentials = Object.assign(
+  {
+    username: process.env.TEXT_TO_SPEECH_USERNAME, // or hard-code credentials here
+    password: process.env.TEXT_TO_SPEECH_PASSWORD,
+    iam_apikey: process.env.TEXT_TO_SPEECH_IAM_APIKEY, // if using an RC service
+    url: process.env.TEXT_TO_SPEECH_URL ? process.env.TEXT_TO_SPEECH_URL : TextToSpeechV1.URL
+  },
+  vcapServices.getCredentials('text_to_speech') // pulls credentials from environment in bluemix, otherwise returns {}
 );
 app.use('/api/text-to-speech/token', function(req, res) {
-  ttsAuthService.getToken(function(err, token) {
+  const ttsAuthService = new AuthorizationV1(ttsCredentials);
+  ttsAuthService.getToken(function(err, response) {
     if (err) {
       console.log('Error retrieving token: ', err);
       res.status(500).send('Error retrieving token');
       return;
     }
-    res.send(token.token || token);
+    const token = response.token || response;
+    if (process.env.TEXT_TO_SPEECH_IAM_APIKEY) {
+      res.json({ access_token: token, url: ttsCredentials.url });
+    } else {
+      res.json({ token: token, url: ttsCredentials.url });
+    }
   });
 });
 

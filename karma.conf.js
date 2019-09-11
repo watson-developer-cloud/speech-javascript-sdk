@@ -1,6 +1,7 @@
 // Karma configuration
 // Generated on Fri Jan 15 2016 13:36:31 GMT-0500 (EST)
 'use strict';
+const path = require('path');
 
 var testServer;
 if (process.env.TEST_MODE === 'integration') {
@@ -44,10 +45,10 @@ module.exports = function(config) {
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+    autoWatch: false,
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromeWithPrerecordedMic', 'FirefoxAutoGUM'],
+    browsers: ['FirefoxAutoGUM'],
     // you can define custom flags
     // there's a handy list of chrome flags at
     customLaunchers: {
@@ -57,7 +58,7 @@ module.exports = function(config) {
         flags: [
           '--use-fake-device-for-media-stream',
           '--use-fake-ui-for-media-stream',
-          '--use-file-for-fake-audio-capture=test/resources/audio.wav',
+          '--use-file-for-fake-audio-capture=' + path.join(__dirname, 'test/resources/audio.wav'),
           '--no-sandbox'
         ]
       },

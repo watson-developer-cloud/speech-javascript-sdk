@@ -30,13 +30,12 @@ document.querySelector('#button').onclick = function () {
 
   fetch('/api/speech-to-text/token')
   .then(function(response) {
-      return response.text();
+      return response.json();
   }).then(function (token) {
 
-    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-      token: token, // use `access_token` as the parameter name if using an RC service
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone(Object.assign(token, {
       object_mode: false
-    });
+    }));
 
     stream.setEncoding('utf8'); // get text instead of Buffers for on data events
 

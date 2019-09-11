@@ -30,14 +30,14 @@
 function getTtsToken() {
   return fetch('/api/speech-to-text/token')
     .then(function(response) {
-      return response.text();
+      return response.json();
     });
 }
 
 // fetch the models and populate the dropdown
 getTtsToken()
   .then(function (token) {
-    return WatsonSpeech.SpeechToText.getModels({token: token});
+    return WatsonSpeech.SpeechToText.getModels(token);
   }).then(function (models) {
 
     var dropdown = document.querySelector('#model');
@@ -57,11 +57,10 @@ getTtsToken()
 document.querySelector('#button').onclick = function () {
   getTtsToken().then(function (token) {
 
-    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-        token: token, // use `access_token` as the parameter name if using an RC service
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone(Object.assign(token,
         model: document.querySelector('#model').value,
         outputElement: '#output' // CSS selector or DOM Element
-    });
+    }));
 
     stream.on('error', function(err) {
         console.log(err);

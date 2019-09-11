@@ -30,7 +30,7 @@
 
     Promise.all([
       fetch('/api/speech-to-text/token').then(function(response) {
-        return response.text();
+        return response.json();
       }),
       fetch('/Us_English_Broadband_Sample_1.wav').then(function(response) {
         return response.blob();
@@ -39,12 +39,11 @@
         var token = values[0];
         var file = values[1];
 
-        return WatsonSpeech.SpeechToText.recognizeFile({
-          token: token, // use `access_token` as the parameter name if using an RC service
+        return WatsonSpeech.SpeechToText.recognizeFile(Object.assign(token, {
           file: file,
           outputElement: '#output',
           play: true
-        })
+        }))
         .promise(); // conveniently passes along error events to the catch handler just below
       })
       .catch(function(err) {
