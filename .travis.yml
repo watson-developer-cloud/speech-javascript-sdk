@@ -3,9 +3,8 @@ node_js: 10
 sudo: required
 services:
   - xvfb
-addons:
-  chrome: stable
-  firefox: "57.0"
+before_install:
+- export CHROME_BIN=chromium-browser
 script:
 - npm run build
 - npm test
