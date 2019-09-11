@@ -25,15 +25,14 @@
 var audio;
 fetch('/api/text-to-speech/token')
   .then(function(response) {
-    return response.text();
+    return response.json();
   })
   .then(function(token) {
-    audio = WatsonSpeech.TextToSpeech.synthesize({
+    audio = WatsonSpeech.TextToSpeech.synthesize(Object.assign(token, {
       text: 'Hello from IBM Watson',
-      token: token, // use `access_token` as the parameter name if using an RC service
       autoPlay: false,
       accept: 'audio/wav'
-    });
+    }));
 
     audio.onerror = function(err) {
       console.log('audio error: ', err);

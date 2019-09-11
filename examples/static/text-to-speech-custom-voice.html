@@ -26,14 +26,14 @@
 function getTtsToken() {
   return fetch('/api/text-to-speech/token')
     .then(function(response) {
-      return response.text();
+      return response.json();
     });
 }
 
 // fetch the voices and populate the dropdown
 getTtsToken()
   .then(function(token) {
-    return WatsonSpeech.TextToSpeech.getVoices({ token: token }); // use `access_token` as the parameter name if using an RC service
+    return WatsonSpeech.TextToSpeech.getVoices(token); // use `access_token` as the parameter name if using an RC service
   })
   .then(function(voices) {
     var dropdown = document.querySelector('#voice');

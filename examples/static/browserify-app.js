@@ -12,13 +12,14 @@ var recognizeMicrophone = require('watson-speech/speech-to-text/recognize-microp
 document.querySelector('#button').onclick = function() {
   fetch('/api/speech-to-text/token')
     .then(function(response) {
-      return response.text();
+      return response.json();
     })
     .then(function(token) {
-      var stream = recognizeMicrophone({
-        token: token,
-        outputElement: '#output' // CSS selector or DOM Element
-      });
+      var stream = recognizeMicrophone(
+        Object.assign(token, {
+          outputElement: '#output' // CSS selector or DOM Element
+        })
+      );
 
       stream.on('error', function(err) {
         console.log(err);

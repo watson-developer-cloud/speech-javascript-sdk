@@ -25,13 +25,12 @@
 document.querySelector('#button').onclick = function() {
   fetch('/api/text-to-speech/token')
     .then(function(response) {
-      return response.text();
+      return response.json();
     })
     .then(function(token) {
-      const audio = WatsonSpeech.TextToSpeech.synthesize({
+      const audio = WatsonSpeech.TextToSpeech.synthesize(Object.assign(token, {
         text: document.querySelector('#text').value,
-        token: token // use `access_token` as the parameter name if using an RC service
-      });
+      }));
       audio.onerror = function(err) {
         console.log('audio error: ', err);
       };

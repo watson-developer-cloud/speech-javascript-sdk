@@ -30,13 +30,12 @@ document.querySelector('#button').onclick = function () {
   output.textContent = 'Processing...';
 
   fetch('/api/speech-to-text/token').then(function(response) {
-    return response.text();
+    return response.json();
   }).then(function (token) {
 
-    return WatsonSpeech.SpeechToText.recognizeFile({
-        token: token, // use `access_token` as the parameter name if using an RC service
+    return WatsonSpeech.SpeechToText.recognizeFile(Object.assign(token, {
         file: '/Us_English_Broadband_Sample_1.wav'
-      })
+      }))
       .promise();
   })
   .then(function(text) {

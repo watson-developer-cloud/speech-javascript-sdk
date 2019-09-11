@@ -30,15 +30,13 @@ document.querySelector('#button').onclick = function () {
 
   fetch('/api/speech-to-text/token')
   .then(function(response) {
-      return response.text();
+      return response.json();
   }).then(function (token) {
 
-    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-        token: token, // use `access_token` as the parameter name if using an RC service
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone(Object.assign(token, {
         objectMode: true, // send objects instead of text
         format: false // optional - performs basic formatting on the results such as capitals an periods
-
-    });
+    }));
 
     stream.on('data', function(data) {
       console.log(data);

@@ -85,18 +85,17 @@ function renderStream(stream, outputElement) {
 
 document.querySelector('#button').onclick = function () {
   fetch('/api/speech-to-text/token').then(function(response) {
-    return response.text();
+    return response.json();
   }).then(function (token) {
 
-    stream = WatsonSpeech.SpeechToText.recognizeFile({
-      token: token, // use `access_token` as the parameter name if using an RC service
+    stream = WatsonSpeech.SpeechToText.recognizeFile(Object.assign(token, {
       file: 'Isac_Newton_spoken_Wikipedia_opus.ogg',
       play: true,
       objectMode: true,
       realtime: false, // defaults to true when play is true, but we're going to turn it off and then manually do it in a moment to show the difference
       timestamps: true // defaults to true when realtime is true
       ,format: false
-    });
+    }));
 
     stream.on('error', function(err) {
       console.log(err);

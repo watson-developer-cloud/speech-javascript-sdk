@@ -29,7 +29,7 @@
 var token;
 fetch('/api/speech-to-text/token')
 .then(function(response) {
-    return response.text();
+    return response.json();
 }).then(function(_token) {
     token = _token;
 }).catch(function(error) {
@@ -38,10 +38,9 @@ fetch('/api/speech-to-text/token')
 
 
 document.querySelector('#button').onclick = function () {
-    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
-        token: token, // use `access_token` as the parameter name if using an RC service
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone(Object.assign(token, {
         outputElement: '#output' // CSS selector or DOM Element
-    });
+    }));
 
     stream.on('error', function(err) {
         console.log(err);
