@@ -57,7 +57,7 @@ getTtsToken()
 document.querySelector('#button').onclick = function () {
   getTtsToken().then(function (token) {
 
-    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone(Object.assign(token,
+    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone(Object.assign(token, {
         model: document.querySelector('#model').value,
         outputElement: '#output' // CSS selector or DOM Element
     }));
