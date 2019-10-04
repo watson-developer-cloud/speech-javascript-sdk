@@ -38,7 +38,7 @@ var fetch = require('nodeify-fetch'); // like regular fetch, but with an extra m
  * @param {Object} options - Also passed to {MediaElementAudioStream} and to {RecognizeStream}
  * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] - Base URL for a service instance
  * @param {String} options.token - Auth Token for CF services - see https://github.com/watson-developer-cloud/node-sdk#authorization
- * @param {String} options.access_token - IAM Access Token for RC services - see https://github.com/watson-developer-cloud/node-sdk#authorization
+ * @param {String} options.accessToken - IAM Access Token for RC services - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {Blob|FileString} options.file - String url or the raw audio data as a Blob or File instance to be transcribed (and optionally played). Playback may not with with Blob or File on mobile Safari.
  * @param {Boolean} [options.play=false] - If a file is set, play it locally as it's being uploaded
  * @param {Boolena} [options.format=true] - pipe the text through a {FormatStream} which performs light formatting. Also controls smart_formatting option unless explicitly set.
@@ -51,8 +51,8 @@ var fetch = require('nodeify-fetch'); // like regular fetch, but with an extra m
  */
 module.exports = function recognizeFile(options) {
   // eslint-disable-line complexity
-  if (!options || (!options.token && !options.access_token)) {
-    throw new Error('WatsonSpeechToText: missing required parameter: opts.token (CF) or opts.access_token (RC)');
+  if (!options || (!options.token && !options.accessToken)) {
+    throw new Error('WatsonSpeechToText: missing required parameter: opts.token (CF) or opts.accessToken (RC)');
   }
 
   if (options.data && !options.file) {
@@ -75,14 +75,14 @@ module.exports = function recognizeFile(options) {
   // SpeakerStream requires objectMode and speaker_labels
   if (options.resultsBySpeaker) {
     options.objectMode = true;
-    options.speaker_labels = true;
+    options.speakerLabels = true;
   }
 
   // default format to true (capitals and periods)
-  // default smart_formatting to options.format value (dates, currency, etc.)
+  // default smartFormatting to options.format value (dates, currency, etc.)
   options.format = options.format !== false;
-  if (typeof options.smart_formatting === 'undefined') {
-    options.smart_formatting = options.format;
+  if (typeof options.smartFormatting === 'undefined') {
+    options.smartFormatting = options.format;
   }
 
   var realtime = options.realtime || (typeof options.realtime === 'undefined' && options.play);
@@ -94,13 +94,13 @@ module.exports = function recognizeFile(options) {
 
   // Attempt to guess content-type based on filename
   // If this fails, recognizeStream will make a second attempt based on the file header
-  if (!options['content-type']) {
-    options['content-type'] = contentType.fromFilename(options.file);
+  if (!options.contentType) {
+    options.contentType = contentType.fromFilename(options.file);
   }
 
   var rsOpts = assign(
     {
-      interim_results: true
+      interimResults: true
     },
     options
   );
@@ -152,7 +152,7 @@ module.exports = function recognizeFile(options) {
   if (options.play) {
     // when file playback actually begins
     // (mostly important for downloaded files)
-    FilePlayer.playFile(options.file, options['content-type'])
+    FilePlayer.playFile(options.file, options.contentType)
       .then(function(player) {
         recognizeStream.on('stop', player.stop.bind(player));
         recognizeStream.on('error', player.stop.bind(player));

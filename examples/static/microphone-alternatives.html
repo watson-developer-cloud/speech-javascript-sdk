@@ -38,7 +38,7 @@ document.querySelector('#button').onclick = function () {
 
     var stream = WatsonSpeech.SpeechToText.recognizeMicrophone(Object.assign(token, {
       objectMode: true,
-      max_alternatives: 4
+      maxAlternatives: 4
     }));
 
     stream.on('error', function(err) {

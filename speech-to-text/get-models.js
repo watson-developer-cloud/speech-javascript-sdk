@@ -39,12 +39,12 @@
  * @param {Object} options
  * @param {String} options.url=https://stream.watsonplatform.net/speech-to-text/api URL for Watson Speech to Text API
  * @param {String} options.token auth token for CF services
- * @param {String} options.access_token IAM access token for RC services
- * @return {Promise.<T>}
+ * @param {String} options.accessToken IAM access token for RC services
+ * @return {Promise<T>}
  */
 module.exports = function getModels(options) {
-  if (!options || (!options.token && !options.access_token)) {
-    throw new Error('Watson SpeechToText: missing required auth parameter: options.token (CF) or options.access_token (RC)');
+  if (!options || (!options.token && !options.accessToken)) {
+    throw new Error('Watson SpeechToText: missing required auth parameter: options.token (CF) or options.accessToken (RC)');
   }
   var reqOpts = {
     credentials: 'omit',
@@ -53,8 +53,8 @@ module.exports = function getModels(options) {
     }
   };
   var url = options.url || 'https://stream.watsonplatform.net/speech-to-text/api';
-  if (options.access_token) {
-    url = url + '/v1/models?access_token=' + options.access_token;
+  if (options.accessToken) {
+    url = url + '/v1/models?access_token=' + options.accessToken;
   } else {
     url = url + '/v1/models?access_token=' + options.token;
   }

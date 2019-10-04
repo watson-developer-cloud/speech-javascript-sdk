@@ -74,6 +74,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
     "buffer-from": "^1.1.1",
+    "camelcase": "^5.3.1",
     "clone": "^2.1.2",
     "core-js": "^3.2.1",
     "defaults": "^1.0.3",
@@ -82,7 +83,6 @@
     "microphone-stream": "^5.0.1",
     "nodeify-fetch": "^1.0.1",
     "object.assign": "^4.1.0",
-    "object.pick": "^1.3.0",
     "path": "^0.12.7",
     "readable-blob-stream": "^1.1.0",
     "readable-stream": "^3.4.0",

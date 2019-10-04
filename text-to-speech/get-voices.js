@@ -40,12 +40,12 @@
  * @param {Object} options
  * @param {String} options.url=https://stream.watsonplatform.net/text-to-speech/api URL for Watson Text to Speech API
  * @param {String} options.token auth token for CF services
- * @param {String} options.access_token IAM access token for RC services
+ * @param {String} options.accessToken IAM access token for RC services
  * @return {Promise.<T>}
  */
 module.exports = function getVoices(options) {
-  if (!options || (!options.token && !options.access_token)) {
-    throw new Error('Watson TextToSpeech: missing required auth parameter: options.token (CF) or options.access_token (RC)');
+  if (!options || (!options.token && !options.accessToken)) {
+    throw new Error('Watson TextToSpeech: missing required auth parameter: options.token (CF) or options.accessToken (RC)');
   }
   var reqOpts = {
     credentials: 'omit',
@@ -54,8 +54,8 @@ module.exports = function getVoices(options) {
     }
   };
   var url = options.url || 'https://stream.watsonplatform.net/text-to-speech/api';
-  if (options.access_token) {
-    url = url + '/v1/voices?watson-token=' + options.access_token;
+  if (options.accessToken) {
+    url = url + '/v1/voices?watson-token=' + options.accessToken;
   } else {
     url = url + '/v1/voices?watson-token=' + options.token;
   }

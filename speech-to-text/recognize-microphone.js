@@ -45,7 +45,7 @@ var bitBucket = new Writable({
  *
  * @param {Object} options - Also passed to {RecognizeStream}, and {FormatStream} when applicable
  * @param {String} options.token - Auth Token for CF services - see https://github.com/watson-developer-cloud/node-sdk#authorization
- * @param {String} options.access_token - IAM Access Token for RC services - see https://github.com/watson-developer-cloud/node-sdk#authorization
+ * @param {String} options.accessToken - IAM Access Token for RC services - see https://github.com/watson-developer-cloud/node-sdk#authorization
  * @param {String} [options.url='wss://stream.watsonplatform.net/speech-to-text/api'] - Base URL for a service instance
  * @param {Boolean} [options.format=true] - pipe the text through a FormatStream which performs light formatting. Also controls smart_formatting option unless explicitly set.
  * @param {Boolean} [options.keepMicrophone=false] - keeps an internal reference to the microphone stream to reuse in subsequent calls (prevents multiple permissions dialogs in firefox)
@@ -57,8 +57,8 @@ var bitBucket = new Writable({
  * @return {RecognizeStream|SpeakerStream|FormatStream|ResultStream}
  */
 module.exports = function recognizeMicrophone(options) {
-  if (!options || (!options.token && !options.access_token)) {
-    throw new Error('WatsonSpeechToText: missing required parameter: opts.token (CF) or opts.access_token (RC)');
+  if (!options || (!options.token && !options.accessToken)) {
+    throw new Error('WatsonSpeechToText: missing required parameter: opts.token (CF) or opts.accessToken (RC)');
   }
 
   // the WritableElementStream works best in objectMode
@@ -69,23 +69,23 @@ module.exports = function recognizeMicrophone(options) {
   if (options.extractResults) {
     options.objectMode = true;
   }
-  // SpeakerStream requires objectMode and speaker_labels
+  // SpeakerStream requires objectMode and speakerLabels
   if (options.resultsBySpeaker) {
     options.objectMode = true;
-    options.speaker_labels = true;
+    options.speakerLabels = true;
   }
 
   // default format to true (capitals and periods)
-  // default smart_formatting to options.format value (dates, currency, etc.)
+  // default smartFormatting to options.format value (dates, currency, etc.)
   options.format = options.format !== false;
-  if (typeof options.smart_formatting === 'undefined') {
-    options.smart_formatting = options.format;
+  if (typeof options.smartFormatting === 'undefined') {
+    options.smartFormatting = options.format;
   }
 
   var rsOpts = assign(
     {
-      'content-type': 'audio/l16;rate=16000',
-      interim_results: true
+      contentType: 'audio/l16;rate=16000',
+      interimResults: true
     },
     options
   );

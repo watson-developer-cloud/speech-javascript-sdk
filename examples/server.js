@@ -94,7 +94,7 @@ app.use('/api/speech-to-text/token', function(req, res) {
     }
     const token = response.token || response;
     if (process.env.SPEECH_TO_TEXT_IAM_APIKEY) {
-      res.json({ access_token: token, url: sttCredentials.url });
+      res.json({ accessToken: token, url: sttCredentials.url });
     } else {
       res.json({ token: token, url: sttCredentials.url });
     }
@@ -121,7 +121,7 @@ app.use('/api/text-to-speech/token', function(req, res) {
     }
     const token = response.token || response;
     if (process.env.TEXT_TO_SPEECH_IAM_APIKEY) {
-      res.json({ access_token: token, url: ttsCredentials.url });
+      res.json({ accessToken: token, url: ttsCredentials.url });
     } else {
       res.json({ token: token, url: ttsCredentials.url });
     }

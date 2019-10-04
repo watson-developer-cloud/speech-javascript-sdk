@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 'use strict';
-var pick = require('object.pick');
+var processUserParameters = require('../util/process-user-parameters.js');
 var qs = require('../util/querystring.js');
-
-var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'access_token', 'accept', 'customization_id'];
 
 /**
  * @module watson-speech/text-to-speech/synthesize
@@ -31,29 +29,31 @@ var QUERY_PARAMS_ALLOWED = ['voice', 'X-WDC-PL-OPT-OUT', 'X-Watson-Learning-Opt-
  * @param {Object} options
  * @param {String} options.url=https://stream.watsonplatform.net/text-to-speech/api URL for Watson Text to Speech API
  * @param {String} [options.token] - Auth token for CF services
- * @param {String} options.access_token - IAM Access Token for RC services
+ * @param {String} options.accessToken - IAM Access Token for RC services
  * @param {String} options.text text to speak
  * @param {String} [options.voice=en-US_MichaelVoice] what voice to use - call getVoices() for a complete list.
- * @param {String} [options.customization_id] GUID of a custom voice model. Omit to use the voice with no customization.
+ * @param {String} [options.customizationId] GUID of a custom voice model. Omit to use the voice with no customization.
  * @param {String} [options.accept] - specify desired audio format. Leave unset to allow (most) browsers to automatically negotiate an ideal format.
- * @param {Number} [options.X-Watson-Learning-Opt-Out=0] set to 1 to opt-out of allowing Watson to use this request to improve it's services
+ * @param {Number} [options.xWatsonLearningOptOut=0] set to 1 to opt-out of allowing Watson to use this request to improve it's services
  * @param {Boolean} [options.autoPlay=true] automatically play the audio
  * @param {DOMAudioElement} [options.element] <audio> element - will be used instead of creating a new one if provided
  * @return {Audio}
  * @see module:watson-speech/text-to-speech/get-voices
  */
 module.exports = function synthesize(options) {
-  if (!options || (!options.token && !options.access_token)) {
-    throw new Error('Watson TextToSpeech: missing required parameter: options.token (CF) or options.access_token (RC)');
+  if (!options || (!options.token && !options.accessToken)) {
+    throw new Error('Watson TextToSpeech: missing required parameter: options.token (CF) or options.accessToken (RC)');
   }
-  if (options.token && !options['watson-token']) {
-    options['watson-token'] = options.token;
+  if (options.token && !options.watsonToken) {
+    options.watsonToken = options.token;
     delete options.token;
   }
   var url = options.url || 'https://stream.watsonplatform.net/text-to-speech/api';
   var audio = options.element || new Audio();
   audio.crossOrigin = 'anonymous';
-  audio.src = url + '/v1/synthesize?' + qs.stringify(pick(options, QUERY_PARAMS_ALLOWED));
+  var queryParamsAllowed = ['voice', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'access_token', 'accept', 'customization_id'];
+  var queryParams = processUserParameters(options, queryParamsAllowed);
+  audio.src = url + '/v1/synthesize?' + qs.stringify(queryParams);
   if (options.autoPlay !== false) {
     var playPromise = audio.play();
     if (playPromise !== undefined) {
