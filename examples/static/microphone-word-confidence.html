@@ -46,7 +46,7 @@
         var stream = WatsonSpeech.SpeechToText.recognizeMicrophone(Object.assign(token, {
           objectMode: true,
           format: false,
-          word_confidence: true
+          wordConfidence: true
         }));
 
         stream.on('error', function(err) {

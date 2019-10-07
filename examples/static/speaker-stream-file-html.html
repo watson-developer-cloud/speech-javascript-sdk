@@ -37,7 +37,7 @@
 
       var stream = WatsonSpeech.SpeechToText.recognizeFile(Object.assign(token, {
         file: '/en-us-multi-speaker-narrowband.wav',
-        speaker_labels: true,
+        speakerLabels: true,
         // only certain models support speaker labels currently,
         // see https://console.bluemix.net/docs/services/speech-to-text/output.html#output
         model: 'en-US_NarrowbandModel',

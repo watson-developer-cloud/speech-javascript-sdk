@@ -1,5 +1,11 @@
 # Changelog
 
+### v0.37.0
+* BREAKING CHANGES INTRODUCED:
+  * All options parameters for all methods are coverted to be lowerCamelCase
+  * For example: `access_token` is now `accessToken` and `content-type` is now `contentType`
+  * Response data from the service is not affected by this change
+
 ### v0.34.0
 * Add support for guessing .mp3 (via file name & header) & .webm (via filename) content-types
 * Re-factored content-type guessing to check filename first, and file header second
