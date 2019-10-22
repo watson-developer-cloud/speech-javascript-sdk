@@ -16,3 +16,4 @@ dist/*.js
 dist/*.map
 gh-pages/
 .idea
+watson-speech-*.tgz

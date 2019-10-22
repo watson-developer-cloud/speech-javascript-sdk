@@ -33,7 +33,7 @@ function getTtsToken() {
 // fetch the voices and populate the dropdown
 getTtsToken()
   .then(function(token) {
-    return WatsonSpeech.TextToSpeech.getVoices(token); // use `access_token` as the parameter name if using an RC service
+    return WatsonSpeech.TextToSpeech.getVoices(token); // use `accessToken` as the parameter name if using an RC service
   })
   .then(function(voices) {
     var dropdown = document.querySelector('#voice');
@@ -52,11 +52,10 @@ getTtsToken()
 // synthesize and play the text using the chosen voice
 document.querySelector('#button').onclick = function() {
   getTtsToken().then(function(token) {
-    const audio = WatsonSpeech.TextToSpeech.synthesize({
+    const audio = WatsonSpeech.TextToSpeech.synthesize(Object.assign({
       text: document.querySelector('#text').value,
       voice: document.querySelector('#voice').value,
-      token: token // use `access_token` as the parameter name if using an RC service
-    });
+    }, token));
     audio.onerror = function(err) {
       console.log('audio error: ', err);
     };

@@ -17,13 +17,13 @@
     "express-browserify": "^1.0.3",
     "express-rate-limit": "^5.0.0",
     "express-secure-only": "^0.2.1",
-    "ibm-watson": "^4.4.0",
+    "ibm-watson": "^4.5.4",
     "jquery": "^3.4.1",
     "object.assign": "^4.0.4",
     "vcap_services": "^0.7.1",
     "watson-speech": "*",
-    "webpack": "^4.39.3",
-    "webpack-dev-middleware": "^3.7.1",
+    "webpack": "^4.41.2",
+    "webpack-dev-middleware": "^3.7.2",
     "whatwg-fetch": "^3.0.0"
   },
   "engines": {
