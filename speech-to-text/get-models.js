@@ -56,7 +56,7 @@ module.exports = function getModels(options) {
   if (options.accessToken) {
     url = url + '/v1/models?access_token=' + options.accessToken;
   } else {
-    url = url + '/v1/models?access_token=' + options.token;
+    url = url + '/v1/models?watson-token=' + options.token;
   }
   return fetch(url, reqOpts)
     .then(function(response) {

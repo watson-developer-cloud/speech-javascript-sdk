@@ -8,3 +8,12 @@ gh-pages/
 scripts/
 docs/
 .env
+.github/
+CHANGELOG.md
+bower.json
+karma.conf.js
+speech-to-text
+text-to-speech
+util
+webpack.config.js
+watson-speech-*.tgz

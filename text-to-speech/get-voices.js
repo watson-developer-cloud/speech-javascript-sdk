@@ -55,7 +55,7 @@ module.exports = function getVoices(options) {
   };
   var url = options.url || 'https://stream.watsonplatform.net/text-to-speech/api';
   if (options.accessToken) {
-    url = url + '/v1/voices?watson-token=' + options.accessToken;
+    url = url + '/v1/voices?access_token=' + options.accessToken;
   } else {
     url = url + '/v1/voices?watson-token=' + options.token;
   }
