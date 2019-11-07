@@ -12,8 +12,5 @@ docs/
 CHANGELOG.md
 bower.json
 karma.conf.js
-speech-to-text
-text-to-speech
-util
 webpack.config.js
 watson-speech-*.tgz
