@@ -12,22 +12,22 @@
   ],
   "dependencies": {
     "defaults": "^1.0.3",
-    "dotenv": "^6.2.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-browserify": "^1.0.3",
     "express-rate-limit": "^5.0.0",
     "express-secure-only": "^0.2.1",
-    "ibm-watson": "^4.5.4",
+    "ibm-watson": "^5.2.1",
     "jquery": "^3.4.1",
     "object.assign": "^4.0.4",
     "vcap_services": "^0.7.1",
     "watson-speech": "*",
-    "webpack": "^4.41.2",
+    "webpack": "^4.41.4",
     "webpack-dev-middleware": "^3.7.2",
     "whatwg-fetch": "^3.0.0"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "license": "Apache-2.0"
 }

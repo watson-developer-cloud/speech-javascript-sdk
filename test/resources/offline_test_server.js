@@ -16,10 +16,6 @@ module.exports = function(app, log) {
 
   app.use(serveStatic(__dirname));
 
-  app.get('/token', function(req, res) {
-    res.json({ token: token, url: 'http://localhost:' + API_PORT + '/speech-to-text/api' });
-  });
-
   app.get('/iam-token', function(req, res) {
     res.json({ accessToken: token, url: 'http://localhost:' + API_PORT + '/speech-to-text/api' });
   });
