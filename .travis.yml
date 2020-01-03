@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "10"
+  - "12"
 sudo: required
 services:
   - xvfb
@@ -32,4 +32,4 @@ deploy:
   skip_cleanup: true
   script: npx semantic-release@15
   on:
-    node: 10
+    node: 12

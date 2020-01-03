@@ -78,6 +78,4 @@ The test suite is broken up into offline unit tests and integration tests that t
 - `npm run test-offline` will run the offline tests
 - `npm run test-integration` will run the integration tests
 
-To run the integration tests, a file with service credentials is required. This file must be called `stt-auth.json` and must be located in `/test/resources/`. There are tests for usage of both CF and RC service instances. For testing CF, the required keys in this configuration file are `username` and `password`. For testing RC, a key of either `iam_acess_token` or `iam_apikey` is required. Optionally, a service URL for an RC instance can be provided under the key `rc_service_url` if the service is available under a URL other than `https://stream.watsonplatform.net/speech-to-text/api`.
-
-For an example, see `test/resources/stt-auth-example.json`.
+To run the integration tests, service credentials are required. Make sure you have a valid `.env` file in the root directory.

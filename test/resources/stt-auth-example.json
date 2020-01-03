@@ -1,6 +1,0 @@
-{
-  "username": "<your-cf-username>",
-  "password": "<your-cf-password>",
-  "iam_apikey": "<your-rc-apikey>",
-  "rc_service_url": "<your-optional-rc-service-url>"
-}

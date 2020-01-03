@@ -10,15 +10,7 @@ if (typeof fetch == 'undefined') {
   require('whatwg-fetch');
 }
 
-// this is mainly for fetching the token, but it also determines what server to connect to during an offline test
 function getConfig() {
-  // console.log('getting config');
-  return fetch('http://localhost:9877/token').then(function(response) {
-    return response.json();
-  });
-}
-
-function getRcConfig() {
   return fetch('http://localhost:9877/iam-token').then(function(response) {
     return response.json();
   });
@@ -68,49 +60,8 @@ describe('WatsonSpeech.SpeechToText end-to-end', function() {
       .catch(done);
   });
 
-  ((offline && !travis) || chrome ? it : xit)('should transcribe mic input -RC', function(done) {
-    getRcConfig()
-      .then(function(cfg) {
-        var stt = SpeechToText.recognizeMicrophone(cfg);
-        // stt.on('send-json', console.log.bind(console, 'sending'));
-        // stt.on('message', console.log.bind(console, 'received'));
-        // stt.on('send-data', function(d) {
-        //  console.log('sending ' + d.length + ' bytes');
-        // })
-        stt
-          .on('error', done)
-          .setEncoding('utf8')
-          .pipe(
-            concat(function(transcript) {
-              assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
-              done();
-            })
-          );
-        setTimeout(stt.stop.bind(stt), 8 * 1000);
-        // ['end', 'close', 'data', /*'results',*/ 'result', 'error', 'stopping', 'finish', 'listening'].forEach(function (eventName) {
-        //  stt.on(eventName, console.log.bind(console, eventName + ' event: '));
-        // });
-      })
-      .catch(done);
-  });
-
   it('should transcribe files', function(done) {
     Promise.all([getConfig(), getAudio()])
-      .then(function(results) {
-        var cfg = results[0];
-        cfg.file = results[1];
-        return SpeechToText.recognizeFile(cfg)
-          .promise()
-          .then(function(transcript) {
-            assert.equal(transcript, 'Thunderstorms could produce large hail isolated tornadoes and heavy rain. ');
-            done();
-          });
-      })
-      .catch(done);
-  });
-
-  it('should transcribe files - RC', function(done) {
-    Promise.all([getRcConfig(), getAudio()])
       .then(function(results) {
         var cfg = results[0];
         cfg.file = results[1];
