@@ -5,7 +5,7 @@ module.exports = {
     path: __dirname + '/dist',
     filename: 'watson-speech.js',
     library: 'WatsonSpeech',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
   module: {
     rules: [
@@ -13,15 +13,15 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
-        }
+          loader: 'babel-loader',
+        },
       },
       {
         test: /index.js$/,
-        loader: 'transform-loader?envify'
+        loader: 'transform-loader?envify',
         // options: {...}
-      }
-    ]
+      },
+    ],
   },
-  mode: 'development'
+  mode: 'development',
 };

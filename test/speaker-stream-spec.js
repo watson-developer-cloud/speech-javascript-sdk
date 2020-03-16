@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-var assert = require('assert');
-var clone = require('clone');
-var SpeakerStream = require('../speech-to-text/speaker-stream.js');
-var sinon = require('sinon');
+var assert = require("assert");
+var clone = require("clone");
+var SpeakerStream = require("../speech-to-text/speaker-stream.js");
+var sinon = require("sinon");
 
-describe('SpeakerStream', function() {
-  it('should split up results by speaker', function(done) {
+describe("SpeakerStream", function() {
+  it("should split up results by speaker", function(done) {
     var stream = new SpeakerStream();
-    stream.on('error', done);
+    stream.on("error", done);
     var actual = [];
-    stream.on('data', function(data) {
+    stream.on("data", function(data) {
       actual.push(data);
     });
 
@@ -21,8 +21,8 @@ describe('SpeakerStream', function() {
             speaker: 0,
             alternatives: [
               {
-                timestamps: [['hi', 0.06, 0.28]],
-                transcript: 'hi '
+                timestamps: [["hi", 0.06, 0.28]],
+                transcript: "hi "
               }
             ],
             final: true
@@ -31,8 +31,8 @@ describe('SpeakerStream', function() {
             speaker: 1,
             alternatives: [
               {
-                timestamps: [['hello', 0.28, 0.37]],
-                transcript: 'hello '
+                timestamps: [["hello", 0.28, 0.37]],
+                transcript: "hello "
               }
             ],
             final: true
@@ -42,7 +42,7 @@ describe('SpeakerStream', function() {
       }
     ];
 
-    stream.on('end', function() {
+    stream.on("end", function() {
       assert.deepEqual(actual, expected);
       done();
     });
@@ -52,8 +52,11 @@ describe('SpeakerStream', function() {
         {
           alternatives: [
             {
-              timestamps: [['hi', 0.06, 0.28], ['hello', 0.28, 0.37]],
-              transcript: 'hi hello '
+              timestamps: [
+                ["hi", 0.06, 0.28],
+                ["hello", 0.28, 0.37]
+              ],
+              transcript: "hi hello "
             }
           ],
           final: true
@@ -81,11 +84,11 @@ describe('SpeakerStream', function() {
     });
   });
 
-  it('should handle speaker label changes', function(done) {
+  it("should handle speaker label changes", function(done) {
     var stream = new SpeakerStream();
-    stream.on('error', done);
+    stream.on("error", done);
     var actual = [];
-    stream.on('data', function(data) {
+    stream.on("data", function(data) {
       actual.push(data);
     });
 
@@ -96,8 +99,8 @@ describe('SpeakerStream', function() {
             speaker: 0,
             alternatives: [
               {
-                timestamps: [['hi', 0.06, 0.28]],
-                transcript: 'hi '
+                timestamps: [["hi", 0.06, 0.28]],
+                transcript: "hi "
               }
             ],
             final: false
@@ -106,8 +109,8 @@ describe('SpeakerStream', function() {
             speaker: 1,
             alternatives: [
               {
-                timestamps: [['hello', 0.28, 0.37]],
-                transcript: 'hello '
+                timestamps: [["hello", 0.28, 0.37]],
+                transcript: "hello "
               }
             ],
             final: false
@@ -121,8 +124,11 @@ describe('SpeakerStream', function() {
             speaker: 0,
             alternatives: [
               {
-                timestamps: [['hi', 0.06, 0.28], ['hello', 0.28, 0.37]],
-                transcript: 'hi hello '
+                timestamps: [
+                  ["hi", 0.06, 0.28],
+                  ["hello", 0.28, 0.37]
+                ],
+                transcript: "hi hello "
               }
             ],
             final: true
@@ -132,7 +138,7 @@ describe('SpeakerStream', function() {
       }
     ];
 
-    stream.on('end', function() {
+    stream.on("end", function() {
       assert.deepEqual(actual, expected);
       done();
     });
@@ -142,8 +148,11 @@ describe('SpeakerStream', function() {
         {
           alternatives: [
             {
-              timestamps: [['hi', 0.06, 0.28], ['hello', 0.28, 0.37]],
-              transcript: 'hi hello '
+              timestamps: [
+                ["hi", 0.06, 0.28],
+                ["hello", 0.28, 0.37]
+              ],
+              transcript: "hi hello "
             }
           ],
           final: true
@@ -189,59 +198,65 @@ describe('SpeakerStream', function() {
     });
   });
 
-  it('should error if given only results and no labels', function(done) {
-    assert(SpeakerStream.ERROR_MISMATCH, 'SpeakerStream.ERROR_MISMATCH should be defined');
+  it("should error if given only results and no labels", function(done) {
+    assert(
+      SpeakerStream.ERROR_MISMATCH,
+      "SpeakerStream.ERROR_MISMATCH should be defined"
+    );
     var stream = new SpeakerStream();
-    var results = require('./resources/results.json');
-    stream.on('data', function(data) {
-      assert.fail(data, null, 'data emitted');
+    var results = require("./resources/results.json");
+    stream.on("data", function(data) {
+      assert.fail(data, null, "data emitted");
     });
-    stream.on('error', function(err) {
+    stream.on("error", function(err) {
       assert.equal(err.name, SpeakerStream.ERROR_MISMATCH);
       done();
     });
     stream.end(results);
   });
 
-  it('should error if given results with no timestamps', function(done) {
-    var noTimestamps = require('../speech-to-text/no-timestamps');
-    assert(noTimestamps.ERROR_NO_TIMESTAMPS, 'noTimestamps.ERROR_NO_TIMESTAMPS should be defined');
+  it("should error if given results with no timestamps", function(done) {
+    var noTimestamps = require("../speech-to-text/no-timestamps");
+    assert(
+      noTimestamps.ERROR_NO_TIMESTAMPS,
+      "noTimestamps.ERROR_NO_TIMESTAMPS should be defined"
+    );
     var stream = new SpeakerStream();
-    var message = clone(require('./resources/results.json'));
+    var message = clone(require("./resources/results.json"));
     delete message.results[0].alternatives[0].timestamps;
-    stream.on('data', function(data) {
-      assert.fail(data, null, 'data emitted');
+    stream.on("data", function(data) {
+      assert.fail(data, null, "data emitted");
     });
-    stream.on('error', function(err) {
+    stream.on("error", function(err) {
       assert.equal(err.name, noTimestamps.ERROR_NO_TIMESTAMPS);
       done();
     });
     stream.end(message);
   });
 
-  it('should not emit identical interim messages when nothing has changed', function(done) {
+  it("should not emit identical interim messages when nothing has changed", function(done) {
     var stream = new SpeakerStream();
-    stream.on('error', done);
+    stream.on("error", done);
     var lastMsg;
-    stream.on('data', function(msg) {
+    stream.on("data", function(msg) {
       assert(msg);
       assert.notDeepEqual(msg, lastMsg);
       lastMsg = msg;
     });
-    stream.on('end', done);
-    var messageStream = require('./resources/car_loan_stream.json');
+    stream.on("end", done);
+    var messageStream = require("./resources/car_loan_stream.json");
     messageStream.forEach(function(msg) {
       stream.write(msg);
     });
     stream.end();
   });
 
-  it('should handle early speaker_labels gracefully', function(done) {
+  it("should handle early speaker_labels gracefully", function(done) {
     // there is/was a bug in the timing stream that could cause this in certain scenarios
     var stream = new SpeakerStream();
-    stream.on('error', done);
+    stream.on("error", done);
     var actual = [];
-    stream.on('data', function(data) {
+    stream.on("data", function(data) {
       actual.push(data);
     });
 
@@ -252,8 +267,8 @@ describe('SpeakerStream', function() {
             speaker: 0,
             alternatives: [
               {
-                timestamps: [['hi', 0.06, 0.28]],
-                transcript: 'hi '
+                timestamps: [["hi", 0.06, 0.28]],
+                transcript: "hi "
               }
             ],
             final: false
@@ -267,8 +282,8 @@ describe('SpeakerStream', function() {
             speaker: 0,
             alternatives: [
               {
-                timestamps: [['hi', 0.06, 0.28]],
-                transcript: 'hi '
+                timestamps: [["hi", 0.06, 0.28]],
+                transcript: "hi "
               }
             ],
             final: true
@@ -277,8 +292,8 @@ describe('SpeakerStream', function() {
             speaker: 1,
             alternatives: [
               {
-                timestamps: [['hello', 0.28, 0.37]],
-                transcript: 'hello '
+                timestamps: [["hello", 0.28, 0.37]],
+                transcript: "hello "
               }
             ],
             final: true
@@ -288,7 +303,7 @@ describe('SpeakerStream', function() {
       }
     ];
 
-    stream.on('end', function() {
+    stream.on("end", function() {
       assert.deepEqual(actual, expected);
       done();
     });
@@ -298,8 +313,8 @@ describe('SpeakerStream', function() {
         {
           alternatives: [
             {
-              timestamps: [['hi', 0.06, 0.28]],
-              transcript: 'hi '
+              timestamps: [["hi", 0.06, 0.28]],
+              transcript: "hi "
             }
           ],
           final: true
@@ -336,8 +351,8 @@ describe('SpeakerStream', function() {
         {
           alternatives: [
             {
-              timestamps: [['hello', 0.28, 0.37]],
-              transcript: 'hello '
+              timestamps: [["hello", 0.28, 0.37]],
+              transcript: "hello "
             }
           ],
           final: true
@@ -348,7 +363,7 @@ describe('SpeakerStream', function() {
     stream.end();
   });
 
-  it('should put word alternatives on the correct result', function(done) {
+  it("should put word alternatives on the correct result", function(done) {
     /*
     {
     "results": [
@@ -366,13 +381,15 @@ describe('SpeakerStream', function() {
           },
      */
     var stream = new SpeakerStream();
-    stream.on('error', done);
+    stream.on("error", done);
     var msgs = [];
-    stream.on('data', function(msg) {
+    stream.on("data", function(msg) {
       msgs.push(msg);
     });
 
-    var source = require('./resources/car_loan_stream.json').filter(function(msg) {
+    var source = require("./resources/car_loan_stream.json").filter(function(
+      msg
+    ) {
       return msg.speaker_labels || (msg.results && msg.results[0].final);
     });
     var expectedNumAlts = source.reduce(function(count, msg) {
@@ -383,7 +400,7 @@ describe('SpeakerStream', function() {
     }, 0);
     assert(expectedNumAlts);
 
-    stream.on('end', function() {
+    stream.on("end", function() {
       assert(msgs.length);
       var numAlts = 0;
       msgs
@@ -406,7 +423,11 @@ describe('SpeakerStream', function() {
             }
           });
         });
-      assert.equal(numAlts, expectedNumAlts, 'should have the same number of word alternatives before and after speaker-izing');
+      assert.equal(
+        numAlts,
+        expectedNumAlts,
+        "should have the same number of word alternatives before and after speaker-izing"
+      );
       done();
     });
     source.forEach(function(msg) {
@@ -415,7 +436,7 @@ describe('SpeakerStream', function() {
     stream.end();
   });
 
-  it('should put spotted keywords on the correct result', function(done) {
+  it("should put spotted keywords on the correct result", function(done) {
     /*
       "keywords_result": {
           "car": [
@@ -443,13 +464,15 @@ describe('SpeakerStream', function() {
         },
      */
     var stream = new SpeakerStream();
-    stream.on('error', done);
+    stream.on("error", done);
     var msgs = [];
-    stream.on('data', function(msg) {
+    stream.on("data", function(msg) {
       msgs.push(msg);
     });
 
-    var source = require('./resources/car_loan_stream.json').filter(function(msg) {
+    var source = require("./resources/car_loan_stream.json").filter(function(
+      msg
+    ) {
       return msg.speaker_labels || (msg.results && msg.results[0].final);
     });
     var expectedNumKeywords = source.reduce(function(count, msg) {
@@ -466,7 +489,7 @@ describe('SpeakerStream', function() {
     }, 0);
     assert(expectedNumKeywords);
 
-    stream.on('end', function() {
+    stream.on("end", function() {
       assert(msgs.length);
       var numAlts = 0;
       msgs
@@ -492,7 +515,11 @@ describe('SpeakerStream', function() {
             }
           });
         });
-      assert.equal(numAlts, expectedNumKeywords, 'should have the same number of word alternatives before and after speaker-izing');
+      assert.equal(
+        numAlts,
+        expectedNumKeywords,
+        "should have the same number of word alternatives before and after speaker-izing"
+      );
       done();
     });
     source.forEach(function(msg) {
@@ -501,8 +528,8 @@ describe('SpeakerStream', function() {
     stream.end();
   });
 
-  describe('with TimingStream', function() {
-    var TimingStream = require('../speech-to-text/timing-stream.js');
+  describe("with TimingStream", function() {
+    var TimingStream = require("../speech-to-text/timing-stream.js");
     var clock;
     beforeEach(function() {
       clock = sinon.useFakeTimers();
@@ -512,26 +539,26 @@ describe('SpeakerStream', function() {
       clock.restore();
     });
 
-    it('should produce the same output with and without a TimingStream', function(done) {
-      var inputMessages = require('./resources/car_loan_stream.json');
+    it("should produce the same output with and without a TimingStream", function(done) {
+      var inputMessages = require("./resources/car_loan_stream.json");
       var actualSpeakerStream = new SpeakerStream();
       var expectedSpeakerStream = new SpeakerStream();
       var timingStream = new TimingStream({ objectMode: true });
       timingStream.pipe(actualSpeakerStream);
 
-      timingStream.on('error', done);
+      timingStream.on("error", done);
 
       var actual = [];
-      actualSpeakerStream.on('data', function(timedResult) {
+      actualSpeakerStream.on("data", function(timedResult) {
         actual.push(timedResult);
       });
-      actualSpeakerStream.on('error', done);
+      actualSpeakerStream.on("error", done);
 
       var expected = [];
-      expectedSpeakerStream.on('data', function(timedResult) {
+      expectedSpeakerStream.on("data", function(timedResult) {
         expected.push(timedResult);
       });
-      expectedSpeakerStream.on('error', done);
+      expectedSpeakerStream.on("error", done);
 
       inputMessages.forEach(function(msg) {
         timingStream.write(msg);
@@ -548,11 +575,11 @@ describe('SpeakerStream', function() {
     });
   });
 
-  it('should provide early results when options.speakerlessInterim=true', function(done) {
+  it("should provide early results when options.speakerlessInterim=true", function(done) {
     var stream = new SpeakerStream({ speakerlessInterim: true });
-    stream.on('error', done);
+    stream.on("error", done);
     var actual = [];
-    stream.on('data', function(data) {
+    stream.on("data", function(data) {
       actual.push(data);
     });
 
@@ -562,8 +589,8 @@ describe('SpeakerStream', function() {
           {
             alternatives: [
               {
-                timestamps: [['hi', 0.06, 0.28]],
-                transcript: 'hi '
+                timestamps: [["hi", 0.06, 0.28]],
+                transcript: "hi "
               }
             ],
             final: false
@@ -577,8 +604,8 @@ describe('SpeakerStream', function() {
             speaker: 0,
             alternatives: [
               {
-                timestamps: [['hi', 0.06, 0.28]],
-                transcript: 'hi '
+                timestamps: [["hi", 0.06, 0.28]],
+                transcript: "hi "
               }
             ],
             final: true
@@ -587,8 +614,8 @@ describe('SpeakerStream', function() {
             speaker: 1,
             alternatives: [
               {
-                timestamps: [['hello', 0.28, 0.37]],
-                transcript: 'hello '
+                timestamps: [["hello", 0.28, 0.37]],
+                transcript: "hello "
               }
             ],
             final: true
@@ -598,7 +625,7 @@ describe('SpeakerStream', function() {
       }
     ];
 
-    stream.on('end', function() {
+    stream.on("end", function() {
       assert.deepEqual(actual, expected);
       done();
     });
@@ -608,8 +635,8 @@ describe('SpeakerStream', function() {
         {
           alternatives: [
             {
-              timestamps: [['hi', 0.06, 0.28]],
-              transcript: 'hi '
+              timestamps: [["hi", 0.06, 0.28]],
+              transcript: "hi "
             }
           ],
           final: false
@@ -622,8 +649,11 @@ describe('SpeakerStream', function() {
         {
           alternatives: [
             {
-              timestamps: [['hi', 0.06, 0.28], ['hello', 0.28, 0.37]],
-              transcript: 'hi hello '
+              timestamps: [
+                ["hi", 0.06, 0.28],
+                ["hello", 0.28, 0.37]
+              ],
+              transcript: "hi hello "
             }
           ],
           final: true
@@ -651,8 +681,8 @@ describe('SpeakerStream', function() {
     });
   });
 
-  describe('speakerLabelsSorter', function() {
-    it('should correctly sort speaker labels by start time and then by end time', function() {
+  describe("speakerLabelsSorter", function() {
+    it("should correctly sort speaker labels by start time and then by end time", function() {
       var input = [
         {
           from: 30.04,

@@ -2,26 +2,10 @@
   "name": "watson-speech",
   "description": "IBM Watson Speech to Text and Text to Speech SDK for web browsers.",
   "main": "dist/watson-speech.js",
-  "authors": [
-    "Nathan Friedly <http://nfriedly.com>"
-  ],
+  "authors": ["Nathan Friedly <http://nfriedly.com>"],
   "license": "Apache-2.0",
-  "keywords": [
-    "voice",
-    "recognition",
-    "speech",
-    "text",
-    "transcription",
-    "synthesis"
-  ],
-  "moduleType": [
-    "amd",
-    "globals",
-    "node"
-  ],
+  "keywords": ["voice", "recognition", "speech", "text", "transcription", "synthesis"],
+  "moduleType": ["amd", "globals", "node"],
   "homepage": "https://watson-speech.mybluemix.net/",
-  "ignore": [
-    "**/*",
-    "!dist/*.js"
-  ]
+  "ignore": ["**/*", "!dist/*.js"]
 }
