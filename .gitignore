@@ -17,3 +17,5 @@ dist/*.map
 gh-pages/
 .idea
 watson-speech-*.tgz
+IBM_Cloud_CLI_0.6.6_amd64.tar.gz
+Bluemix_CLI
