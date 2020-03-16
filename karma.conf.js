@@ -24,14 +24,14 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/*-spec.js': ['browserify']
+      'test/*-spec.js': ['browserify'],
     },
     browserify: {
       debug: true,
       // 'brfs' makes fs.read* work
       // 'browserify-shim' wraps non-browserify modules
       // 'envify' makes process.env work
-      transform: ['envify']
+      transform: ['envify'],
     },
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -59,16 +59,16 @@ module.exports = function(config) {
           '--use-fake-device-for-media-stream',
           '--use-fake-ui-for-media-stream',
           '--use-file-for-fake-audio-capture=' + path.join(__dirname, 'test/resources/audio.wav'),
-          '--no-sandbox'
-        ]
+          '--no-sandbox',
+        ],
       },
       // automatically approve getUserMedia calls
       FirefoxAutoGUM: {
         base: 'Firefox',
         prefs: {
-          'media.navigator.permission.disabled': true
-        }
-      }
+          'media.navigator.permission.disabled': true,
+        },
+      },
     },
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -80,10 +80,10 @@ module.exports = function(config) {
       port: 9877,
       // this function takes express app object and allows you to modify it
       // to your liking. For more see http://expressjs.com/4x/api.html
-      appVisitor: testServer
+      appVisitor: testServer,
     },
     browserDisconnectTimeout: 15000,
     browserDisconnectTolerance: 2,
-    browserNoActivityTimeout: 30000
+    browserNoActivityTimeout: 30000,
   });
 };
