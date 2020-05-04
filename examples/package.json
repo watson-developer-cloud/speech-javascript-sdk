@@ -18,7 +18,7 @@
     "express-rate-limit": "^5.0.0",
     "express-secure-only": "^0.2.1",
     "ibm-watson": "^5.2.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "object.assign": "^4.0.4",
     "vcap_services": "^0.7.1",
     "watson-speech": "*",
