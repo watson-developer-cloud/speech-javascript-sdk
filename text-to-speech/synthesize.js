@@ -27,7 +27,7 @@ var qs = require('../util/querystring.js');
  * Creates and returns a HTML5 `<audio>` element
  *
  * @param {Object} options
- * @param {String} options.url=https://stream.watsonplatform.net/text-to-speech/api URL for Watson Text to Speech API
+ * @param {String} options.url=https://api.us-south.text-to-speech.watson.cloud.ibm.com URL for Watson Text to Speech API
  * @param {String} [options.token] - Auth token for CF services
  * @param {String} options.accessToken - IAM Access Token for RC services
  * @param {String} options.text text to speak
@@ -48,7 +48,7 @@ module.exports = function synthesize(options) {
     options.watsonToken = options.token;
     delete options.token;
   }
-  var url = options.url || 'https://stream.watsonplatform.net/text-to-speech/api';
+  var url = options.url || 'https://api.us-south.text-to-speech.watson.cloud.ibm.com';
   var audio = options.element || new Audio();
   audio.crossOrigin = 'anonymous';
   var queryParamsAllowed = ['voice', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'access_token', 'accept', 'customization_id'];
