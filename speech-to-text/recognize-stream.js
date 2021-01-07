@@ -34,7 +34,7 @@ var qs = require('../util/querystring.js');
  * Note that the WebSocket connection is not established until the first chunk of data is recieved. This allows for auto-detection of content type (for wav/flac/opus audio).
  *
  * @param {Options} options
- * @param {string} [options.url] - Base url for service (default='wss://stream.watsonplatform.net/speech-to-text/api')
+ * @param {string} [options.url] - Base url for service (default='wss://api.us-south.speech-to-text.watson.cloud.ibm.com')
  * @param {OutgoingHttpHeaders} [options.headers] - Only works in Node.js, not in browsers. Allows for custom headers to be set, including an Authorization header (preventing the need for auth tokens)
  * @param {boolean} [options.readableObjectMode] - Emit `result` objects instead of string Buffers for the `data` events. Does not affect input (which must be binary)
  * @param {boolean} [options.objectMode] - Alias for readableObjectMode
@@ -158,7 +158,7 @@ RecognizeStream.prototype.initialize = function() {
   }
   var queryString = qs.stringify(queryParams);
 
-  var url = (options.url || 'wss://stream.watsonplatform.net/speech-to-text/api').replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
+  var url = (options.url || 'wss://api.us-south.speech-to-text.watson.cloud.ibm.com').replace(/^http/, 'ws') + '/v1/recognize?' + queryString;
 
   // process opening payload params
   var openingMessageParamsAllowed = [

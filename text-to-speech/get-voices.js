@@ -28,7 +28,7 @@
     "language": "en-US",
     "customizable": true,
     "gender": "male",
-    "url": "https://stream.watsonplatform.net/text-to-speech/api/v1/voices/en-US_MichaelVoice",
+    "url": "https://api.us-south.text-to-speech.watson.cloud.ibm.com/v1/voices/en-US_MichaelVoice",
     "description": "Michael: American English male voice."
  },
  //...
@@ -38,7 +38,7 @@
 
  * @todo define format in @return statement
  * @param {Object} options
- * @param {String} options.url=https://stream.watsonplatform.net/text-to-speech/api URL for Watson Text to Speech API
+ * @param {String} options.url=https://api.us-south.text-to-speech.watson.cloud.ibm.com URL for Watson Text to Speech API
  * @param {String} options.token auth token for CF services
  * @param {String} options.accessToken IAM access token for RC services
  * @return {Promise.<T>}
@@ -53,7 +53,7 @@ module.exports = function getVoices(options) {
       accept: 'application/json'
     }
   };
-  var url = options.url || 'https://stream.watsonplatform.net/text-to-speech/api';
+  var url = options.url || 'https://api.us-south.text-to-speech.watson.cloud.ibm.com';
   if (options.accessToken) {
     url = url + '/v1/voices?access_token=' + options.accessToken;
   } else {

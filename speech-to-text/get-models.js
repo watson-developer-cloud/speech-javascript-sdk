@@ -24,7 +24,7 @@
 
  ```js
  [{
-    "url": "https://stream.watsonplatform.net/speech-to-text/api/v1/models/en-UK_BroadbandModel",
+    "url": "https://api.us-south.speech-to-text.watson.cloud.ibm.com/v1/models/en-UK_BroadbandModel",
     "rate": 16000,
     "name": "en-UK_BroadbandModel",
     "language": "en-UK",
@@ -37,7 +37,7 @@
 
  * @todo define format in @return statement
  * @param {Object} options
- * @param {String} options.url=https://stream.watsonplatform.net/speech-to-text/api URL for Watson Speech to Text API
+ * @param {String} options.url=https://api.us-south.speech-to-text.watson.cloud.ibm.com URL for Watson Speech to Text API
  * @param {String} options.token auth token for CF services
  * @param {String} options.accessToken IAM access token for RC services
  * @return {Promise<T>}
@@ -52,7 +52,7 @@ module.exports = function getModels(options) {
       accept: 'application/json'
     }
   };
-  var url = options.url || 'https://stream.watsonplatform.net/speech-to-text/api';
+  var url = options.url || 'https://api.us-south.speech-to-text.watson.cloud.ibm.com';
   if (options.accessToken) {
     url = url + '/v1/models?access_token=' + options.accessToken;
   } else {
