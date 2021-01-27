@@ -82,7 +82,7 @@
     "ibm-watson": "^6.0.2",
     "lodash.pullallwith": "^4.7.0",
     "microphone-stream": "^5.1.0",
-    "nodeify-fetch": "^2.2.1",
+    "nodeify-fetch": "^1.0.1",
     "npm": "^6.14.11",
     "object.assign": "^4.1.2",
     "path": "^0.12.7",
