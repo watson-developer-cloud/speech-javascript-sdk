@@ -18,10 +18,16 @@ module.exports = {
       },
       {
         test: /index.js$/,
-        loader: 'transform-loader?envify',
-        // options: {...}
+        use: {
+          loader: 'transform-loader?envify',
+        }
       },
     ],
   },
   mode: 'development',
+  resolve: {
+    fallback: {
+      "stream": require.resolve("stream-browserify")
+    }
+  },
 };
