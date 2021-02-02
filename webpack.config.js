@@ -1,4 +1,6 @@
 // browserify output is slightly smaller, but webpack wins after minification & gzipping
+const webpack = require('webpack');
+
 module.exports = {
   entry: './index.js',
   output: {
@@ -18,10 +20,24 @@ module.exports = {
       },
       {
         test: /index.js$/,
-        loader: 'transform-loader?envify',
-        // options: {...}
+        use: {
+          loader: 'transform-loader?envify',
+        }
       },
     ],
   },
   mode: 'development',
+  resolve: {
+    alias: {
+      'stream': 'stream-browserify',
+      'Buffer': 'buffer',
+      'process': 'process/browser.js',
+    }
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser.js',
+      Buffer: ['buffer', 'Buffer'],
+    }),
+  ]
 };
