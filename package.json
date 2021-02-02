@@ -44,6 +44,7 @@
     "babel-loader": "^8.2.2",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
+    "buffer": "^6.0.3",
     "concat-stream": "^2.0.0",
     "envify": "^4.1.0",
     "envify-loader": "^0.1.0",
