@@ -63,6 +63,10 @@ var qs = require('../util/querystring.js');
  * @param {boolean} [options.processingMetrics] - If true, requests processing metrics about the service's transcription of the input audio (default=false)
  * @param {number} [options.processingMetricsInterval] - Specifies the interval in seconds at which the service is to return processing metrics
  * @param {boolean} [options.audioMetrics] - If true, requests detailed information about the signal characteristics of the input audio (detailed=false)
+ * @param {number} [options.endOfPhraseSilenceTime] -  If true, specifies the duration of the pause interval at which the service splits a transcript into multiple final results. Specify a value for the pause interval in the range of 0.0 to 120.0 (default=0.8)
+ * @param {boolean} [options.splitTranscriptAtPhraseEnd] - If true, directs the service to split the transcript into multiple final results based on semantic features of the input, for example, at the conclusion of meaningful phrases such as sentences (default=false)
+ * @param {number} [options.speechDetectorSensitivity] - The sensitivity of speech activity detection that the service is to perform. Specify a value between 0.0 and 1.0 (default=0.5)
+ * @param {number} [options.backgroundAudioSuppression] - The level to which the service is to suppress background audio based on its volume to prevent it from being transcribed as speech. Specify a value between 0.0 and 1.0 (default=0.0)
  *
  * @constructor
  */
@@ -179,7 +183,11 @@ RecognizeStream.prototype.initialize = function() {
     'smart_formatting',
     'speaker_labels',
     'grammar_name',
-    'redaction'
+    'redaction',
+    'end_of_phrase_silence_time',
+    'split_transcript_at_phrase_end',
+    'speech_detector_sensitivity',
+    'background_audio_suppression'
   ];
   var openingMessage = processUserParameters(options, openingMessageParamsAllowed);
   openingMessage.action = 'start';
