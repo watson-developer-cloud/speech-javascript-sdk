@@ -67,6 +67,7 @@ var qs = require('../util/querystring.js');
  * @param {boolean} [options.splitTranscriptAtPhraseEnd] - If true, directs the service to split the transcript into multiple final results based on semantic features of the input, for example, at the conclusion of meaningful phrases such as sentences (default=false)
  * @param {number} [options.speechDetectorSensitivity] - The sensitivity of speech activity detection that the service is to perform. Specify a value between 0.0 and 1.0 (default=0.5)
  * @param {number} [options.backgroundAudioSuppression] - The level to which the service is to suppress background audio based on its volume to prevent it from being transcribed as speech. Specify a value between 0.0 and 1.0 (default=0.0)
+ * @param {boolean} [options.lowLatency] - If `true` for next-generation `Multimedia` and `Telephony` models that support low latency, directs the service to produce results even more quickly than it usually does.
  *
  * @constructor
  */
@@ -187,7 +188,8 @@ RecognizeStream.prototype.initialize = function() {
     'end_of_phrase_silence_time',
     'split_transcript_at_phrase_end',
     'speech_detector_sensitivity',
-    'background_audio_suppression'
+    'background_audio_suppression',
+    'low_latency'
   ];
   var openingMessage = processUserParameters(options, openingMessageParamsAllowed);
   openingMessage.action = 'start';
