@@ -111,7 +111,16 @@ module.exports = function recognizeFile(options) {
   if (typeof options.file === 'string') {
     fetch(options.file)
       .then(function(response) {
-        return response.readable();
+        console.log(response)
+        // old behavior https://github.com/bergos/nodeify-fetch/blob/v1.0.1/lib/patch-response.js#L23
+        //return response.readable();
+        // new behavior https://github.com/bergos/nodeify-fetch/blob/v2.2.2/lib/patchResponse.js
+        // seems like we just have to check if the body is readable
+        if (response.body.readable) {
+          return response.body
+        } else {
+          return new Error("file is not a readable stream")
+        }
       })
       .then(function(source) {
         source.pipe(recognizeStream);
