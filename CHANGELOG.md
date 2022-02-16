@@ -1,5 +1,9 @@
 # Changelog
 
+### v0.39.1
+* Update vulnerable dependencies
+* Update example dependencies (removed vulenerable express-browserify)
+
 ### v0.37.0
 * BREAKING CHANGES INTRODUCED:
   * All options parameters for all methods are coverted to be lowerCamelCase
