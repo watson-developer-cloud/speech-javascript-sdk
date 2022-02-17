@@ -111,7 +111,6 @@ module.exports = function recognizeFile(options) {
   if (typeof options.file === 'string') {
     fetch(options.file)
       .then(function(response) {
-        console.log(response)
         // old behavior https://github.com/bergos/nodeify-fetch/blob/v1.0.1/lib/patch-response.js#L23
         //return response.readable();
         // new behavior https://github.com/bergos/nodeify-fetch/blob/v2.2.2/lib/patchResponse.js
