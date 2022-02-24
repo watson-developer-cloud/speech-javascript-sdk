@@ -19,7 +19,6 @@
 const express = require('express');
 const app = express();
 
-const expressBrowserify = require('express-browserify');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config');
@@ -52,14 +51,10 @@ const secure = require('express-secure-only');
 app.use(secure());
 app.use(express.static(__dirname + '/static'));
 
-// set up express-browserify to serve browserify bundles for examples
-const isDev = app.get('env') === 'development';
+// use watchify to build browserify bundle and serve it
 app.get(
   '/browserify-bundle.js',
-  expressBrowserify('static/browserify-app.js', {
-    watch: isDev,
-    debug: isDev
-  })
+  express.static(__dirname + '/static/scripts/browserify-bundle.js')
 );
 
 // set up webpack-dev-middleware to serve Webpack bundles for examples
