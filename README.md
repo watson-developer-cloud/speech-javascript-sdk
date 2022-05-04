@@ -60,6 +60,10 @@ See [CHANGELOG.md](CHANGELOG.md) for a complete list of changes.
 
 ## Development
 
+### Global Transaction ID
+
+Unfortunately, there is no way to set or get the global transaction id provided by the initial websocket handshake with the Speech service. This is due to limitations from the W3C Websocket API for browser. It is possible; however, to grab the `X-Global-Transaction-Id` header through a browser's dev tool "Network" tab. After making a call to the service, look for a request to the `v1/recognize` endpoint which should return a 101 code. The response headers from that request will contain the `X-Global-Transaction-Id` header.
+
 ### Use examples for development
 
 The provided examples can be used to test developmental code in action:
