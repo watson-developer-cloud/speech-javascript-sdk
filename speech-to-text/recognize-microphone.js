@@ -20,7 +20,6 @@ var MicrophoneStream = require('microphone-stream');
 var RecognizeStream = require('./recognize-stream.js');
 var L16 = require('./webaudio-l16-stream.js');
 var FormatStream = require('./format-stream.js');
-var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 var { Writable } = require('readable-stream');
 var ResultStream = require('./result-stream');
@@ -82,7 +81,7 @@ module.exports = function recognizeMicrophone(options) {
     options.smartFormatting = options.format;
   }
 
-  var rsOpts = assign(
+  var rsOpts = Object.assign(
     {
       contentType: 'audio/l16;rate=16000',
       interimResults: true

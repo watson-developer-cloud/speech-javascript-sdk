@@ -20,7 +20,6 @@ var RecognizeStream = require('./recognize-stream.js');
 var FilePlayer = require('./file-player.js');
 var FormatStream = require('./format-stream.js');
 var TimingStream = require('./timing-stream.js');
-var assign = require('object.assign/polyfill')();
 var WritableElementStream = require('./writable-element-stream');
 var ResultStream = require('./result-stream');
 var SpeakerStream = require('./speaker-stream');
@@ -98,7 +97,7 @@ module.exports = function recognizeFile(options) {
     options.contentType = contentType.fromFilename(options.file);
   }
 
-  var rsOpts = assign(
+  var rsOpts = Object.assign(
     {
       interimResults: true
     },
