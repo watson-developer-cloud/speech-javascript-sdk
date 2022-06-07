@@ -85,7 +85,6 @@
     "lodash.pullallwith": "^4.7.0",
     "microphone-stream": "^5.1.0",
     "nodeify-fetch": "^2.2.2",
-    "object.assign": "^4.1.2",
     "path": "^0.12.7",
     "readable-blob-stream": "^1.1.0",
     "readable-stream": "^3.6.0",
