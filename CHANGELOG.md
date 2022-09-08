@@ -1,5 +1,9 @@
 # Changelog
 
+### v0.40.1
+* Update vulnerable dependencies
+* feat(recognize-stream): add new websocket parameter character_insertion_bias
+
 ### v0.39.1
 * Update vulnerable dependencies
 * Update example dependencies (removed vulenerable express-browserify)
