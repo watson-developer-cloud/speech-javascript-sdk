@@ -68,7 +68,8 @@ var qs = require('../util/querystring.js');
  * @param {number} [options.speechDetectorSensitivity] - The sensitivity of speech activity detection that the service is to perform. Specify a value between 0.0 and 1.0 (default=0.5)
  * @param {number} [options.backgroundAudioSuppression] - The level to which the service is to suppress background audio based on its volume to prevent it from being transcribed as speech. Specify a value between 0.0 and 1.0 (default=0.0)
  * @param {boolean} [options.lowLatency] - If `true` for next-generation `Multimedia` and `Telephony` models that support low latency, directs the service to produce results even more quickly than it usually does.
- *
+ * @param {number} [options.characterInsertionBias] - Indicate that the service is to favor shorter or longer strings as it considers subsequent characters for its hypotheses. Specify a value between -1.0 and 1.0 (default=0.0)
+*
  * @constructor
  */
 function RecognizeStream(options) {
@@ -189,7 +190,8 @@ RecognizeStream.prototype.initialize = function() {
     'split_transcript_at_phrase_end',
     'speech_detector_sensitivity',
     'background_audio_suppression',
-    'low_latency'
+    'low_latency',
+    'character_insertion_bias'
   ];
   var openingMessage = processUserParameters(options, openingMessageParamsAllowed);
   openingMessage.action = 'start';
