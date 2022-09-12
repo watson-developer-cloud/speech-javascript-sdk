@@ -1,6 +1,6 @@
 # Changelog
 
-### v0.40.1
+### v0.40.0
 * Update vulnerable dependencies
 * feat(recognize-stream): add new websocket parameter character_insertion_bias
 
