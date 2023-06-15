@@ -1,7 +1,3 @@
 node_modules/
 dist/
 doc/
-examples/static/watson-speech.js
-examples/static/scripts/
-examples/node_modules/
-examples/static/webpack-bundle.js
