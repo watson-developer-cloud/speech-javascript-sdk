@@ -52,7 +52,6 @@ module.exports = function synthesize(options) {
   var audio = options.element || new Audio();
   audio.crossOrigin = 'anonymous';
   var queryParamsAllowed = ['voice', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'access_token', 'accept', 'customization_id', 'pitch_percentage'];
-  console.log({queryParamsAllowed});
   var queryParams = processUserParameters(options, queryParamsAllowed);
   audio.src = url + '/v1/synthesize?' + qs.stringify(queryParams);
   if (options.autoPlay !== false) {
