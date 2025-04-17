@@ -51,7 +51,7 @@ module.exports = function synthesize(options) {
   var url = options.url || 'https://api.us-south.text-to-speech.watson.cloud.ibm.com';
   var audio = options.element || new Audio();
   audio.crossOrigin = 'anonymous';
-  var queryParamsAllowed = ['voice', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'access_token', 'accept', 'customization_id'];
+  var queryParamsAllowed = ['voice', 'X-Watson-Learning-Opt-Out', 'text', 'watson-token', 'access_token', 'accept', 'customization_id', 'pitch_percentage'];
   var queryParams = processUserParameters(options, queryParamsAllowed);
   audio.src = url + '/v1/synthesize?' + qs.stringify(queryParams);
   if (options.autoPlay !== false) {
