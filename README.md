@@ -6,6 +6,9 @@ IBM Watson Speech Services for Web Browsers
 
 Allows you to easily add voice recognition and synthesis to any web app with minimal code.
 
+## Deprecation Notice
+This repo and the npm package associated with it are being deprecated. While this repo will no longer see active support from the IBM team, contributions by the community via PRs are still welcomed and will be reviewed. Keep in mind, updates will no longer be published to npm and changes made after this update will need to be built independently.
+
 ### Built for Browsers
 
 This library is primarily intended for use in web browsers. Check out [ibm-watson](https://www.npmjs.com/package/ibm-watson) to use Watson services (speech and others) from Node.js.
